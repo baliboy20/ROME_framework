@@ -85,6 +85,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - Generate CLAUDE.md files for each robot
   - Configure robot-specific instructions
   - Provide module-specific context
+  - Follow robot creation procedures in robot_creation.md
 
 - **Task Assignment**
   - Distribute actionlist.md to robots
@@ -150,7 +151,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
    - Deployment architecture
 
 3. **Development Plan**
-   - Comprehensive task list (actionlist.md)
+   - Comprehensive task list (./PROJECT/dev/actionlist.md)
    - Resource allocation matrix
    - Project timeline
    - Risk assessment
@@ -160,6 +161,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
    - CLAUDE.md files
    - Module assignments
    - Access permissions
+   - Robot instantiation following robot_creation.md procedures
 
 5. **Progress Reports**
    - Weekly status summaries

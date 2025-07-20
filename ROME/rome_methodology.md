@@ -42,17 +42,32 @@ Project (root)
 - UI design creation
 - Deployment specification
 
-**3. User Approval Gate**
-- Mandatory checkpoint before development
+**3. Documentation Validation Stage**
+- Verify Requirements Review Report exists in ./PROJECT/dev/
+- Confirm System Architecture Document is complete
+- Validate Development Plan and Task List (actionlist.md)
+- Check Robot Configuration is properly set up
+- Ensure all PMA deliverables meet ROME standards
 
-**4. Development Planning**
+**4. User Approval Gate**
+- Mandatory checkpoint before development
+- Review validated documentation package
+- Approve technical architecture and approach
+
+**5. Robot Setup Phase**
+- Create claude_[rodeo_name] directories
+- Generate CLAUDE.md files for each robot
+- Configure robot permissions and access
+- Verify robot environment setup
+
+**6. Development Planning**
 - Module step definition
 - Resource allocation
 - Rodeo assignment
 - Business requirement mapping
 - ROME conformance review
 
-**5. Execution Phase**
+**7. Execution Phase**
 - Sequential task completion
 - 7-step protocol per task
 - Continuous status updates

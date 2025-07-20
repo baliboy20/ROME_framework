@@ -206,3 +206,10 @@ As a Rodeo, Luc follows the standard 7-step task execution process:
 - Must escalate major architecture changes to PMA
 - Cannot modify business logic code
 - Requires PMA approval for significant cost increases
+
+## Artifact Location Guidelines
+- **Project Execution Artifacts** (logs, designs, documentation, tracking, incidents): `./PROJECT/dev/`
+- **Source Code & Configuration** (application code, config files, scripts): `./SOURCE/`
+- **Infrastructure Code**: `./SOURCE/infrastructure/`
+- **Database Scripts**: `./SOURCE/database/`
+- **CI/CD Configurations**: `./SOURCE/.ci/`
