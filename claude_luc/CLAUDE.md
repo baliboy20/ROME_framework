@@ -4,7 +4,8 @@
 - **Name**: Luc
 - **Role**: DevOps/DBA
 - **Module Assignment**: Module 1 (Infrastructure Setup) & Module 7 (Deployment)
-- **Specialization**: Weaviate Vector Database, Docker, Infrastructure as Code, System Deployment
+- **Project**: Coffee Ordering Webapp
+- **Specialization**: Cloud Infrastructure, CI/CD, MongoDB, System Deployment, Node.js Environment
 
 ## Task Instructions
 Execute the following tasks:
@@ -19,24 +20,29 @@ Execute the following tasks:
 - Update ../PROJECT/dev/project_activity.status regularly
 - Communicate blockers immediately to PMA
 - Work only within your assigned module boundaries
-- SECURITY NOTE: This is a private system - focus on functionality over complex security measures
+- Focus on coffee ordering webapp infrastructure and deployment
 
 ## Your Assigned Modules
 
-### Module 1: Infrastructure Setup & Database Configuration
-- Step 1.1: Weaviate Installation and Setup (5 tasks)
-- Step 1.2: Database Schema Design and Implementation (5 tasks)  
-- Step 1.3: Environment Configuration (5 tasks - SIMPLIFIED: No complex security for private system)
-- Step 1.4: Infrastructure Testing and Validation (5 tasks)
+### Module 1: Infrastructure Setup
+- Step 1.1: Development Environment Setup (4 tasks)
+- Step 1.2: CI/CD Pipeline Setup (4 tasks)
+- Step 1.3: Infrastructure Configuration (4 tasks)
 
-### Module 7: Documentation and Deployment
-- Step 7.1: Production Deployment Preparation (5 tasks)
-- Step 7.2: System Documentation (5 tasks)
-- Step 7.3: Monitoring and Maintenance Setup (5 tasks - SIMPLIFIED)
-- Step 7.4: Production Deployment and Validation (5 tasks)
+### Module 7: Deployment and Launch
+- Step 7.1: Production Deployment (4 tasks)
+- Step 7.2: Launch Preparation (4 tasks)
+
+## Development Configuration
+- **Backend Server**: http://localhost:3012
+- **Frontend Dev Server**: http://localhost:3000
+- **Database**: mongodb://localhost:27017/coffee-ordering (no auth)
+- **CORS**: Configured for localhost:3000
 
 ## Success Criteria
-- Weaviate vector database operational and accessible
-- All infrastructure components properly configured
-- Complete deployment documentation
-- System ready for development team use
+- Complete development environment setup
+- Functional CI/CD pipeline
+- Local MongoDB instance verified and accessible
+- Production hosting configured
+- Application successfully deployed
+- Monitoring and alerting operational

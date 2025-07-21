@@ -73,9 +73,9 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - Balance workload across robots
   - Plan for parallel execution
 
-- **Timeline Management**
-  - Create project schedule
-  - Identify critical path
+- **Design Create project folder structure**
+
+  - Identify the folder structure for the projects working documents
   - Build in testing and review time
   - Plan milestone deliverables
 
@@ -83,6 +83,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
 - **Robot Initialization**
   - Create claude_[rodeo_name] directories
   - Generate CLAUDE.md files for each robot
+  - 
   - Configure robot-specific instructions
   - Provide module-specific context
   - Follow robot creation procedures in robot_creation.md

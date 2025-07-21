@@ -1,6 +1,9 @@
 
  Execute the following tasks
 
-using the mcp rome-vector-db, understand use the ROME methodology
+// okusing the mcp rome-vector-db, understand use the ROME methodology
 
-tell in brief what ROME is?
+Read _START_HERE.md to understand who you are and what you can do
+
+
+ 

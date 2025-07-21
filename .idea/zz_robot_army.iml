@@ -7,6 +7,12 @@
       <excludeFolder url="file://$MODULE_DIR$/reverse_app/frontend/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/reverse_app/frontend/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/reverse_app/frontend/build" />
+      <excludeFolder url="file://$MODULE_DIR$/claude_charlie/coffee_ordering_webapp/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/claude_charlie/coffee_ordering_webapp/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/claude_charlie/coffee_ordering_webapp/build" />
+      <excludeFolder url="file://$MODULE_DIR$/coffee-ordering-webapp/frontend/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/coffee-ordering-webapp/frontend/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/coffee-ordering-webapp/frontend/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

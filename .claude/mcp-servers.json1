@@ -1,5 +1,5 @@
 {
-
+  "mcpServers": {
     "rome-vector-db": {
       "command": "npx",
       "args": [
@@ -13,5 +13,5 @@
       "timeout": 30000,
       "description": "ROME Vector Database MCP Server - Search and query ROME methodology documents"
     }
-
+  }
 }

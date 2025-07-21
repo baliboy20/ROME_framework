@@ -1,291 +1,252 @@
-# ROME Vector Database Project - Action List
-**Project**: ROME Documentation Vector Database System  
-**PMA**: Claude PMA  
-**Date**: January 2025  
-**Status**: Ready for Robot Assignment  
+# Coffee Ordering Webapp - ROME Development Task List
 
-## Project Structure: Modules → Steps → Tasks
-
----
-
-## Module 1: Infrastructure Setup & Database Configuration
-**Owner**: Luc (DevOps/DBA)  
-**Estimated Duration**: 3-4 days  
-**Dependencies**: None  
-
-### Step 1.1: Weaviate Installation and Setup
-- **Task 1.1.1**: Install Docker and Docker Compose on development environment
-- **Task 1.1.2**: Create docker-compose.yml file for Weaviate with text2vec-openai module
-- **Task 1.1.3**: Configure Weaviate environment variables and secrets
-- **Task 1.1.4**: Start Weaviate container and verify accessibility on port 8080
-- **Task 1.1.5**: Test Weaviate API connectivity with basic health check
-
-### Step 1.2: Database Schema Design and Implementation
-- **Task 1.2.1**: Design ROMEDocument class schema with properties (content, source_file, section, role, module_type, timestamp, chunk_index)
-- **Task 1.2.2**: Implement schema creation script using Weaviate Python client
-- **Task 1.2.3**: Configure text2vec-openai vectorizer with appropriate model settings
-- **Task 1.2.4**: Set up HNSW index parameters for optimal search performance
-- **Task 1.2.5**: Test schema creation and validate with sample document insertion
-
-### Step 1.3: Environment Configuration and Security
-- **Task 1.3.1**: Create environment configuration files (.env, config.yaml)
-- **Task 1.3.2**: Set up OpenAI API key management and validation
-- **Task 1.3.3**: Configure Weaviate authentication and authorization settings
-- **Task 1.3.4**: Implement backup and persistence configuration
-- **Task 1.3.5**: Create health monitoring and alerting setup
-
-### Step 1.4: Infrastructure Testing and Validation
-- **Task 1.4.1**: Create integration test suite for Weaviate connectivity
-- **Task 1.4.2**: Test database schema operations (create, read, update, delete)
-- **Task 1.4.3**: Validate vector search functionality with test embeddings
-- **Task 1.4.4**: Performance test with sample document load
-- **Task 1.4.5**: Document infrastructure setup procedures and troubleshooting guide
+**Project**: Coffee Ordering Webapp
+**Version**: 1.0
+**Date**: 2025-07-20
+**PMA**: Project Manager/Architect
 
 ---
 
-## Module 2: Document Processing Pipeline
-**Owner**: Reena (Backend Developer)  
-**Estimated Duration**: 5-6 days  
-**Dependencies**: Module 1 completion  
+## Project Overview
 
-### Step 2.1: File System Integration and Monitoring
-- **Task 2.1.1**: Implement file watcher using Python watchdog for ROME directory
-- **Task 2.1.2**: Create file change detection and filtering logic (.md, .txt files only)
-- **Task 2.1.3**: Implement incremental update detection (modified files only)
-- **Task 2.1.4**: Create file validation and error handling
-- **Task 2.1.5**: Test file monitoring with simulated document changes
-
-### Step 2.2: Document Parsing and Text Extraction
-- **Task 2.2.1**: Implement markdown parser to extract text content and structure
-- **Task 2.2.2**: Create metadata extraction (file path, section headers, document type)
-- **Task 2.2.3**: Implement role detection logic based on file content (Charlie, Reena, Luc references)
-- **Task 2.2.4**: Handle special characters and formatting preservation
-- **Task 2.2.5**: Test parser with all existing ROME documentation files
-
-### Step 2.3: Intelligent Text Chunking System
-- **Task 2.3.1**: Implement semantic chunking algorithm preserving context boundaries
-- **Task 2.3.2**: Set maximum chunk size (1000 tokens) with overlap strategy
-- **Task 2.3.3**: Preserve markdown structure and headers in chunks
-- **Task 2.3.4**: Create chunk metadata including source section and index
-- **Task 2.3.5**: Test chunking with various document types and validate output quality
-
-### Step 2.4: Embedding Generation Pipeline
-- **Task 2.4.1**: Integrate OpenAI embedding API with error handling and retries
-- **Task 2.4.2**: Implement batch processing for multiple documents
-- **Task 2.4.3**: Create embedding caching to avoid re-processing unchanged content
-- **Task 2.4.4**: Add rate limiting and API quota management
-- **Task 2.4.5**: Test embedding generation with sample ROME documents
-
-### Step 2.5: Vector Database Integration
-- **Task 2.5.1**: Implement batch upload functionality to Weaviate
-- **Task 2.5.2**: Create data validation and integrity checking
-- **Task 2.5.3**: Implement update and delete operations for changed documents
-- **Task 2.5.4**: Add transaction handling and error recovery
-- **Task 2.5.5**: Test complete ingestion pipeline with full ROME documentation set
+This task list breaks down the Coffee Ordering Webapp into modules, steps, and individual tasks following ROME methodology. Each module is assigned to a specific robot developer (Rodeo) who will execute tasks sequentially using the 7-step protocol.
 
 ---
 
-## Module 3: Query Processing and Search Engine
-**Owner**: Reena (Backend Developer)  
-**Estimated Duration**: 4-5 days  
-**Dependencies**: Module 1, Module 2 completion  
+## Module 1: Infrastructure Setup
+**Owner**: Luc (DevOps/DBA)
+**Duration**: 3 days
+**Dependencies**: None
 
-### Step 3.1: Query Processing Engine
-- **Task 3.1.1**: Implement natural language query preprocessing and normalization
-- **Task 3.1.2**: Create query embedding generation using same model as documents
-- **Task 3.1.3**: Implement query filtering logic (role-based, module-type)
-- **Task 3.1.4**: Add query validation and sanitization
-- **Task 3.1.5**: Test query processing with various natural language inputs
+### Step 1.1: Development Environment Setup
+- **Task 1.1.1**: Create project repository and branch structure
+- **Task 1.1.2**: Set up local development environment (Node.js, Flutter)
+- **Task 1.1.3**: Configure environment variables (Backend: http://localhost:3012)
+- **Task 1.1.4**: Verify local MongoDB instance is running without authentication
 
-### Step 3.2: Semantic Search Implementation
-- **Task 3.2.1**: Implement similarity search using Weaviate nearText query
-- **Task 3.2.2**: Create result ranking algorithm with confidence scoring
-- **Task 3.2.3**: Implement result filtering and deduplication
-- **Task 3.2.4**: Add pagination and result limiting functionality
-- **Task 3.2.5**: Test search accuracy with predefined query scenarios
+### Step 1.2: CI/CD Pipeline Setup
+- **Task 1.2.1**: Configure GitHub Actions for automated testing
+- **Task 1.2.2**: Set up deployment pipelines for staging and production
+- **Task 1.2.3**: Configure automated code quality checks
+- **Task 1.2.4**: Implement build and deployment scripts
 
-### Step 3.3: Result Processing and Formatting
-- **Task 3.3.1**: Create result aggregation and source attribution
-- **Task 3.3.2**: Implement context highlighting and snippet extraction
-- **Task 3.3.3**: Format results in structured JSON with metadata
-- **Task 3.3.4**: Add search analytics and query logging
-- **Task 3.3.5**: Test result formatting and validate output structure
-
-### Step 3.4: Caching and Performance Optimization
-- **Task 3.4.1**: Implement query result caching with TTL
-- **Task 3.4.2**: Create embedding cache for frequent queries
-- **Task 3.4.3**: Optimize database query performance
-- **Task 3.4.4**: Implement connection pooling and resource management
-- **Task 3.4.5**: Performance test and validate response time targets (<2s)
+### Step 1.3: Infrastructure Configuration
+- **Task 1.3.1**: Set up cloud hosting accounts (frontend and backend)
+- **Task 1.3.2**: Configure production MongoDB database
+- **Task 1.3.3**: Set up monitoring and logging infrastructure
+- **Task 1.3.4**: Configure SSL certificates and domain setup
 
 ---
 
-## Module 4: MCP Server Development
-**Owner**: Reena (Backend Developer)  
-**Estimated Duration**: 4-5 days  
-**Dependencies**: Module 3 completion  
+## Module 2: Data Architecture Implementation
+**Owner**: Ashok (Data Architect)
+**Duration**: 3 days
+**Dependencies**: Module 1
 
-### Step 4.1: FastAPI Server Setup and Configuration
-- **Task 4.1.1**: Create FastAPI application with proper project structure
-- **Task 4.1.2**: Configure CORS, middleware, and security settings
-- **Task 4.1.3**: Implement environment-based configuration management
-- **Task 4.1.4**: Set up logging, monitoring, and health check endpoints
-- **Task 4.1.5**: Test basic server functionality and API documentation
+### Step 2.1: Database Setup
+- **Task 2.1.1**: Connect to local MongoDB (mongodb://localhost:27017/coffee-ordering)
+- **Task 2.1.2**: Implement Mongoose connection configuration (no auth)
+- **Task 2.1.3**: Set up database indexes for performance
+- **Task 2.1.4**: Create database backup procedures
 
-### Step 4.2: Query API Endpoint Implementation
-- **Task 4.2.1**: Create POST /query endpoint with request/response validation
-- **Task 4.2.2**: Implement query processing integration with search engine
-- **Task 4.2.3**: Add error handling and proper HTTP status codes
-- **Task 4.2.4**: Implement request rate limiting and timeout handling
-- **Task 4.2.5**: Test API endpoint with various query scenarios
+### Step 2.2: Data Models Implementation
+- **Task 2.2.1**: Implement MenuItem Mongoose schema
+- **Task 2.2.2**: Implement Order Mongoose schema
+- **Task 2.2.3**: Create data validation rules
+- **Task 2.2.4**: Implement schema versioning strategy
 
-### Step 4.3: Authentication and Authorization
-- **Task 4.3.1**: Implement API key authentication system
-- **Task 4.3.2**: Create role-based access control for query filtering
-- **Task 4.3.3**: Add request validation and security headers
-- **Task 4.3.4**: Implement audit logging for all API calls
-- **Task 4.3.5**: Test authentication flows and security measures
-
-### Step 4.4: MCP Protocol Integration
-- **Task 4.4.1**: Research and implement MCP protocol specifications
-- **Task 4.4.2**: Create MCP-compatible request/response handling
-- **Task 4.4.3**: Implement MCP discovery and capability endpoints
-- **Task 4.4.4**: Add MCP-specific error handling and status codes
-- **Task 4.4.5**: Test MCP integration with compatible clients
-
-### Step 4.5: API Testing and Documentation
-- **Task 4.5.1**: Create comprehensive API test suite
-- **Task 4.5.2**: Generate OpenAPI/Swagger documentation
-- **Task 4.5.3**: Create API usage examples and integration guides
-- **Task 4.5.4**: Implement integration tests for all endpoints
-- **Task 4.5.5**: Performance test API with concurrent requests
+### Step 2.3: Data Access Layer
+- **Task 2.3.1**: Create repository pattern implementation
+- **Task 2.3.2**: Implement CRUD operations for Menu Items
+- **Task 2.3.3**: Implement CRUD operations for Orders
+- **Task 2.3.4**: Create data seeding scripts for development
 
 ---
 
-## Module 5: CLI Tool Development
-**Owner**: Charlie (Frontend Developer)  
-**Estimated Duration**: 3-4 days  
-**Dependencies**: Module 4 completion  
+## Module 3: Backend API Development
+**Owner**: Reena (Backend Developer)
+**Duration**: 5 days
+**Dependencies**: Module 2
 
-### Step 5.1: CLI Framework and Structure
-- **Task 5.1.1**: Set up Python Click framework with proper command structure
-- **Task 5.1.2**: Create main CLI application with subcommands
-- **Task 5.1.3**: Implement configuration file management (YAML/JSON)
-- **Task 5.1.4**: Add help documentation and usage examples
-- **Task 5.1.5**: Test basic CLI functionality and command parsing
+### Step 3.1: Server Setup
+- **Task 3.1.1**: Initialize Express.js server with TypeScript on port 3012
+- **Task 3.1.2**: Configure middleware (CORS for localhost:3000, body parser, helmet)
+- **Task 3.1.3**: Implement error handling middleware
+- **Task 3.1.4**: Set up request logging and monitoring
 
-### Step 5.2: Search Command Implementation
-- **Task 5.2.1**: Create 'rome-search' command with query parameter handling
-- **Task 5.2.2**: Implement API client for MCP server communication
-- **Task 5.2.3**: Add query options (role filter, result limit, output format)
-- **Task 5.2.4**: Implement result display with syntax highlighting
-- **Task 5.2.5**: Test search functionality with various query scenarios
+### Step 3.2: API Endpoints Implementation
+- **Task 3.2.1**: Implement GET http://localhost:3012/api/menu endpoint
+- **Task 3.2.2**: Implement POST http://localhost:3012/api/orders endpoint
+- **Task 3.2.3**: Implement GET http://localhost:3012/api/orders/:id endpoint
+- **Task 3.2.4**: Implement GET http://localhost:3012/api/health endpoint
 
-### Step 5.3: Administrative Commands
-- **Task 5.3.1**: Create 'rome-reindex' command for triggering document re-processing
-- **Task 5.3.2**: Implement 'rome-status' command showing system health
-- **Task 5.3.3**: Create 'rome-config' command for configuration management
-- **Task 5.3.4**: Add verbose and debug output options
-- **Task 5.3.5**: Test all administrative commands
+### Step 3.3: Business Logic Services
+- **Task 3.3.1**: Create MenuService for menu operations
+- **Task 3.3.2**: Create OrderService for order processing
+- **Task 3.3.3**: Implement order number generation logic
+- **Task 3.3.4**: Implement collection time calculation
 
-### Step 5.4: Output Formatting and User Experience
-- **Task 5.4.1**: Implement markdown formatting for search results
-- **Task 5.4.2**: Create colorized output with syntax highlighting
-- **Task 5.4.3**: Add result source attribution and confidence scores
-- **Task 5.4.4**: Implement paging for large result sets
-- **Task 5.4.5**: Test user experience and refine output formatting
-
-### Step 5.5: CLI Installation and Distribution
-- **Task 5.5.1**: Create package setup and installation scripts
-- **Task 5.5.2**: Add CLI to system PATH with proper executable permissions
-- **Task 5.5.3**: Create user documentation and quick start guide
-- **Task 5.5.4**: Test installation process on different systems
-- **Task 5.5.5**: Create troubleshooting guide for common issues
+### Step 3.4: API Testing
+- **Task 3.4.1**: Write unit tests for services
+- **Task 3.4.2**: Write integration tests for API endpoints
+- **Task 3.4.3**: Create API documentation
+- **Task 3.4.4**: Implement API rate limiting
 
 ---
 
-## Module 6: Integration Testing and Quality Assurance
-**Owner**: All Rodeos (Collaborative)  
-**Estimated Duration**: 2-3 days  
-**Dependencies**: Modules 1-5 completion  
+## Module 4: Frontend UI Implementation
+**Owner**: Charlie (Frontend Developer)
+**Duration**: 5 days
+**Dependencies**: Module 3 (for API integration)
 
-### Step 6.1: End-to-End Integration Testing
-- **Task 6.1.1**: Create comprehensive test scenarios covering full user workflows
-- **Task 6.1.2**: Test document ingestion → search → result display pipeline
-- **Task 6.1.3**: Validate API integration between all components
-- **Task 6.1.4**: Test error handling and recovery scenarios
-- **Task 6.1.5**: Validate data consistency across all system components
+### Step 4.1: Project Setup
+- **Task 4.1.1**: Initialize Flutter Web project
+- **Task 4.1.2**: Configure project dependencies
+- **Task 4.1.3**: Set up routing and navigation
+- **Task 4.1.4**: Implement responsive breakpoints
 
-### Step 6.2: Performance and Load Testing
-- **Task 6.2.1**: Create performance test suite for concurrent user simulation
-- **Task 6.2.2**: Load test MCP server with multiple simultaneous queries
-- **Task 6.2.3**: Test database performance with large document sets
-- **Task 6.2.4**: Validate response time targets (<2s for 95th percentile)
-- **Task 6.2.5**: Identify and resolve performance bottlenecks
+### Step 4.2: UI Components Development
+- **Task 4.2.1**: Create splash screen with branding
+- **Task 4.2.2**: Implement coffee menu list component
+- **Task 4.2.3**: Create menu item card component
+- **Task 4.2.4**: Implement quantity selector component
 
-### Step 6.3: Security Testing and Validation
-- **Task 6.3.1**: Conduct security vulnerability scanning
-- **Task 6.3.2**: Test authentication and authorization mechanisms
-- **Task 6.3.3**: Validate input sanitization and injection prevention
-- **Task 6.3.4**: Test encryption and data security measures
-- **Task 6.3.5**: Create security compliance report
+### Step 4.3: Screen Implementation
+- **Task 4.3.1**: Implement splash screen with auto-navigation
+- **Task 4.3.2**: Create menu display screen
+- **Task 4.3.3**: Implement order review screen
+- **Task 4.3.4**: Create order confirmation screen
 
-### Step 6.4: User Acceptance Testing
-- **Task 6.4.1**: Create user test scenarios based on business requirements
-- **Task 6.4.2**: Test CLI tool usability and functionality
-- **Task 6.4.3**: Validate MCP integration with development environments
-- **Task 6.4.4**: Test search accuracy with real ROME documentation queries
-- **Task 6.4.5**: Gather user feedback and implement necessary improvements
+### Step 4.4: UI Polish and Responsiveness
+- **Task 4.4.1**: Implement loading states and skeletons
+- **Task 4.4.2**: Add animations and transitions
+- **Task 4.4.3**: Ensure mobile responsiveness
+- **Task 4.4.4**: Implement error display components
 
 ---
 
-## Module 7: Documentation and Deployment
-**Owner**: Luc (DevOps/DBA)  
-**Estimated Duration**: 2-3 days  
-**Dependencies**: Module 6 completion  
+## Module 5: Frontend State Management
+**Owner**: Nicolas (Frontend Developer)
+**Duration**: 4 days
+**Dependencies**: Module 4
 
-### Step 7.1: Production Deployment Preparation
-- **Task 7.1.1**: Create production-ready Docker configurations
-- **Task 7.1.2**: Implement environment-specific configuration management
-- **Task 7.1.3**: Set up production monitoring and logging
-- **Task 7.1.4**: Create backup and disaster recovery procedures
-- **Task 7.1.5**: Test deployment process in staging environment
+### Step 5.1: BLoC Setup
+- **Task 5.1.1**: Set up BLoC pattern architecture
+- **Task 5.1.2**: Create event and state classes
+- **Task 5.1.3**: Implement dependency injection
+- **Task 5.1.4**: Configure BLoC providers
 
-### Step 7.2: System Documentation
-- **Task 7.2.1**: Create comprehensive deployment guide
-- **Task 7.2.2**: Document system architecture and component interactions
-- **Task 7.2.3**: Create troubleshooting and maintenance guide
-- **Task 7.2.4**: Document API specifications and usage examples
-- **Task 7.2.5**: Create user manual for CLI tool and MCP integration
+### Step 5.2: State Management Implementation
+- **Task 5.2.1**: Implement MenuBloc for menu management
+- **Task 5.2.2**: Create CartBloc for order management
+- **Task 5.2.3**: Implement OrderBloc for order submission
+- **Task 5.2.4**: Create NavigationBloc for screen flow
 
-### Step 7.3: Monitoring and Maintenance Setup
-- **Task 7.3.1**: Implement system health monitoring with alerting
-- **Task 7.3.2**: Set up performance metrics collection and dashboards
-- **Task 7.3.3**: Create automated backup procedures
-- **Task 7.3.4**: Implement log rotation and retention policies
-- **Task 7.3.5**: Test monitoring and alerting systems
+### Step 5.3: API Integration
+- **Task 5.3.1**: Implement API service with Dio
+- **Task 5.3.2**: Create data models with JSON serialization
+- **Task 5.3.3**: Implement error handling and retry logic
+- **Task 5.3.4**: Add offline detection and handling
 
-### Step 7.4: Production Deployment and Validation
-- **Task 7.4.1**: Deploy system to production environment
-- **Task 7.4.2**: Validate all functionality in production
-- **Task 7.4.3**: Conduct final user acceptance testing
-- **Task 7.4.4**: Create rollback procedures and test scenarios
-- **Task 7.4.5**: Document go-live checklist and sign-off procedures
+### Step 5.4: Testing
+- **Task 5.4.1**: Write unit tests for BLoCs
+- **Task 5.4.2**: Write widget tests for UI components
+- **Task 5.4.3**: Create integration tests
+- **Task 5.4.4**: Implement mock data for testing
 
 ---
 
-## Summary
-**Total Modules**: 7  
-**Total Steps**: 28  
-**Total Tasks**: 140  
-**Estimated Timeline**: 3-4 weeks  
+## Module 6: Integration and Testing
+**Owner**: Reena (Backend Developer) & Charlie (Frontend Developer)
+**Duration**: 3 days
+**Dependencies**: Modules 3, 4, 5
 
-**Robot Assignments**:
-- **Luc (DevOps/DBA)**: Modules 1, 7 (Infrastructure, Deployment)
-- **Reena (Backend Developer)**: Modules 2, 3, 4 (Processing, Search, API)
-- **Charlie (Frontend Developer)**: Module 5 (CLI Tool)
-- **All Rodeos**: Module 6 (Testing and QA)
+### Step 6.1: End-to-End Integration
+- **Task 6.1.1**: Connect frontend to backend API
+- **Task 6.1.2**: Test complete order flow
+- **Task 6.1.3**: Verify error handling across layers
+- **Task 6.1.4**: Optimize API calls and caching
 
-**Critical Path**: Module 1 → Module 2 → Module 3 → Module 4 → Module 5 → Module 6 → Module 7
+### Step 6.2: Performance Testing
+- **Task 6.2.1**: Conduct load testing on API
+- **Task 6.2.2**: Optimize frontend bundle size
+- **Task 6.2.3**: Implement lazy loading
+- **Task 6.2.4**: Profile and fix performance bottlenecks
 
-**Risk Mitigation**: Early integration testing, parallel development where possible, regular PMA check-ins every 2 days.
+### Step 6.3: Security Review
+- **Task 6.3.1**: Conduct security audit
+- **Task 6.3.2**: Implement input sanitization
+- **Task 6.3.3**: Verify HTTPS configuration
+- **Task 6.3.4**: Test rate limiting and DOS protection
+
+---
+
+## Module 7: Deployment and Launch
+**Owner**: Luc (DevOps/DBA)
+**Duration**: 2 days
+**Dependencies**: Module 6
+
+### Step 7.1: Production Deployment
+- **Task 7.1.1**: Deploy backend to production
+- **Task 7.1.2**: Deploy frontend to CDN
+- **Task 7.1.3**: Configure production database
+- **Task 7.1.4**: Set up monitoring alerts
+
+### Step 7.2: Launch Preparation
+- **Task 7.2.1**: Perform final testing in production
+- **Task 7.2.2**: Create operational documentation
+- **Task 7.2.3**: Set up backup and recovery procedures
+- **Task 7.2.4**: Conduct launch readiness review
+
+---
+
+## Task Execution Guidelines
+
+### 7-Step Protocol (per ROME methodology)
+1. **Read**: Understand task requirements and dependencies
+2. **Log Start**: Record task start time and status
+3. **Execute**: Implement the task following best practices
+4. **Test**: Verify task completion and quality
+5. **Log Complete**: Record completion time and any issues
+6. **Update Status**: Update project tracking system
+7. **Next Task**: Move to next sequential task
+
+### Task Dependencies Matrix
+```
+Module 1 (Infrastructure) ──┐
+                           ├──► Module 2 (Data)
+                           │         │
+                           │         ▼
+                           │    Module 3 (Backend API)
+                           │         │
+                           │         ├──► Module 4 (Frontend UI)
+                           │         │         │
+                           │         │         ▼
+                           │         │    Module 5 (State Mgmt)
+                           │         │         │
+                           │         ▼         ▼
+                           │    Module 6 (Integration)
+                           │         │
+                           └─────────┴──► Module 7 (Deployment)
+```
+
+### Resource Allocation
+- **Luc**: Modules 1, 7 (5 days total)
+- **Ashok**: Module 2 (3 days)
+- **Reena**: Modules 3, 6 (shared) (7 days)
+- **Charlie**: Modules 4, 6 (shared) (6 days)
+- **Nicolas**: Module 5 (4 days)
+
+### Success Criteria
+- All tasks completed following 7-step protocol
+- Code review approved for each module
+- Test coverage > 80% for critical paths
+- Performance metrics met
+- Security audit passed
+- Documentation complete
+
+---
+
+**Document Status**: Complete
+**Approval Required**: Yes
+**Next Action**: Create robot developer workspaces and assign modules

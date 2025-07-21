@@ -3,7 +3,10 @@
 ### **ROME (Robot Methodology)**
 Systematic software development framework using specialized robot developers (Rodeos) with defined protocols and structured task management.
 
-### **Key Roles**
+I 
+
+
+### **Key Actors**
 
 **PMA (Project Manager/Architect)**
 - Analyzes PRD/SRS documents
@@ -20,27 +23,29 @@ Systematic software development framework using specialized robot developers (Ro
 - Communicate blockers to PMA
 - Maintain code quality standards
 
-### **Hierarchical Structure**
-```
-Project (root)
-├── Module (discrete functionality unit)
-│   ├── Step (logical task grouping)
-│   │   └── Task (atomic work unit)
-```
 
-### **Development Phases**
+**Experts**
+- ModelContextProtocols (MCP) programs who provide insight and advice on best or established practice onto how to solve certain problems
+- none yet available
 
+**Task Structure**: See [Module Design Principles](module_design_principles.md) for complete hierarchy and design guidelines.
+
+## Methodology Phrases
+
+### Phase : 0 - Initial Setup
+**1. PMA Purpose**
+must determine or  ask the user whether the purpose of this session is to create a new system, continue the modification or complete an existing one, conduct a review, or some other purpose.
+
+### Phase : 1 - Project Analysis and Design
 **1. PMA Review Stage**
+
 - Input: PRD + SRS documents
 - Output: Gap analysis, improvement suggestions
 - Action: Document review for completeness
 
-**2. System Design Production**
-- Technical architecture definition
-- Module boundaries establishment
-- Library selection/specification
-- UI design creation
-- Deployment specification
+**2. System Design Creation**
+- See: [System Design Tasks and Deliverables](system_design_tasks_and_deliverables.md)
+
 
 **3. Documentation Validation Stage**
 - Verify Requirements Review Report exists in ./PROJECT/dev/
@@ -54,8 +59,16 @@ Project (root)
 - Review validated documentation package
 - Approve technical architecture and approach
 
+Phase 2 : Setup Project and Planning
+
+2.1 Project Environment Setup
+     - See: [Project Setup](project_setup.md)
+2.2 Create Project coordination artifacts (task lists, documentation, etc.)
+ -  See: [Project Coordination](project_coordination.md)
+
+
 **5. Robot Setup Phase**
-- Create claude_[rodeo_name] directories
+- Create claude_[robot_name] directories
 - Generate CLAUDE.md files for each robot
 - Configure robot permissions and access
 - Verify robot environment setup
@@ -74,18 +87,14 @@ Project (root)
 - Blocker escalation
 
 ### **7-Step Task Protocol**
-1. Review module/tasks
-2. Log start time/status
-3. Execute per specifications
-4. Test/verify implementation
-5. Log completion/issues
-6. Update activity status
-7. Proceed to next task
+All Robot Developers follow a standardized 7-step execution process for each task.
+
+**Complete Protocol Details**: See [Robot Developer Guide](robot_creation_guide.md) Section 2
 
 ### **Core Documents**
 - **Requirements**: PRD, SRS
 - **Templates**: project_activity.status_template.md, project_tasks_log.template.txt
-- **Protocols**: robot_action_protocols.md
+- **Protocols**: robot_actions_protocol.md
 - **Roles**: robot_developer_roles.spec.md
 - **Task Lists**: design_task_list.md
 

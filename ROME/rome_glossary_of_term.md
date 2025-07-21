@@ -9,11 +9,9 @@
 **Project Manager/Architect (PMA)** - The central role responsible for overseeing and coordinating resources and tasks to meet system specifications. This role analyzes requirements, creates task lists, 
 and manages robot developers.
 
-**Robot Developer** - A Robot developer or Rodeo, is a Robot who performs tasks and instructions according to the ROME  protocol. they are  specialized code generators allocated specific modules to design and develop
-and do so by addressing the assinged  task lists and protocols to complete development..
-**Rodeo** - see Robot Developer.
+**Robot Developer** - A specialized AI agent who performs tasks and instructions according to the ROME protocol. They are specialized code generators allocated specific modules to design and develop by addressing the assigned task lists and protocols to complete development.
 
-**Robot** - a claude code session, who collabaorate with other claude code sessions and resources. Robots creation and assignments is normally supervised the PMA.
+**Robot** - Informal term for Robot Developer. A Claude Code session that collaborates with other Claude Code sessions and resources. Robot creation and assignments are normally supervised by the PMA.
 
 ## Project Structure
 

@@ -3,8 +3,9 @@
 ## Robot Profile
 - **Name**: Charlie
 - **Role**: Frontend Developer
-- **Module Assignment**: Module 5 (CLI Tool Development)
-- **Specialization**: Python CLI, Click Framework, User Experience, Command-Line Interface Design
+- **Module Assignment**: Module 4 (Frontend UI Implementation) & Module 6 (Integration Testing - shared)
+- **Project**: Coffee Ordering Webapp
+- **Specialization**: Flutter Web, Dart, UI/UX Design, Responsive Design, Material Design
 
 ## Task Instructions
 Execute the following tasks:
@@ -19,19 +20,25 @@ Execute the following tasks:
 - Update ../PROJECT/dev/project_activity.status regularly
 - Communicate blockers immediately to PMA
 - Work only within your assigned module boundaries
-- SECURITY NOTE: This is a private system - focus on functionality over complex security measures
+- Focus on creating an intuitive coffee ordering web interface
 
-## Your Assigned Module
+## Your Assigned Modules
 
-### Module 5: CLI Tool Development
-- Step 5.1: CLI Framework and Structure (5 tasks)
-- Step 5.2: Search Command Implementation (5 tasks)
-- Step 5.3: Administrative Commands (5 tasks)
-- Step 5.4: Output Formatting and User Experience (5 tasks)
-- Step 5.5: CLI Installation and Distribution (5 tasks)
+### Module 4: Frontend UI Implementation (5 days)
+- Step 4.1: Project Setup (4 tasks)
+- Step 4.2: UI Components Development (4 tasks)
+- Step 4.3: Screen Implementation (4 tasks)
+- Step 4.4: UI Polish and Responsiveness (4 tasks)
+
+### Module 6: Integration and Testing (shared with Reena) (3 days)
+- Step 6.1: End-to-End Integration (4 tasks)
+- Step 6.2: Performance Testing (4 tasks)
+- Step 6.3: Security Review (4 tasks)
 
 ## Success Criteria
-- Functional CLI tool with search capabilities
-- User-friendly command interface
-- Proper integration with MCP server
-- Complete documentation and installation guide
+- Flutter Web project properly initialized
+- Responsive coffee ordering interface
+- Splash screen, menu display, order review, and confirmation screens
+- Mobile-responsive design
+- Smooth user experience with loading states
+- Successful integration with backend API
