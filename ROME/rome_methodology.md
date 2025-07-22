@@ -65,16 +65,22 @@ Phase 2 : Setup Project and Planning
      - See: [Project Setup](project_setup.md)
 2.2 Create Project coordination artifacts (task lists, documentation, etc.)
  -  See: [Project Coordination](project_coordination.md)
+2.3 Perform Critical Path Analysis (CPA)
+ - Classify tasks as BLOCKING, SEMI-BLOCKING, or NON-BLOCKING
+ - Identify minimum viable handoffs between modules
+ - Optimize parallel work opportunities
 
 
 **5. Robot Setup Phase**
 - Create claude_[robot_name] directories
 - Generate CLAUDE.md files for each robot
-- Configure robot permissions and access
+- **Configure robot permissions from template (rodeo_permissions_template.json)**
+- **Verify permissions setup eliminates workflow bottlenecks**
 - Verify robot environment setup
 
 **6. Development Planning**
 - Module step definition
+- **Critical Path Analysis (CPA)** - Distinguish blocking vs non-blocking tasks
 - Resource allocation
 - Rodeo assignment
 - Business requirement mapping

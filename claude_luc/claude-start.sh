@@ -1,5 +1,10 @@
 #!/bin/bash
 
-# Claude Code startup script that automatically executes CLAUDE.md instructions
+# Luc - Database Specialist startup script
+echo -ne "\033]0;Luc - Database Specialist\007"
+echo "🗄️  Starting Luc - Database & DevOps Specialist"
+echo "Specializing in: MongoDB, Data Models, Schema Design"
 
-echo "execute CLAUDE.md instructions" | claude "$@" in newWindow
+# Start Claude in the robot directory
+cd "$(dirname "$0")"
+echo "execute CLAUDE.md instructions" | claude "$@"

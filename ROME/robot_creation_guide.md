@@ -101,9 +101,9 @@ echo "Starting [Robot Name] - [Role Description]"
 echo "Specializing in: [Key Specializations]"
 echo "Current Module(s): [Assigned Modules]"
 
-# Start Claude in the robot directory
+# Start Claude with CLAUDE.md instructions
 cd "$(dirname "$0")"
-claude --start-with-file CLAUDE.md
+echo "execute CLAUDE.md instructions" | claude "$@" in newWindow
 ```
 
 **Permissions Setup**:
@@ -111,11 +111,33 @@ claude --start-with-file CLAUDE.md
 chmod +x claude-start.sh
 ```
 
+### **Step 4.5: Setup Robot Permissions**
+**Objective**: Configure comprehensive permissions to minimize workflow interruptions
+
+**Commands to Execute**:
+```bash
+# Create .claude directory if it doesn't exist
+mkdir -p .claude
+
+# Copy permissions template to robot workspace
+cp ../ROME/rodeo_permissions_template.json .claude/settings.local.json
+
+# Verify permissions file exists
+ls -la .claude/settings.local.json
+```
+
+**Validation**:
+- [ ] .claude directory created
+- [ ] settings.local.json contains comprehensive permissions
+- [ ] Robot can access all necessary development tools without prompts
+
 ### **Step 5: Validate Robot Configuration**
 **Validation Checklist**:
 - [ ] Robot directory created with correct naming convention
 - [ ] CLAUDE.md contains complete role definition and instructions
 - [ ] Startup script is executable and tested
+- [ ] **Permissions file (.claude/settings.local.json) configured**
+- [ ] **Robot can execute development commands without permission prompts**
 - [ ] Robot assignments align with module definitions
 - [ ] Dependencies and deliverables clearly specified
 - [ ] Quality standards documented
@@ -674,6 +696,66 @@ pwd
 
 **Document Status**: Comprehensive Robot Developer Guide  
 **Usage**: Primary reference for all robot creation and management  
+
+## Robot Session Management
+
+### **Automated Multi-Robot Launcher**
+Instead of manually opening multiple terminal sessions, use the automated orchestration tools:
+
+#### **Quick Launch (Recommended)**
+```bash
+# From project root
+./rome_robots.sh go
+
+# Or from ROME/robot_scripts directory  
+cd ROME/robot_scripts
+./launch_robots.sh go
+
+# Stop all robots
+./launch_robots.sh stop
+
+# Check robot status
+./launch_robots.sh check
+```
+
+#### **Advanced Orchestration**
+```bash
+# Navigate to robot scripts directory
+cd ROME/robot_scripts
+
+# Start specific robots
+./rome_orchestrator.sh start claude_reena claude_luc
+
+# Show detailed status
+./rome_orchestrator.sh status
+
+# Restart all robots
+./rome_orchestrator.sh restart
+```
+
+#### **TMux Session Management (Power Users)**
+```bash
+# Navigate to robot scripts directory
+cd ROME/robot_scripts
+
+# Start all robots in single tmux session
+./rome_tmux_launcher.sh start
+
+# Attach to session (switch between robots with Ctrl+B, w)
+./rome_tmux_launcher.sh attach
+
+# Stop tmux session
+./rome_tmux_launcher.sh stop
+```
+
+### **Benefits of Automated Launching**
+- **One Command**: Start all robots simultaneously
+- **Process Tracking**: Automatic PID management
+- **Terminal Titles**: Clear identification of each robot
+- **Clean Shutdown**: Proper cleanup of all sessions
+- **Status Monitoring**: Real-time view of active robots
+- **Cross-Platform**: Works on macOS and Linux
+
 **Cross-References**:
 - See: [Module Design Principles](module_design_principles.md)
 - See: [Project Coordination](project_coordination.md)  

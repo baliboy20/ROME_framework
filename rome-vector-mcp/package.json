@@ -1,0 +1,23 @@
+{
+  "name": "rome-vector-db",
+  "version": "1.0.0",
+  "description": "MCP server for ROME methodology documents with vendor-free semantic search",
+  "type": "module",
+  "main": "index.js",
+  "bin": {
+    "rome-vector-db": "./bin/start.js"
+  },
+  "scripts": {
+    "start": "node ./bin/start.js",
+    "dev": "node --watch ./bin/start.js",
+    "debug": "node --inspect-brk ./bin/start.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
+    "@xenova/transformers": "^2.17.2",
+    "glob": "^10.3.10"
+  },
+  "keywords": ["mcp", "rome", "methodology", "semantic-search", "embeddings"],
+  "author": "ROME Methodology Team",
+  "license": "MIT"
+}

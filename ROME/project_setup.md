@@ -114,59 +114,79 @@ Co-Authored-By: Claude <noreply@anthropic.com>"
 
 #### Standard ROME Folder Structure:
 ```
-[project_name]_ROME/
-├── README.md
-├── .gitignore
-├── ROME/                           # ROME methodology documentation
-│   ├── __START_HERE.md
-│   ├── rome_methodology.md
-│   ├── rome_glossary_of_terms.md
-│   ├── robot_actions_protocol.md
-│   ├── design_task_list.md
-│   ├── project_activity.status_template.md
-│   ├── project_tasks_log.template.txt
-│   ├── role_spec_pma.md
-│   ├── role_spec_[role1_name].md    # One per robot role
-│   ├── role_spec_[role2_name].md
-│   └── team_structure.md
-├── PROJECT/                        # Project-specific artifacts
-│   └── dev/                        # Development documentation
-│       ├── requirements_review_report.md
-│       ├── system_architecture_document.md
-│       ├── project_activity.status
-│       ├── project_tasks.log
-│       └── [robot_name]_tasks.log   # Individual robot logs
-├── SOURCE/                         # Source code organization
-│   ├── backend/
-│   ├── frontend/
-│   ├── database/
-│   ├── infrastructure/
-│   ├── docs/
-│   └── tests/
-├── actionlist.md                   # Master task list
-├── claude_[robot1]/                # Robot workspaces
+[project_root]/                     # Parent directory containing project
+├── [project_name]_ROME/           # Main ROME project directory
+│   ├── README.md
+│   ├── .gitignore
+│   ├── ROME/                      # ROME methodology documentation
+│   │   ├── __START_HERE.md
+│   │   ├── rome_methodology.md
+│   │   ├── rodeo_permissions_template.json  # Robot permissions template
+│   │   ├── robot_scripts/         # Robot automation scripts
+│   │   │   ├── launch_robots.sh   # Quick launcher
+│   │   │   ├── rome_orchestrator.sh # Advanced orchestration
+│   │   │   ├── rome_tmux_launcher.sh # TMux session manager
+│   │   │   └── README.md          # Script documentation
+│   │   ├── rome_glossary_of_terms.md
+│   │   ├── robot_actions_protocol.md
+│   │   ├── design_task_list.md
+│   │   ├── project_activity.status_template.md
+│   │   ├── project_tasks_log.template.txt
+│   │   ├── role_spec_pma.md
+│   │   ├── role_spec_[role1_name].md  # One per robot role
+│   │   ├── role_spec_[role2_name].md
+│   │   └── team_structure.md
+│   ├── PROJECT/                   # Project-specific artifacts
+│   │   ├── code/                  # CRITICAL: PROJECT CODE ARTIFACTS
+│   │   │   └── actionlist.md     # Master task list (MUST BE HERE)
+│   │   └── dev/                   # Development documentation
+│   │       ├── requirements_review_report.md
+│   │       ├── system_architecture_document.md
+│   │       ├── project_activity.status
+│   │       ├── project_tasks.log
+│   │       └── [robot_name]_tasks.log # Individual robot logs
+│   ├── SOURCE/                    # Source code organization
+│   │   ├── backend/
+│   │   ├── frontend/
+│   │   ├── database/
+│   │   ├── infrastructure/
+│   │   ├── docs/
+│   │   └── tests/
+│   └── claude-start.sh           # Master startup script
+├── rodeo_[robot1]/               # ROBOT WORKSPACES (ONE LEVEL UP!)
 │   ├── CLAUDE.md
 │   ├── claude-start.sh
 │   └── startup_prompt.txt
-├── claude_[robot2]/
+├── rodeo_[robot2]/               # ROBOT WORKSPACES (ONE LEVEL UP!)
 │   ├── CLAUDE.md
 │   ├── claude-start.sh
 │   └── startup_prompt.txt
-└── claude-start.sh                 # Master startup script
+└── rodeo_[robot3]/               # ROBOT WORKSPACES (ONE LEVEL UP!)
+    ├── CLAUDE.md
+    ├── claude-start.sh
+    └── startup_prompt.txt
 ```
+
+**CRITICAL STRUCTURE REQUIREMENTS:**
+- **actionlist.md MUST be in PROJECT/code/actionlist.md** 
+- **All robot workspaces (rodeo_[robot_name]/) MUST be ONE LEVEL UP from ROME directory**
+- **Robot workspace naming: rodeo_[robot_name] (NOT claude_[robot_name])**
+- **PROJECT/code/ directory MUST be created if it doesn't exist**
 
 #### Commands to Create Structure:
 ```bash
 # Create main directories
-mkdir -p ROME
+mkdir -p ROME/robot_scripts
+mkdir -p PROJECT/code          # CRITICAL: Must create PROJECT/code directory
 mkdir -p PROJECT/dev
 mkdir -p SOURCE/{backend,frontend,database,infrastructure,docs,tests}
 
-# Create robot workspace directories (customize for your project)
-mkdir -p claude_luc claude_reena claude_charlie claude_ashok claude_nicolas
+# Create robot workspace directories ONE LEVEL UP from ROME directory (customize for your project)
+cd .. && mkdir -p rodeo_luc rodeo_reena rodeo_charlie rodeo_ashok rodeo_nicolas && cd -
 
 # Make startup scripts executable
 find . -name "claude-start.sh" -exec chmod +x {} \;
+find ROME/robot_scripts -name "*.sh" -exec chmod +x {} \;
 ```
 
 ---
@@ -209,8 +229,8 @@ find . -name "claude-start.sh" -exec chmod +x {} \;
 
 #### Master Action List (actionlist.md):
 ```bash
-# Create master actionlist.md
-cat > actionlist.md << 'EOF'
+# Create master actionlist.md in PROJECT/code/ directory
+cat > PROJECT/code/actionlist.md << 'EOF'
 # [Project Name] - Action List
 **Project**: [Project Name]
 **PMA**: [Your Name]
@@ -252,12 +272,14 @@ EOF
 #### Robot Workspace Setup:
 For each robot, create:
 ```bash
-# Example for robot workspace setup
-cat > claude_[robot_name]/CLAUDE.md << 'EOF'
+# Example for robot workspace setup (ONE LEVEL UP from ROME directory)
+mkdir -p ../rodeo_[robot_name]/.claude
+
+cat > ../rodeo_[robot_name]/CLAUDE.md << 'EOF'
 Execute the following tasks
 
-1) read all the documents in the ../ROME folder
-2) read and understand your assigned module/ steps and tasks in the ../actionlist.md in accordance to the ROME methodology.
+1) read all the documents in the ./[project_name]_ROME/ROME folder
+2) read and understand your assigned module/ steps and tasks in the ./[project_name]_ROME/PROJECT/code/actionlist.md in accordance to the ROME methodology.
 3) execute the plan.
 
 ## Your Role: [Robot Role Name]
@@ -273,7 +295,7 @@ Focus on [key areas of responsibility].
 EOF
 
 # Create startup script
-cat > claude_[robot_name]/claude-start.sh << 'EOF'
+cat > ../rodeo_[robot_name]/claude-start.sh << 'EOF'
 #!/bin/bash
 
 # [Robot Name] startup script
@@ -285,7 +307,10 @@ cd "$(dirname "$0")"
 claude --start-with-file CLAUDE.md
 EOF
 
-chmod +x claude_[robot_name]/claude-start.sh
+# Setup comprehensive permissions to eliminate workflow bottlenecks
+cp ROME/rodeo_permissions_template.json ../rodeo_[robot_name]/.claude/settings.local.json
+
+chmod +x ../rodeo_[robot_name]/claude-start.sh
 ```
 
 ---
@@ -304,6 +329,11 @@ chmod +x claude_[robot_name]/claude-start.sh
   - Frameworks: [React, Express, FastAPI, etc.]
   - Infrastructure: [Docker, Kubernetes, etc.]
 
+
+#### Check for liciences, api keys, etc.
+
+#### Choose http port setting that are unlikely to be in use, check for open ports
+
 #### Environment Setup Commands:
 ```bash
 # Create environment configuration
@@ -320,7 +350,7 @@ DB_USER=[username]
 DB_PASSWORD=[password]
 
 # API Configuration
-API_PORT=3000
+API_PORT=3090
 API_HOST=localhost
 
 # External Services

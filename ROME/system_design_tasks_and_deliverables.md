@@ -35,7 +35,7 @@ This document outlines the process for creating comprehensive system designs wit
 - Create high-level architecture diagrams
 - Document architectural decisions and rationale
 
-**Deliverables**:
+**Deliverables** (in ../PROJECT/docs/):
 - System architecture overview document
 - Component relationship diagrams
 - Architecture decision records (ADRs)
@@ -50,7 +50,7 @@ This document outlines the process for creating comprehensive system designs wit
 - Establish dependency relationships
 - Validate module boundaries against business requirements
 
-**Deliverables**:
+**Deliverables** (in ../PROJECT/docs/):
 - Module boundary specifications
 - Module dependency graph
 - Interface contract definitions
@@ -74,7 +74,7 @@ This document outlines the process for creating comprehensive system designs wit
 - any licence keys need to be checked and updated and made available.
 - identify and utilites or dev dependencise to assist in code gen ie build_ruuner, automated class designer or schema buider.
 
-**Deliverables**:
+**Deliverables** (in ../PROJECT/docs/):
 - Comprehensive technology stack documentation
 - Programming language specifications and versions
 - Framework and library specifications with rationale
@@ -95,7 +95,7 @@ This document outlines the process for creating comprehensive system designs wit
 - Establish data governance policies
 - Design backup and recovery strategies
 
-**Deliverables**:
+**Deliverables** (in ../PROJECT/docs/):
 - Conceptual data models
 - Logical database schemas
 - Data flow diagrams
@@ -111,7 +111,7 @@ This document outlines the process for creating comprehensive system designs wit
 - Create error handling strategies
 - Design authentication and authorization
 
-**Deliverables**:
+**Deliverables** (in ../PROJECT/docs/):
 - API specification documents
 - Service integration diagrams
 - Communication protocol definitions
@@ -127,7 +127,7 @@ This document outlines the process for creating comprehensive system designs wit
 - Establish monitoring and logging
 - Design disaster recovery procedures
 
-**Deliverables**:
+**Deliverables** (in ../PROJECT/docs/):
 - Infrastructure architecture diagrams
 - Deployment environment specifications
 - Performance and scaling plans
@@ -159,6 +159,7 @@ This document outlines the process for creating comprehensive system designs wit
 - **Decisions**: Document rationale and alternatives considered
 - **Interfaces**: Detailed contract specifications
 - **Cross-References**: Link to related documents and requirements
+- **Location**: All project-specific design documents must be created in ../PROJECT/docs/
 
 ---
 

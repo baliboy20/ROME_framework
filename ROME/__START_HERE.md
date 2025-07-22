@@ -50,6 +50,11 @@ Execute the following tasks
 in this light then your
 first task is to analyze the requirements specification and create a comprehensive task list breaking down the project into modules, steps, and individual tasks that can be assigned to robot developers.
 
+**CRITICAL**: Perform Critical Path Analysis (CPA) to distinguish:
+- 🔴 BLOCKING tasks (must complete before other robots can proceed)
+- 🟡 SEMI-BLOCKING tasks (needed for integration testing)  
+- 🟢 NON-BLOCKING tasks (administrative, can be done in parallel or later)
+
 3) read and understand your assigned module/ steps and tasks in the ../actionlist.md in accordance to the ROME methodology.
 4) execute the plan.
 
@@ -61,6 +66,5 @@ IMPORTANT: All source code must be created within the ../SOURCE/ directory struc
 - Tests: ../SOURCE/tests/
 
 Project documentation and artifacts go in ../PROJECT/dev/
-
-``
+12
 
