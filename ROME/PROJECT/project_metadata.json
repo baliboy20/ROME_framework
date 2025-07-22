@@ -1,0 +1,27 @@
+{
+  "projectId": "ROME-2025-0722-1430-FARM-WEATHER",
+  "projectName": "Farm Weather App PoC",
+  "title": "Simple Weather Button Application",
+  "created": "2025-07-22T14:30:00Z",
+  "status": "active",
+  "version": "1.0.0",
+  "pma": "Rome PMA",
+  "robots": ["luc", "reena", "charlie", "roma"],
+  "techStack": ["Node.js", "Express", "Vanilla JS"],
+  "ports": [8094, 3301, 3302],
+  "paths": {
+    "source": "../PROJECT/SOURCE/",
+    "artifacts": "./PROJECT/",
+    "robots": ["../rodeo_luc", "../rodeo_reena", "../rodeo_charlie", "../rodeo_roma"]
+  },
+  "lifecycle": {
+    "created": "2025-07-22T14:30:00Z",
+    "activated": "2025-07-22T14:35:00Z",
+    "lastActivity": "2025-07-22T11:49:00Z"
+  },
+  "deliverables": {
+    "backend": "Express server with weather endpoint on port 3301",
+    "frontend": "Vanilla JS with weather button on port 3302", 
+    "deployment": "Static files served on port 8094"
+  }
+}

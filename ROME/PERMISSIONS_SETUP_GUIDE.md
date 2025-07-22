@@ -15,11 +15,11 @@ ROME robots need specific permissions to:
 Copy the comprehensive permissions template:
 
 ```bash
-# From your ROME directory
-cp templates/settings.local.json .claude/settings.local.json
+# From your ROME directory - use the comprehensive version for maximum freedom
+cp templates/settings.local.comprehensive.json .claude/settings.local.json
 ```
 
-This gives all robots the same comprehensive permissions.
+This gives all robots comprehensive permissions including testing tools (curl, wget, etc.) without confirmation requests.
 
 ### Option 2: Role-Specific Permissions (Production)
 
@@ -149,8 +149,24 @@ Launch a robot and verify it can:
 "Bash(git:*)"
 ```
 
+### Robot getting permission confirmation requests
+
+**Problem**: Even with `"requireConfirmation": false`, robots still ask for permission for testing commands like `curl`.
+
+**Solution**: Use the comprehensive permissions template that includes:
+```bash
+# Testing and debugging tools
+"Bash(curl:*)",
+"Bash(wget:*)", 
+"Bash(ping:*)",
+"Bash(ps:*)",
+"Bash(kill:*)",
+"Bash(netstat:*)"
+```
+
 ### JSON syntax errors
 
+- **CRITICAL**: Remove ALL comments from settings.local.json files - JSON does not support comments and they cause linting errors
 - Remove trailing commas
 - Check quote matching
 - Use a JSON formatter/validator

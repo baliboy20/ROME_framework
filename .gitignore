@@ -4,5 +4,7 @@
 .env
 /coffee-ordering-webapp
 /claude_*
+/rodeo_*
 /rome-vector-mcp/node_modules
 /artifact/node_modulesgit
+/PROJECT/SOURCE

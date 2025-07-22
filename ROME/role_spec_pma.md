@@ -95,7 +95,8 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - Provide necessary resources and access
 
 - **Progress Monitoring**
-  - Review project_tasks.log regularly
+  - Review project_tasks.log regularly (shared coordination)
+  - Monitor individual robot_activity_[name].log files for detailed progress
   - Monitor project_activity.status updates
   - Track task completion rates
   - Identify bottlenecks early

@@ -142,12 +142,38 @@ User UI | COMPLETED | frontend | 2024-01-15 09:45:00 | All components tested
 Database | BLOCKED | data | 2024-01-15 11:00:00 | Waiting for schema approval
 ```
 
-### project_tasks.log
+### project_tasks.log (Shared Coordination)
 ```
 [2024-01-15 10:30:00] [backend] [START] Implementing JWT authentication
 [2024-01-15 10:45:00] [backend] [COMPLETE] JWT implementation done
 [2024-01-15 11:00:00] [frontend] [BLOCKED] Waiting for API documentation
 ```
+
+### robot_activity_[name].log (Individual Robot Tracking)
+```
+# Backend Robot (Reena) Activity Log
+## ROME 7-Step Protocol Execution
+
+### Step 1: READ
+- [COMPLETED] Reviewed ROME methodology documents
+- [COMPLETED] Read project requirements
+
+### Step 4: IMPLEMENT
+- [IN_PROGRESS] Creating user authentication endpoints
+- [COMPLETED] JWT token generation implemented
+
+### Step 7: REPORT
+- [COMPLETED] Updated shared project_tasks.log
+- [COMPLETED] Updated individual robot_activity_reena.log
+```
+
+## Dual Logging Protocol
+
+All robots MUST maintain both:
+1. **Shared Log**: `PROJECT/dev/project_tasks.log` - Key milestones for coordination
+2. **Individual Log**: `PROJECT/dev/robot_activity_[name].log` - Detailed ROME step execution
+
+This provides both high-level project coordination and detailed individual robot visibility.
 
 ## Quick Reference Commands
 
