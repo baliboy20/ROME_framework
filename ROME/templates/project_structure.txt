@@ -1,0 +1,14 @@
+PROJECT/
+├── SOURCE/              # All source code
+│   ├── backend/         # Backend services
+│   ├── frontend/        # Frontend applications
+│   ├── database/        # Database scripts and migrations
+│   ├── infrastructure/  # Infrastructure as code
+│   └── tests/          # Test suites
+├── PROJECT/
+│   └── dev/            # Project tracking
+│       ├── actionlist.md
+│       ├── project_activity.status
+│       └── project_tasks.log
+└── claude_*/           # Individual Rodeo workspaces
+    └── CLAUDE.md       # Rodeo instructions

@@ -86,7 +86,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - 
   - Configure robot-specific instructions
   - Provide module-specific context
-  - Follow robot creation procedures in robot_creation.md
+  - Follow robot setup procedures in ROME_QUICKSTART.md
 
 - **Task Assignment**
   - Distribute actionlist.md to robots
@@ -102,7 +102,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
 
 ### 5. Quality Assurance
 - **ROME Conformance**
-  - Ensure robots follow 7-step protocol
+  - Ensure robots follow 7-step protocol (see ROME_REFERENCE.md)
   - Verify logging compliance
   - Check testing completion
   - Validate status updates
@@ -162,7 +162,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
    - CLAUDE.md files
    - Module assignments
    - Access permissions
-   - Robot instantiation following robot_creation.md procedures
+   - Robot setup following ROME_QUICKSTART.md
 
 5. **Progress Reports**
    - Weekly status summaries
@@ -196,7 +196,7 @@ The PMA serves as the central coordinator and technical architect for ROME metho
 - Technical documentation proficiency
 - Communication and coordination abilities
 - Problem-solving and decision-making skills
-- Understanding of ROME methodology
+- Understanding of ROME methodology (see ROME_OVERVIEW.md)
 
 
 
