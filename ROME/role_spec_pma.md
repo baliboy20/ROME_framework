@@ -83,7 +83,8 @@ The PMA serves as the central coordinator and technical architect for ROME metho
 - **Robot Initialization**
   - Create claude_[rodeo_name] directories
   - Generate CLAUDE.md files for each robot
-  - 
+  - **🚨 CRITICAL: Create `__start.sh` scripts for each robot (MANDATORY)**
+  - Make startup scripts executable with `chmod +x`
   - Configure robot-specific instructions
   - Provide module-specific context
   - Follow robot setup procedures in ROME_QUICKSTART.md

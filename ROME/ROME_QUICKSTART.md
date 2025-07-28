@@ -26,6 +26,43 @@ Execute the following tasks:
 4) Execute the plan following ROME methodology
 ```
 
+### 4. 🚨 CRITICAL: Create Startup Scripts
+**FAILURE TO DO THIS STEP WILL BREAK ROBOT LAUNCHES**
+
+In each `claude_*` directory, create an executable `__start.sh` file:
+
+```bash
+#!/bin/bash
+
+# Claude Code startup script that automatically executes CLAUDE.md instructions
+
+echo "execute CLAUDE.md instructions" | claude "$@"
+```
+
+Make scripts executable:
+```bash
+chmod +x claude_*/__start.sh
+```
+
+**Why This is Critical**: Without `__start.sh`, robots cannot auto-execute their CLAUDE.md instructions, causing project launch failures.
+
+### 5. 🚨 CRITICAL: Create Robot Permission Files
+**ROBOTS WILL HAVE WRONG PERMISSIONS WITHOUT THIS STEP**
+
+In each `claude_*/.claude/` directory, create role-specific `settings.local.json`:
+
+```bash
+mkdir -p claude_*/.claude
+```
+
+Create permission files for each robot based on their role:
+- **Database robots**: `Write(**/SOURCE/database/**)`
+- **Backend robots**: `Write(**/SOURCE/backend/**)`  
+- **Frontend robots**: `Write(**/SOURCE/frontend/**)`
+- **Coordinator robots**: `Write(**/PROJECT/dev/**)`
+
+**Why This is Critical**: Without role-specific permissions, robots cannot access their assigned directories or will have excessive permissions violating security boundaries.
+
 ## Your First ROME Project
 
 ### Step 1: Define Requirements
@@ -41,9 +78,13 @@ The PMA will:
 ### Step 3: Launch Rodeos
 Each Rodeo reads its tasks from actionlist.md and begins work:
 ```bash
-# Launch all Rodeos (example using the launch script)
-./robot_scripts/launch_robots.sh
+# Launch individual Rodeos using startup scripts
+cd claude_coordinator && ./__start.sh
+cd ../claude_backend && ./__start.sh  
+cd ../claude_frontend && ./__start.sh
 ```
+
+**Note**: Always ensure `__start.sh` scripts exist and are executable before launching!
 
 ### Step 4: Monitor Progress
 Check `PROJECT/dev/project_activity.status` for real-time updates:
@@ -78,6 +119,11 @@ Rodeos automatically update actionlist.md:
 ### Rodeo Can't Find Tasks
 - Check actionlist.md exists and has assigned tasks
 - Verify Rodeo is reading from correct directory
+
+### Robot Launch Failures  
+- **Missing `__start.sh`**: Create executable startup script in robot directory
+- **Permission denied**: Run `chmod +x __start.sh` to make executable
+- **Script not found**: Verify `__start.sh` exists in each `claude_*` directory
 
 ### Module Conflicts
 - Ensure clear module boundaries in design

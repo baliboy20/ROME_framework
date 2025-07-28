@@ -2,7 +2,7 @@
   "permissions": {
     "requireConfirmation": false,
     "allow": [
-      // === Core ROME Operations ===
+
       "Read(*)",
       "LS(*)",
       "Glob(*)",
@@ -10,7 +10,7 @@
       "Task(*)",
       "TodoWrite(*)",
       
-      // === File System Write Access ===
+
       "Write(**/SOURCE/**)",
       "Write(**/PROJECT/dev/**)",
       "Write(**/claude_*/**)",

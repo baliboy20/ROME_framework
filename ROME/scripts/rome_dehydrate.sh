@@ -57,14 +57,27 @@ tar -czf "$ARCHIVE_NAME" \
     --exclude='*.log.bak' \
     --exclude='*.tmp' \
     --exclude='.DS_Store' \
-    PROJECT/project_metadata.json \
     PROJECT/ \
-    ../PROJECT/SOURCE/ \
-    ../rodeo_*/CLAUDE.md \
-    ../rodeo_*/.claude/settings.local.json \
-    ../rodeo_*/robot_activity_*.log \
     dehydration_manifest.json \
     2>/dev/null
+
+# Add SOURCE directory if it exists
+if [ -d "../PROJECT/SOURCE" ]; then
+    echo "  📂 Adding source code..."
+    tar -rzf "$ARCHIVE_NAME" ../PROJECT/SOURCE/ 2>/dev/null || true
+fi
+
+# Add robot directories if they exist
+echo "  🤖 Adding robot configurations..."
+for robot_dir in ../rodeo_*; do
+    if [ -d "$robot_dir" ]; then
+        robot_name=$(basename "$robot_dir")
+        echo "    Adding $robot_name..."
+        tar -rzf "$ARCHIVE_NAME" "$robot_dir/CLAUDE.md" 2>/dev/null || true
+        tar -rzf "$ARCHIVE_NAME" "$robot_dir/.claude/settings.local.json" 2>/dev/null || true
+        tar -rzf "$ARCHIVE_NAME" "$robot_dir/robot_activity_"*.log 2>/dev/null || true
+    fi
+done
 
 if [ $? -eq 0 ]; then
     # Move to dehydrated projects folder
