@@ -131,7 +131,8 @@ PROJECT_ROOT/
 │       └── rome_tmux_launcher.sh
 ├── claude_[robot_name]/        # Robot workspaces
 │   ├── CLAUDE.md
-│   └── claude-start.sh
+│   ├── Start.sh                # Primary launch script
+│   └── startclaude.sh         # Claude command script
 └── PROJECT/dev/logs/           # Log files (created automatically)
 ```
 
@@ -139,7 +140,9 @@ PROJECT_ROOT/
 For robots to be detected and managed:
 1. Directory named `claude_[robot_name]`
 2. Valid `CLAUDE.md` file with role definition
-3. Executable `claude-start.sh` script
+3. Executable startup scripts:
+   - `Start.sh` - Primary launch script (opens iTerm)
+   - `startclaude.sh` - Claude command with bypass permissions
 
 ### **Dependencies**
 - **bash**: All scripts require bash shell
