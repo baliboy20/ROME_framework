@@ -1,0 +1,234 @@
+{
+  "articles": [
+    {
+      "title": "Getting Started with Flutter State Management",
+      "url": "https://medium.com/@flutter/getting-started-with-flutter-state-management-abc123",
+      "urlHash": "a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890",
+      "content": "# Getting Started with Flutter State Management\n\nState management is one of the most important aspects of Flutter development...\n\n## Provider Pattern\n\nThe Provider pattern is a popular choice for managing state in Flutter applications...",
+      "emailDate": "2025-07-27T10:00:00.000Z",
+      "scrapedAt": "2025-07-28T09:00:00.000Z",
+      "lastUpdated": "2025-07-28T09:00:00.000Z",
+      "wordCount": 850,
+      "readingTime": "4 min read",
+      "author": {
+        "name": "Flutter Team",
+        "url": "https://medium.com/@flutter",
+        "avatar": "https://miro.medium.com/v2/resize:fill:88:88/1*5-aoK8IBmXve5whBQM90GA.png"
+      },
+      "keywords": ["flutter", "state management", "provider", "bloc"],
+      "tags": ["tutorial", "beginner"],
+      "category": "flutter",
+      "sourceEmail": {
+        "id": "email123456789",
+        "subject": "Medium Daily Digest - Flutter Updates",
+        "date": "2025-07-27T08:00:00.000Z"
+      },
+      "filePath": "articles/2025/07/27/getting-started-flutter-state-management.md",
+      "status": "scraped",
+      "scrapeAttempts": 1
+    },
+    {
+      "title": "Advanced Dart Patterns You Should Know",
+      "url": "https://medium.com/@dartlang/advanced-dart-patterns-you-should-know-def456",
+      "urlHash": "b2c3d4e5f67890123456789012345678901234567890123456789012345678901",
+      "content": "# Advanced Dart Patterns You Should Know\n\nDart 3.0 introduced many powerful pattern matching features...\n\n## Pattern Matching\n\nPattern matching allows you to destructure and analyze data in powerful ways...",
+      "emailDate": "2025-07-26T14:30:00.000Z",
+      "scrapedAt": "2025-07-28T09:05:00.000Z",
+      "lastUpdated": "2025-07-28T09:05:00.000Z",
+      "wordCount": 1200,
+      "readingTime": "6 min read",
+      "author": {
+        "name": "Dart Team",
+        "url": "https://medium.com/@dartlang",
+        "avatar": "https://miro.medium.com/v2/resize:fill:88:88/1*Bxo_7nKVzOLl2R7vtDTrTg.png"
+      },
+      "keywords": ["dart", "patterns", "matching", "advanced"],
+      "tags": ["advanced", "dart3"],
+      "category": "dart",
+      "sourceEmail": {
+        "id": "email123456790",
+        "subject": "Medium Daily Digest - Dart Language Features",
+        "date": "2025-07-26T08:00:00.000Z"
+      },
+      "filePath": "articles/2025/07/26/advanced-dart-patterns.md",
+      "status": "scraped",
+      "scrapeAttempts": 1
+    },
+    {
+      "title": "Building Responsive Web Apps with Flutter",
+      "url": "https://medium.com/@flutterweb/building-responsive-web-apps-flutter-ghi789",
+      "urlHash": "c3d4e5f678901234567890123456789012345678901234567890123456789012",
+      "content": "# Building Responsive Web Apps with Flutter\n\nFlutter Web has matured significantly, making it a viable option for web development...\n\n## Responsive Design Principles\n\nWhen building for the web, responsive design is crucial...",
+      "emailDate": "2025-07-25T16:45:00.000Z",
+      "scrapedAt": "2025-07-28T09:10:00.000Z",
+      "lastUpdated": "2025-07-28T09:10:00.000Z",
+      "wordCount": 950,
+      "readingTime": "5 min read",
+      "author": {
+        "name": "Sarah Johnson",
+        "url": "https://medium.com/@sarah.johnson",
+        "avatar": "https://miro.medium.com/v2/resize:fill:88:88/1*example-avatar.png"
+      },
+      "keywords": ["flutter", "web", "responsive", "design"],
+      "tags": ["web", "responsive", "tutorial"],
+      "category": "web",
+      "sourceEmail": {
+        "id": "email123456791",
+        "subject": "Medium Daily Digest - Web Development",
+        "date": "2025-07-25T08:00:00.000Z"
+      },
+      "filePath": "articles/2025/07/25/responsive-web-apps-flutter.md",
+      "status": "scraped",
+      "scrapeAttempts": 1
+    },
+    {
+      "title": "Failed Scrape Example - Network Timeout",
+      "url": "https://medium.com/@example/network-timeout-article-jkl012",
+      "urlHash": "d4e5f6789012345678901234567890123456789012345678901234567890123",
+      "content": "",
+      "emailDate": "2025-07-24T12:00:00.000Z",
+      "scrapedAt": "2025-07-28T09:15:00.000Z",
+      "lastUpdated": "2025-07-28T09:15:00.000Z",
+      "wordCount": 0,
+      "readingTime": "0 min read",
+      "keywords": [],
+      "tags": [],
+      "category": "general",
+      "sourceEmail": {
+        "id": "email123456792",
+        "subject": "Medium Daily Digest - Technical Articles",
+        "date": "2025-07-24T08:00:00.000Z"
+      },
+      "filePath": "articles/2025/07/24/failed-network-timeout.md",
+      "status": "failed",
+      "scrapeAttempts": 3,
+      "lastError": "Network timeout after 30 seconds - server not responding"
+    }
+  ],
+  "emailDigests": [
+    {
+      "messageId": "email123456789",
+      "threadId": "thread789123456",
+      "subject": "Medium Daily Digest - Flutter Updates",
+      "date": "2025-07-27T08:00:00.000Z",
+      "processedAt": "2025-07-28T09:00:00.000Z",
+      "sender": {
+        "email": "digest@medium.com",
+        "name": "Medium Daily Digest"
+      },
+      "bodyPreview": "Here are today's top Flutter articles from Medium. Discover new patterns, techniques, and insights from the Flutter community...",
+      "linksFound": 5,
+      "flutterLinks": [
+        "https://medium.com/@flutter/getting-started-with-flutter-state-management-abc123",
+        "https://medium.com/@flutterdev/new-flutter-3-19-features-xyz789"
+      ],
+      "allLinks": [
+        "https://medium.com/@flutter/getting-started-with-flutter-state-management-abc123",
+        "https://medium.com/@flutterdev/new-flutter-3-19-features-xyz789",
+        "https://medium.com/@general/some-other-article-123",
+        "https://medium.com/@tech/another-article-456",
+        "https://medium.com/@programming/coding-tips-789"
+      ],
+      "status": "processed",
+      "articles": [],
+      "processingTime": 2500,
+      "matchedFilters": ["flutter", "daily-digest"]
+    },
+    {
+      "messageId": "email123456790",
+      "threadId": "thread789123457",
+      "subject": "Medium Daily Digest - Dart Language Features",
+      "date": "2025-07-26T08:00:00.000Z",
+      "processedAt": "2025-07-28T09:05:00.000Z",
+      "sender": {
+        "email": "digest@medium.com",
+        "name": "Medium Daily Digest"
+      },
+      "bodyPreview": "Explore the latest Dart language features and improvements. Learn about pattern matching, new syntax, and performance enhancements...",
+      "linksFound": 3,
+      "flutterLinks": [
+        "https://medium.com/@dartlang/advanced-dart-patterns-you-should-know-def456"
+      ],
+      "allLinks": [
+        "https://medium.com/@dartlang/advanced-dart-patterns-you-should-know-def456",
+        "https://medium.com/@programming/general-programming-concepts-123",
+        "https://medium.com/@tech/software-architecture-456"
+      ],
+      "status": "processed",
+      "articles": [],
+      "processingTime": 1800,
+      "matchedFilters": ["dart", "daily-digest"]
+    },
+    {
+      "messageId": "email123456791",
+      "threadId": "thread789123458",
+      "subject": "Medium Daily Digest - Web Development",
+      "date": "2025-07-25T08:00:00.000Z",
+      "processedAt": "2025-07-28T09:10:00.000Z",
+      "sender": {
+        "email": "digest@medium.com",
+        "name": "Medium Daily Digest"
+      },
+      "bodyPreview": "Web development trends and techniques. From responsive design to modern frameworks, stay updated with the latest in web development...",
+      "linksFound": 4,
+      "flutterLinks": [
+        "https://medium.com/@flutterweb/building-responsive-web-apps-flutter-ghi789"
+      ],
+      "allLinks": [
+        "https://medium.com/@flutterweb/building-responsive-web-apps-flutter-ghi789",
+        "https://medium.com/@webdev/css-grid-mastery-123",
+        "https://medium.com/@javascript/modern-js-patterns-456",
+        "https://medium.com/@react/react-18-features-789"
+      ],
+      "status": "processed",
+      "articles": [],
+      "processingTime": 3200,
+      "matchedFilters": ["web", "flutter", "daily-digest"]
+    },
+    {
+      "messageId": "email123456792",
+      "threadId": "thread789123459",
+      "subject": "Medium Daily Digest - Technical Articles",
+      "date": "2025-07-24T08:00:00.000Z",
+      "processedAt": "2025-07-28T09:15:00.000Z",
+      "sender": {
+        "email": "digest@medium.com",
+        "name": "Medium Daily Digest"
+      },
+      "bodyPreview": "Technical deep-dives and programming insights. Explore advanced concepts, best practices, and industry trends...",
+      "linksFound": 6,
+      "flutterLinks": [
+        "https://medium.com/@example/network-timeout-article-jkl012"
+      ],
+      "allLinks": [
+        "https://medium.com/@example/network-timeout-article-jkl012",
+        "https://medium.com/@tech/microservices-architecture-123",
+        "https://medium.com/@devops/kubernetes-best-practices-456",
+        "https://medium.com/@database/mongodb-optimization-789",
+        "https://medium.com/@security/api-security-101-012",
+        "https://medium.com/@performance/web-performance-345"
+      ],
+      "status": "processed",
+      "articles": [],
+      "processingTime": 4100,
+      "matchedFilters": ["technical", "daily-digest"]
+    },
+    {
+      "messageId": "email123456793",
+      "subject": "Medium Daily Digest - Weekend Edition",
+      "date": "2025-07-23T08:00:00.000Z",
+      "sender": {
+        "email": "digest@medium.com",
+        "name": "Medium Daily Digest"
+      },
+      "bodyPreview": "Weekend reading: Inspiration, career advice, and thought-provoking articles from across the Medium platform...",
+      "linksFound": 0,
+      "flutterLinks": [],
+      "allLinks": [],
+      "status": "skipped",
+      "articles": [],
+      "matchedFilters": ["weekend", "daily-digest"],
+      "errorMessage": "No Flutter-related content found in this digest"
+    }
+  ]
+}

@@ -1,0 +1,132 @@
+# =================================
+# DOCKER COMPOSE - PRODUCTION ENVIRONMENT
+# =================================
+# Production-ready stack with security and monitoring
+
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: mfe-mongodb-prod
+    restart: always
+    environment:
+      MONGO_INITDB_DATABASE: medium_extractor
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongodb_root_username
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongodb_root_password
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+      - ./configs/mongodb/mongod.conf:/etc/mongo/mongod.conf:ro
+    networks:
+      - mfe-backend-network
+    secrets:
+      - mongodb_root_username
+      - mongodb_root_password
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+  # Backend API
+  backend:
+    build:
+      context: ../../
+      dockerfile: infrastructure/docker/backend.Dockerfile
+    container_name: mfe-backend-prod
+    restart: always
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI_FILE=/run/secrets/mongodb_uri
+    volumes:
+      - ../../data:/app/data:rw
+      - ../../logs:/app/logs:rw
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - mfe-backend-network
+      - mfe-frontend-network
+    secrets:
+      - mongodb_uri
+      - google_credentials
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+
+  # Frontend Web Application
+  frontend:
+    build:
+      context: ../../
+      dockerfile: infrastructure/docker/frontend.Dockerfile
+    container_name: mfe-frontend-prod
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./configs/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - mfe-frontend-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+
+# Docker secrets for production
+secrets:
+  mongodb_root_username:
+    file: ./secrets/mongodb_root_username.txt
+  mongodb_root_password:
+    file: ./secrets/mongodb_root_password.txt
+  mongodb_uri:
+    file: ./secrets/mongodb_uri.txt
+  google_credentials:
+    file: ./secrets/google_credentials.json
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  mfe-backend-network:
+    driver: bridge
+    internal: true
+  mfe-frontend-network:
+    driver: bridge

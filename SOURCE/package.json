@@ -1,0 +1,56 @@
+{
+  "name": "medium-flutter-extractor",
+  "version": "1.0.0",
+  "description": "Medium Flutter Link Extractor - Web application for extracting Flutter articles from Medium Daily Digest emails",
+  "type": "module",
+  "engines": {
+    "node": ">=20.11.0",
+    "npm": ">=10.0.0"
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "npm run dev:backend",
+    "dev:backend": "npm run dev --workspace=backend",
+    "dev:frontend": "npm run dev --workspace=frontend",
+    "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "npm run build --workspace=backend",
+    "build:frontend": "npm run build --workspace=frontend",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "npm run test --workspace=backend",
+    "test:frontend": "npm run test --workspace=frontend",
+    "lint": "npm run lint:backend",
+    "lint:backend": "npm run lint --workspace=backend",
+    "docker:dev": "docker-compose -f infrastructure/docker/docker-compose.dev.yml up",
+    "docker:prod": "docker-compose -f infrastructure/docker/docker-compose.prod.yml up",
+    "docker:build": "docker-compose -f infrastructure/docker/docker-compose.prod.yml build",
+    "env:setup": "node infrastructure/scripts/setup-env.js",
+    "health": "curl -f http://localhost:3000/health || exit 1",
+    "clean": "npm run clean --workspaces",
+    "install:all": "npm install && npm install --workspaces"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/medium-flutter-extractor.git"
+  },
+  "keywords": [
+    "medium",
+    "flutter",
+    "extractor",
+    "scraper",
+    "gmail",
+    "node.js",
+    "mongodb"
+  ],
+  "author": "ROME Development Team",
+  "license": "MIT",
+  "private": true
+}
