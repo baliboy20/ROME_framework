@@ -27,13 +27,23 @@ Examples:
   "created": "2025-07-22T14:30:00Z",
   "status": "active|suspended|completed|archived",
   "version": "1.0.0",
+  "methodology": "TDD-ROME",
   "pma": "Rome PMA",
   "robots": ["luc", "reena", "charlie", "roma"],
   "techStack": ["Node.js", "Express", "Vanilla JS"],
   "ports": [8094, 3301, 3302],
+  "testMetrics": {
+    "contractTests": 0,
+    "passingTests": 0,
+    "coverage": 0,
+    "integrationFailures": 0,
+    "reworkPercentage": 0
+  },
   "paths": {
     "source": "../PROJECT/SOURCE/",
     "artifacts": "./PROJECT/",
+    "tests": "../PROJECT/SOURCE/tests/",
+    "contracts": "../PROJECT/SOURCE/tests/contracts/",
     "robots": ["../rodeo_luc", "../rodeo_reena", "../rodeo_charlie", "../rodeo_roma"]
   }
 }

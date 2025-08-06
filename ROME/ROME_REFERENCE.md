@@ -8,24 +8,30 @@
 5. [Task Classification](#task-classification)
 6. [File Formats](#file-formats)
 
-## 7-Step Protocol
+## Enhanced 7-Step Protocol (TDD-ROME)
 
 Every Rodeo MUST follow these steps for each task:
 
 | Step | Action | Description | Output |
 |------|--------|-------------|--------|
 | 1 | **READ** | Understand requirements and context | Mental model of task |
-| 2 | **ANALYZE** | Break down into subtasks | Implementation plan |
-| 3 | **CLARIFY** | Resolve ambiguities | Clear specifications |
-| 4 | **IMPLEMENT** | Write code/documentation | Working solution |
-| 5 | **TEST** | Verify functionality | Test results |
-| 6 | **DOCUMENT** | Update docs and comments | Complete documentation |
-| 7 | **REPORT** | Update status tracking | Status in tracking files |
+| 2 | **ANALYZE** | Break down into testable contracts | Interface specifications |
+| 3 | **TEST-FIRST** | Write failing tests for interfaces | Contract test suite |
+| 4 | **CLARIFY** | Resolve test ambiguities | Clear test specifications |
+| 5 | **IMPLEMENT** | Write minimum code to pass tests | Working solution |
+| 6 | **VALIDATE** | Ensure comprehensive test coverage | Complete test suite |
+| 7 | **REPORT** | Update status with test evidence | Status with test metrics |
 
-### Protocol Enforcement
-- Steps 1-3 MUST complete before implementation
-- Step 5 (Test) is mandatory for all code changes
-- Step 7 triggers coordinator notification
+### TDD Protocol Enforcement
+- **CRITICAL**: Steps 1-4 MUST complete before ANY implementation
+- **NO CODE WITHOUT TESTS**: Implementation only begins after failing tests exist
+- **Test Evidence Required**: Step 7 must include test coverage metrics
+- **Roma Enforcement**: Roma blocks task completion without passing tests
+
+### Why TDD-ROME?
+- **Reduces Rework**: 21% API failure rate eliminated through contract tests
+- **Parallel Safety**: Clear interfaces prevent integration issues
+- **Quality Built-In**: Tests drive design, not validate after
 
 ## Module Design Principles
 

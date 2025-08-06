@@ -8,3 +8,4 @@
 /rome-vector-mcp/node_modules
 /artifact/node_modulesgit
 /PROJECT/SOURCE
+**/node_modules

@@ -1,0 +1,3 @@
+This is a test file for API integration testing.
+It contains sample text data to verify file upload functionality.
+Created for the Project Management Application backend testing.

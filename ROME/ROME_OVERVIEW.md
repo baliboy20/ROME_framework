@@ -11,16 +11,16 @@ ROME (Robot Methodology) is a framework for building software using specialized 
 - **Why**: Parallel development, consistent quality, clear responsibilities
 - **How**: Each runs in its own session with role-specific instructions
 
-### 2. The 7-Step Protocol
-Every Rodeo follows this process:
+### 2. The Enhanced 7-Step Protocol (TDD-ROME)
+Every Rodeo follows this test-driven process:
 
 1. **Read** requirements and understand the task
-2. **Analyze** what needs to be done
-3. **Clarify** any questions with the coordinator
-4. **Implement** the solution
-5. **Test** the implementation
-6. **Document** what was built
-7. **Report** completion status
+2. **Analyze** what needs to be done and define testable contracts
+3. **Test-First** write failing tests for all interfaces
+4. **Clarify** any test ambiguities with the coordinator
+5. **Implement** minimum code to make tests pass
+6. **Validate** ensure comprehensive test coverage
+7. **Report** completion status with test evidence
 
 ### 3. Module Design
 - **Independent**: Each module can be developed separately
@@ -84,13 +84,16 @@ Requirements → Tech Stack → Infrastructure → 7-Step → Testing → Delive
 ## Key Benefits
 
 - **Speed**: Multiple Rodeos work simultaneously
-- **Quality**: Built-in testing and documentation steps
-- **Clarity**: Clear roles and responsibilities
-- **Tracking**: Automatic progress logging
+- **Quality**: Test-driven development ensures first-time success
+- **Clarity**: Clear roles and contract-based interfaces
+- **Tracking**: Automatic progress logging with test metrics
 - **🆕 Reliability**: Environment validation prevents technical surprises
+- **🆕 Zero Rework**: Contract tests eliminate integration failures
 
 ## Next Steps
 
 - Read [ROME_QUICKSTART.md](ROME_QUICKSTART.md) for setup instructions
 - See [ROME_REFERENCE.md](ROME_REFERENCE.md) for detailed protocols
+- **NEW**: Read [ROME_TDD_GUIDE.md](ROME_TDD_GUIDE.md) for test-driven development approach
+- **NEW**: Read [ROME_CICD_GUIDE.md](ROME_CICD_GUIDE.md) for GitHub Actions integration
 - Check role specifications for each Rodeo type

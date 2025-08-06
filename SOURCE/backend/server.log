@@ -1,0 +1,26 @@
+
+> project-management-api@1.0.0 start
+> node server.js
+
+Connecting to MongoDB...
+📚 Swagger documentation available at /api/docs
+🚀 Server running on port 8090
+🌍 Environment: development
+📊 Health check: http://localhost:8090/health
+🔗 API endpoint: http://localhost:8090/api/v1
+✅ Connected to MongoDB successfully
+info: Database connected successfully {"service":"project-management-api","timestamp":"2025-08-04T20:02:29.470Z"}
+info: GET /api/v1/blogs - Fetching all blogs {"ip":"::1","query":{},"service":"project-management-api","timestamp":"2025-08-04T20:16:16.918Z"}
+info: Blog query filter applied {"filter":{"isPublished":true},"pagination":{"limit":10,"page":1,"skip":0},"service":"project-management-api","timestamp":"2025-08-04T20:16:16.919Z"}
+info: Blogs fetched successfully {"count":0,"page":1,"service":"project-management-api","timestamp":"2025-08-04T20:16:16.928Z","total":0,"totalPages":0}
+::1 - - [04/Aug/2025:20:16:16 +0000] "GET /api/v1/blogs HTTP/1.1" 200 113 "-" "curl/8.7.1"
+info: GET /api/v1/blogs - Fetching all blogs {"ip":"::1","query":{},"service":"project-management-api","timestamp":"2025-08-04T20:16:30.367Z"}
+info: Blog query filter applied {"filter":{"isPublished":true},"pagination":{"limit":10,"page":1,"skip":0},"service":"project-management-api","timestamp":"2025-08-04T20:16:30.367Z"}
+info: Blogs fetched successfully {"count":0,"page":1,"service":"project-management-api","timestamp":"2025-08-04T20:16:30.369Z","total":0,"totalPages":0}
+::1 - - [04/Aug/2025:20:16:30 +0000] "GET /api/v1/blogs HTTP/1.1" 200 113 "-" "curl/8.7.1"
+info: GET /api/v1/blogs - Fetching all blogs {"ip":"::1","query":{},"service":"project-management-api","timestamp":"2025-08-04T20:16:56.342Z"}
+info: Blog query filter applied {"filter":{"isPublished":true},"pagination":{"limit":10,"page":1,"skip":0},"service":"project-management-api","timestamp":"2025-08-04T20:16:56.342Z"}
+info: Blogs fetched successfully {"count":0,"page":1,"service":"project-management-api","timestamp":"2025-08-04T20:16:56.345Z","total":0,"totalPages":0}
+::1 - - [04/Aug/2025:20:16:56 +0000] "GET /api/v1/blogs HTTP/1.1" 200 113 "-" "curl/8.7.1"
+SIGTERM received, shutting down gracefully
+Process terminated

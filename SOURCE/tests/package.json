@@ -1,0 +1,70 @@
+{
+  "name": "project-mgmt-database-tests",
+  "version": "1.0.0",
+  "description": "Unit tests for Project Management Application database models",
+  "main": "run-tests.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:database": "jest unit/database/",
+    "test:models": "jest unit/database/*.model.test.js",
+    "test:project": "jest unit/database/project.model.test.js",
+    "test:task": "jest unit/database/task.model.test.js",
+    "test:blog": "jest unit/database/blog.model.test.js",
+    "test:file": "jest unit/database/file.model.test.js",
+    "test:ci": "jest --ci --coverage --watchAll=false"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "setupFilesAfterEnv": ["<rootDir>/setup/jest.setup.js"],
+    "testMatch": [
+      "**/__tests__/**/*.js",
+      "**/unit/**/*.test.js",
+      "**/integration/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "../database/models/*.js",
+      "../database/migrations/*.js",
+      "../database/seeds/*.js",
+      "!../database/models/index.js",
+      "!../database/migrate.js"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 80,
+        "functions": 80,
+        "lines": 80,
+        "statements": 80
+      }
+    },
+    "coverageDirectory": "./coverage",
+    "coverageReporters": [
+      "text",
+      "html",
+      "lcov"
+    ],
+    "verbose": true,
+    "testTimeout": 30000
+  },
+  "keywords": [
+    "database",
+    "mongoose",
+    "mongodb",
+    "testing",
+    "unit-tests",
+    "project-management"
+  ],
+  "author": "Ashok (Data Architect)",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "mongodb-memory-server": "^9.1.1",
+    "supertest": "^6.3.3"
+  },
+  "dependencies": {
+    "mongoose": "^8.0.0",
+    "express": "^4.18.2",
+    "dotenv": "^16.3.1"
+  }
+}

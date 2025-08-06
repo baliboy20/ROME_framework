@@ -60,12 +60,18 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - **Test Data Management**: Design test data creation and cleanup strategies
   - **CI/CD Integration**: Define automated test execution in pipeline
 
-### 3. Development Planning
+### 3. Development Planning (TDD-Enhanced)
+- **Contract Test Definition**
+  - Define all interface tests before implementation
+  - Create failing tests for API contracts
+  - Specify database schema validation tests
+  - Design UI behavior tests
+  
 - **Task List Creation**
-  - Decompose modules into steps
-  - Break steps into atomic tasks
-  - Estimate task complexity and duration
-  - Create task dependencies
+  - Decompose modules into testable contracts
+  - Break contracts into test-first tasks
+  - Estimate test creation and implementation time
+  - Create task dependencies based on test contracts
 
 - **Resource Allocation**
   - Assign modules to appropriate Rodeos
