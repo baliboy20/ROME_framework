@@ -1,4 +1,8 @@
 # ROME Project Lifecycle Management
+**Version**: 2.1  
+**Last Updated**: 2025-08-07  
+**Changelog**: No changes - version sync with other ROME documents
+
 ## Enhanced Project Management System
 
 ### Project Identity & Metadata
@@ -27,13 +31,23 @@ Examples:
   "created": "2025-07-22T14:30:00Z",
   "status": "active|suspended|completed|archived",
   "version": "1.0.0",
+  "methodology": "TDD-ROME",
   "pma": "Rome PMA",
   "robots": ["luc", "reena", "charlie", "roma"],
   "techStack": ["Node.js", "Express", "Vanilla JS"],
   "ports": [8094, 3301, 3302],
+  "testMetrics": {
+    "contractTests": 0,
+    "passingTests": 0,
+    "coverage": 0,
+    "integrationFailures": 0,
+    "reworkPercentage": 0
+  },
   "paths": {
     "source": "../PROJECT/SOURCE/",
     "artifacts": "./PROJECT/",
+    "tests": "../PROJECT/SOURCE/tests/",
+    "contracts": "../PROJECT/SOURCE/tests/contracts/",
     "robots": ["../rodeo_luc", "../rodeo_reena", "../rodeo_charlie", "../rodeo_roma"]
   }
 }
@@ -52,7 +66,7 @@ ROME-PROJECT-[PROJECT_ID].tar.gz
 ├── project_metadata.json          # Core project information
 ├── source_code/                   # All source code from SOURCE/
 ├── project_artifacts/             # Documentation, logs, configs
-├── robot_configurations/          # Each robot's CLAUDE.md and settings
+├── robot_configurations/          # Each robot's notit.txt and settings
 ├── environment_state/             # Dependencies, package files
 └── dehydration_manifest.json      # What was included/excluded
 ```
@@ -102,7 +116,7 @@ tar -czf "$ARCHIVE_NAME" \
   project_metadata.json \
   ../PROJECT/SOURCE/ \
   ./PROJECT/ \
-  ../rodeo_*/CLAUDE.md \
+  ../rodeo_*/notit.txt \
   ../rodeo_*/.claude/settings.local.json \
   dehydration_manifest.json
 

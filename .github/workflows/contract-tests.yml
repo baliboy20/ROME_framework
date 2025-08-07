@@ -1,0 +1,123 @@
+name: Contract Test Enforcement
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  contract-validation:
+    name: Contract Test Validation
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Need full history for git diff
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: SOURCE/backend/package-lock.json
+      
+      - name: Install backend dependencies
+        run: |
+          cd SOURCE/backend
+          npm ci
+      
+      - name: Check Contract Tests Exist
+        run: |
+          echo "🔍 Verifying contract tests exist for new features..."
+          
+          # Check if new controllers/models/routes were added
+          NEW_FILES=$(git diff --name-only origin/main..HEAD | grep -E '(controllers|models|routes)' || true)
+          
+          if [ ! -z "$NEW_FILES" ]; then
+            echo "📋 New backend files detected:"
+            echo "$NEW_FILES"
+            
+            # Check if corresponding contract tests exist
+            MISSING_CONTRACTS=""
+            for file in $NEW_FILES; do
+              if [[ $file == *"controllers"* ]]; then
+                CONTRACT_FILE="SOURCE/tests/contracts/api/$(basename $file .js).contract.test.js"
+              elif [[ $file == *"models"* ]]; then
+                CONTRACT_FILE="SOURCE/tests/contracts/database/$(basename $file .js).contract.test.js"
+              elif [[ $file == *"routes"* ]]; then
+                CONTRACT_FILE="SOURCE/tests/contracts/api/$(basename $file .js).contract.test.js"
+              fi
+              
+              if [ ! -f "$CONTRACT_FILE" ]; then
+                MISSING_CONTRACTS="$MISSING_CONTRACTS\n$CONTRACT_FILE"
+              fi
+            done
+            
+            if [ ! -z "$MISSING_CONTRACTS" ]; then
+              echo "❌ Missing contract tests:"
+              echo -e "$MISSING_CONTRACTS"
+              echo "🚨 All new features must have contract tests first!"
+              exit 1
+            fi
+          fi
+          
+          echo "✅ Contract test validation passed"
+      
+      - name: Run Contract Tests
+        run: |
+          cd SOURCE/backend
+          echo "🧪 Running contract tests..."
+          
+          # Run contract tests first - these should define the interfaces
+          if [ -d "../tests/contracts" ]; then
+            npm run test:contracts || {
+              echo "❌ Contract tests failed!"
+              echo "🚨 Contract tests must pass before implementation tests"
+              exit 1
+            }
+          else
+            echo "⚠️  No contract tests directory found"
+            echo "📝 Create SOURCE/tests/contracts/ with API and database contract tests"
+            exit 1
+          fi
+          
+          echo "✅ All contract tests passed"
+      
+      - name: Validate Test-First Compliance
+        run: |
+          echo "🔒 Validating TDD compliance..."
+          
+          # Check that contract tests were not modified in the same commit as implementation
+          MODIFIED_CONTRACTS=$(git diff --name-only origin/main..HEAD | grep -E 'contracts.*test\.js' || true)
+          MODIFIED_IMPL=$(git diff --name-only origin/main..HEAD | grep -E '(controllers|models|routes)' | grep -v test || true)
+          
+          if [ ! -z "$MODIFIED_CONTRACTS" ] && [ ! -z "$MODIFIED_IMPL" ]; then
+            echo "⚠️  Both contract tests and implementation modified in same PR"
+            echo "📋 Contract tests: $MODIFIED_CONTRACTS"
+            echo "📋 Implementation: $MODIFIED_IMPL"
+            echo "💡 TDD Best Practice: Contract tests should be defined before implementation"
+          fi
+          
+          echo "✅ TDD compliance check completed"
+      
+      - name: Generate Contract Report
+        run: |
+          echo "📊 Generating contract coverage report..."
+          cd SOURCE/backend
+          
+          # Count contract tests vs implementation files
+          CONTRACT_COUNT=$(find ../tests/contracts -name "*.test.js" 2>/dev/null | wc -l || echo "0")
+          CONTROLLER_COUNT=$(find src/controllers -name "*.js" 2>/dev/null | wc -l || echo "0")
+          MODEL_COUNT=$(find src/models -name "*.js" 2>/dev/null | wc -l || echo "0")
+          
+          echo "Contract Coverage:"
+          echo "  Contract Tests: $CONTRACT_COUNT"
+          echo "  Controllers: $CONTROLLER_COUNT"
+          echo "  Models: $MODEL_COUNT"
+          
+          # Save for Roma's report
+          echo "CONTRACT_TESTS=$CONTRACT_COUNT" >> $GITHUB_ENV
+          echo "TOTAL_FILES=$((CONTROLLER_COUNT + MODEL_COUNT))" >> $GITHUB_ENV

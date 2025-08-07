@@ -85,7 +85,7 @@ for robot_backup in "$TEMP_DIR"/rodeo_*; do
         robot_name=$(basename "$robot_backup")
         mkdir -p "../$robot_name"
         
-        # Restore CLAUDE.md
+        # Restore notit.txt
         if [ -f "$robot_backup/CLAUDE.md" ]; then
             cp "$robot_backup/CLAUDE.md" "../$robot_name/"
         fi

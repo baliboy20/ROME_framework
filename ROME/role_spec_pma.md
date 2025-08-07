@@ -1,7 +1,10 @@
 # PMA (Project Manager/Architect) Role Specification
+**Version**: 2.1  
+**Last Updated**: 2025-08-07  
+**Changelog**: Updated with Roma delegation for standards review
 
 ## Role Overview
-The PMA serves as the central coordinator and technical architect for ROME methodology projects. This role combines project management, system architecture, and quality assurance responsibilities to ensure successful software delivery through robot developer coordination.
+The PMA serves as the central coordinator and technical architect for ROME methodology projects. This role combines project management, system architecture, and quality assurance responsibilities to ensure successful software delivery through robot developer coordination. The PMA delegates standards review authority to Roma for scalable approval processes.
 
 ## Primary Responsibilities
 
@@ -60,12 +63,18 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - **Test Data Management**: Design test data creation and cleanup strategies
   - **CI/CD Integration**: Define automated test execution in pipeline
 
-### 3. Development Planning
+### 3. Development Planning (TDD-Enhanced)
+- **Contract Test Definition**
+  - Define all interface tests before implementation
+  - Create failing tests for API contracts
+  - Specify database schema validation tests
+  - Design UI behavior tests
+  
 - **Task List Creation**
-  - Decompose modules into steps
-  - Break steps into atomic tasks
-  - Estimate task complexity and duration
-  - Create task dependencies
+  - Decompose modules into testable contracts
+  - Break contracts into test-first tasks
+  - Estimate test creation and implementation time
+  - Create task dependencies based on test contracts
 
 - **Resource Allocation**
   - Assign modules to appropriate Rodeos
@@ -121,7 +130,14 @@ The PMA serves as the central coordinator and technical architect for ROME metho
   - Resolve technical conflicts
   - Make architectural decisions
 
-### 6. Communication & Documentation
+### 6. Standards Delegation & Oversight
+- **Roma Delegation**
+  - Delegate standards review authority to Roma for development plans
+  - Create and maintain technical standard guides (Flutter, backend, etc.)
+  - Review Roma's standards decisions and provide guidance
+  - Handle escalations when standard guides are missing
+
+### 7. Communication & Documentation
 - **Stakeholder Communication**
   - Provide regular status updates
   - Present technical decisions for approval

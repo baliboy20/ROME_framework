@@ -57,7 +57,7 @@ detect_robots() {
     echo "${robots[@]}"
 }
 
-# Get robot role from CLAUDE.md
+# Get robot role from notit.txt
 get_robot_role() {
     local robot_name="$1"
     local claude_file="$ROBOTS_DIR/$robot_name/CLAUDE.md"

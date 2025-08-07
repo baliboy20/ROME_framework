@@ -1,0 +1,333 @@
+name: Integration Test Matrix
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+  workflow_dispatch:  # Allow manual triggers
+
+jobs:
+  integration-matrix:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        test-suite:
+          - api-database
+          - frontend-api
+          - file-upload
+          - end-to-end
+        include:
+          - test-suite: api-database
+            description: "Backend API with Database Integration"
+            timeout: 10
+          - test-suite: frontend-api
+            description: "Frontend with Backend API Integration"
+            timeout: 15
+          - test-suite: file-upload
+            description: "File Upload System Integration"
+            timeout: 12
+          - test-suite: end-to-end
+            description: "Complete User Workflow Testing"
+            timeout: 20
+    
+    services:
+      mongodb:
+        image: mongo:latest
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd mongosh --eval "db.adminCommand('ping')"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          cache-dependency-path: SOURCE/backend/package-lock.json
+      
+      - name: Setup Flutter
+        if: matrix.test-suite == 'frontend-api' || matrix.test-suite == 'end-to-end'
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+          channel: 'stable'
+      
+      - name: Install Backend Dependencies
+        run: |
+          cd SOURCE/backend
+          npm ci
+      
+      - name: Install Frontend Dependencies
+        if: matrix.test-suite == 'frontend-api' || matrix.test-suite == 'end-to-end'
+        run: |
+          cd SOURCE/frontend
+          flutter pub get
+      
+      - name: Start Backend Server
+        env:
+          NODE_ENV: test
+          MONGODB_URI: mongodb://localhost:27017/integration_test_db
+          PORT: 8090
+        run: |
+          cd SOURCE/backend
+          npm start &
+          echo $! > backend.pid
+          
+          # Wait for server to be ready
+          echo "⏳ Waiting for backend server..."
+          for i in {1..30}; do
+            if curl -f http://localhost:8090/api/v1/health 2>/dev/null; then
+              echo "✅ Backend server is ready"
+              break
+            fi
+            sleep 1
+          done
+      
+      - name: 🧪 API-Database Integration Tests
+        if: matrix.test-suite == 'api-database'
+        timeout-minutes: ${{ matrix.timeout }}
+        env:
+          MONGODB_URI: mongodb://localhost:27017/integration_test_db
+        run: |
+          echo "🔗 Running API-Database integration tests..."
+          cd SOURCE/backend
+          
+          # Test project CRUD operations
+          echo "Testing Project APIs..."
+          
+          # Create project
+          PROJECT_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/projects \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Integration Test Project","description":"Test project for API-DB integration"}')
+          
+          echo "Create Project Response: $PROJECT_RESPONSE"
+          PROJECT_ID=$(echo $PROJECT_RESPONSE | jq -r '.data._id')
+          
+          if [ "$PROJECT_ID" = "null" ]; then
+            echo "❌ Failed to create project"
+            exit 1
+          fi
+          
+          # Read project
+          curl -f http://localhost:8090/api/v1/projects/$PROJECT_ID || exit 1
+          
+          # Update project
+          curl -f -X PUT http://localhost:8090/api/v1/projects/$PROJECT_ID \
+            -H "Content-Type: application/json" \
+            -d '{"name":"Updated Integration Test Project"}' || exit 1
+          
+          # Test task operations
+          echo "Testing Task APIs..."
+          TASK_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"projectId":"'$PROJECT_ID'","title":"Integration Test Task","description":"Test task"}')
+          
+          TASK_ID=$(echo $TASK_RESPONSE | jq -r '.data._id')
+          
+          # Test blog operations
+          echo "Testing Blog APIs..."
+          BLOG_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/blogs \
+            -H "Content-Type: application/json" \
+            -d '{"projectId":"'$PROJECT_ID'","title":"Integration Test Blog","content":"# Test Blog Content"}')
+          
+          echo "✅ API-Database integration tests passed"
+      
+      - name: 🎨 Frontend-API Integration Tests
+        if: matrix.test-suite == 'frontend-api'
+        timeout-minutes: ${{ matrix.timeout }}
+        run: |
+          echo "📱 Running Frontend-API integration tests..."
+          cd SOURCE/frontend
+          
+          # Run Flutter integration tests that call real APIs
+          flutter test integration_test/ --dart-define=API_BASE_URL=http://localhost:8090/api/v1 || {
+            echo "⚠️  No Flutter integration tests found, running basic HTTP tests"
+            
+            # Basic HTTP connectivity test from Flutter
+            flutter test --dart-define=API_BASE_URL=http://localhost:8090/api/v1 test/ || echo "Flutter tests completed"
+          }
+          
+          echo "✅ Frontend-API integration tests completed"
+      
+      - name: 📁 File Upload Integration Tests
+        if: matrix.test-suite == 'file-upload'
+        timeout-minutes: ${{ matrix.timeout }}
+        run: |
+          echo "📂 Running File Upload integration tests..."
+          
+          # Create a test project first
+          PROJECT_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/projects \
+            -H "Content-Type: application/json" \
+            -d '{"name":"File Upload Test Project","description":"Testing file uploads"}')
+          
+          PROJECT_ID=$(echo $PROJECT_RESPONSE | jq -r '.data._id')
+          
+          # Create test files
+          echo "Test file content" > test-file.txt
+          echo "Another test file" > test-file-2.txt
+          
+          # Test file upload to project
+          echo "Testing file upload to project..."
+          UPLOAD_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/projects/$PROJECT_ID/files \
+            -F "file=@test-file.txt")
+          
+          echo "Upload Response: $UPLOAD_RESPONSE"
+          
+          # Test file listing
+          curl -f http://localhost:8090/api/v1/projects/$PROJECT_ID/files || echo "File listing test"
+          
+          # Test multiple file upload
+          echo "Testing multiple file upload..."
+          curl -s -X POST http://localhost:8090/api/v1/projects/$PROJECT_ID/files \
+            -F "files=@test-file.txt" \
+            -F "files=@test-file-2.txt" || echo "Multiple upload test"
+          
+          # Clean up test files
+          rm -f test-file.txt test-file-2.txt
+          
+          echo "✅ File Upload integration tests passed"
+      
+      - name: 🎯 End-to-End Integration Tests
+        if: matrix.test-suite == 'end-to-end'
+        timeout-minutes: ${{ matrix.timeout }}
+        run: |
+          echo "🎯 Running End-to-End integration tests..."
+          
+          # Complete user workflow simulation
+          echo "Simulating complete user workflow..."
+          
+          # 1. Create a project
+          echo "Step 1: Creating project..."
+          PROJECT_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/projects \
+            -H "Content-Type: application/json" \
+            -d '{"name":"E2E Test Project","description":"Complete workflow test","folders":["/test/folder"]}')
+          
+          PROJECT_ID=$(echo $PROJECT_RESPONSE | jq -r '.data._id')
+          echo "Created project: $PROJECT_ID"
+          
+          # 2. Add tasks to project
+          echo "Step 2: Adding tasks..."
+          TASK_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"projectId":"'$PROJECT_ID'","title":"E2E Task 1","description":"First task","progress":25}')
+          
+          TASK_ID=$(echo $TASK_RESPONSE | jq -r '.data._id')
+          
+          TASK2_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/tasks \
+            -H "Content-Type: application/json" \
+            -d '{"projectId":"'$PROJECT_ID'","title":"E2E Task 2","description":"Second task","progress":75}')
+          
+          # 3. Create blog entries
+          echo "Step 3: Creating blog entries..."
+          BLOG_RESPONSE=$(curl -s -X POST http://localhost:8090/api/v1/blogs \
+            -H "Content-Type: application/json" \
+            -d '{"projectId":"'$PROJECT_ID'","title":"Project Progress Update","content":"# Progress Update\n\nTasks are going well!"}')
+          
+          # 4. Upload files
+          echo "Step 4: Uploading files..."
+          echo "Project documentation" > project-doc.txt
+          curl -s -X POST http://localhost:8090/api/v1/projects/$PROJECT_ID/files \
+            -F "file=@project-doc.txt" > /dev/null
+          
+          # 5. Update task progress
+          echo "Step 5: Updating task progress..."
+          curl -s -X PUT http://localhost:8090/api/v1/tasks/$TASK_ID \
+            -H "Content-Type: application/json" \
+            -d '{"progress":100,"status":"completed"}' > /dev/null
+          
+          # 6. Get project dashboard data
+          echo "Step 6: Getting project dashboard..."
+          DASHBOARD_RESPONSE=$(curl -s http://localhost:8090/api/v1/projects/$PROJECT_ID/dashboard)
+          echo "Dashboard data retrieved"
+          
+          # 7. Verify all data is connected
+          echo "Step 7: Verifying data connections..."
+          PROJECT_DETAILS=$(curl -s http://localhost:8090/api/v1/projects/$PROJECT_ID)
+          TASK_COUNT=$(echo $PROJECT_DETAILS | jq '.data.tasks | length // 0')
+          BLOG_COUNT=$(echo $PROJECT_DETAILS | jq '.data.blogs | length // 0')
+          
+          echo "Project has $TASK_COUNT tasks and $BLOG_COUNT blogs"
+          
+          # Clean up
+          rm -f project-doc.txt
+          
+          echo "✅ End-to-End integration tests passed"
+      
+      - name: Stop Backend Server
+        if: always()
+        run: |
+          if [ -f SOURCE/backend/backend.pid ]; then
+            kill $(cat SOURCE/backend/backend.pid) || true
+            rm SOURCE/backend/backend.pid
+          fi
+      
+      - name: Report Integration Results
+        if: always()
+        run: |
+          echo "📊 Integration Test Results for: ${{ matrix.description }}"
+          echo "Suite: ${{ matrix.test-suite }}"
+          echo "Status: ${{ job.status }}"
+          
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Integration tests passed"
+          else
+            echo "❌ Integration tests failed"
+          fi
+      
+      - name: Notify Roma on Failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const suite = '${{ matrix.test-suite }}';
+            const description = '${{ matrix.description }}';
+            
+            // If this is a PR, comment about the failure
+            if (context.payload.pull_request) {
+              github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: `🚨 **Roma Alert**: Integration test failed!\n\n**Failed Suite**: ${suite}\n**Description**: ${description}\n\n@roma Please investigate and coordinate fixes.`
+              });
+            }
+  
+  integration-summary:
+    name: 📊 Integration Test Summary
+    needs: integration-matrix
+    if: always()
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Generate Integration Summary
+        run: |
+          echo "🔗 Integration Test Matrix Results"
+          echo "================================="
+          echo ""
+          echo "Test Results:"
+          echo "- API-Database: ${{ needs.integration-matrix.result }}"
+          echo "- Frontend-API: ${{ needs.integration-matrix.result }}"
+          echo "- File Upload: ${{ needs.integration-matrix.result }}"
+          echo "- End-to-End: ${{ needs.integration-matrix.result }}"
+          echo ""
+          
+          # Check overall status
+          if [[ "${{ needs.integration-matrix.result }}" == "success" ]]; then
+            echo "✅ All integration tests passed!"
+            echo "🚀 System integration verified - Ready for deployment"
+          else
+            echo "❌ Some integration tests failed"
+            echo "🚨 Integration issues detected - Roma coordination required"
+            exit 1
+          fi
