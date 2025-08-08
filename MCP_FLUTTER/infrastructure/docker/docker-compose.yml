@@ -1,0 +1,41 @@
+name: mcp-flutter
+version: '3.8'
+
+services:
+
+  # MCP Server
+  mcp-server:
+    build:
+      context: ../../
+      dockerfile: infrastructure/docker/Dockerfile
+    container_name: flutter-mcp-server
+    restart: unless-stopped
+    ports:
+      - "3040:3040"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      WEAVIATE_HOST: shared-vdb
+      WEAVIATE_PORT: 8080
+      WEAVIATE_SCHEME: http
+      REDIS_HOST: shared-redis
+      REDIS_PORT: 6379
+      SERVER_PORT: 3040
+      SERVER_HOST: 0.0.0.0
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+    volumes:
+      - ../../src:/app/src
+      - ../../documents:/app/documents
+    networks:
+      - mcp-shared-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3040/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+
+networks:
+  mcp-shared-network:
+    external: true
+    name: mcp-experts_mcp-shared-network
