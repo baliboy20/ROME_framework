@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  weaviate-local:
+    image: semitechnologies/weaviate:1.22.4
+    container_name: weaviate-local
+    restart: unless-stopped
+    ports:
+      - "8089:8080"  # Different port to avoid conflict
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'text2vec-transformers'
+      ENABLE_MODULES: 'text2vec-transformers'
+      TRANSFORMERS_INFERENCE_API: 'http://t2v-transformers:8080'
+    volumes:
+      - weaviate_local_data:/var/lib/weaviate
+    depends_on:
+      - t2v-transformers
+    networks:
+      - mcp-network
+
+  t2v-transformers:
+    image: semitechnologies/transformers-inference:sentence-transformers-all-MiniLM-L6-v2
+    container_name: t2v-transformers
+    restart: unless-stopped
+    environment:
+      ENABLE_CUDA: 0  # Set to 1 if you have GPU
+    networks:
+      - mcp-network
+
+  # Alternative: Ollama for local embeddings
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - mcp-network
+
+volumes:
+  weaviate_local_data:
+    driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  mcp-network:
+    driver: bridge

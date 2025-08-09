@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "rome-mcp": {
+      "command": "npx",
+      "args": [
+        "tsx",
+        "./claude_pma/services/mcp-server/src/index.ts"
+      ],
+      "env": {
+        "VDB_SERVICE_URL": "http://localhost:8081"
+      }
+    }
+  }
+}

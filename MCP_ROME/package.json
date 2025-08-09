@@ -8,11 +8,17 @@
     "test:contracts": "jest --config tests/jest.config.js --testPathPattern=contracts",
     "test:watch": "jest --config tests/jest.config.js --watch",
     "test:coverage": "jest --config tests/jest.config.js --coverage",
-    "build": "tsc",
+    "build": "tsc && cd backend && npm run build",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js",
     "lint": "eslint src/**/*.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "ingest-docs": "cd backend && npm run ingest-docs --",
+    "doc-server": "cd backend && npm run doc-server",
+    "mcp-server": "cd backend && npm run mcp-server",
+    "backend:dev": "cd backend && npm run dev",
+    "backend:build": "cd backend && npm run build",
+    "backend:start": "cd backend && npm run start"
   },
   "keywords": [
     "mcp",

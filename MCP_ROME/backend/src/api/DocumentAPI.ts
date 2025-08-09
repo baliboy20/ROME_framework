@@ -377,7 +377,7 @@ export class DocumentAPI {
 }
 
 // Create standalone server if run directly
-export async function createDocumentServer(port = 3001): Promise<DocumentAPI> {
+export async function createDocumentServer(port = 3040): Promise<DocumentAPI> {
   const logger = new Logger('DocumentServer');
   
   // Initialize Weaviate client
@@ -402,7 +402,7 @@ export async function createDocumentServer(port = 3001): Promise<DocumentAPI> {
 
 // Start server if run directly
 if (import.meta.url === `file://${process.argv[1]}`) {
-  const port = parseInt(process.env.PORT || '3001');
+  const port = parseInt(process.env.PORT || '3040');
   
   createDocumentServer(port).then(server => {
     server.listen(port, () => {

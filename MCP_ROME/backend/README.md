@@ -43,19 +43,19 @@ docker-compose up -d weaviate
 
 ```bash
 # Ingest all markdown files from a directory
-npm run ingest-docs ./flutter-docs
+npm run ingest-docs -- ./flutter-docs
 
 # Ingest with custom file pattern
-npm run ingest-docs ./docs --pattern "\\.md$"
+npm run ingest-docs -- ./docs --pattern "\\.md$"
 
 # Ingest a single file
-npm run ingest-docs --file ./docs/widgets.md
+npm run ingest-docs -- --file ./docs/widgets.md
 
 # Clear existing documents first
-npm run ingest-docs ./docs --clear
+npm run ingest-docs -- ./docs --clear
 
 # Show statistics
-npm run ingest-docs --stats
+npm run ingest-docs -- --stats
 ```
 
 #### Method 2: HTTP API
@@ -65,18 +65,18 @@ npm run ingest-docs --stats
 npm run doc-server
 
 # Upload a single file
-curl -X POST http://localhost:3001/api/documents/upload \
+curl -X POST http://localhost:3040/api/documents/upload \
   -F "file=@./docs/widgets.md" \
   -F "category=widgets" \
   -F "tags=[\"flutter\",\"ui\"]"
 
 # Ingest directory via API
-curl -X POST http://localhost:3001/api/documents/directory \
+curl -X POST http://localhost:3040/api/documents/directory \
   -H "Content-Type: application/json" \
   -d '{"directoryPath": "./flutter-docs", "pattern": "\\.md$"}'
 
 # Get statistics
-curl http://localhost:3001/api/documents/stats
+curl http://localhost:3040/api/documents/stats
 ```
 
 #### Method 3: Programmatic
@@ -126,7 +126,7 @@ OPENAI_API_KEY=your-openai-api-key-here
 LOG_LEVEL=info
 
 # Document API Server (optional)
-PORT=3001
+PORT=3040
 ```
 
 ## Usage with Claude Code
