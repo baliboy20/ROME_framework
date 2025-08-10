@@ -1,0 +1,24 @@
+{
+  "name": "rome-management-console",
+  "version": "1.0.0",
+  "description": "Web-based management console for ROME VDB Management Service",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "keywords": [
+    "rome",
+    "management",
+    "console",
+    "dashboard",
+    "tdd",
+    "coordination"
+  ],
+  "author": "ROME Development Team",
+  "license": "MIT"
+}

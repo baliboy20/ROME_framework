@@ -2,7 +2,7 @@
 
 ## 📖 Overview
 
-This is a complete **RAG (Retrieval-Augmented Generation) system** for Flutter documentation using the **Model Context Protocol (MCP)**. It enables AI assistants like Claude to search and query Flutter documentation intelligently through semantic search powered by **Weaviate** vector database.
+This is a complete **RAG_ROME (Retrieval-Augmented Generation) system** for Flutter documentation using the **Model Context Protocol (MCP)**. It enables AI assistants like Claude to search and query Flutter documentation intelligently through semantic search powered by **Weaviate** vector database.
 
 ## 🚀 Quick Start
 
@@ -40,7 +40,7 @@ npm run setup:weaviate
 # ✅ Expected output: "Successfully ingested 7 documents"
 ```
 
-### 4. Start RAG Server
+### 4. Start RAG_ROME Server
 ```bash
 # Start the Express server
 npm start
@@ -52,7 +52,7 @@ npx tsx src/index.ts
 
 ### 5. Verify System Health
 ```bash
-# Check RAG server health
+# Check RAG_ROME server health
 curl http://localhost:3040/health
 # ✅ Expected: {"status":"healthy","timestamp":"...","services":{"weaviate":"connected"}}
 
@@ -71,7 +71,7 @@ curl -X POST http://localhost:8088/v1/graphql \
 
 ### 🩺 Health Check Commands
 
-#### RAG Server Health
+#### RAG_ROME Server Health
 ```bash
 # Quick health check
 curl http://localhost:3040/health
@@ -199,7 +199,7 @@ top -p $(pgrep -f "tsx src/index.ts")
 #### Service Availability Matrix
 | Service | Health Check | Expected Response | Port |
 |---------|--------------|-------------------|------|
-| **RAG Server** | `curl localhost:3040/health` | `{"status":"healthy"}` | 3040 |
+| **RAG_ROME Server** | `curl localhost:3040/health` | `{"status":"healthy"}` | 3040 |
 | **Weaviate** | `curl localhost:8088/v1/.well-known/ready` | `{"result":"true"}` | 8088 |
 | **Redis** | `redis-cli ping` | `PONG` | 6379 |
 | **Docker** | `docker compose ps` | All services `Up` | N/A |
@@ -210,7 +210,7 @@ top -p $(pgrep -f "tsx src/index.ts")
 cat << 'EOF' > health-check.sh
 #!/bin/bash
 echo "=== System Health Check ==="
-echo "RAG Server:  $(curl -s localhost:3040/health | jq -r .status 2>/dev/null || echo 'DOWN')"
+echo "RAG_ROME Server:  $(curl -s localhost:3040/health | jq -r .status 2>/dev/null || echo 'DOWN')"
 echo "Weaviate:    $(curl -s localhost:8088/v1/.well-known/ready | jq -r .result 2>/dev/null || echo 'DOWN')"
 echo "Redis:       $(redis-cli ping 2>/dev/null || echo 'DOWN')"
 echo "Documents:   $(curl -s -X POST localhost:8088/v1/graphql -H 'Content-Type: application/json' -d '{"query":"{ Aggregate { FlutterDoc { meta { count } } } }"}' | jq -r .data.Aggregate.FlutterDoc[0].meta.count 2>/dev/null || echo '0')"
@@ -494,6 +494,6 @@ For issues and questions:
 
 ## 🎉 Success!
 
-You now have a fully functional Flutter Documentation RAG system with MCP protocol integration. The system is production-ready and can serve as an intelligent knowledge base for Flutter development queries through AI assistants.
+You now have a fully functional Flutter Documentation RAG_ROME system with MCP protocol integration. The system is production-ready and can serve as an intelligent knowledge base for Flutter development queries through AI assistants.
 
 **Happy Flutter Development!** 🚀

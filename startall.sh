@@ -42,7 +42,7 @@ done
 #tell application "iTerm2"
 #    create window with default profile
 #    tell current session of current window
-#        write text "cd '$FULL_PATH' && sh startclaude.sh"
+#        write text "cd '$FULL_PATH' && sh go.claude.sh"
 #    end tell
 #end tell
 #EOF

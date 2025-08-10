@@ -112,7 +112,7 @@ class VDBSchemaInspector {
   async inspectAllServers(): Promise<VDBInspectionResult[]> {
     // Both MCP servers share the same Weaviate instance on port 8088
     const servers = [
-      { name: 'SHARED_VDB (MCP_ROME & MCP_FLUTTER)', host: 'localhost', port: 8088 },
+      { name: 'SHARED_VDB (RAG_ROME & MCP_FLUTTER)', host: 'localhost', port: 8088 },
     ];
 
     const results = await Promise.all(

@@ -1,6 +1,6 @@
 /**
  * End-to-End Integration Test Suite
- * Tests the complete Flutter Documentation RAG system
+ * Tests the complete Flutter Documentation RAG_ROME system
  */
 
 import { describe, test, expect, beforeAll, afterAll } from '@jest/globals';
