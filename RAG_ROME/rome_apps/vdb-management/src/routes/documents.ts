@@ -348,7 +348,7 @@ router.post('/bulk-upload', async (req: ServiceRequest, res: Response) => {
           rome_category = 'protocols';
           if (lowerFile.includes('step')) {
             const stepMatch = lowerFile.match(/step[\s-_]*(\d+)/);
-            if (stepMatch) protocol_step = parseInt(stepMatch[1]);
+            if (stepMatch && stepMatch[1]) protocol_step = parseInt(stepMatch[1]);
           }
         } else if (lowerFile.includes('contract') || lowerFile.includes('api')) {
           rome_category = 'contracts';

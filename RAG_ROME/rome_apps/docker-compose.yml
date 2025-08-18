@@ -1,0 +1,74 @@
+version: '3.8'
+
+networks:
+  default:
+    name: rome-docs
+
+services:
+  rome-docs:
+    image: cr.weaviate.io/semitechnologies/weaviate:1.25.6
+    container_name: rome-docs
+    ports:
+      - "8087:8080"
+    environment:
+      - QUERY_DEFAULTS_LIMIT=25
+      - AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED=true
+      - PERSISTENCE_DATA_PATH=/var/lib/weaviate
+      - DEFAULT_VECTORIZER_MODULE=none
+      - ENABLE_MODULES=text2vec-cohere,text2vec-huggingface,text2vec-palm,text2vec-openai,generative-openai,generative-cohere,generative-palm,ref2vec-centroid,reranker-cohere,qna-openai
+      - CLUSTER_HOSTNAME=node1
+    volumes:
+      - weaviate_data:/var/lib/weaviate
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/v1/.well-known/ready"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  vdb-management:
+    build:
+      context: .
+      dockerfile: ./vdb-management/Dockerfile
+    container_name: rome-vdb-management
+    ports:
+      - "8081:8081"
+    environment:
+      - NODE_ENV=production
+      - WEAVIATE_SCHEME=http
+      - WEAVIATE_HOST=rome-docs:8080
+      - PORT=8081
+    depends_on:
+      - rome-docs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  rome-console:
+    build:
+      context: .
+      dockerfile: ./rome-console/Dockerfile
+    container_name: rome-console
+    ports:
+      - "8082:8081"
+    environment:
+      - NODE_ENV=production
+      - VDB_SERVICE_URL=http://rome-vdb-management:8081
+      - PORT=8081
+    depends_on:
+      - vdb-management
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  weaviate_data:

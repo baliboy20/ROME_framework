@@ -56,7 +56,7 @@ class VDBManagementServer {
       // Initialize Weaviate service with real connection to port 8080
       this.weaviateService = new WeaviateService({
         scheme: process.env.WEAVIATE_SCHEME || 'http',
-        host: process.env.WEAVIATE_HOST || 'localhost:8088' // Updated to point to Weaviate on 8088
+        host: process.env.WEAVIATE_HOST || 'localhost:8087' // Updated to point to Weaviate on 8087
       }, this.logger);
 
       // Initialize coordination service
@@ -126,10 +126,10 @@ class VDBManagementServer {
     // Serve management console static files
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
-    const consolePath = path.join(__dirname, '../../rome-console');
+    const consolePath = path.join(__dirname, '../rome-console');
     this.app.use('/console', express.static(consolePath));
     
-    // Serve console at root for convenience
+    // Serve console at dashboard route
     this.app.get('/dashboard', (_req, res) => {
       res.sendFile(path.join(consolePath, 'index.html'));
     });
@@ -154,7 +154,7 @@ class VDBManagementServer {
           '/api/v1/contracts',
           '/api/v1/integration'
         ],
-        weaviate_host: process.env.WEAVIATE_HOST || 'localhost:8088',
+        weaviate_host: process.env.WEAVIATE_HOST || 'localhost:8087',
         timestamp: new Date().toISOString()
       });
     });
@@ -219,7 +219,7 @@ class VDBManagementServer {
         this.logger.info(`VDB Management Service running on port ${this.port}`, {
           port: this.port,
           environment: process.env.NODE_ENV || 'development',
-          weaviate_host: process.env.WEAVIATE_HOST || 'localhost:8088'
+          weaviate_host: process.env.WEAVIATE_HOST || 'localhost:8087'
         });
       });
 
