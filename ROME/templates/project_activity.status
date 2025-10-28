@@ -1,4 +1,0 @@
-# Format: Module | Status | Rodeo | Timestamp | Notes
-# Status: PENDING | IN_PROGRESS | COMPLETED | BLOCKED
-# Example:
-# Auth Module | IN_PROGRESS | backend | 2024-01-15 10:30:00 | Working on JWT implementation
