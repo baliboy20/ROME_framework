@@ -71,9 +71,74 @@ done
 
 ---
 
-## Your First ROME 3.0 Project
+## Your First ROME 4.0 Project
 
-### Step 1: PMA Analysis Phase
+### ⚠️ CRITICAL: Read ROME-4.0-COMPLETE-GUIDE.md First
+
+The complete execution order is documented in [ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md) - Part A.
+
+**Quick reminder of correct order:**
+1. 🎯 **Chaperone Phase 1** - Refine raw requirements into clear specs
+2. 📋 **PMA Phases 1-9** - Design using refined specs
+3. ✅ **Chaperone Phase 2** - Validate design is practical
+4. 🚀 **Development Robots** - Build with validated specs
+
+This quick start assumes Chaperone Phase 1 is already complete.
+
+---
+
+### Step 0: Launch Chaperone Phase 1 FIRST
+
+**Create the user input directory and add your requirement documents:**
+
+```bash
+# Create directory for raw requirements
+mkdir -p PROJECT/dev/_user_input
+
+# Add your documents (create or copy):
+# - product_requirements.md       (PRD, business needs)
+# - use_cases.md                  (user workflows, user stories)
+# - design_mockups/               (wireframes, screenshots - optional)
+# - technical_specs.md            (technical constraints - optional)
+# - business_context.md           (goals, constraints - optional)
+
+# Example: Create a simple PRD
+cat > PROJECT/dev/_user_input/product_requirements.md << 'EOF'
+# Product Requirements Document
+
+## Overview
+[Your project overview]
+
+## Features
+[Key features to build]
+
+## Success Criteria
+[How to measure success]
+EOF
+```
+
+**Launch Chaperone Phase 1:**
+
+```bash
+cd claude_chaperone
+./__start.sh
+# Chaperone will:
+# 1. Read documents from PROJECT/dev/_user_input/
+# 2. Analyze across 8 technical dimensions
+# 3. Ask clarifying questions
+# 4. Produce refined specifications
+#
+# Produces:
+# - PROJECT/dev/specification_augmented.md
+# - PROJECT/dev/questions_and_answers.md
+# - PROJECT/dev/deferred_issues.md
+```
+
+**⏳ Wait for Chaperone to complete before proceeding to Step 1.**
+
+---
+
+### Step 1: PMA Analysis Phase (using Chaperone's refined specs)
 
 **As PMA, ask extensive questions:**
 ```markdown
@@ -182,7 +247,34 @@ POST /api/projects
   Response: { success: boolean, data: Project }
 ```
 
-### Step 5: Launch Robots
+### Step 5: Launch Chaperone Phase 2 (Design Inspection)
+
+**Before development, validate the design:**
+
+```bash
+# Chaperone Phase 2: Review PMA's design against refined specs
+cd claude_chaperone
+./__start.sh
+# Select: "Phase 2: Design Inspection & Validation"
+# Chaperone will validate:
+# - Technical feasibility
+# - Schedule realism
+# - Scope clarity
+
+# Produces: PROJECT/dev/design_approval.md
+# Status: ✅ APPROVED or 🚫 BLOCKED
+```
+
+**If Blocked:**
+- PMA must fix issues identified by Chaperone
+- Re-submit for Phase 2 validation
+
+**If Approved:**
+- Continue to Step 6 (launch robots)
+
+---
+
+### Step 6: Launch Robots (with validated specs and approved design)
 
 **Launch in sequence:**
 

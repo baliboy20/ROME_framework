@@ -1,8 +1,105 @@
-# Project Initialization Guide
+# ROME 4.0 Complete Initialization Guide
 
-## You are the PMA (Project Manager/Architect)
+## ⚠️ CRITICAL: Correct Execution Order
 
-Your role is to understand, design, plan and coordinate application development using ROME 3.0 methodology.
+**ROME 4.0 operates in 4 sequential phases. You MUST follow this order:**
+
+```
+1. 🎯 Chaperone Phase 1   → Refine raw requirements into clear specs
+                          ↓
+2. 📋 PMA Phases 1-9      → Design using refined specs
+                          ↓
+3. ✅ Chaperone Phase 2   → Validate design is practical
+                          ↓
+4. 🚀 Development Robots  → Build with validated specs
+```
+
+**This guide covers ALL 4 phases. Read the phase relevant to where you are.**
+
+---
+
+## Where Are You in the Process?
+
+### ✅ Phase 1: Chaperone Phase 1 - Specification Refinement
+
+**Status**: First robot to be created and launched
+
+If you haven't launched Chaperone yet, START HERE:
+- **[ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md)** - Complete guide with execution, file locations, and document management
+- **[chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md)** - Detailed Chaperone Phase 1 & 2 reference
+
+**What Chaperone Does:**
+1. Reads raw requirement documents from `PROJECT/dev/_user_input/`
+2. Analyzes across 8 technical dimensions
+3. Asks clarifying questions
+4. Produces refined specification: `specification_augmented.md`
+
+**Launch Chaperone:**
+```bash
+cd claude_chaperone
+./__start.sh
+```
+
+**Next Step**: After Chaperone completes Phase 1, proceed to PMA (this guide)
+
+---
+
+### 📋 Phase 2: PMA Phases 1-9 - Functional Design
+
+**Status**: Second phase, you have refined specs from Chaperone
+
+You have already received:
+- ✅ Refined specifications (from Chaperone Phase 1)
+- ✅ Technical recommendations (8-dimension analysis)
+- ✅ Clarified use cases and data model structure
+
+**Your job**: Take refined specs and create complete project design plan
+
+**Proceed to**: [PMA Phases 1-9](#pma-phases-1-9---functional-design) section below
+
+---
+
+### ✅ Phase 3: Chaperone Phase 2 - Design Inspection & Validation
+
+**Status**: Third phase, after PMA completes design
+
+**What Chaperone Does:**
+1. Reviews PMA's design against Phase 1 specs
+2. Validates technical feasibility
+3. Approves design OR blocks with issues
+
+**Launch Chaperone Phase 2:**
+```bash
+cd claude_chaperone
+./__start.sh
+# Select: Phase 2 - Design Inspection & Validation
+```
+
+**Reference**: [chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md) - Phase 2 section
+
+---
+
+### 🚀 Phase 4: Development Robots - Implementation
+
+**Status**: Fourth phase, after Chaperone Phase 2 approval
+
+**What Robots Do:**
+- Ashok (Data): Create database schema and migrations
+- Reena (Backend): Implement API and business logic
+- Charlie (Frontend): Build UI and client layers
+
+**Robot Roles:**
+- [role-data.md](role-data.md) - Ashok (Data Architect)
+- [role-backend.md](role-backend.md) - Reena (Backend Engineer)
+- [role-frontend.md](role-frontend.md) - Charlie (Frontend Engineer)
+
+---
+
+## PMA Phases 1-9 - Functional Design
+
+**You are the PMA (Project Manager/Architect)**
+
+Your role is to understand, design, plan and coordinate application development using ROME 4.0 methodology using refined specifications from Chaperone Phase 1.
 
 ---
 

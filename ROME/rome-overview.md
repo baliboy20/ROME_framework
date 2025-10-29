@@ -77,13 +77,35 @@ class ProjectService { ... }
 - Research/experimental projects
 - Systems without clear use cases
 
-## Quick Start
+## Quick Start (ROME 4.0 Correct Order)
 
-1. PMA analyzes requirements → asks extensive questions
-2. PMA creates data models and use case workflows
-3. PMA decomposes into vertical feature slices
-4. Robots implement features with integration tests + annotations
-5. Complex logic gets unit tests at project end
+**⚠️ CRITICAL: Read [ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md) for the complete process**
+
+### Phase 1: Chaperone Phase 1 (Specification Refinement) ← START HERE
+- Chaperone analyzes raw requirements across 8 technical dimensions
+- Asks clarifying questions and resolves ambiguities
+- Produces refined, unambiguous specifications
+- **Output**: specification_augmented.md ✅
+
+### Phase 2: PMA Phases 1-9 (Functional Design)
+- PMA analyzes refined requirements → asks design questions
+- PMA creates data models and use case workflows
+- PMA decomposes into vertical feature slices
+- PMA creates action list and project plan
+- **Output**: data_model.md, use_cases.md, actionlist.md ✅
+
+### Phase 3: Chaperone Phase 2 (Design Inspection)
+- Chaperone validates PMA's design against refined specs
+- Checks technical feasibility, schedule realism, scope clarity
+- Can BLOCK design if issues found
+- **Output**: design_approval.md ✅
+
+### Phase 4: Robots Implement (with validated specs and approved design)
+- Robots implement features with integration tests + annotations
+- Complex logic gets unit tests at project end
+- **Output**: Working application 🎉
+
+**Key Insight**: Chaperone Phase 1 must come FIRST, before PMA begins design.
 
 ## Project Structure
 ```
