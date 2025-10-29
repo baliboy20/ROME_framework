@@ -511,15 +511,15 @@ tail -20 PROJECT/dev/project_tasks.log
 ```bash
 # Run all integration tests
 npm test -- tests/integration
-flutter test test/integration
+flutter_archive test test/integration
 
 # Run specific layer
 npm test -- tests/integration/api
-flutter test test/integration/data
+flutter_archive test test/integration/data
 
 # Check coverage
 npm test -- --coverage
-flutter test --coverage
+flutter_archive test --coverage
 ```
 
 ---

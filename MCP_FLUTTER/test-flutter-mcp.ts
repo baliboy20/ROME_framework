@@ -86,7 +86,7 @@ class CounterWidget extends StatelessWidget {
       'Should detect code type correctly'
     );
     this.assert(
-      chunks[0].metadata.imports?.includes('package:flutter/material.dart'),
+      chunks[0].metadata.imports?.includes('package:flutter_archive/material.dart'),
       'Should extract imports'
     );
     

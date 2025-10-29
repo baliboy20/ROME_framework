@@ -43,7 +43,7 @@ docker-compose up -d weaviate
 
 ```bash
 # Ingest all markdown files from a directory
-npm run ingest-docs ./flutter-docs
+npm run ingest-docs ./flutter_archive-docs
 
 # Ingest with custom file pattern
 npm run ingest-docs ./docs --pattern "\\.md$"
@@ -73,7 +73,7 @@ curl -X POST http://localhost:3001/api/documents/upload \
 # Ingest directory via API
 curl -X POST http://localhost:3001/api/documents/directory \
   -H "Content-Type: application/json" \
-  -d '{"directoryPath": "./flutter-docs", "pattern": "\\.md$"}'
+  -d '{"directoryPath": "./flutter_archive-docs", "pattern": "\\.md$"}'
 
 # Get statistics
 curl http://localhost:3001/api/documents/stats
@@ -95,7 +95,7 @@ const result = await ingestionService.ingestDocument({
   content: "# Flutter Widgets\nWidgets are the building blocks...",
   source: "widgets-guide.md",
   category: "widgets",
-  tags: ["flutter", "ui", "widgets"]
+  tags: ["flutter_archive", "ui", "widgets"]
 });
 ```
 

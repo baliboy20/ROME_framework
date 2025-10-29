@@ -312,7 +312,7 @@ void main() {
 
 ```yaml
 # analysis_options.yaml (REQUIRED)
-include: package:flutter_lints/flutter.yaml
+include: package:flutter_lints/flutter_archive.yaml
 
 linter:
   rules:
@@ -343,7 +343,7 @@ coffee.dart                   # too generic
 import 'dart:async';
 
 // 2. Flutter packages  
-import 'package:flutter/material.dart';
+import 'package:flutter_archive/material.dart';
 
 // 3. Third-party packages
 import 'package:dio/dio.dart';

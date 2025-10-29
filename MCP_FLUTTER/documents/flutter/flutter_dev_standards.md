@@ -158,7 +158,7 @@ final router = GoRouter(
 # Example: pubspec.yaml dependency section
 dependencies:
   flutter:
-    sdk: flutter
+    sdk: flutter_archive
   # State management
   flutter_bloc: ^8.1.3
   provider: ^6.0.5

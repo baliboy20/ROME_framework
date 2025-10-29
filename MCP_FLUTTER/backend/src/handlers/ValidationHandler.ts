@@ -313,12 +313,12 @@ export class ValidationHandler extends BaseToolHandler {
     const issues: ValidationIssue[] = [];
 
     // Check for missing imports
-    if (code.includes('StatefulWidget') && !code.includes('import \'package:flutter/material.dart\'')) {
+    if (code.includes('StatefulWidget') && !code.includes('import \'package:flutter_archive/material.dart\'')) {
       issues.push({
         severity: 'error',
         message: 'Missing Flutter material import',
         rule: 'missing_imports',
-        suggestion: 'Add import \'package:flutter/material.dart\';'
+        suggestion: 'Add import \'package:flutter_archive/material.dart\';'
       });
     }
 

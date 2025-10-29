@@ -1,6 +1,6 @@
 # Chaperone Quick Reference
-**Version**: 3.0
-**Purpose**: Quick lookup guide for Chaperone analysis framework
+**Version**: 4.0 (Updated to two-phase model)
+**Purpose**: Quick lookup guide for Chaperone specification refinement and design inspection
 
 ---
 
@@ -170,6 +170,53 @@
 
 ---
 
+## Prototype Generation (Phase 4)
+
+### What the Prototype Shows
+
+**Interactive HTML Prototype includes:**
+- All application pages/screens
+- Navigation links between pages
+- Page layouts and information architecture
+- Example data from the data model
+- Loading, error, and success states
+- Basic responsive design with Bootstrap
+- Clickable elements showing user flows
+
+### Prototype Structure
+
+```
+PROJECT/dev/prototype_ui/
+├── index.html                    # Homepage/dashboard
+├── project-detail.html           # Project page
+├── task-detail.html             # Task page
+├── settings.html                # Settings page
+├── css/
+│   ├── bootstrap.css
+│   └── custom.css
+├── js/
+│   └── navigation.js            # Page linking logic
+├── README.md                    # Navigation guide
+└── navigation-manifest.json     # Site map (for indexing pages)
+```
+
+### When to Offer Prototype
+
+**Offer prototype when:**
+- ✅ Data model is complex
+- ✅ Navigation between pages is intricate
+- ✅ Need to validate information architecture
+- ✅ Team benefits from visual preview
+- ✅ Design handoff to Clara (UX) needed
+
+**Skip prototype when:**
+- ❌ Simple single-page app
+- ❌ Specification is trivial
+- ❌ Timeline is extremely tight
+- ❌ Patron explicitly doesn't want it
+
+---
+
 ## Question Format Template
 
 ```
@@ -198,16 +245,16 @@
 
 ---
 
-## Analysis Checklist
+## Phase 1: Specification Refinement Checklist
 
 ### Before Starting
 - [ ] Read all ROME documentation
-- [ ] Gathered all specification documents (PRD, use cases, design docs)
-- [ ] Identified stakeholders for clarification
-- [ ] Set up project directory structure
+- [ ] Gathered all user requirements (PRD, use cases, design docs, tech specs)
+- [ ] Identified stakeholder contact for questions
+- [ ] Understood project scope from user perspective
 
 ### During Analysis
-- [ ] Data Model analysis complete
+- [ ] Data Model & Schema analysis complete
 - [ ] Use Cases & Workflows analysis complete
 - [ ] Auth & Authorization analysis complete
 - [ ] Caching Strategy analysis complete
@@ -216,25 +263,58 @@
 - [ ] Testing Strategy analysis complete
 - [ ] System Scope analysis complete
 
-### Clarification Phase
-- [ ] Questions formatted and categorized
-- [ ] Options provided for decision points
-- [ ] Questions sent to stakeholders
+### Clarification Questions Phase
+- [ ] Questions formatted with options and context
+- [ ] Questions sent to user
 - [ ] Responses received and documented
+- [ ] User identified which deferred issues (to PMA phase)
+- [ ] Ambiguities resolved
 
-### Augmentation Phase
-- [ ] Enhanced specification document created
-- [ ] Original gaps documented
-- [ ] Recommendations provided
-- [ ] Risk assessment included
-- [ ] Implementation sequence planned
-- [ ] Questions and answers appended
-
-### Sign-Off
-- [ ] PMA review complete
-- [ ] Stakeholder approval obtained
-- [ ] Development robots (Ashok, Reena, Charlie) have clarity
+### Phase 1 Sign-Off
+- [ ] Refined specification document created
+- [ ] All 8 dimensions covered
+- [ ] Questions and answers documented
+- [ ] Deferred issues listed
+- [ ] ✅ Confirmation: Specs are clear and interpretable
 - [ ] Document stored in PROJECT/dev/
+
+---
+
+## Phase 2: Design Inspection Checklist
+
+### Before Starting
+- [ ] Received PMA's functional design
+- [ ] Have Phase 1 refined specifications
+- [ ] Understand deferred issues from Phase 1
+
+### During Review
+- [ ] PMA design reviewed against refined specs
+- [ ] All requirements confirmed as addressed
+- [ ] Data model validation complete
+- [ ] Use case workflows validation complete
+- [ ] Feature list completeness check
+- [ ] Technical feasibility assessment complete
+- [ ] Schedule realism assessment complete
+- [ ] Scope clarity assessment complete
+
+### Decision Phase
+Choose one:
+
+- [ ] ✅ **APPROVED** - No issues, ready for development robots
+- [ ] 🚫 **BLOCKED** - Blocking issues identified (see below)
+- [ ] 🚩 **ESCALATE** - Conflicts require user/stakeholder decision
+
+### If Blocking Issues
+- [ ] Technical feasibility issues documented
+- [ ] Schedule realism issues documented
+- [ ] Scope clarity issues documented
+- [ ] Suggested fixes or escalation points noted
+- [ ] Sent to PMA for resolution or escalation
+
+### Phase 2 Sign-Off
+- [ ] Design approval/blocking document created
+- [ ] Escalations raised (if needed)
+- [ ] Development robots notified of status
 
 ---
 
@@ -341,62 +421,99 @@
 
 ## Output Structure
 
-### Phase 1: Analysis Report
+### Phase 1: Refined Requirements Document
 ```
-1. Data Model Analysis
-2. Use Cases Analysis
-3. Auth Analysis
-4. Caching Analysis
-5. Tech Stack Analysis
-6. Platform Analysis
-7. Testing Analysis
-8. Scope Analysis
+# [Project] - Refined Requirements Specification
+
+1. Summary of Refinements
+   - Clarifications made
+   - Ambiguities resolved
+   - Gaps filled
+
+2. For Each 8 Dimension:
+   - Original requirement
+   - Questions asked & answers
+   - Refined specification
+
+3. Deferred Issues
+   - Issues user chose to address in PMA phase
+   - Reason for deferral
+
+4. Confirmation
+   ✅ Specs are clear and interpretable
+   ✅ Ready for PMA to design from
 ```
 
-### Phase 2: Clarification Questions
+### Phase 2: Design Approval Document
+
+**If Approved:**
 ```
-1. Questions for Each Area
-2. Options Provided
-3. Impact Assessment
-4. Complexity Analysis
+# [Project] - Design Approval
+
+Status: ✅ APPROVED
+
+Validation:
+- Design matches refined specs
+- All requirements addressed
+- Technical feasibility confirmed
+- Schedule realism confirmed
+- Scope clarity confirmed
+
+Ready for: Development robots (Ashok, Reena, Charlie)
 ```
 
-### Phase 3: Augmented Specification
+**If Blocked:**
 ```
-1. Executive Summary
-2. Enhanced Data Model
-3. Clarified Use Cases
-4. Architecture Decisions
-5. Technology Justifications
-6. Testing Strategy
-7. Implementation Roadmap
-8. Risk Assessment
-9. Appendices (schemas, APIs, etc.)
+# [Project] - Design Review: Blocking Issues
+
+Status: 🚫 BLOCKED
+
+Technical Feasibility Issues:
+- [Issue & fix required]
+
+Schedule Realism Issues:
+- [Issue & impact]
+
+Scope Clarity Issues:
+- [Issue & conflict]
+
+Next step: PMA resolves or escalates
 ```
 
 ---
 
 ## Success Indicators
 
-✅ Development robots (Ashok, Reena, Charlie) have complete clarity
-✅ All gaps in original spec identified and addressed
-✅ Technical decisions documented with trade-offs
-✅ Data model is complete and correct
-✅ Testing strategy is defined by layer
-✅ Architecture patterns are consistent
-✅ Technology choices are justified
-✅ Performance and scale requirements are clear
-✅ Security requirements are explicit
-✅ Implementation sequence is recommended
-✅ Risks are identified with mitigation strategies
-✅ Ambiguities are resolved
+### Phase 1 Success:
+✅ All 8 dimensions analyzed
+✅ Clarifying questions asked and answered
+✅ Ambiguities resolved
+✅ Gaps identified and addressed
+✅ Deferred issues documented
+✅ Requirements specifications are clear and unambiguous
+✅ PMA can design from these specs with confidence
+
+### Phase 2 Success:
+✅ Design reviewed against refined specs
+✅ All requirements confirmed as addressed
+✅ Technical feasibility validated OR blocking issues identified
+✅ Schedule realism validated OR blocking issues identified
+✅ Scope clarity validated OR blocking issues identified
+✅ Design approved OR blocking issues escalated
+✅ Development robots ready to proceed (if approved)
+
+### Overall Success:
+✅ Quality gate between requirements and design confirmed
+✅ Business practicality issues caught early
+✅ Minimal surprises when robots begin implementation
 
 ---
 
 ## Related Documents
 
 - [role-chaperone.md](role-chaperone.md) - Full role specification
-- [template-augmented-specification.md](template-augmented-specification.md) - Output template
+- [template-augmented-specification.md](template-augmented-specification.md) - Output template for specifications
+- [template-prototype-ui.md](template-prototype-ui.md) - Output template for UI prototypes
 - [rome-overview.md](rome-overview.md) - ROME methodology
 - [rome-implementation-guide.md](rome-implementation-guide.md) - Integration testing approach
 - [role-pma.md](role-pma.md) - PMA role (partner role)

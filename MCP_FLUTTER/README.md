@@ -38,7 +38,7 @@ To ingest Flutter documentation:
 
 ```bash
 cd MCP_FLUTTER/backend
-npm run ingest-docs ./documents/flutter
+npm run ingest-docs ./documents/flutter_archive
 ```
 
 Or simply run without arguments to use the default Flutter documents directory:

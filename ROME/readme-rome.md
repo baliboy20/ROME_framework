@@ -9,7 +9,7 @@ Version 3.0 | Released October 2025
 
 This is the **complete ROME 3.0 document suite** with all methodology docs, role specifications, and templates needed to build software using AI robot developers.
 
-### 20 Documents Included:
+### 23 Documents Included:
 
 **Core Methodology** (4 docs)
 - rome-overview.md
@@ -33,11 +33,14 @@ This is the **complete ROME 3.0 document suite** with all methodology docs, role
 - template-claude-md.txt (Robot instruction template)
 - template-activity-status.txt (Status tracking template)
 
-**Guides & Examples** (4 docs)
+**Guides & Examples** (7 docs)
 - start-here.md (PMA initialization guide)
 - readme-rome.md (This document)
 - example-validation-reports.txt (UX validation examples)
 - rome-v3-summary.txt (Complete suite summary)
+- document-management-strategy.md (Doc tiering & lifecycle) ⭐ NEW
+- spec-change-process.md (Interim modification management) ⭐ NEW
+- coordinator-hygiene-checklist.md (Document hygiene oversight) ⭐ NEW
 
 ---
 
@@ -72,7 +75,16 @@ This is the **complete ROME 3.0 document suite** with all methodology docs, role
 ```bash
 1. Read: rome-overview.md (10 min)
 2. Read: role-roma.md (15 min)
-3. Reference: rome-reference.md (as needed)
+3. Read: document-management-strategy.md (document hygiene)
+4. Read: coordinator-hygiene-checklist.md (weekly/monthly tasks)
+5. Reference: rome-reference.md (as needed)
+```
+
+### For Document Management:
+```bash
+1. Understand: document-management-strategy.md (tiering system)
+2. Learn: spec-change-process.md (interim modifications)
+3. Follow: coordinator-hygiene-checklist.md (hygiene oversight)
 ```
 
 ---
@@ -83,49 +95,59 @@ This is the **complete ROME 3.0 document suite** with all methodology docs, role
 
 ```
 your-project/
-├── ROME/                          # Put all ROME docs here
+├── ROME/                          # ROME methodology (immutable)
 │   ├── readme-rome.md             # This file
 │   ├── rome-overview.md
 │   ├── rome-implementation-guide.md
 │   ├── rome-reference.md
 │   ├── rome-quickstart.md
-│   ├── rome-v3-summary.txt
-│   ├── start-here.md
-│   ├── role-pma.md
-│   ├── role-backend.md
-│   ├── role-frontend.md
-│   ├── role-data.md
-│   ├── role-devops.md
-│   ├── role-roma.md
-│   ├── role-ux-clara.md
-│   ├── template-claude-md.txt
-│   ├── template-actionlist.md
-│   ├── template-data-model.txt
-│   ├── template-use-cases.txt
-│   ├── template-activity-status.txt
-│   └── example-validation-reports.txt
+│   ├── role-*.md                  # All role specifications
+│   ├── template-*.md              # All templates
+│   ├── document-management-strategy.md  # NEW
+│   ├── spec-change-process.md          # NEW
+│   └── coordinator-hygiene-checklist.md # NEW
 │
-├── PROJECT/
-│   ├── SOURCE/                    # All source code here
+├── PROJECT/                       # Core project files (versioned)
+│   ├── SOURCE/                    # Source code
 │   │   ├── backend/
 │   │   ├── frontend/
 │   │   ├── database/
-│   │   └── tests/integration/
-│   └── dev/                       # Project tracking files
-│       ├── data_model.md          # Copy from template
-│       ├── use_cases.md           # Copy from template
-│       ├── actionlist.md          # Copy from template
-│       ├── project_activity.status
-│       └── project_tasks.log
+│   │   └── tests/
+│   └── dev/                       # Core documentation (git-tracked)
+│       ├── data_model.md
+│       ├── use_cases.md
+│       ├── actionlist.md
+│       ├── chaperone_refined_specs.md
+│       ├── pma_design_plan.md
+│       ├── pma_design_approval.md
+│       ├── spec_changes.log
+│       └── project_activity.status
 │
-└── claude_*/                      # Robot workspaces
+├── PROJECT_WORKING/               # Transient working docs (git-ignored)
+│   ├── ashok_data/
+│   │   ├── 2025-10-29_schema_exploration/
+│   │   ├── 2025-10-30_indexing_analysis/
+│   │   └── current/               # Latest active work
+│   ├── reena_backend/current/
+│   ├── charlie_frontend/current/
+│   ├── pma_working/current/
+│   └── chaperone_working/current/
+│
+├── PROJECT_ARCHIVE/               # Old working docs (auto-cleanup)
+│   ├── ashok_data/2025-10/
+│   ├── reena_backend/2025-10/
+│   ├── charlie_frontend/2025-10/
+│   └── cleanup_log.md
+│
+└── claude_*/                      # Robot workspaces (session-specific)
     ├── claude_pma/
-    ├── claude_backend/
-    ├── claude_frontend/
-    ├── claude_data/
-    ├── claude_devops/
-    └── claude_coordinator/
+    ├── claude_chaperone/
+    ├── claude_ashok/
+    ├── claude_reena/
+    └── claude_charlie/
 ```
+
+See **[document-management-strategy.md](document-management-strategy.md)** for detailed explanation.
 
 ---
 

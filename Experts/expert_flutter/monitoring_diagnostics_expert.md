@@ -15,8 +15,8 @@
 
 import 'dart:async';
 import 'dart:isolate';
-import 'package:flutter_archive/foundation.dart';
-import 'package:flutter_archive/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 void main() async {
   await runZonedGuarded(

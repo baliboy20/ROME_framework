@@ -188,7 +188,7 @@ class MyWidget extends StatelessWidget {
     const metadata = metadataExtractor.extract(flutterContent, fileInfo);
     
     expect(metadata.language).toBe('dart');
-    expect(metadata.frameworks).toContain('flutter');
+    expect(metadata.frameworks).toContain('flutter_archive');
     expect(metadata.tags).toContain('widget');
     expect(metadata.categories).toContain('ui');
   });

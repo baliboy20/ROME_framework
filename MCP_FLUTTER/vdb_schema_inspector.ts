@@ -6,7 +6,7 @@
  * Author: PMA (Project Manager/Architect)
  * 
  * Usage:
- * npx ts-node vdb_schema_inspector.ts [--server rome|flutter|all]
+ * npx ts-node vdb_schema_inspector.ts [--server rome|flutter_archive|all]
  */
 
 import weaviate from 'weaviate-ts-client';

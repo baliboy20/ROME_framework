@@ -1,6 +1,17 @@
 # Claude Chaperone Setup - Complete Summary
 **Date**: 2025-10-28
-**Status**: Complete & Ready for Use
+**Status**: Complete & Ready for Use (v4.0 - Two-Phase Model)
+
+---
+
+## What Was Created
+
+### Updated Model: Two-Phase Quality Gates
+
+The Chaperone now operates as two distinct quality gates:
+
+1. **Phase 1 - Specification Refinement**: Ensures requirements are clear
+2. **Phase 2 - Design Inspection**: Ensures design is practically achievable
 
 ---
 
@@ -16,9 +27,10 @@ claude_chaperone/
 └── README.md              (9 KB) - User-friendly guide
 
 ROME/
-├── role-chaperone.md                      (12 KB) - Full role specification
-├── chaperone-quick-reference.md           (9 KB) - Quick lookup templates
-├── template-augmented-specification.md    (18 KB) - Output template
+├── role-chaperone.md                      (Updated) - Full role specification
+├── chaperone-quick-reference.md           (Updated) - Quick lookup templates
+├── template-augmented-specification.md    (18 KB) - Output template for specs
+├── template-prototype-ui.md               (NEW) - Output template for UI prototypes
 └── CHAPERONE_SETUP_SUMMARY.md            (This file)
 ```
 
@@ -109,15 +121,26 @@ The Chaperone analyzes projects across 8 critical technical dimensions:
 3. Document ambiguities and gaps
 4. Flag risk areas and complexity
 
-### Phase 4: Produce Augmented Specification
-1. Create enhanced specification document
-2. Include detailed data model with constraints
-3. Clarify use cases with edge cases
-4. Document architecture decisions
-5. Justify technology choices
-6. Define testing strategy by layer
-7. Recommend implementation sequence
-8. Identify risks with mitigation strategies
+### Phase 1: Specification Refinement
+1. Read and analyze user requirements (PRD, tech specs, design files)
+2. Conduct 8-dimension analysis
+3. Ask clarifying questions with options
+4. Document user answers
+5. Identify deferred issues (user decides: resolve now or defer to PMA)
+6. Produce refined specification document
+7. Confirm: specifications are clear and sensibly interpretable
+
+### Phase 2: Design Inspection & Validation
+1. Review PMA's functional design
+2. Validate design against Phase 1 refined specs
+3. Assess business practicality:
+   - Technical feasibility (can this be built with chosen tech?)
+   - Schedule realism (is timeline realistic for complexity?)
+   - Scope clarity (are requirements and scope aligned?)
+4. Decision:
+   - ✅ **APPROVE**: Design is practically achievable
+   - 🚫 **BLOCK**: Issues found (technical, schedule, or scope)
+   - 🚩 **ESCALATE**: Conflicts require stakeholder decision
 
 ### Phase 5: Coordinate with Development Robots
 1. Provide guidance to Ashok (Data Architect)
@@ -173,6 +196,16 @@ The Chaperone analyzes projects across 8 critical technical dimensions:
 - Questions for stakeholders
 - Appendices (schemas, API examples, etc.)
 
+**ROME/template-prototype-ui.md** (NEW - ~20 KB)
+- Complete template for UI prototype output
+- HTML page structure documentation
+- Navigation flow maps
+- Data model integration guidelines
+- Styling and responsive design specs
+- Validation checklist for prototype
+- Browser compatibility notes
+- Usage instructions for patron, frontend dev, UX designer
+
 ---
 
 ## How to Use
@@ -216,6 +249,12 @@ Identifies risks early and recommends mitigation.
 
 ### 6. Scalable Analysis
 Works for projects of any size and complexity.
+
+### 7. Optional UI Prototype
+Generates interactive HTML prototype showing pages and navigation flows (patron chooses if needed).
+
+### 8. Multi-Output Options
+Patron can choose specification alone, specification + prototype, or comprehensive package.
 
 ---
 
@@ -420,16 +459,20 @@ The Chaperone role was designed with these principles:
 - **More technical depth** - Dives into technology choices
 - **Less planning focus** - Not about team coordination
 - **More Q&A** - Clarifies existing specs vs creating new ones
+- **Visual output** - Offers UI prototype option
 
 ### vs. Individual Robot
 - **Broader scope** - Covers multiple technology areas
 - **Specification focus** - Not implementation
 - **Cross-cutting concerns** - Auth, caching, testing across whole system
+- **Design bridge** - Prototype connects specs to design
 
 ### vs. External Consultant
 - **ROME-integrated** - Understands your methodology
 - **Always available** - No scheduling conflicts
 - **Consistent approach** - Same analysis framework every time
+- **Visual deliverable** - Generates interactive prototypes
+- **Question-driven** - Clarifies with options, not mandates
 
 ---
 
@@ -475,10 +518,12 @@ Development robots now have clear technical guidance.
 | claude_chaperone/CLAUDE.md | 13 KB | Main instructions |
 | claude_chaperone/__start.sh | 272 B | Startup script |
 | claude_chaperone/README.md | 9 KB | User guide |
-| ROME/role-chaperone.md | 12 KB | Role specification |
-| ROME/chaperone-quick-reference.md | 9 KB | Quick lookup guide |
-| ROME/template-augmented-specification.md | 18 KB | Output template |
-| **Total** | **~61 KB** | **Complete system** |
+| ROME/role-chaperone.md | 13 KB | Role specification (updated) |
+| ROME/chaperone-quick-reference.md | 12 KB | Quick lookup guide (updated) |
+| ROME/template-augmented-specification.md | 18 KB | Specification output template |
+| ROME/template-prototype-ui.md | 20 KB | UI prototype output template (NEW) |
+| ROME/chaperone_setup_summary.md | TBD | Setup summary (updated) |
+| **Total** | **~98 KB** | **Complete system with prototyping** |
 
 ---
 
@@ -508,7 +553,9 @@ Did the Chaperone setup make sense? Some evaluation questions:
 3. **Usability**: Are the templates and guides easy to follow?
 4. **Integration**: Does it integrate well with ROME?
 5. **Value**: Would this role add value to your projects?
-6. **Improvements**: What could be improved?
+6. **Prototype**: Does the optional UI prototype feature add value?
+7. **Output Options**: Are the 4 output options (A-D) the right trade-offs between detail and delivery time?
+8. **Improvements**: What could be improved?
 
 ---
 
@@ -520,28 +567,49 @@ The Chaperone role is designed to be:
 - **Flexible**: Works for projects of any scope
 - **Integrated**: Fits naturally into ROME methodology
 - **Scalable**: Can handle simple or complex projects
+- **Visual**: Offers optional UI prototyping for clarity
 
 ### Potential Enhancements
-- Integration with design tools (Figma imports)
-- Automated risk scoring
-- Pre-filled templates for common project types
-- Integration with issue tracking systems
-- Continuous specification monitoring during development
+- **Prototype enhancements**:
+  - Generate React/Vue component stubs from prototype
+  - Export prototype to Figma for design refinement
+  - Add interactive forms and validation examples
+  - Generate API endpoint examples based on prototype
+- **Specification enhancements**:
+  - Integration with design tools (Figma imports)
+  - Automated risk scoring
+  - Pre-filled templates for common project types
+  - Integration with issue tracking systems
+  - Continuous specification monitoring during development
 
 ---
 
 ## Summary
 
-You now have a complete **Chaperone assistant role** that:
+You now have a complete **Chaperone assistant role** that operates as **two quality gates**:
 
-✅ **Analyzes** specifications across 8 technical dimensions
+### Phase 1: Specification Refinement
+✅ **Analyzes** requirements across 8 technical dimensions
 ✅ **Clarifies** ambiguities with structured questions
-✅ **Augments** specs with deeper technical analysis
-✅ **Produces** actionable documentation for developers
-✅ **Identifies** risks and recommends mitigation
-✅ **Enables** parallel development with clarity
+✅ **Refines** specs until clear and unambiguous
+✅ **Identifies** deferred issues (user decides timing)
+✅ **Produces** refined specification document
+✅ **Confirms** specs are ready for PMA design
 
-The Chaperone complements your PMA and integrates seamlessly with your development robots (Ashok, Reena, Charlie) through the ROME methodology.
+### Phase 2: Design Inspection & Validation
+✅ **Reviews** PMA's functional design against refined specs
+✅ **Validates** design addresses all requirements
+✅ **Assesses** business practicality:
+   - Technical feasibility (can it be built?)
+   - Schedule realism (is timeline achievable?)
+   - Scope clarity (are requirements aligned?)
+✅ **Can BLOCK** design approval if issues found
+✅ **Escalates** conflicts to user/stakeholders
+✅ **Approves** design for development robots
+
+The Chaperone integrates seamlessly with:
+- **PMA**: Phase 1 refines specs → Phase 2 inspects design
+- **Development Robots** (Ashok, Reena, Charlie): Receive validated specs and approved design
 
 **Ready to enhance your project specifications?**
 

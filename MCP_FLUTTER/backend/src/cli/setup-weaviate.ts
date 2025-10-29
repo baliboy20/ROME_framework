@@ -73,7 +73,7 @@ const flutterDocSchema = {
     {
       name: 'frameworks',
       dataType: ['text[]'],
-      description: 'Related frameworks (flutter, provider, bloc, etc)'
+      description: 'Related frameworks (flutter_archive, provider, bloc, etc)'
     },
     {
       name: 'tags',
@@ -124,7 +124,7 @@ async function setupSchema() {
 async function loadDocuments() {
   console.log('📚 Loading Flutter documentation...');
   
-  const docsPath = path.join(__dirname, '../../../documents/flutter');
+  const docsPath = path.join(__dirname, '../../../documents/flutter_archive');
   const files = fs.readdirSync(docsPath);
   const documents = [];
   

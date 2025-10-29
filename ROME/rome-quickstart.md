@@ -212,7 +212,7 @@ tail -f PROJECT/dev/project_tasks.log
 
 # Check integration tests
 npm test -- tests/integration
-flutter test test/integration
+flutter_archive test test/integration
 ```
 
 **Example status:**
@@ -372,7 +372,7 @@ grep -r "@Stable false" PROJECT/SOURCE/
 npm test -- tests/integration
 
 # Frontend integration tests
-flutter test test/integration
+flutter_archive test test/integration
 
 # Specific test file
 npm test -- tests/integration/api/projects_test.js

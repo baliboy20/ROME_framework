@@ -177,8 +177,8 @@ ENVIRONMENT VARIABLES:
   }
 
   private async ingestDirectory(directoryPath: string, pattern?: string): Promise<void> {
-    // Default to flutter documents directory
-    const targetPath = directoryPath || './documents/flutter';
+    // Default to flutter_archive documents directory
+    const targetPath = directoryPath || './documents/flutter_archive';
     this.logger.info(`Ingesting directory: ${targetPath}`);
     
     try {

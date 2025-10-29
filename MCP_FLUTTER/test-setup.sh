@@ -52,7 +52,7 @@ cd ..
 echo ""
 echo "🧪 Running Flutter MCP Tests"
 echo "============================"
-npx tsx test-flutter-mcp.ts
+npx tsx test-flutter_archive-mcp.ts
 
 echo ""
 echo "✅ Test setup complete!"

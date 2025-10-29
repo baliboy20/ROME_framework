@@ -43,7 +43,7 @@ npm run docker:logs
 #### Run Tests
 ```bash
 # Run Flutter-specific tests
-npm run test:flutter
+npm run test:flutter_archive
 
 # Run contract tests
 npm run test:contracts
@@ -93,7 +93,7 @@ npm run ingest
 
 # Or manually specify directory
 cd backend
-npm run ingest-docs ../documents/flutter
+npm run ingest-docs ../documents/flutter_archive
 ```
 
 ### Test with Sample Queries
@@ -230,21 +230,21 @@ jobs:
 ```bash
 # Generate multiple test documents
 for i in {1..100}; do
-  echo "# Test Document $i" > documents/flutter/test_$i.md
-  echo "Flutter widget test content" >> documents/flutter/test_$i.md
+  echo "# Test Document $i" > documents/flutter_archive/test_$i.md
+  echo "Flutter widget test content" >> documents/flutter_archive/test_$i.md
 done
 
 # Run ingestion
 npm run ingest
 
 # Monitor performance
-time npm run test:flutter
+time npm run test:flutter_archive
 ```
 
 ### Memory Profiling
 ```bash
 # Run with memory profiling
-node --inspect test-flutter-mcp.ts
+node --inspect test-flutter_archive-mcp.ts
 
 # Open Chrome DevTools
 # Navigate to chrome://inspect

@@ -147,7 +147,7 @@ export class MetadataExtractor {
     const categories: string[] = [];
 
     // Language-based categories
-    if (language === 'dart') categories.push('flutter-development');
+    if (language === 'dart') categories.push('flutter_archive-development');
     if (language === 'javascript' || language === 'typescript') categories.push('web-development');
     if (language === 'java' || language === 'kotlin') categories.push('mobile-development');
     if (language === 'python') categories.push('backend-development');

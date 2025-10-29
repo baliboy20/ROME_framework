@@ -208,7 +208,7 @@ abstract class DesignTokens {
 // core/platform/platform_detector.dart
 
 import 'dart:io' show Platform;
-import 'package:flutter_archive/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 enum AppPlatform {
   web,

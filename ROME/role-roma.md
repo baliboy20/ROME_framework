@@ -195,7 +195,7 @@ tail -20 PROJECT/dev/project_tasks.log
 
 # Run all integration tests
 npm test -- tests/integration
-flutter test test/integration
+flutter_archive test test/integration
 ```
 
 ### Blocker Management

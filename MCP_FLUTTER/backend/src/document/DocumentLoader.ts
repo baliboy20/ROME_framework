@@ -308,7 +308,7 @@ export class DocumentLoader {
 
     return {
       tags,
-      categories: tags.length > 0 ? ['flutter-development'] : ['documentation'],
+      categories: tags.length > 0 ? ['flutter_archive-development'] : ['documentation'],
       language: format === 'dart' ? 'dart' : 
                 format === 'javascript' ? 'javascript' :
                 format === 'typescript' ? 'typescript' : 'unknown',
