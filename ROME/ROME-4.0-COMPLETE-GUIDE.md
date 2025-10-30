@@ -1460,16 +1460,28 @@ claude_*/                           # Robot workspaces (session-specific)
 
 ## Related Documents
 
+### Core Guides
 - [chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md) - Chaperone Phase 1 & 2 details
 - [start-here.md](start-here.md) - Entry point with phase navigation
 - [coordinator-hygiene-checklist.md](coordinator-hygiene-checklist.md) - Coordinator oversight guide
 - [spec-change-process.md](spec-change-process.md) - Formal change management
+
+### Role Specifications
 - [role-chaperone.md](role-chaperone.md) - Chaperone role specification
 - [role-pma.md](role-pma.md) - PMA role specification
 - [role-data.md](role-data.md) - Data Architect role
 - [role-backend.md](role-backend.md) - Backend Engineer role
 - [role-frontend.md](role-frontend.md) - Frontend Engineer role
+- [role-ux-clara.md](role-ux-clara.md) - UX Designer role
 - [role-roma.md](role-roma.md) - Project Coordinator role
+
+### Governance & Integration Guides (New)
+- [document-governance-matrix.md](document-governance-matrix.md) - **CENTRAL REFERENCE** - All project documents: who creates them, who uses them, which phases, locations, success criteria
+- [guide-ux-to-frontend-integration.md](guide-ux-to-frontend-integration.md) - **UX Design → Frontend Integration Protocol** (How design specs flow from Clara to Charlie with validation checkpoints)
+- [guide-robot-naming-conventions.md](guide-robot-naming-conventions.md) - **Robot Naming Conventions** (Standardized naming for robot directories: robot_charlie, robot_reena, robot_ashok, robot_clara, etc.)
+- [guide-question-option-completeness.md](guide-question-option-completeness.md) - **Question & Option Completeness Framework** (How Chaperone and PMA ask clarifying questions with complete option sets)
+
+### Reference Documents
 - [rome-overview.md](rome-overview.md) - ROME methodology overview
 - [rome-implementation-guide.md](rome-implementation-guide.md) - Implementation details
 - [rome-reference.md](rome-reference.md) - Quick reference guide

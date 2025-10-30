@@ -580,9 +580,17 @@ For state machines, algorithms, complex calculations:
 
 **Role Specifications:**
 - [role-pma.md](ROME/role-pma.md) - Your role
-- [role-backend.md](ROME/role-backend.md)
-- [role-frontend.md](ROME/role-frontend.md)
-- [role-data.md](ROME/role-data.md)
+- [role-chaperone.md](ROME/role-chaperone.md) - Chaperone role
+- [role-backend.md](ROME/role-backend.md) - Backend Engineer
+- [role-frontend.md](ROME/role-frontend.md) - Frontend Engineer
+- [role-data.md](ROME/role-data.md) - Data Architect
+- [role-ux-clara.md](ROME/role-ux-clara.md) - UX Designer
+
+**Governance & Integration Guides (New):**
+- [document-governance-matrix.md](ROME/document-governance-matrix.md) - **START HERE** for document management - central reference showing all project documents, who creates/uses them, phases, locations, success criteria
+- [guide-ux-to-frontend-integration.md](ROME/guide-ux-to-frontend-integration.md) - How design flows from UX to frontend with validation
+- [guide-robot-naming-conventions.md](ROME/guide-robot-naming-conventions.md) - Robot directory naming standards
+- [guide-question-option-completeness.md](ROME/guide-question-option-completeness.md) - How to ask clarifying questions with complete options
 
 ---
 

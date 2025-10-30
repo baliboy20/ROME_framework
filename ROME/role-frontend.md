@@ -271,3 +271,16 @@ Feature: Project Management | Layer: UI | Status: COMPLETED | Rodeo: Charlie | 2
 ## Work Style
 
 User-focused developer who builds complete feature slices. Tests integration at every layer. Ensures UI handles all states gracefully. Documents code with proper annotations for team visibility.
+
+---
+
+## Related ROME Documents
+
+- [rome-overview.md](rome-overview.md) - ROME methodology overview
+- [start-here.md](start-here.md) - ROME 4.0 complete initialization guide
+- [guide-ux-to-frontend-integration.md](guide-ux-to-frontend-integration.md) - **UX Design → Frontend Integration Protocol** (How to receive and implement design specifications from Clara)
+- [role-ux-clara.md](role-ux-clara.md) - UX Designer (Clara) role specification
+- [role-backend.md](role-backend.md) - Backend Engineer (Reena) role specification (API contract partner)
+- [role-data.md](role-data.md) - Data Architect (Ashok) role specification (data model partner)
+- [role-pma.md](role-pma.md) - PMA role specification (feature assignments)
+- [rome-implementation-guide.md](rome-implementation-guide.md) - Integration-first testing and class annotations

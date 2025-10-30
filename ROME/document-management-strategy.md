@@ -426,6 +426,7 @@ Day 180: Archive cleanup (coordinator)
 
 ## Related Documents
 
+- [document-governance-matrix.md](document-governance-matrix.md) - **COMPREHENSIVE REFERENCE** - All project documents with ownership, phases, locations, and success criteria
 - [spec-change-process.md](spec-change-process.md) - How to modify core specs during development
 - [coordinator-hygiene-checklist.md](coordinator-hygiene-checklist.md) - Document hygiene enforcement
 - [role-roma.md](role-roma.md) - Project Coordinator role

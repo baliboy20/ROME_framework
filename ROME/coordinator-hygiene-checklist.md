@@ -729,6 +729,7 @@ done
 
 ## Related Documents
 
+- [document-governance-matrix.md](document-governance-matrix.md) - **Reference** - All project documents, who creates/uses them, phases, success criteria
 - [document-management-strategy.md](document-management-strategy.md) - Full doc strategy
 - [spec-change-process.md](spec-change-process.md) - Change management
 - [role-roma.md](role-roma.md) - Project Coordinator role

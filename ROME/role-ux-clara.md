@@ -543,3 +543,15 @@ Detail-oriented advocate for user experience. Validates continuously rather than
 - Translates between design intent and technical implementation
 - Helps robots understand UX requirements
 - Advocates for users throughout development
+
+---
+
+## Related ROME Documents
+
+- [rome-overview.md](rome-overview.md) - ROME methodology overview
+- [start-here.md](start-here.md) - ROME 4.0 complete initialization guide
+- [guide-ux-to-frontend-integration.md](guide-ux-to-frontend-integration.md) - **UX Design → Frontend Integration Protocol** (How to hand off design artifacts to frontend developers and validate implementation)
+- [role-frontend.md](role-frontend.md) - Frontend Developer (Charlie) role specification
+- [role-pma.md](role-pma.md) - PMA role specification (partner in design approval)
+- [role-chaperone.md](role-chaperone.md) - Chaperone role specification (validates design in Phase 2)
+- [rome-implementation-guide.md](rome-implementation-guide.md) - Integration-first testing and class annotations

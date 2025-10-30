@@ -1001,6 +1001,35 @@ Phase 2 catches design issues before development starts. Saves cost of fixing pr
 - Navigation flow maps
 - Validation checklist
 
+**ROME/guide-question-option-completeness.md** (New)
+- Decision framework for choosing question types (multiple-choice vs. open-ended)
+- Completeness criteria for evaluating option sets
+- Recovery patterns when user answers don't fit options
+- Validation protocols for ensuring specifications are adequately refined
+- Real-world examples of good and bad question/option combinations
+
+**ROME/guide-ux-to-frontend-integration.md** (New)
+- UX Design → Frontend Integration Protocol
+- How Clara hands off design artifacts to Charlie
+- Design validation checkpoints during implementation
+- Design-driven code annotations (@Source tags)
+
+**ROME/guide-robot-naming-conventions.md** (New)
+- Standardized robot directory naming (robot_charlie, robot_reena, robot_ashok, etc.)
+- Directory structure standards for all robots
+- Cross-robot coordination map
+- Migration plan for renaming existing directories
+
+**ROME/document-governance-matrix.md** (New)
+- **CENTRAL REFERENCE** for all project documents
+- Which phase creates each document
+- Who creates it (role/robot)
+- Who uses it (roles)
+- Document locations (Tier 1/2/3)
+- Success criteria for each document
+- Phase-by-phase completion checklists
+- Quick reference: "Which document do I need?"
+
 ---
 
 ## Next Steps: How to Use Chaperone

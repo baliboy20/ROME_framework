@@ -490,6 +490,7 @@ Reviewed PMA functional design against Phase 1 refined specifications:
 - [rome-overview.md](rome-overview.md) - ROME methodology overview
 - [start-here.md](start-here.md) - ROME 4.0 complete initialization guide
 - [chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md) - Complete Chaperone guide (templates, checklists, patterns)
+- [guide-question-option-completeness.md](guide-question-option-completeness.md) - **Question & Option Completeness Framework** (How to ask clarifying questions with appropriate options and handle incomplete option sets)
 - [role-pma.md](role-pma.md) - PMA role specification (partner role)
 - [role-data.md](role-data.md) - Data Architect role (receives validated specs)
 - [role-backend.md](role-backend.md) - Backend Engineer role (receives validated specs)
