@@ -136,7 +136,7 @@ git commit -m "Initial requirements for [project name]"
 ### Step 4: Launch Chaperone
 
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 ```
 
@@ -222,7 +222,7 @@ If something's wrong:
 You don't do anything! Just:
 
 ```bash
-cd claude_pma
+cd robot_pma
 ./__start.sh
 ```
 
@@ -269,7 +269,7 @@ If something's wrong:
 ### Step 10: Launch Chaperone Phase 2
 
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Select: Phase 2 - Design Inspection & Validation
 ```
@@ -312,15 +312,15 @@ Chaperone makes a decision:
 
 ```bash
 # 1. Database robot (Ashok)
-cd claude_data
+cd robot_ashok
 ./__start.sh
 
 # 2. Backend robot (Reena) - wait for database first
-cd ../claude_backend
+cd ../robot_reena
 ./__start.sh
 
 # 3. Frontend robot (Charlie) - wait for API first
-cd ../claude_frontend
+cd ../robot_charlie
 ./__start.sh
 ```
 
@@ -398,26 +398,26 @@ EOF
 # Add use_cases.md, business_context.md if desired
 
 # Day 2-5: Chaperone Phase 1
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Answer questions about your project
 # Wait for specification_augmented.md
 
 # Day 6-8: PMA Design
-cd ../claude_pma
+cd ../robot_pma
 ./__start.sh
 # Wait for data_model.md, use_cases.md, actionlist.md
 
 # Day 9: Chaperone Phase 2 Validation
-cd ../claude_chaperone
+cd ../robot_chaperone
 ./__start.sh
 # Select: Phase 2
 # Wait for design_approval.md
 
 # Day 10+: Robots Build
-cd ../claude_data && ./__start.sh
-cd ../claude_backend && ./__start.sh
-cd ../claude_frontend && ./__start.sh
+cd ../robot_ashok && ./__start.sh
+cd ../robot_reena && ./__start.sh
+cd ../robot_charlie && ./__start.sh
 # Monitor PROJECT/dev/project_activity.status
 ```
 

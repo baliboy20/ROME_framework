@@ -108,7 +108,7 @@ PROJECT/dev/
 ### How to Launch Chaperone Phase 1
 
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Chaperone will ask: "Where are your requirement documents?"
 # You answer: "PROJECT/dev/_user_input/"
@@ -214,7 +214,7 @@ PROJECT/SOURCE/                      (created by PMA)
 ### How to Launch PMA
 
 ```bash
-cd claude_pma
+cd robot_pma
 ./__start.sh
 # PMA automatically reads: ../PROJECT/dev/specification_augmented.md
 ```
@@ -278,7 +278,7 @@ PROJECT/dev/
 ### How to Launch Chaperone Phase 2
 
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Select: Phase 2 - Design Inspection & Validation
 # Chaperone automatically reads the files above
@@ -313,15 +313,15 @@ Each robot implements their vertical feature slices following the 6-step ROME pr
 
 ```bash
 # 1. Database layer first (Ashok)
-cd claude_data
+cd robot_ashok
 ./__start.sh
 
 # 2. Backend layer (Reena) - waits for database
-cd ../claude_backend
+cd ../robot_reena
 ./__start.sh
 
 # 3. Frontend layer (Charlie) - waits for API
-cd ../claude_frontend
+cd ../robot_charlie
 ./__start.sh
 ```
 
@@ -1038,7 +1038,7 @@ EOF
 
 ### Day 2-4: Chaperone Phase 1
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Chaperone analyzes raw requirements
 # Produces: specification_augmented.md
@@ -1046,7 +1046,7 @@ cd claude_chaperone
 
 ### Day 5-7: PMA Phases 1-9
 ```bash
-cd claude_pma
+cd robot_pma
 ./__start.sh
 # PMA designs based on refined specs
 # Produces: data_model.md, use_cases.md, actionlist.md
@@ -1054,7 +1054,7 @@ cd claude_pma
 
 ### Day 8: Chaperone Phase 2
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Select: Phase 2 - Design Inspection
 # Decision: Approve or Block
@@ -1062,9 +1062,9 @@ cd claude_chaperone
 
 ### Day 9+: Development (if Approved)
 ```bash
-cd claude_data && ./__start.sh    # Ashok (database)
-cd ../claude_backend && ./__start.sh  # Reena (backend API)
-cd ../claude_frontend && ./__start.sh # Charlie (frontend)
+cd robot_ashok && ./__start.sh    # Ashok (database)
+cd ../robot_reena && ./__start.sh  # Reena (backend API)
+cd ../robot_charlie && ./__start.sh # Charlie (frontend)
 ```
 
 ---
@@ -1230,19 +1230,19 @@ ROME/                               # ROME methodology (immutable)
 └── ... (other ROME docs)
 
 claude_*/                           # Robot workspaces (session-specific)
-├── claude_chaperone/
+├── robot_chaperone/
 │   ├── CLAUDE.md
 │   └── __start.sh
-├── claude_pma/
+├── robot_pma/
 │   ├── CLAUDE.md
 │   └── __start.sh
-├── claude_data/
+├── robot_ashok/
 │   ├── CLAUDE.md
 │   └── __start.sh
-├── claude_backend/
+├── robot_reena/
 │   ├── CLAUDE.md
 │   └── __start.sh
-└── claude_frontend/
+└── robot_charlie/
     ├── CLAUDE.md
     └── __start.sh
 ```

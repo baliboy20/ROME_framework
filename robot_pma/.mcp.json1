@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "rome-mcp": {
+      "command": "npx",
+      "args": [
+        "tsx", 
+        "/Users/will/flutterProjects/Exercises/august/rome_tdd/RAG_ROME/services/mcp-server/src/index.ts"
+      ],
+      "env": {
+        "VDB_SERVICE_URL": "http://localhost:8081"
+      }
+    },
+
+    "codexpert-mcp": {
+      "command": "node",
+      "args": [
+        "/Users/will/flutterProjects/Exercises/august/rome_tdd/CODEXPERT/services/mcp-server/dist/index.js"
+      ],
+      "cwd": "/Users/will/flutterProjects/Exercises/august/rome_tdd/CODEXPERT/services/mcp-server",
+      "env": {
+        "NODE_ENV": "development",
+        "VDB_SERVICE_URL": "http://localhost:3040",
+        "MCP_SERVER_NAME": "codexpert-mcp",
+        "PORT": "3000",
+        "LOG_LEVEL": "info"
+      }
+    }
+
+
+
+  }
+}

@@ -959,17 +959,17 @@ Phase 2 catches design issues before development starts. Saves cost of fixing pr
 
 ### Chaperone Workspace Files
 
-**claude_chaperone/CLAUDE.md** (13 KB)
+**robot_chaperone/CLAUDE.md** (13 KB)
 - Detailed phase-by-phase execution instructions
 - What Chaperone should do in each phase
 - Success criteria and decision points
 - Step-by-step guidance
 
-**claude_chaperone/__start.sh** (272 B)
+**robot_chaperone/__start.sh** (272 B)
 - Startup script to launch Chaperone
 - Makes executable with: `chmod +x __start.sh`
 
-**claude_chaperone/README.md** (9 KB)
+**robot_chaperone/README.md** (9 KB)
 - User-friendly guide to Chaperone
 - What Chaperone does
 - How to use it
@@ -1050,7 +1050,7 @@ mkdir -p PROJECT/dev/_user_input
 
 ### Step 3: Launch Chaperone Phase 1
 ```bash
-cd /path/to/claude_chaperone
+cd /path/to/robot_chaperone
 ./__start.sh
 # Chaperone will ask: "Where are your requirement documents?"
 # Answer: "PROJECT/dev/_user_input/"
@@ -1075,7 +1075,7 @@ PMA uses refined specs to create functional design
 
 ### Step 7: Launch Chaperone Phase 2
 ```bash
-cd /path/to/claude_chaperone
+cd /path/to/robot_chaperone
 ./__start.sh
 # Select: Phase 2 - Design Inspection & Validation
 ```
@@ -1143,6 +1143,6 @@ Reflect on Chaperone with these questions:
 **Version**: 4.0 (Two-Phase Model, Comprehensive)
 
 For questions, refer to:
-- [claude_chaperone/README.md](../claude_chaperone/README.md) - User guide
+- [robot_chaperone/README.md](../robot_chaperone/README.md) - User guide
 - [ROME/role-chaperone.md](./role-chaperone.md) - Detailed role specification
 - [ROME/template-augmented-specification.md](./template-augmented-specification.md) - Output template

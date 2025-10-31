@@ -24,7 +24,7 @@ touch PROJECT/dev/project_tasks.log
 In each `claude_*` directory:
 
 ```bash
-cat > claude_backend/CLAUDE.md << 'EOF'
+cat > robot_reena/CLAUDE.md << 'EOF'
 Execute the following tasks:
 
 1) Read all documents in ../ROME folder
@@ -120,7 +120,7 @@ EOF
 **Launch Chaperone Phase 1:**
 
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Chaperone will:
 # 1. Read documents from PROJECT/dev/_user_input/
@@ -253,7 +253,7 @@ POST /api/projects
 
 ```bash
 # Chaperone Phase 2: Review PMA's design against refined specs
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Select: "Phase 2: Design Inspection & Validation"
 # Chaperone will validate:
@@ -280,16 +280,16 @@ cd claude_chaperone
 
 ```bash
 # 1. Data robot creates database schema
-cd claude_data && ./__start.sh
+cd robot_ashok && ./__start.sh
 
 # 2. Backend robot creates API (waits for DB)
-cd ../claude_backend && ./__start.sh
+cd ../robot_reena && ./__start.sh
 
 # 3. Frontend robot creates UI (waits for API)
-cd ../claude_frontend && ./__start.sh
+cd ../robot_charlie && ./__start.sh
 
 # 4. Coordinator monitors progress
-cd ../claude_coordinator && ./__start.sh
+cd ../robot_roma && ./__start.sh
 ```
 
 ### Step 6: Monitor Progress

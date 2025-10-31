@@ -36,7 +36,7 @@ If you haven't launched Chaperone yet, START HERE:
 
 **Launch Chaperone:**
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 ```
 
@@ -70,7 +70,7 @@ You have already received:
 
 **Launch Chaperone Phase 2:**
 ```bash
-cd claude_chaperone
+cd robot_chaperone
 ./__start.sh
 # Select: Phase 2 - Design Inspection & Validation
 ```
