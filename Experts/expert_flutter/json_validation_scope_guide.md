@@ -1,5 +1,4 @@
 # JSON Validation Scope Guide
-## The Art Deco Bakery - Flutter Application
 
 ### Overview
 **MANDATORY REQUIREMENT**: All JSON responses from external sources must be validated before deserialization. This guide defines which data paths require validation and implementation patterns.

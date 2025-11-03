@@ -1,5 +1,5 @@
 # Routing Patterns Expert Guide
-## The Art Deco Bakery - Flutter Application
+ 
 
 ### Overview
 This document establishes routing patterns and navigation conventions using **GoRouter**, Flutter's declarative routing solution. The architecture emphasizes type-safe navigation with centralized route definitions.

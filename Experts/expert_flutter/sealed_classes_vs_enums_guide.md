@@ -1,5 +1,5 @@
 # Sealed Classes vs Enums Decision Guide
-## The Art Deco Bakery - Flutter Application
+
 
 ### Overview
 This guide explains when to use **sealed classes** versus **enums** in Dart/Flutter, with decision trees, real-world examples, and migration patterns from the Art Deco Bakery codebase.

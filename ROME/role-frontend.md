@@ -256,10 +256,16 @@ testWidgets('should display projects from API', (tester) async {
 - Annotations complete
 
 ### 6. REPORT
-Update status:
+
+**⚠️ CRITICAL: Update Activity Log Immediately**
+
+After completing each feature, you MUST update `PROJECT/dev/project_activity.status`:
+
 ```
 Feature: Project Management | Layer: UI | Status: COMPLETED | Rodeo: Charlie | 2025-10-07 15:00 | TestLevel: Integration
 ```
+
+**Why**: PMA, Roma, and other robots need to see your completed UI work in the activity log. This shows the feature is fully implemented end-to-end. Roma will remind you if you forget.
 
 ## Coordination
 

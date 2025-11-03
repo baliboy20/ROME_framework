@@ -1,5 +1,4 @@
 # Platform Theme Architecture Guide
-## The Art Deco Bakery - Flutter Application
 
 ### Overview
 This guide establishes a unified, centralized approach to theming across both Cupertino and Material design systems, eliminating **50+ instances of duplicate spacing constants** and **decorative styles** scattered across 8+ files.

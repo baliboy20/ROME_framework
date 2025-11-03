@@ -61,6 +61,27 @@ grep -r "@Created.*@TestLevel.*@Stable.*@ComplexityLevel" PROJECT/SOURCE/
 - Identify completed features
 - Spot blockers early
 
+**⚠️ CRITICAL RESPONSIBILITY: Ensure Activity Log is Updated**
+
+Roma MUST actively remind all development robots to update `PROJECT/dev/project_activity.status` after completing work:
+
+- **After every feature completion**: Remind robot to update status
+- **If no update for >2 hours**: Proactively ask robot for status update
+- **Before daily reports**: Verify all robots have logged their progress
+- **When blockers occur**: Ensure blocker is documented immediately
+
+**Why This Matters**: The activity log is the **coordination mechanism** that allows:
+- Other robots to see what's available (e.g., Charlie needs to know when Reena's API is ready)
+- PMA to track overall project progress
+- Roma to generate accurate status reports
+- Team to identify dependencies and blockers
+
+**Format to remind robots**:
+```
+"Please update PROJECT/dev/project_activity.status with your completed work:
+ Feature: [name] | Layer: [layer] | Status: COMPLETED | Robot: [name] | Timestamp | TestLevel: [level]"
+```
+
 **Generate Reports:**
 ```markdown
 ## Daily Status Report - 2025-10-07

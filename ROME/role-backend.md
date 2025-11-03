@@ -246,10 +246,16 @@ describe('Projects API Integration', () => {
 - Annotations complete
 
 ### 6. REPORT
-Update status:
+
+**⚠️ CRITICAL: Update Activity Log Immediately**
+
+After completing each feature, you MUST update `PROJECT/dev/project_activity.status`:
+
 ```
 Feature: Project Management | Layer: API | Status: COMPLETED | Rodeo: Reena | 2025-10-07 10:30 | TestLevel: Integration
 ```
+
+**Why**: Frontend (Charlie) depends on seeing your completed API work in the activity log. This is how Charlie knows which endpoints are ready for integration. Roma will remind you if you forget.
 
 ## Coordination
 

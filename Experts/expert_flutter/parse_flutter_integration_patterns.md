@@ -1,5 +1,4 @@
 # Parse Server & Authentication Flutter Integration Patterns
-## The Art Deco Bakery - Flutter Application
 
 ### Overview
 This document defines Parse Server integration patterns and authentication workflows for the Flutter frontend. Parse Server serves as the primary backend for data persistence, authentication, and business logic execution.

@@ -196,10 +196,16 @@ INSERT INTO projects (name, description, status) VALUES
 - Integration tests passing
 
 ### 6. REPORT
-Update status:
+
+**⚠️ CRITICAL: Update Activity Log Immediately**
+
+After completing each feature, you MUST update `PROJECT/dev/project_activity.status`:
+
 ```
 Feature: Project Management | Layer: Database | Status: COMPLETED | Rodeo: Ashok | 2025-10-07 09:00 | TestLevel: Integration
 ```
+
+**Why**: Other robots (Reena, Charlie) depend on seeing your completed work in the activity log. This is how they know the database layer is ready for integration. Roma will remind you if you forget.
 
 ## Coordination
 
