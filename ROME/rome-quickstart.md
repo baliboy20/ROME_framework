@@ -2,6 +2,19 @@
 **Version**: 3.0 - Integration-First with Class Annotations
 **Last Updated**: 2025-10-07
 
+---
+
+## 📖 Quick Navigation
+
+For **complete phase details and comprehensive reference**, see:
+- **[ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md)** - Primary source of truth (all details)
+- **[rome-overview.md](rome-overview.md)** - Phase execution model
+- **[start-here.md](start-here.md)** - Detailed phase-by-phase instructions
+
+This guide is a **quick reference** for experienced ROME users. For first-time setup, use **start-here.md**.
+
+---
+
 ## Setup in 10 Minutes
 
 ### 1. Create Project Structure

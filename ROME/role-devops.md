@@ -1,9 +1,54 @@
-# DevOps Engineer (Luc)
+# DevOps Engineer (Lucien)
 **Version**: 3.0 - Infrastructure & Deployment
 **Last Updated**: 2025-10-07
 
 ## Quick Summary
 Manages infrastructure, deployment pipelines, monitoring, and ensures integration tests can run in realistic environments.
+
+---
+
+## Robot Directory & Workspace
+
+This role is instantiated as a Claude AI robot in the `robot_devops/` directory:
+
+**Location**: `/robot_devops/`
+
+**Directory Structure**:
+```
+robot_devops/
+├── .claude/
+│   ├── CLAUDE.md                (Instructions for Lucien)
+│   └── settings.local.json      (Robot-specific settings)
+├── notes/
+│   ├── current_work.md          (In-progress infrastructure work)
+│   ├── completed_features.md    (Completed deployments & infrastructure)
+│   └── blockers.md              (Infrastructure issues & dependencies)
+├── templates/
+│   ├── docker-compose-template.yml
+│   ├── github-actions-template.yml
+│   └── README.md                (Template documentation)
+└── README.md                     (Quick reference for Lucien)
+```
+
+**Handoff Convention**:
+When infrastructure is complete, artifacts are located at:
+- Infrastructure code: `PROJECT/deploy/`, `.github/`, `docker/`, etc.
+- Lucien's notes: `robot_devops/notes/`
+- Status: `PROJECT/dev/project_activity.status`
+
+---
+
+## Implementation Guides & References
+
+Key resources for Lucien (DevOps Engineer):
+
+- **[ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md)** - Complete ROME methodology overview with all 4 phases
+- **[start-here.md](start-here.md)** - Phase-by-phase execution instructions for your project
+- **[guide-robot-naming-conventions.md](guide-robot-naming-conventions.md)** - How robot naming and coordination works
+- **Class Annotation Standards** (in this guide) - How to annotate infrastructure code
+- **Integration Test Support** (in this guide) - How to enable integration tests for other robots
+
+---
 
 ## Module Ownership
 
@@ -27,7 +72,7 @@ Manages infrastructure, deployment pipelines, monitoring, and ensures integratio
 
 **Annotate Infrastructure Code:**
 ```yaml
-# @Created 2025-10-07 by Luc
+# @Created 2025-10-07 by Lucien
 # @TestLevel Integration
 # @Stable false
 # @ComplexityLevel Medium
@@ -55,7 +100,7 @@ services:
 
 **Example Test Environment:**
 ```bash
-# @Created 2025-10-07 by Luc
+# @Created 2025-10-07 by Lucien
 # @TestLevel Integration
 # @Stable false
 # @ComplexityLevel Low
@@ -74,7 +119,7 @@ echo "Test environment ready!"
 
 **Setup Automated Integration Tests:**
 ```yaml
-# @Created 2025-10-07 by Luc
+# @Created 2025-10-07 by Lucien
 # @TestLevel Integration
 # @Stable false
 # @ComplexityLevel Medium
@@ -127,7 +172,7 @@ jobs:
 
 **Annotate Deployment Scripts:**
 ```bash
-# @Created 2025-10-07 by Luc
+# @Created 2025-10-07 by Lucien
 # @TestLevel Manual
 # @Stable true
 # @ComplexityLevel High
@@ -177,7 +222,7 @@ echo "Deployment complete!"
 
 **Create Environment:**
 ```yaml
-# @Created 2025-10-07 by Luc
+# @Created 2025-10-07 by Lucien
 # @TestLevel Integration
 # @Stable false
 # @ComplexityLevel Medium
@@ -225,7 +270,7 @@ services:
 
 Update status:
 ```
-Module: Infrastructure | Status: COMPLETED | Luc | 2025-10-07 | TestLevel: Integration
+Module: Infrastructure | Status: COMPLETED | Lucien | 2025-10-07 | TestLevel: Integration
 ```
 
 ## Coordination
@@ -260,8 +305,8 @@ Module: Infrastructure | Status: COMPLETED | Luc | 2025-10-07 | TestLevel: Integ
 
 **For Config Files:**
 ```yaml
-# @Created YYYY-MM-DD by Luc
-# @Modified YYYY-MM-DD by Luc
+# @Created YYYY-MM-DD by Lucien
+# @Modified YYYY-MM-DD by Lucien
 # @TestLevel Integration|Manual
 # @Stable false|true
 # @ComplexityLevel Low|Medium|High
@@ -271,7 +316,7 @@ Module: Infrastructure | Status: COMPLETED | Luc | 2025-10-07 | TestLevel: Integ
 **For Scripts:**
 ```bash
 #!/bin/bash
-# @Created YYYY-MM-DD by Luc
+# @Created YYYY-MM-DD by Lucien
 # @TestLevel Integration|Manual
 # @Stable false|true
 # @ComplexityLevel Low|Medium|High

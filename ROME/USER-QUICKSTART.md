@@ -7,6 +7,17 @@
 
 ---
 
+## 📖 For Complete Phase Details
+
+This guide provides a user-friendly walkthrough. For **comprehensive phase information, file locations, and technical details**, see:
+- **[ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md)** - Complete reference (single source of truth)
+- **[rome-overview.md](rome-overview.md)** - Phase execution model diagram
+- **[start-here.md](start-here.md)** - Detailed step-by-step instructions
+
+This guide focuses on **what you (the project owner) need to do** at each stage.
+
+---
+
 ## What You Need Before Starting
 
 ### 1. Requirements Documentation

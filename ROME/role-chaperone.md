@@ -99,15 +99,18 @@ robot_chaperone/
 - Clarify terminology mismatches
 
 #### 2. Technical Dimension Analysis
-Conduct analysis across 8 technical dimensions:
-- **Data Model & Schema** - Entity relationships, constraints, lifecycle
-- **Application Flows** - Use case clarity, state machines, edge cases
-- **Authentication & Authorization** - Auth strategy, permissions model, security
-- **Caching Strategy** - Cache layers, invalidation, performance targets
-- **Technology Stack** - Language, frameworks, libraries, patterns, anti-patterns
-- **Target Platforms** - Web, mobile, native vs cross-platform, deployment
-- **Testing Strategy** - Integration tests, unit tests, test layers, testing sequence
-- **System Scope** - Greenfield vs brownfield, migration strategy
+Conduct analysis across **8 technical dimensions**. For detailed analysis framework with specific questions for each dimension, see:
+- **[chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md)** - Complete 8-Dimension Analysis Framework (primary reference)
+
+**The 8 Dimensions** (quick reference):
+1. **Data Model & Schema** - Entity relationships, constraints, lifecycle
+2. **Application Flows** - Use case clarity, state machines, edge cases
+3. **Authentication & Authorization** - Auth strategy, permissions model, security
+4. **Caching Strategy** - Cache layers, invalidation, performance targets
+5. **Technology Stack** - Language, frameworks, libraries, patterns, anti-patterns
+6. **Target Platforms** - Web, mobile, native vs cross-platform, deployment
+7. **Testing Strategy** - Integration tests, unit tests, test layers, testing sequence
+8. **System Scope** - Greenfield vs brownfield, migration strategy
 
 #### 3. Specification Refinement Output
 - Produce clarified, unambiguous requirement specifications

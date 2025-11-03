@@ -67,7 +67,7 @@ PHASE 3: Implementation (Development Robots)
 **Critical**:
 - DO NOT skip phases or run them out of order
 - Each phase depends on the previous one
-- Chaperone Phase 2 (2B) is a GATE that can BLOCK Phase 3
+- Phase 2B (Chaperone Phase 2) is a GATE that can BLOCK Phase 3
 - Phase 3 includes QA and unit tests (not separate phases)
 
 ---
@@ -195,7 +195,7 @@ See: [chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md) - Phas
 - Action list populated with tasks
 - Robot workspaces created
 - Integration test strategy defined
-- **Ready for Chaperone Phase 2 validation**
+- **Ready for Phase 2B (Chaperone Phase 2) validation**
 
 ### Input Files
 
@@ -1557,7 +1557,7 @@ robot_*/                            # Robot workspaces (session-specific)
 ### Governance & Integration Guides (New)
 - [document-governance-matrix.md](document-governance-matrix.md) - **CENTRAL REFERENCE** - All project documents: who creates them, who uses them, which phases, locations, success criteria
 - [guide-ux-to-frontend-integration.md](guide-ux-to-frontend-integration.md) - **UX Design → Frontend Integration Protocol** (How design specs flow from Clara to Charlie with validation checkpoints)
-- [guide-robot-naming-conventions.md](guide-robot-naming-conventions.md) - **Robot Naming Conventions** (Standardized naming for robot directories: robot_charlie, robot_reena, robot_ashok, robot_clara, etc.)
+- [guide-robot-naming-conventions.md](guide-robot-naming-conventions.md) - **Robot Naming Conventions** (Standardized naming for robot directories: robot_charlie, robot_reena, robot_ashok, robot_clara, robot_roma, robot_pma, robot_chaperone, robot_devops)
 - [guide-question-option-completeness.md](guide-question-option-completeness.md) - **Question & Option Completeness Framework** (How Chaperone and PMA ask clarifying questions with complete option sets)
 
 ### Reference Documents
