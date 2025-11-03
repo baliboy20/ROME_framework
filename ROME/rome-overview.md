@@ -77,6 +77,63 @@ class ProjectService { ... }
 - Research/experimental projects
 - Systems without clear use cases
 
+## ROME 4.0 Execution Model: 4 Phases
+
+ROME 4.0 operates in **4 sequential Phases** with clear handoffs:
+
+```
+PHASE 1: Specification Refinement (Chaperone)
+         Input: Raw requirements
+         Output: Refined specifications
+         Duration: 2-5 days
+
+         ↓ (specifications approved)
+
+PHASE 2: Functional Design & Planning (PMA)
+         Input: Refined specifications
+         Output: Data model, use cases, design, action list
+         Duration: 2-3 days
+         Includes:
+         - Step 1: Deep Requirements Analysis
+         - Step 2: Data-First Design
+         - Step 3: Feature Decomposition
+         - Step 4: Integration Test Planning
+         - Step 5: Project Setup
+         - Step 6: Create Action List
+
+         ↓ (design ready for validation)
+
+PHASE 2B: Design Validation Gate (Chaperone Phase 2)
+         Input: PMA's design artifacts
+         Output: Approval (✅), Blockers (🚫), or Escalation (🚩)
+         Duration: 1-2 days
+         Decision: Can development proceed?
+
+         ↓ (IF APPROVED: Design is feasible and practical)
+
+PHASE 3: Implementation (Development Robots)
+         Input: Approved design + specifications
+         Output: Working features with integration tests
+         Duration: 5-10+ days
+         Robots:
+         - robot_ashok (Data): Database schema & migrations
+         - robot_reena (Backend): API endpoints & business logic
+         - robot_charlie (Frontend): UI & domain logic
+         - robot_clara (UX): Design validation throughout
+         Includes:
+         - Build Layer 1 (Database)
+         - Build Layer 2-3 (Backend)
+         - Build Layer 4-6 (Frontend)
+         - Quality Assurance & Integration Tests
+         - Complex Logic Unit Tests
+```
+
+**Critical Points:**
+- Phases must run sequentially (no skipping or parallel running)
+- Chaperone Phase 2 is a GATE that can BLOCK Phase 3
+- Phase 3 includes quality assurance and unit tests (not separate phases)
+- Each phase has clear inputs, outputs, and success criteria
+
 ## Quick Start (ROME 4.0 Correct Order)
 
 **⚠️ CRITICAL: Read [ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md) for the complete process**

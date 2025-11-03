@@ -5,16 +5,22 @@
 **ROME 4.0 operates in 4 sequential phases. You MUST follow this order:**
 
 ```
-1. 🎯 Chaperone Phase 1   → Refine raw requirements into clear specs
-                          ↓
-2. 📋 PMA Phases 1-9      → Design using refined specs
-                          ↓
-3. ✅ Chaperone Phase 2   → Validate design is practical
-                          ↓
-4. 🚀 Development Robots  → Build with validated specs
+PHASE 1: 🎯 Chaperone Phase 1
+         → Refine raw requirements into clear specs
+         ↓
+PHASE 2: 📋 PMA (6 Steps)
+         → Design using refined specs
+         ↓
+PHASE 2B:✅ Chaperone Phase 2 (Design Validation Gate)
+         → Approve or block design
+         ↓ (IF APPROVED)
+PHASE 3: 🚀 Development Robots (5 Steps)
+         → Build with validated specs & designs
 ```
 
-**This guide covers ALL 4 phases. Read the phase relevant to where you are.**
+**Critical**: Each phase depends on the previous one. Do NOT skip or run out of order.
+
+**This guide covers ALL 4 phases + 2B gate. Read the phase relevant to where you are.**
 
 ---
 
@@ -44,7 +50,7 @@ cd robot_chaperone
 
 ---
 
-### 📋 Phase 2: PMA Phases 1-9 - Functional Design
+### 📋 Phase 2: PMA - Functional Design & Planning (6 Steps)
 
 **Status**: Second phase, you have refined specs from Chaperone
 
@@ -55,18 +61,31 @@ You have already received:
 
 **Your job**: Take refined specs and create complete project design plan
 
-**Proceed to**: [PMA Phases 1-9](#pma-phases-1-9---functional-design) section below
+**PMA executes 6 Steps:**
+1. Deep Requirements Analysis
+2. Data-First Design (→ data_model.md, use_cases.md)
+3. Feature Decomposition
+4. Integration Test Strategy
+5. Project Setup
+6. Create Action List (→ actionlist.md)
+
+**Proceed to**: [Phase 2: PMA Steps 1-6](#phase-2-pma-steps-1-6---functional-design) section below
 
 ---
 
-### ✅ Phase 3: Chaperone Phase 2 - Design Inspection & Validation
+### ✅ Phase 2B: Design Validation Gate (Chaperone Phase 2)
 
-**Status**: Third phase, after PMA completes design
+**Status**: Validation checkpoint, after PMA completes 6 steps
+
+**This is a GATE/DECISION POINT:**
+- ✅ **APPROVED** - Design is practical, proceed to Phase 3
+- 🚫 **BLOCKED** - Design has issues, return to Phase 2 to fix
+- 🚩 **ESCALATED** - Issues need stakeholder decision
 
 **What Chaperone Does:**
 1. Reviews PMA's design against Phase 1 specs
-2. Validates technical feasibility
-3. Approves design OR blocks with issues
+2. Validates technical feasibility, schedule realism, scope clarity
+3. Makes decision: Approve, Block, or Escalate
 
 **Launch Chaperone Phase 2:**
 ```bash
@@ -79,31 +98,36 @@ cd robot_chaperone
 
 ---
 
-### 🚀 Phase 4: Development Robots - Implementation
+### 🚀 Phase 3: Development Robots - Implementation (5 Steps)
 
-**Status**: Fourth phase, after Chaperone Phase 2 approval
+**Status**: Fourth phase, after Chaperone Phase 2 APPROVAL
 
-**What Robots Do:**
-- Ashok (Data): Create database schema and migrations
-- Reena (Backend): Implement API and business logic
-- Charlie (Frontend): Build UI and client layers
+**What Robots Do (5 Steps):**
+- Step 1: robot_ashok (Data) - Database layer
+- Step 2-3: robot_reena (Backend) - API & business logic
+- Step 4-6: robot_charlie (Frontend) - UI & domain logic
+- Throughout: robot_clara (UX) validates designs
+- End of phase: Unit tests for complex logic
 
 **Robot Roles:**
-- [role-data.md](role-data.md) - Ashok (Data Architect)
-- [role-backend.md](role-backend.md) - Reena (Backend Engineer)
-- [role-frontend.md](role-frontend.md) - Charlie (Frontend Engineer)
+- [role-data.md](role-data.md) - robot_ashok (Data Architect)
+- [role-backend.md](role-backend.md) - robot_reena (Backend Engineer)
+- [role-frontend.md](role-frontend.md) - robot_charlie (Frontend Engineer)
+- [role-ux-clara.md](role-ux-clara.md) - robot_clara (UX Designer)
 
 ---
 
-## PMA Phases 1-9 - Functional Design
+## Phase 2: PMA Steps 1-6 - Functional Design & Planning
 
 **You are the PMA (Project Manager/Architect)**
 
 Your role is to understand, design, plan and coordinate application development using ROME 4.0 methodology using refined specifications from Chaperone Phase 1.
 
+You will execute **6 Steps** within Phase 2. After completing all 6 steps, your design goes to Chaperone Phase 2 for validation.
+
 ---
 
-## Phase 1: Deep Requirements Analysis
+## Phase 2, Step 1: Deep Requirements Analysis
 
 ### 1.1 Ask Extensive Questions
 
@@ -138,7 +162,7 @@ Before proceeding, confirm:
 
 ---
 
-## Phase 2: Data-First Design
+## Phase 2, Step 2: Data-First Design
 
 ### 2.1 Create Data Model
 
@@ -245,7 +269,7 @@ In data_model.md, document all validation:
 
 ---
 
-## Phase 3: Feature Decomposition
+## Phase 2, Step 3: Feature Decomposition
 
 ### 3.1 Break into Vertical Slices
 
@@ -310,7 +334,7 @@ Assign complete vertical slices WITH UX validation:
 
 ---
 
-## Phase 4: Integration Test Strategy
+## Phase 2, Step 4: Integration Test Strategy
 
 ### 4.1 Test Progression
 
@@ -344,7 +368,7 @@ Mark features/components needing unit tests:
 
 ---
 
-## Phase 5: Project Setup
+## Phase 2, Step 5: Project Setup
 
 ### 5.1 Create Directory Structure
 
@@ -442,7 +466,7 @@ See individual role specifications for robot-specific directory details:
 
 ---
 
-## Phase 6: Create Action List
+## Phase 2, Step 6: Create Action List
 
 ### 6.1 Populate actionlist.md
 
@@ -516,7 +540,7 @@ DELETE /api/projects/:id
 
 ---
 
-## Phase 7: Launch Robots
+## Phase 3, Step 1: Launch Robots
 
 ### 7.1 Verify Setup
 
@@ -552,7 +576,7 @@ Before launching:
 
 ---
 
-## Phase 8: Quality Assurance
+## Phase 3, Step 2: Quality Assurance
 
 ### 8.1 Monitor Annotations
 
@@ -590,7 +614,7 @@ When features are complete:
 
 ---
 
-## Phase 9: Complex Logic Unit Tests (End of Project)
+## Phase 3, Step 5: Complex Logic Unit Tests (End of Project)
 
 ### 9.1 Identify Complex Logic
 
