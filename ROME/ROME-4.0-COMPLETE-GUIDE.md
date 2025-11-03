@@ -34,11 +34,9 @@ ROME 4.0 operates in **4 sequential Phases**. You MUST follow this order:
 
 ```
 PHASE 1: Specification Refinement (Chaperone)
-         Duration: 2-5 days
          ↓ (produces refined specifications)
 
 PHASE 2: Functional Design & Planning (PMA)
-         Duration: 2-3 days
          Contains 6 Steps:
          • Step 1: Deep Requirements Analysis
          • Step 2: Data-First Design
@@ -49,12 +47,10 @@ PHASE 2: Functional Design & Planning (PMA)
          ↓ (produces design plan)
 
 PHASE 2B: Design Validation Gate (Chaperone Phase 2)
-         Duration: 1-2 days
          Decision Point: Approve, Block, or Escalate?
          ↓ (IF APPROVED: proceed to Phase 3)
 
 PHASE 3: Implementation (Development Robots)
-         Duration: 5-10+ days
          Contains 5 Steps:
          • Step 1: Database Layer (robot_ashok)
          • Step 2-3: Backend Layer (robot_reena)
@@ -75,7 +71,6 @@ PHASE 3: Implementation (Development Robots)
 ## Phase 1: Chaperone Phase 1 - Specification Refinement
 
 **When**: First, before PMA begins work
-**Duration**: 2-5 days depending on complexity
 **Who**: Chaperone AI Assistant
 **Input**: Raw requirement documents in `PROJECT/dev/_user_input/`
 **Output**: Refined specifications in `PROJECT/dev/`
@@ -145,7 +140,6 @@ See: [chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md) - Phas
 ## Phase 2: Functional Design & Planning (PMA)
 
 **When**: After Chaperone Phase 1 completes
-**Duration**: 2-3 days
 **Who**: PMA (Project Manager/Architect) AI Assistant
 **Input**: Refined specifications from Chaperone Phase 1
 **Output**: Functional design plan in `PROJECT/dev/`
@@ -242,7 +236,6 @@ See: [start-here.md](start-here.md) - Phase 2: PMA Steps 1-6 section
 ## Phase 2B: Design Validation Gate (Chaperone Phase 2)
 
 **When**: After Phase 2 (PMA) completes Steps 1-6
-**Duration**: 1-2 days
 **Who**: Chaperone AI Assistant
 **Input**: PMA's functional design and Phase 1 refined specs
 **Output**: Design approval or blocking issues in `PROJECT/dev/`
@@ -330,7 +323,6 @@ See: [chaperone-comprehensive-guide.md](chaperone-comprehensive-guide.md) - Phas
 ## Phase 3: Implementation (Development Robots)
 
 **When**: After Phase 2B (Chaperone Phase 2) APPROVAL
-**Duration**: 5-10+ days depending on project complexity
 **Who**: robot_ashok (Data), robot_reena (Backend), robot_charlie (Frontend), robot_clara (UX throughout)
 **Input**: Refined specs, design, action list, design approval
 **Output**: Fully implemented features with integration tests in `PROJECT/SOURCE/`

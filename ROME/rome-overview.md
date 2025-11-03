@@ -85,14 +85,12 @@ ROME 4.0 operates in **4 sequential Phases** with clear handoffs:
 PHASE 1: Specification Refinement (Chaperone)
          Input: Raw requirements
          Output: Refined specifications
-         Duration: 2-5 days
 
          ↓ (specifications approved)
 
 PHASE 2: Functional Design & Planning (PMA)
          Input: Refined specifications
          Output: Data model, use cases, design, action list
-         Duration: 2-3 days
          Includes:
          - Step 1: Deep Requirements Analysis
          - Step 2: Data-First Design
@@ -106,7 +104,6 @@ PHASE 2: Functional Design & Planning (PMA)
 PHASE 2B: Design Validation Gate (Chaperone Phase 2)
          Input: PMA's design artifacts
          Output: Approval (✅), Blockers (🚫), or Escalation (🚩)
-         Duration: 1-2 days
          Decision: Can development proceed?
 
          ↓ (IF APPROVED: Design is feasible and practical)
@@ -114,7 +111,6 @@ PHASE 2B: Design Validation Gate (Chaperone Phase 2)
 PHASE 3: Implementation (Development Robots)
          Input: Approved design + specifications
          Output: Working features with integration tests
-         Duration: 5-10+ days
          Robots:
          - robot_ashok (Data): Database schema & migrations
          - robot_reena (Backend): API endpoints & business logic
