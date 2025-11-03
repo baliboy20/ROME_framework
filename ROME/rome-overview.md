@@ -144,7 +144,7 @@ PHASE 3: Implementation (Development Robots)
 - Produces refined, unambiguous specifications
 - **Output**: specification_augmented.md ✅
 
-### Phase 2: PMA Phases 1-9 (Functional Design)
+### Phase 2: PMA - Phase 2, Steps 1-6 (Functional Design & Planning)
 - PMA analyzes refined requirements → asks design questions
 - PMA creates data models and use case workflows
 - PMA decomposes into vertical feature slices

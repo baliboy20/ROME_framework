@@ -235,7 +235,7 @@ cd robot_pma
 
 ### Reference
 
-See: [start-here.md](start-here.md) - PMA Phases 1-9 section
+See: [start-here.md](start-here.md) - Phase 2: PMA Steps 1-6 section
 
 ---
 
@@ -1063,9 +1063,9 @@ See: [coordinator-hygiene-checklist.md](coordinator-hygiene-checklist.md) for de
 1. Read this guide (Part A - Execution Flow)
 2. Create `PROJECT/dev/_user_input/` with raw requirements
 3. Launch Chaperone Phase 1
-4. When done, launch PMA Phases 1-9
-5. When done, launch Chaperone Phase 2
-6. When approved, launch Development Robots
+4. When done, launch PMA (Phase 2, Steps 1-6)
+5. When done, launch Chaperone Phase 2 (Phase 2B - Design Validation Gate)
+6. If approved, launch Development Robots (Phase 3)
 
 ### If You're Joining Mid-Project
 1. Check: What phase are we in? (See Phase Summary above)
@@ -1113,7 +1113,7 @@ cd robot_chaperone
 # Produces: specification_augmented.md
 ```
 
-### Day 5-7: PMA Phases 1-9
+### Day 5-7: PMA (Phase 2, Steps 1-6)
 ```bash
 cd robot_pma
 ./__start.sh
@@ -1121,7 +1121,7 @@ cd robot_pma
 # Produces: data_model.md, use_cases.md, actionlist.md
 ```
 
-### Day 8: Chaperone Phase 2
+### Day 8: Chaperone Phase 2 (Phase 2B - Design Validation Gate)
 ```bash
 cd robot_chaperone
 ./__start.sh
@@ -1156,13 +1156,13 @@ cd ../robot_charlie && ./__start.sh # Charlie (frontend)
 ### For PMA
 **First Time?**
 1. Read: Part A - Phase 2 section above
-2. Read: [start-here.md](start-here.md) - PMA Phases 1-9 section
+2. Read: [start-here.md](start-here.md) - Phase 2: PMA Steps 1-6 section
 3. Execute: Launch PMA as shown above
 
 **Reference During Work:**
 - Phase details: start-here.md
 - Actionlist template: template-actionlist.md
-- Robot workspace setup: start-here.md Phase 7
+- Robot workspace setup: start-here.md Phase 2, Step 5 (Project Setup)
 
 ---
 
@@ -1298,22 +1298,32 @@ ROME/                               # ROME methodology (immutable)
 ├── template-*.md
 └── ... (other ROME docs)
 
-claude_*/                           # Robot workspaces (session-specific)
+robot_*/                            # Robot workspaces (session-specific)
 ├── robot_chaperone/
-│   ├── CLAUDE.md
-│   └── __start.sh
+│   ├── .claude/
+│   │   └── CLAUDE.md
+│   ├── __start.sh
+│   └── notes/
 ├── robot_pma/
-│   ├── CLAUDE.md
-│   └── __start.sh
+│   ├── .claude/
+│   │   └── CLAUDE.md
+│   ├── __start.sh
+│   └── notes/
 ├── robot_ashok/
-│   ├── CLAUDE.md
-│   └── __start.sh
+│   ├── .claude/
+│   │   └── CLAUDE.md
+│   ├── __start.sh
+│   └── notes/
 ├── robot_reena/
-│   ├── CLAUDE.md
-│   └── __start.sh
+│   ├── .claude/
+│   │   └── CLAUDE.md
+│   ├── __start.sh
+│   └── notes/
 └── robot_charlie/
-    ├── CLAUDE.md
-    └── __start.sh
+    ├── .claude/
+    │   └── CLAUDE.md
+    ├── __start.sh
+    └── notes/
 ```
 
 ---
@@ -1429,13 +1439,13 @@ claude_*/                           # Robot workspaces (session-specific)
 ### For PMA
 
 **Q: Do I wait for Phase 1 to complete before starting?**
-**A**: **Yes.** You MUST have `specification_augmented.md` before starting Phase 1.
+**A**: **Yes.** You MUST have `specification_augmented.md` before starting Phase 2.
 
 **Q: How do I decompose features?**
-**A**: See start-here.md Phase 3 - Feature Decomposition section
+**A**: See start-here.md Phase 2, Step 3 - Feature Decomposition section
 
-**Q: Can I create robot workspaces before Phase 7?**
-**A**: Yes, prep them in Phase 5, but don't launch robots until Phase 7 complete.
+**Q: Can I create robot workspaces before Phase 3?**
+**A**: Yes, prep them in Phase 2, Step 5 (Project Setup), but don't launch robots until Phase 2B (Design Validation Gate) is approved.
 
 ---
 

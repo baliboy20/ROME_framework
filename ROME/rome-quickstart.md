@@ -78,10 +78,10 @@ done
 The complete execution order is documented in [ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md) - Part A.
 
 **Quick reminder of correct order:**
-1. 🎯 **Chaperone Phase 1** - Refine raw requirements into clear specs
-2. 📋 **PMA Phases 1-9** - Design using refined specs
-3. ✅ **Chaperone Phase 2** - Validate design is practical
-4. 🚀 **Development Robots** - Build with validated specs
+1. 🎯 **Phase 1: Chaperone Phase 1** - Refine raw requirements into clear specs
+2. 📋 **Phase 2: PMA (Steps 1-6)** - Design using refined specs
+3. ✅ **Phase 2B: Chaperone Phase 2** - Validate design is practical (Gate)
+4. 🚀 **Phase 3: Development Robots** - Build with validated specs
 
 This quick start assumes Chaperone Phase 1 is already complete.
 
