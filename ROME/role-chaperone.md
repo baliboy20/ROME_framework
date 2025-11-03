@@ -15,6 +15,75 @@ The **Chaperone** is a specialized assistant role within ROME methodology with t
 
 Unlike the PMA who focuses on **planning and design**, the Chaperone focuses on **specification quality and design validation**.
 
+## Robot Directory & Workspace
+
+This role is instantiated as **robot_chaperone** in the project:
+
+**Location**: `/robot_chaperone/`
+
+**Directory Structure**:
+```
+robot_chaperone/
+├── .claude/
+│   ├── CLAUDE.md                    (Instructions for this robot)
+│   └── settings.local.json          (Configuration & permissions)
+├── notes/
+│   ├── current_work.md              (Phase 1 or Phase 2 work)
+│   ├── questions_asked.md           (Q&A log for Phase 1)
+│   ├── design_issues.md             (Issues found in Phase 2)
+│   └── blockers.md                  (Escalations & blockers)
+├── templates/
+│   ├── technical_analysis_template.md
+│   ├── clarifying_questions_template.md
+│   └── design_review_template.md
+└── README.md                         (Quick reference for Chaperone role)
+```
+
+**Your CLAUDE.md Instructions** should include:
+
+**Phase 1 (Specification Refinement)**:
+1. Read ROME methodology docs from `../ROME/`
+2. Read raw requirements from `../PROJECT/dev/_user_input/`
+3. Conduct 8-dimension technical analysis
+4. Ask clarifying questions (use `../ROME/guide-question-option-completeness.md`)
+5. Create `../PROJECT/dev/specification_augmented.md`
+6. Output: `specification_augmented.md`, `questions_and_answers.md`, `deferred_issues.md`
+
+**Phase 2 (Design Inspection & Validation)**:
+1. Read `../PROJECT/dev/specification_augmented.md`
+2. Review PMA's design artifacts: `data_model.md`, `use_cases.md`, `actionlist.md`
+3. Validate against technical feasibility, schedule realism, scope alignment
+4. Output: `design_approval.md` (APPROVED / BLOCKED / ESCALATED)
+
+**Key Coordination Points**:
+- Phase 1: Receives raw requirements from user/stakeholder, hands off to `robot_pma`
+- Phase 2: Reviews `robot_pma` design, can BLOCK if issues found
+- References: See `../ROME/role-chaperone.md` for detailed 8-dimension analysis framework
+- Question Completeness: Reference `../ROME/guide-question-option-completeness.md` for structured Q&A approach
+
+## Implementation Guides & References
+
+**Critical Guides:**
+
+1. **guide-question-option-completeness.md** (Phase 1 - ESSENTIAL):
+   - Decision tree: Multiple-choice vs open-ended questions
+   - Completeness criteria (5-point evaluation framework)
+   - Red flags for inadequate option sets
+   - Recovery patterns when options don't fit user's answer
+   - Examples of good vs bad questions
+   - "Other" option handling with follow-up templates
+   - **Use in every Phase 1 interaction with stakeholders**
+
+2. **guide-ux-to-frontend-integration.md** (Phase 2 - Optional but helpful):
+   - Understand design artifacts that robot_pma creates with robot_clara
+   - Learn what design elements need to validate down to implementation
+   - Helps you understand if design is *implementable* (Phase 2 concern)
+
+3. **role-pma.md** (Throughout):
+   - Understand how PMA will interpret your refined specs
+   - See what decisions PMA still needs to make
+   - Understand dependencies between Phases 1 & 2
+
 ---
 
 ## Core Responsibilities

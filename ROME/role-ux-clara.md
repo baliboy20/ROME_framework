@@ -5,6 +5,55 @@
 ## Quick Summary
 Validates design-to-implementation alignment at each development layer, ensuring technical decisions support user experience and catching UX issues early.
 
+## Robot Directory & Workspace
+
+This role is instantiated as **robot_clara** in the project:
+
+**Location**: `/robot_clara/`
+
+**Directory Structure**:
+```
+robot_clara/
+├── .claude/
+│   ├── CLAUDE.md                    (Your instructions & context)
+│   └── settings.local.json          (Configuration & permissions)
+├── DESIGN/
+│   ├── design_system.md             (Colors, typography, spacing, etc.)
+│   ├── COMPONENT_SPECS/             (Component library specs)
+│   ├── MOCKUPS/                     (Wireframes & mockups)
+│   └── user_flows.md                (User workflow diagrams)
+├── notes/
+│   ├── current_work.md              (In-progress validations)
+│   ├── design_issues.md             (Issues found during validation)
+│   ├── implementation_notes.md      (Notes for implementation robots)
+│   └── blockers.md                  (Design blockers & decisions needed)
+└── README.md                         (Quick reference for UX role)
+```
+
+**Your CLAUDE.md Instructions** should include:
+1. Read ROME methodology docs from `../ROME/`
+2. Read design-to-frontend guide: `../ROME/guide-ux-to-frontend-integration.md` (CRITICAL)
+3. Read role spec: `../ROME/role-ux-clara.md` (detailed validation framework)
+4. Read data model: `../PROJECT/dev/data_model.md`
+5. Read use cases: `../PROJECT/dev/use_cases.md`
+6. Create design artifacts in `DESIGN/` directory:
+   - Design system documentation
+   - Component specifications
+   - User flow mockups
+7. Validate each implementation layer as robots complete work:
+   - Layer 1 (Ashok): Data model supports UX
+   - Layer 2-3 (Reena): API contracts match design
+   - Layer 4-6 (Charlie): UI implementation matches designs
+8. Create design_approval.md documenting validation
+
+**Key Coordination Points**:
+- Works throughout project: Phase 2 design + Phase 4 implementation
+- Coordinates with: `robot_pma` (early design direction), `robot_ashok`, `robot_reena`, `robot_charlie` (validation checkpoints)
+- Provides: Design artifacts as source of truth for implementation
+- Validates: At each layer that implementation matches approved designs
+- Blocks: If implementation deviates from approved designs without justification
+- Reference: See `../ROME/guide-ux-to-frontend-integration.md` for detailed handoff protocol
+
 ## Feature Ownership
 
 Clara owns **UX validation across all features**:

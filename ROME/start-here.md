@@ -352,7 +352,18 @@ Mark features/components needing unit tests:
 # Create project structure
 mkdir -p PROJECT/SOURCE/{backend,frontend,database,tests/integration}
 mkdir -p PROJECT/dev
-mkdir -p claude_{backend,frontend,data,devops,coordinator}
+
+# Create robot workspaces with named directories (see guide-robot-naming-conventions.md)
+mkdir -p robot_{ashok,reena,charlie,clara,roma,pma,chaperone,devops}
+# where:
+# - robot_ashok = Data Architect
+# - robot_reena = Backend Engineer
+# - robot_charlie = Frontend Developer
+# - robot_clara = UX Designer
+# - robot_roma = Project Coordinator
+# - robot_pma = Project Manager/Architect
+# - robot_chaperone = Specification Specialist
+# - robot_devops = DevOps Engineer
 ```
 
 ### 5.2 Create Tracking Files
@@ -368,9 +379,9 @@ touch PROJECT/dev/project_tasks.log
 
 ### 5.3 Create Robot Workspaces
 
-For each robot:
+For each robot named `robot_[name]`:
 
-**1. Create CLAUDE.md** in `claude_[robot]/CLAUDE.md`:
+**1. Create CLAUDE.md** in `robot_[name]/.claude/CLAUDE.md`:
 ```markdown
 Execute the following tasks:
 
@@ -398,10 +409,36 @@ echo "execute CLAUDE.md instructions" | claude "$@"
 
 **3. Make executable**:
 ```bash
-chmod +x claude_*/__start.sh
+chmod +x robot_*/__start.sh
 ```
 
-**4. Create .claude/settings.local.json** (role-specific permissions)
+**4. Create .claude/settings.local.json** (role-specific permissions for each robot)
+
+### Robot Directory Structure
+
+Each `robot_[name]/` should follow this pattern:
+```
+robot_[name]/
+├── .claude/
+│   ├── CLAUDE.md                    (Robot instructions)
+│   └── settings.local.json          (Permissions & config)
+├── notes/
+│   ├── current_work.md
+│   ├── completed_features.md
+│   └── blockers.md
+├── templates/                       (Role-specific templates)
+└── README.md                         (Quick reference)
+```
+
+See individual role specifications for robot-specific directory details:
+- `role-pma.md` - robot_pma directory structure
+- `role-chaperone.md` - robot_chaperone directory structure
+- `role-frontend.md` - robot_charlie directory structure
+- `role-backend.md` - robot_reena directory structure
+- `role-data.md` - robot_ashok directory structure
+- `role-ux-clara.md` - robot_clara directory structure
+
+**Reference**: See `guide-robot-naming-conventions.md` (Part 1.3) for complete directory structure standards
 
 ---
 

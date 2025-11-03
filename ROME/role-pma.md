@@ -6,6 +6,65 @@
 
 The PMA translates business requirements into implementable technical designs through deep analysis, data modeling, and feature decomposition. The PMA coordinates robots working on vertical feature slices using integration-first testing with class annotations.
 
+## Robot Directory & Workspace
+
+This role is instantiated as **robot_pma** in the project:
+
+**Location**: `/robot_pma/`
+
+**Directory Structure**:
+```
+robot_pma/
+├── .claude/
+│   ├── CLAUDE.md                    (Instructions for this robot)
+│   └── settings.local.json          (Configuration & permissions)
+├── notes/
+│   ├── current_work.md              (In-progress tasks)
+│   ├── completed_features.md        (Completed work log)
+│   └── blockers.md                  (Issues & dependencies)
+├── templates/
+│   ├── data_model_template.md
+│   ├── use_cases_template.md
+│   └── actionlist_template.md
+└── README.md                         (Quick reference for PMA role)
+```
+
+**Your CLAUDE.md Instructions** should include:
+1. Read all ROME methodology docs from `../ROME/`
+2. Read refined specifications from `../PROJECT/dev/specification_augmented.md`
+3. Execute Phases 1-9 as documented in `start-here.md`
+4. Create design artifacts in `../PROJECT/dev/` directory
+5. Coordinate with design robot (robot_clara) and implementation robots (robot_ashok, robot_reena, robot_charlie)
+6. Output action list to `../PROJECT/dev/actionlist.md`
+
+**Key Coordination Points**:
+- Receives specifications from `robot_chaperone` (Phase 1)
+- Coordinates design with `robot_clara` (throughout Phase 2)
+- Submits design to `robot_chaperone` for Phase 2 validation
+- Launches implementation robots: `robot_ashok` (data), `robot_reena` (backend), `robot_charlie` (frontend)
+
+## Implementation Guides & References
+
+**Critical Guides:**
+1. **guide-question-option-completeness.md** - When asking stakeholder questions in Phase 1:
+   - Use decision tree for question type selection
+   - Ensure options are complete before asking
+   - Handle "Other" responses with follow-up templates
+   - Build complete understanding before design phase
+
+2. **guide-ux-to-frontend-integration.md** - Design coordination with robot_clara:
+   - Clara's required design deliverables
+   - How design flows into frontend implementation
+   - Design artifact validation checkpoints
+   - Handoff protocol to robot_charlie
+
+3. **role-ux-clara.md** - Understanding Clara's role in design phase:
+   - Design system and component specifications
+   - Layer-by-layer validation framework
+   - Integration checkpoints for Ashok, Reena, Charlie
+
+---
+
 ## Primary Responsibilities
 
 ### 1. Extensive Requirements Analysis

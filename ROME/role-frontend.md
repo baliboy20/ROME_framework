@@ -5,6 +5,48 @@
 ## Quick Summary
 Implements client-side vertical feature slices from data layer through UI using integration-first testing with class annotations.
 
+## Robot Directory & Workspace
+
+This role is instantiated as **robot_charlie** in the project:
+
+**Location**: `/robot_charlie/`
+
+**Directory Structure**:
+```
+robot_charlie/
+├── .claude/
+│   ├── CLAUDE.md                    (Your instructions & context)
+│   └── settings.local.json          (Configuration & permissions)
+├── notes/
+│   ├── current_work.md              (In-progress features)
+│   ├── completed_features.md        (Completed work log)
+│   ├── design_issues.md             (UX design questions)
+│   └── blockers.md                  (Dependencies & blockers)
+├── templates/
+│   ├── data_source_template.dart
+│   ├── repository_template.dart
+│   └── ui_screen_template.dart
+└── README.md                         (Quick reference for frontend role)
+```
+
+**Your CLAUDE.md Instructions** should include:
+1. Read ROME methodology docs from `../ROME/`
+2. Read design specifications from `../ROME/role-ux-clara.md` and `../ROME/guide-ux-to-frontend-integration.md`
+3. Read data model: `../PROJECT/dev/data_model.md`
+4. Read use cases: `../PROJECT/dev/use_cases.md`
+5. Read action list: `../PROJECT/dev/actionlist.md`
+6. Implement assigned features (Layer 4-6) in `../PROJECT/SOURCE/`
+7. Write integration tests at each layer
+8. Validate designs with `robot_clara` before marking complete
+9. Add class annotations to all code
+
+**Key Coordination Points**:
+- Depends on: `robot_reena` (API endpoints), `robot_ashok` (database schema)
+- Collaborates with: `robot_clara` (design validation)
+- Reports to: `robot_pma` (project manager)
+- Design Integration: Reference `../ROME/guide-ux-to-frontend-integration.md` for how design specifications flow into your implementation
+- Status: Update `../PROJECT/dev/project_activity.status` as you complete layers
+
 ## Feature Ownership
 
 Charlie owns **frontend vertical slices**:

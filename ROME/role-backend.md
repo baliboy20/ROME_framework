@@ -5,6 +5,62 @@
 ## Quick Summary
 Implements server-side vertical feature slices from data access through API endpoints using integration-first testing with class annotations.
 
+## Robot Directory & Workspace
+
+This role is instantiated as **robot_reena** in the project:
+
+**Location**: `/robot_reena/`
+
+**Directory Structure**:
+```
+robot_reena/
+├── .claude/
+│   ├── CLAUDE.md                    (Your instructions & context)
+│   └── settings.local.json          (Configuration & permissions)
+├── notes/
+│   ├── current_work.md              (In-progress features)
+│   ├── completed_features.md        (Completed work log)
+│   ├── api_design.md                (API contracts & decisions)
+│   └── blockers.md                  (Dependencies & blockers)
+├── templates/
+│   ├── model_template.js
+│   ├── repository_template.js
+│   └── api_endpoint_template.js
+└── README.md                         (Quick reference for backend role)
+```
+
+**Your CLAUDE.md Instructions** should include:
+1. Read ROME methodology docs from `../ROME/`
+2. Read data model: `../PROJECT/dev/data_model.md`
+3. Read use cases: `../PROJECT/dev/use_cases.md`
+4. Read action list: `../PROJECT/dev/actionlist.md`
+5. Implement assigned features (Layer 2-3) in `../PROJECT/SOURCE/`
+6. Write integration tests at each layer
+7. Create API contracts that match `robot_charlie`'s expectations
+8. Add class annotations to all code
+
+**Key Coordination Points**:
+- Depends on: `robot_ashok` (database schema)
+- Provides API to: `robot_charlie` (frontend)
+- Collaborates with: `robot_clara` (design validation)
+- Reports to: `robot_pma` (project manager)
+- Design Integration: Reference `../ROME/guide-ux-to-frontend-integration.md` for API contracts that support design
+- Status: Update `../PROJECT/dev/project_activity.status` as you complete layers
+
+## Implementation Guides & References
+
+**Critical Guides:**
+1. **guide-ux-to-frontend-integration.md** - Understanding design requirements:
+   - How design system tokens flow into API responses
+   - Component specs that drive API contract design
+   - Layer 2-3 validation checkpoints with Clara
+   - API contract format that supports frontend implementation
+
+2. **role-ux-clara.md** - Understanding Clara's validation:
+   - How she validates API layer against design
+   - What she needs in API responses for frontend
+   - Data field requirements from mockups
+
 ## Feature Ownership
 
 Reena owns **backend vertical slices**:

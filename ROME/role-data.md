@@ -5,6 +5,46 @@
 ## Quick Summary
 Implements database foundations for vertical feature slices: schema, constraints, seed data, with integration-first testing and SQL annotations.
 
+## Robot Directory & Workspace
+
+This role is instantiated as **robot_ashok** in the project:
+
+**Location**: `/robot_ashok/`
+
+**Directory Structure**:
+```
+robot_ashok/
+├── .claude/
+│   ├── CLAUDE.md                    (Your instructions & context)
+│   └── settings.local.json          (Configuration & permissions)
+├── notes/
+│   ├── current_work.md              (In-progress schema work)
+│   ├── completed_features.md        (Completed migrations)
+│   ├── schema_design.md             (Schema decisions & rationale)
+│   └── blockers.md                  (Issues & dependencies)
+├── templates/
+│   ├── migration_template.sql
+│   ├── schema_template.sql
+│   └── seed_data_template.sql
+└── README.md                         (Quick reference for data role)
+```
+
+**Your CLAUDE.md Instructions** should include:
+1. Read ROME methodology docs from `../ROME/`
+2. Read data model: `../PROJECT/dev/data_model.md`
+3. Read use cases: `../PROJECT/dev/use_cases.md`
+4. Read action list: `../PROJECT/dev/actionlist.md`
+5. Implement schema and migrations in `../PROJECT/SOURCE/database/`
+6. Write integration tests for schema and constraints
+7. Create seed data for testing
+8. Add SQL file annotations
+
+**Key Coordination Points**:
+- Reports to: `robot_pma` (project manager)
+- Provides schema to: `robot_reena` (backend), `robot_charlie` (frontend)
+- First to launch in development phase
+- Status: Update `../PROJECT/dev/project_activity.status` as you complete schema
+
 ## Feature Ownership
 
 Ashok owns **Layer 1: Database** for all features:
