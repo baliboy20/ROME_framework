@@ -123,6 +123,94 @@ Roma MUST actively remind all development robots to update `PROJECT/dev/project_
 - Integration test reviews
 - Feature demos
 
+### Work Assignment Notification
+
+**⚠️ CRITICAL: Alert Robots to New Work**
+
+When new work is assigned (by PMA or when dependencies are unblocked), Roma MUST actively notify the assigned robot:
+
+**Trigger Points for Notification:**
+- PMA adds new tasks to `PROJECT/dev/actionlist.md`
+- A dependency completes (e.g., Reena finishes API → Charlie can start frontend)
+- A blocker is resolved (robot can resume work)
+- Scope changes require new implementation work
+- Integration test failures need fixes
+
+**Notification Protocol:**
+
+1. **Update the actionlist** - Ensure task is clearly documented in `PROJECT/dev/actionlist.md`
+
+2. **Direct notification format**:
+```
+"[Robot Name], you have new work assigned:
+
+Task: [Task description from actionlist]
+Location: PROJECT/dev/actionlist.md [line numbers]
+Dependencies: [What's ready that you need]
+Priority: [HIGH/MEDIUM/LOW]
+Blocked by: [Nothing/Robot/Resource]
+
+Please acknowledge and provide estimated start time."
+```
+
+3. **Log the assignment** in `PROJECT/dev/project_tasks.log`:
+```
+[TIMESTAMP] [Roma] [ASSIGN] Notified Charlie: Projects list UI (Slice 2) - dependencies ready
+```
+
+**Example Scenarios:**
+
+**Scenario 1: Dependency Unblocked**
+```
+"Charlie, you have new work assigned:
+
+Task: Implement Projects List UI (Slice 2)
+Location: PROJECT/dev/actionlist.md lines 45-52
+Dependencies: Reena's GET /api/projects endpoint is COMPLETED (see project_activity.status)
+Priority: HIGH
+Blocked by: Nothing - you can start immediately
+
+Please acknowledge and provide estimated start time."
+```
+
+**Scenario 2: New PMA Assignment**
+```
+"Ashok, you have new work assigned:
+
+Task: Add user_preferences table to database schema
+Location: PROJECT/dev/actionlist.md lines 78-82
+Dependencies: PMA's updated data_model.md (just published)
+Priority: MEDIUM
+Blocked by: Nothing - design approved by Chaperone
+
+Please acknowledge and provide estimated start time."
+```
+
+**Scenario 3: Blocker Resolved**
+```
+"Reena, your blocked work can now proceed:
+
+Task: Complete Projects API integration tests (was blocked)
+Location: PROJECT/dev/actionlist.md line 34
+Blocker Resolved: Ashok fixed database constraint issue (see project_activity.status)
+Priority: HIGH
+Action: Resume integration test implementation
+
+Please acknowledge."
+```
+
+**Expected Response:**
+- Robot acknowledges within 1 hour
+- Robot provides start time estimate
+- Robot updates own status to "IN_PROGRESS" when starting
+- If robot is blocked or unavailable, escalate to PMA immediately
+
+**Why This Matters:**
+- Prevents "I didn't know I had work" delays
+- Makes dependencies explicit and actionable
+- Ensures smooth handoffs between layers (DB → Backend → Frontend)
+- Keeps project velocity high by eliminating wait time
+
 ### Status Management
 
 **Update Tracking Files:**
@@ -245,6 +333,8 @@ Status: Reena working on it (ETA: 2 hours)
 - Updates tracking files 3x daily
 - Monitors integration test results
 - Verifies annotation compliance
+- **Actively notifies robots of new work assignments**
+- **Reminds robots to update activity log after completing work**
 - Facilitates robot communication
 - Escalates blockers to PMA
 
