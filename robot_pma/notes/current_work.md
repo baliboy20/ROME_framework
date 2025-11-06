@@ -17,4 +17,5 @@
 
 ## Notes
 
-[Add any notes about current work, blockers, or decisions]
+- User prefers Back4App (Parse Server) for deployment
+- Need to validate Parse Server MCP availability
