@@ -606,13 +606,13 @@ Which do you prefer?
 
 ### When to Escalate
 
-**Escalate to Chaperone when:**
+**Escalate to Sarah when:**
 - HTM artifacts incomplete or inconsistent
 - Requirements fundamentally unclear
 - Technical infeasibility detected
 - Major architectural trade-offs required
 
-**Escalation path:** PMA → Chaperone → User decision
+**Escalation path:** PMA → Sarah → User decision
 
 ---
 
@@ -643,7 +643,7 @@ Phase 2 complete when:
 ### Working with Other Robots
 - **HTM Decomposer (Phase 1):** Provides requirements artifacts
 - **UX Clara (Phase 2A):** Receives architecture constraints
-- **Chaperone (Phase 2B):** Validates all Phase 2 outputs
+- **Sarah (Phase 2B):** Validates all Phase 2 outputs
 - **Ashok/Reena/Charlie (Phase 3):** Implement based on PMA specs
 
 ---

@@ -6,7 +6,7 @@ This directory contains CLAUDE.md instruction templates for each robot role in R
 
 | Template | Robot | Role | Phase |
 |----------|-------|------|-------|
-| **chaperone.md** | robot_chaperone | Specification Specialist | Phase 2B (Validation) |
+| **sarah.md** | robot_sarah | Specification Specialist | Phase 2B (Validation) |
 | **pma.md** | robot_pma | Project Manager/Architect | Phase 2 (Architecture) |
 | **htm-decomposer.md** | robot_htm_decomposer | HTM Decomposer | Phase 1 (Requirements) |
 | **clara.md** | robot_clara | UX Designer | Phase 2A (Design) |

@@ -19,7 +19,7 @@
 4. **Creates all 7 robot directories**:
    - robot_talib
    - robot_pma
-   - robot_chaperone
+   - robot_sarah
    - robot_clara
    - robot_ashok
    - robot_reena
@@ -27,7 +27,7 @@
 5. **Launches iTerm with split-pane layout**:
    ```
    ┌───────────────────────────────────────┐
-   │  📋 TALIB  │ 🏗️ PMA  │ ✅ CHAPERONE │
+   │  📋 TALIB  │ 🏗️ PMA  │ ✅ SARAH │
    │            │          │               │
    ├───────────────────────────────────────┤
    │  🎨 CLARA  │ 🗄️ ASHOK │ ⚙️ REENA     │
@@ -80,9 +80,10 @@ cd /Users/will/flutterProjects/Exercises/oct/romev2
    - Show confirmation dialog
 
 5. **Start working**:
+   - Place your PRD/BRD in `Project/user_docs/` (this is for original user documents)
    - Click on TALIB pane
    - Type `claude` to start Phase 1
-   - Place your PRD in `Project/requirements/`
+   - Tell Talib to read from `Project/user_docs/your-prd.pdf`
 
 ---
 
@@ -91,7 +92,7 @@ cd /Users/will/flutterProjects/Exercises/oct/romev2
 ### Top Row - Phase 1 & 2
 - **TALIB** (📋): HTM Requirements Engineer - Phase 1
 - **PMA** (🏗️): Project Manager/Architect - Phase 2
-- **CHAPERONE** (✅): Specification Validator - Phase 2B
+- **SARAH** (✅): Specification Validator - Phase 2B
 
 ### Middle Row - Phase 2A & 3
 - **CLARA** (🎨): UX Designer - Phase 2A
@@ -127,17 +128,17 @@ printf '\e]1337;SetBadgeFormat=%s\a' $(echo -n 'YOUR TEXT' | base64)
 ROME/
 ├── Project → InventorySystem/     (symlink)
 ├── InventorySystem/                (actual project directory)
-│   ├── requirements/
-│   ├── dev/
-│   ├── design/
-│   └── user_docs/
+│   ├── user_docs/              ← Place original PRD/BRD here
+│   ├── requirements/            ← Talib's generated YAML artifacts
+│   ├── dev/                     ← PMA's architecture specs
+│   └── design/                  ← Clara's UX specs
 ├── robot_talib/
 │   ├── .claude/
 │   │   └── CLAUDE.md → ../../ROME/templates/claude-md/talib.md
 │   ├── notes/
 │   └── README.md → ../role-talib.md
 ├── robot_pma/
-├── robot_chaperone/
+├── robot_sarah/
 ├── robot_clara/
 ├── robot_ashok/
 ├── robot_reena/
@@ -154,7 +155,7 @@ ROME/
 claude
 
 # Tell Talib:
-"Hi Talib, please read Project/requirements/my-prd.pdf and begin Phase 1"
+"Hi Talib, please read Project/user_docs/my-prd.pdf and begin Phase 1"
 ```
 
 ### Phase 2: Architecture (PMA pane)

@@ -11,14 +11,16 @@
 
 Before starting, ensure you have:
 
-- [ ] **A requirements document (PRD)**
+- [ ] **A requirements document (PRD/BRD)**
   - Can be any format (Word doc, slides, wiki page, etc.)
   - Should describe desired product/features
   - Doesn't need to be perfectly formatted
+  - **Place in:** `PROJECT/user_docs/` directory
 
 - [ ] **Project directory structure**
   - Create: `PROJECT/` (replace with your project name)
-  - Will auto-generate subdirectories during workflow
+  - Create: `PROJECT/user_docs/` (for original PRD/BRD)
+  - Other subdirectories auto-generated during workflow
 
 - [ ] **Claude Code CLI access**
   - HTM Decomposer robot instance
@@ -61,9 +63,9 @@ Before starting, ensure you have:
    ./start.sh
    ```
 
-2. **Provide your PRD**
-   - Upload PRD document OR
-   - Paste PRD content into chat
+2. **Provide your PRD location**
+   - Tell HTM Decomposer: "Please read PROJECT/user_docs/my-prd.pdf"
+   - Or paste PRD content directly into chat
 
 3. **HTM assesses readiness**
    - Is PRD HTM-ready? (6 required sections)

@@ -10,8 +10,8 @@ on run argv
 		set baseDir to do shell script "pwd"
 	end if
 
-	-- Prompt user for project name
-	set projectName to text returned of (display dialog "Enter project name:" default answer "MyProject")
+	-- Prompt user for project directory path
+	set projectName to text returned of (display dialog "Enter full directory path:" default answer "MyProject")
 
 	-- Create project directory structure
 	set projectDir to baseDir & "/" & projectName
@@ -24,7 +24,7 @@ on run argv
 	do shell script "cd " & quoted form of baseDir & " && rm -f Project && ln -s " & quoted form of projectName & " Project"
 
 	-- Create all robot directories using create-robot.sh
-	set robotNames to {"talib", "pma", "chaperone", "clara", "ashok", "reena", "charlie"}
+	set robotNames to {"talib", "pma", "sarah", "clara", "ashok", "reena", "charlie"}
 	repeat with robotName in robotNames
 		do shell script "cd " & quoted form of baseDir & " && ./ROME/scripts/create-robot.sh " & robotName
 	end repeat
@@ -33,7 +33,7 @@ on run argv
 	set robotConfigs to {¬
 		{robotName:"TALIB", robotDir:"robot_talib", badge:"📋"}, ¬
 		{robotName:"PMA", robotDir:"robot_pma", badge:"🏗️"}, ¬
-		{robotName:"CHAPERONE", robotDir:"robot_chaperone", badge:"✅"}, ¬
+		{robotName:"SARAH", robotDir:"robot_sarah", badge:"✅"}, ¬
 		{robotName:"CLARA", robotDir:"robot_clara", badge:"🎨"}, ¬
 		{robotName:"ASHOK", robotDir:"robot_ashok", badge:"🗄️"}, ¬
 		{robotName:"REENA", robotDir:"robot_reena", badge:"⚙️"}, ¬
@@ -51,8 +51,10 @@ on run argv
 		tell talibSession
 			set name to "TALIB"
 			write text "cd " & quoted form of (baseDir & "/robot_talib") & " && clear"
-			write text "export PS1='[TALIB] \\w $ '"
+			write text "export PS1='\\\\W > '"
 		end tell
+
+		delay 0.5
 
 		-- Split TALIB vertically to create PMA (top-middle)
 		tell talibSession
@@ -61,19 +63,24 @@ on run argv
 		tell pmaSession
 			set name to "PMA"
 			write text "cd " & quoted form of (baseDir & "/robot_pma") & " && clear"
-			write text "export PS1='[PMA] \\w $ '"
+			write text "export PS1='\\\\W > '"
 		end tell
 
-		-- Split PMA vertically to create CHAPERONE (top-right)
+		delay 0.5
+
+		-- Split PMA vertically to create SARAH (top-right)
 		tell pmaSession
-			set chaperoneSession to (split vertically with default profile)
+			set sarahSession to (split vertically with default profile)
 		end tell
-		tell chaperoneSession
-			set name to "CHAPERONE"
-			write text "cd " & quoted form of (baseDir & "/robot_chaperone") & " && clear"
-			write text "export PS1='[CHAPERONE] \\w $ '"
+		tell sarahSession
+			set name to "SARAH"
+			write text "cd " & quoted form of (baseDir & "/robot_sarah") & " && clear"
+			write text "export PS1='\\\\W > '"
 		end tell
 
+		delay 0.5
+
+		-- NOW SPLIT HORIZONTALLY FROM TALIB to create middle row
 		-- Split TALIB horizontally to create CLARA (middle-left)
 		tell talibSession
 			set claraSession to (split horizontally with default profile)
@@ -81,38 +88,46 @@ on run argv
 		tell claraSession
 			set name to "CLARA"
 			write text "cd " & quoted form of (baseDir & "/robot_clara") & " && clear"
-			write text "export PS1='[CLARA] \\w $ '"
+			write text "export PS1='\\\\W > '"
 		end tell
 
-		-- Split CLARA vertically to create ASHOK (middle-middle)
-		tell claraSession
-			set ashokSession to (split vertically with default profile)
+		delay 0.5
+
+		-- Split PMA horizontally to align with CLARA row and create middle-middle position
+		tell pmaSession
+			set ashokSession to (split horizontally with default profile)
 		end tell
 		tell ashokSession
 			set name to "ASHOK"
 			write text "cd " & quoted form of (baseDir & "/robot_ashok") & " && clear"
-			write text "export PS1='[ASHOK] \\w $ '"
+			write text "export PS1='\\\\W > '"
 		end tell
 
-		-- Split ASHOK vertically to create REENA (middle-right)
-		tell ashokSession
-			set reenaSession to (split vertically with default profile)
+		delay 0.5
+
+		-- Split SARAH horizontally to align with CLARA/ASHOK row and create middle-right position
+		tell sarahSession
+			set reenaSession to (split horizontally with default profile)
 		end tell
 		tell reenaSession
 			set name to "REENA"
 			write text "cd " & quoted form of (baseDir & "/robot_reena") & " && clear"
-			write text "export PS1='[REENA] \\w $ '"
+			write text "export PS1='\\\\W > '"
 		end tell
 
-		-- Split CLARA horizontally to create CHARLIE (bottom row - wider)
+		delay 0.5
+
+		-- Split CLARA horizontally to create CHARLIE (bottom row)
 		tell claraSession
 			set charlieSession to (split horizontally with default profile)
 		end tell
 		tell charlieSession
 			set name to "CHARLIE"
 			write text "cd " & quoted form of (baseDir & "/robot_charlie") & " && clear"
-			write text "export PS1='[CHARLIE] \\w $ '"
+			write text "export PS1='\\\\W > '"
 		end tell
+
+		delay 0.5
 
 		-- Set badges for all sessions (iTerm badges require manual configuration or profiles)
 		-- Note: Badges must be enabled in iTerm Preferences -> Profiles -> General -> Badge
@@ -124,8 +139,8 @@ on run argv
 			write text "printf '\\e]1337;SetBadgeFormat=%s\\a' $(echo -n '🏗️ PMA' | base64)"
 		end tell
 
-		tell chaperoneSession
-			write text "printf '\\e]1337;SetBadgeFormat=%s\\a' $(echo -n '✅ CHAPERONE' | base64)"
+		tell sarahSession
+			write text "printf '\\e]1337;SetBadgeFormat=%s\\a' $(echo -n '✅ SARAH' | base64)"
 		end tell
 
 		tell claraSession
@@ -154,7 +169,7 @@ Symlink: Project -> " & projectName & "
 
 iTerm layout:
 ┌─────────────────────────────────┐
-│ TALIB  │  PMA   │ CHAPERONE │
+│ TALIB  │  PMA   │ SARAH │
 ├─────────────────────────────────┤
 │ CLARA  │ ASHOK  │  REENA    │
 ├─────────────────────────────────┤
