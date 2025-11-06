@@ -21,8 +21,13 @@ ROME v5.0 integrates **HTM (Hierarchical Traceability Method)** as Phase 1 Requi
 - **Now:** PMA reads HTM artifacts + designs technical architecture (6 steps, Step 2 expanded)
 - **Output:** Architecture specification + refined data model + test plan + action list
 
+### Phase 2A: UX Design & Prototyping (NEW)
+- **Was:** Not formally part of workflow
+- **Now:** UX Clara creates design specifications and prototypes
+- **Output:** Prototype UI document with wireframes, styling specs, component designs
+
 ### Phases 2B, 3, 4: UNCHANGED
-- Phase 2B: Chaperone validates (now validates HTM + PMA outputs)
+- Phase 2B: Chaperone validates (now validates HTM + PMA + UX outputs)
 - Phase 3: Development robots build features
 - Phase 4: Validation & deployment
 
@@ -36,7 +41,6 @@ External PRD (any format)
 ┌─────────────────────────────────────────────────┐
 │ PHASE 1: HTM Requirements Engineering          │
 │ Agent: HTM Decomposer                           │
-│ Duration: 2-5 days                              │
 │                                                 │
 │ Stage 1: Assessment (human decision)           │
 │ Stage 2: PRD Transformation (if needed)        │
@@ -53,7 +57,6 @@ External PRD (any format)
 ┌─────────────────────────────────────────────────┐
 │ PHASE 2: Technical Architecture & Planning     │
 │ Agent: PMA                                      │
-│ Duration: 3-7 days                              │
 │                                                 │
 │ Step 1: Read HTM Artifacts                     │
 │ Step 2: Technical Architecture Design ← NEW    │
@@ -74,15 +77,32 @@ External PRD (any format)
 │   ├── integration_test_plan.md                 │
 │   └── actionlist.md                            │
 └─────────────────────────────────────────────────┘
+    ↓ (Architecture complete)
+┌─────────────────────────────────────────────────┐
+│ PHASE 2A: UX Design & Prototyping              │
+│ Agent: UX Clara                                 │
+│                                                 │
+│ Step 1: Read Requirements & Architecture       │
+│ Step 2: Create Wireframes                      │
+│ Step 3: Define Component Specifications        │
+│ Step 4: Document Styling & Design System       │
+│ Step 5: Create Interactive Prototypes          │
+│                                                 │
+│ Outputs → PROJECT/design/                      │
+│   ├── prototype_ui.md                          │
+│   ├── wireframes/                              │
+│   ├── component_specs.md                       │
+│   └── design_system.md                         │
+└─────────────────────────────────────────────────┘
     ↓ (Design complete)
 ┌─────────────────────────────────────────────────┐
 │ PHASE 2B: Design Validation Gate               │
 │ Agent: Chaperone                                │
-│ Duration: 1-2 days                              │
 │                                                 │
 │ Validates:                                      │
 │   ✓ HTM artifacts complete                     │
 │   ✓ Architecture addresses all requirements    │
+│   ✓ UX design specs complete & consistent      │
 │   ✓ Data model consistent                      │
 │   ✓ Test plan comprehensive                    │
 │                                                 │
@@ -91,8 +111,9 @@ External PRD (any format)
     ↓ (Approved)
 ┌─────────────────────────────────────────────────┐
 │ PHASE 3: Development                            │
-│ Agents: Ashok, Reena, Charlie                  │
+│ Agents: Backend, Data, Frontend Robots         │
 │ Build features per action list                 │
+│ Frontend uses UX specs from Phase 2A           │
 └─────────────────────────────────────────────────┘
     ↓
 ┌─────────────────────────────────────────────────┐
@@ -124,7 +145,42 @@ PROJECT/requirements/
 - **Step 3:** Refines data-dictionary.yaml into data_model.md
 - **Step 6:** Uses component-registry.yaml to create actionlist.md
 
-### 2. Why PMA Does Architecture (Not Chaperone)
+### 2. PMA → UX Clara Handoff
+
+**PMA Delivers:**
+```
+PROJECT/dev/
+├── architecture_specification.md  # Tech stack, APIs, data architecture
+├── data_model.md                 # Refined data structures
+└── (HTM artifacts accessible)
+```
+
+**UX Clara Reads & Uses:**
+- Requirements from HTM artifacts
+- Architecture constraints from PMA
+- Data model for form/display design
+- Component registry for UI mapping
+
+**UX Clara Delivers:**
+```
+PROJECT/design/
+├── prototype_ui.md               # Main design specification
+├── wireframes/                   # Visual mockups
+├── component_specs.md            # Component design details
+└── design_system.md              # Styling, colors, typography
+```
+
+### 3. UX Clara → Frontend Robot Handoff
+
+**Frontend robots receive:**
+- Complete UX specifications from `PROJECT/design/`
+- Component-level styling requirements
+- Interaction patterns and user flows
+- Responsive design specifications
+
+**This solves:** "No point where styling or UX design carried forward to frontend developer"
+
+### 4. Why PMA Does Architecture (Not Chaperone)
 
 **PMA has access to:**
 - ✅ Expert technical documentation
@@ -145,25 +201,38 @@ PROJECT/requirements/
 ## Role Responsibilities v5.0
 
 ### HTM Decomposer (Phase 1)
-**Focus:** Requirements engineering  
-**Needs:** HTM methodology knowledge  
-**Does NOT need:** Technical architecture expertise, MCP access  
+**Robot Name:** HTM Decomposer (robot_htm_decomposer)
+**Focus:** Requirements engineering
+**Needs:** HTM methodology knowledge
+**Does NOT need:** Technical architecture expertise, MCP access
 **Outputs:** Requirements artifacts (YAML)
 
 ### PMA (Phase 2)
-**Focus:** Technical architecture + implementation planning  
-**Needs:** Expert docs, MCP access, architecture knowledge  
+**Robot Name:** PMA (robot_pma)
+**Focus:** Technical architecture + implementation planning
+**Needs:** Expert docs, MCP access, architecture knowledge
 **Outputs:** Architecture spec, data model, test plan, action list
 
+### UX Clara (Phase 2A)
+**Robot Name:** Clara (robot_clara)
+**Focus:** User experience design & prototyping
+**Needs:** Design expertise, requirements & architecture context
+**Does NOT need:** MCP access (receives specs from PMA)
+**Outputs:** Wireframes, component specs, design system, prototype UI
+
 ### Chaperone (Phase 2B)
-**Focus:** Validation & quality gate  
-**Needs:** Critical thinking, methodology knowledge  
-**Does NOT need:** Deep technical resources (reviews, doesn't create)  
+**Robot Name:** Chaperone (robot_chaperone)
+**Focus:** Validation & quality gate
+**Needs:** Critical thinking, methodology knowledge
+**Does NOT need:** Deep technical resources (reviews, doesn't create)
 **Outputs:** Approval or blocking issues
 
 ### Development Robots (Phase 3)
-**Focus:** Implementation  
+**Robot Names:** Charlie (robot_charlie - Frontend), Reena (robot_reena - Backend), Ashok (robot_ashok - Data)
+**Focus:** Implementation
 **Unchanged from v4.0**
+
+**Note:** All robots referenced by human names. See `/ROME/guide-robot-naming-conventions.md` for directory structure.
 
 ---
 
@@ -290,13 +359,16 @@ A: Yes. For <5 features, go directly to ROME Phase 2 (legacy mode).
 **Q: What if my PRD is already good?**  
 A: Run HTM Stage 3-4 only (decomposition + artifacts). Skip transformation.
 
-**Q: Do I need to learn HTM AND ROME?**  
+**Q: Do I need to learn HTM AND ROME?**
 A: Learn HTM for Phase 1, then ROME for Phases 2-4. They're sequential.
 
-**Q: How long does HTM add to timeline?**  
-A: 2-5 days for Phase 1. But saves time in Phase 2-3 due to clarity.
+**Q: When does UX design happen?**
+A: Phase 2A, after architecture is complete. UX Clara receives architecture constraints and requirements to create design specifications.
 
-**Q: Can PMA do architecture without expert docs?**  
+**Q: Can frontend developers start without UX specs?**
+A: Not recommended. Phase 2B validation ensures UX specs are complete before Phase 3 development begins.
+
+**Q: Can PMA do architecture without expert docs?**
 A: No. PMA needs expert docs + MCP access. That's why architecture moved to Phase 2.
 
 ---
@@ -317,10 +389,204 @@ A: No. PMA needs expert docs + MCP access. That's why architecture moved to Phas
 - ✅ integration_test_plan.md covers all boundaries
 - ✅ actionlist.md assigns features to robots
 
+### Phase 2A Complete When:
+- ✅ prototype_ui.md created with complete specifications
+- ✅ Wireframes cover all user-facing features
+- ✅ component_specs.md defines all UI components
+- ✅ design_system.md documents styling standards
+- ✅ Designs align with architecture constraints
+
 ### Ready for Phase 3 When:
-- ✅ Phase 2B Chaperone approves
+- ✅ Phase 2B Chaperone approves all artifacts
 - ✅ No blocking issues
-- ✅ Development robots have complete specs
+- ✅ Development robots have complete specs (architecture + UX)
+
+---
+
+## User Interaction Protocol
+
+### When Robots Ask Questions
+
+**Robots that interact with users:**
+- HTM Decomposer (Phase 1) - Requirements clarification
+- PMA (Phase 2) - Architecture decisions
+- UX Clara (Phase 2A) - Design preferences
+- Chaperone (Phase 2B) - Validation decisions
+
+### Question Format Standard
+
+**Always use structured options:**
+
+```
+Question: [Clear, specific question]
+
+Options:
+A) [Option 1 with brief description]
+B) [Option 2 with brief description]
+C) [Option 3 with brief description]
+D) Other (please specify): __________
+
+Which option do you prefer?
+```
+
+### When Options Are Incomplete
+
+**If provided options don't fit user's needs:**
+- User selects "D) Other"
+- User provides written explanation
+- Robot acknowledges and incorporates feedback
+- Robot may refine options for future similar questions
+
+**Reference:** `/ROME/guide-question-option-completeness.md` for detailed guidelines
+
+### Escalation Triggers
+
+**Robot must escalate (not decide) when:**
+- User requirements conflict
+- Technical infeasibility detected
+- Scope change requested mid-phase
+- Budget/timeline implications significant
+- Security/compliance concerns
+
+**Escalation path:** Robot → Chaperone → User decision
+
+---
+
+## Phase 1B: Validation Gate (Optional)
+
+### Purpose
+
+Optional checkpoint between HTM Phase 1 and PMA Phase 2 to validate artifact quality before handoff.
+
+### When to Use Phase 1B
+
+**Recommended for:**
+- First-time HTM usage
+- Complex projects (>20 features)
+- Projects requiring external review
+- Training/learning scenarios
+
+**Can skip for:**
+- Simple projects (<10 features)
+- Experienced team with HTM
+- Rapid prototyping
+
+### Validation Checklist
+
+**Chaperone validates:**
+
+**Completeness:**
+- [ ] requirements-matrix.yaml exists and parses
+- [ ] data-dictionary.yaml exists and parses
+- [ ] component-registry.yaml exists and parses
+- [ ] All features have documentation files
+
+**Consistency:**
+- [ ] All feature IDs referenced exist
+- [ ] All entity names referenced are defined
+- [ ] All component IDs referenced exist
+- [ ] Traceability chain complete (Epic → Feature → Story → Task)
+
+**Quality:**
+- [ ] Acceptance criteria specific and testable
+- [ ] No placeholder or TODO items
+- [ ] Business rules clearly stated
+- [ ] Dependencies logically valid
+
+### Outcomes
+
+**✅ PASS:** PMA proceeds to Phase 2
+**🚫 BLOCK:** HTM Decomposer fixes issues, resubmit for validation
+**🚩 ESCALATE:** Ambiguity requires user clarification
+
+### Rollback Process
+
+**If blocked:**
+1. Chaperone documents specific issues
+2. HTM Decomposer reviews feedback
+3. HTM Decomposer fixes identified problems
+4. HTM Decomposer resubmits artifacts
+5. Chaperone re-validates
+6. Maximum 2 revision cycles before escalation
+
+---
+
+## Rework & Iteration Protocol
+
+### Maximum Iteration Limits
+
+**Per phase:**
+- Phase 1 (HTM): Max 2 revision cycles
+- Phase 2 (PMA): Max 2 revision cycles
+- Phase 2A (UX): Max 2 revision cycles
+- Phase 2B (Chaperone): Max 2 rejection cycles
+
+**If limits exceeded:** Escalate to user for decision
+
+### Revision Cycle Definition
+
+**One cycle includes:**
+1. Work performed
+2. Validation/review
+3. Issues identified
+4. Fixes applied
+5. Resubmission
+
+**Example:**
+- Cycle 1: HTM creates artifacts → Chaperone finds gaps → HTM fixes → Resubmit
+- Cycle 2: HTM resubmits → Chaperone finds more issues → HTM fixes → Resubmit
+- Cycle 3: ESCALATE (limit exceeded)
+
+### Escalation Triggers
+
+**Automatic escalation when:**
+- Max iterations reached
+- Requirements fundamentally unclear
+- Technical infeasibility confirmed
+- Conflicting user feedback
+- Blocked by external dependency
+
+### Escalation Path
+
+```
+Robot (blocked)
+   ↓
+Chaperone (reviews issue)
+   ↓
+[Can Chaperone resolve?]
+   ├─ Yes → Provide guidance, robot continues
+   └─ No → Escalate to User
+          ↓
+       User Decision
+          ├─ Clarify requirements → Return to Phase 1
+          ├─ Revise scope → Update artifacts, continue
+          ├─ Accept limitations → Document, continue
+          └─ Pause project → Document state, pause
+```
+
+### Preventing Rework
+
+**Best practices:**
+- Use Phase 1B validation gate
+- Structured questions with options
+- Clear acceptance criteria upfront
+- Regular progress checkpoints
+- Document assumptions immediately
+
+### Tracking Iterations
+
+**Activity log format:**
+```
+[Phase X] Iteration 1 COMPLETE
+- Issues: [List]
+- Fixes applied: [List]
+- Status: [Resubmitted/Escalated]
+
+[Phase X] Iteration 2 COMPLETE
+- Issues: [List]
+- Fixes applied: [List]
+- Status: [Approved/Escalated]
+```
 
 ---
 
