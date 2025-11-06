@@ -13,3 +13,16 @@
 **/build
 **/*.map
 **/*.test.js
+
+# Robot directories: Project-specific files (ephemeral)
+robot_*/notes/current_work.md
+robot_*/notes/completed_features.md
+robot_*/notes/blockers.md
+robot_*/.claude/settings.local.json
+
+# Keep structure (tracked)
+!robot_*/notes/.gitkeep
+!robot_*/.claude/.gitkeep
+
+# Backup files from restructure
+robot_*/*.backup
