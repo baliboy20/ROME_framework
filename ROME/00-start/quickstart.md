@@ -1,581 +1,573 @@
-# ROME Quick Start Guide
-**Version**: 3.0 - Integration-First with Class Annotations
-**Last Updated**: 2025-10-07
+# ROME 6.0 Quick Start Guide
+
+**Version**: 6.0 - Evolutionary, Session-Continuous, Robot-Native
+**Last Updated**: 2025-11-07
+**Audience**: Teams launching first ROME project
 
 ---
 
-## 📖 Quick Navigation
+## 📖 For Complete Information
 
-For **complete phase details and comprehensive reference**, see:
-- **[ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md)** - Primary source of truth (all details)
-- **[rome-overview.md](rome-overview.md)** - Phase execution model
-- **[start-here.md](start-here.md)** - Detailed phase-by-phase instructions
-
-This guide is a **quick reference** for experienced ROME users. For first-time setup, use **start-here.md**.
+This guide covers **quickest path to first working feature**. For comprehensive details:
+- **[operational-design-principles.md](../01-methodology/operational-design-principles.md)** - 14 core governance principles
+- **[README.md](README.md)** - Phase-by-phase execution model
+- **[robot-generic-protocols.md](../robot-protocols/robot-generic-protocols.md)** - Detailed protocols (RP-1 through RP-8)
 
 ---
 
-## Setup in 10 Minutes
+## ⚡ 30-Minute Setup
 
 ### 1. Create Project Structure
+
 ```bash
 mkdir -p PROJECT/SOURCE/{backend,frontend,database,tests/integration}
 mkdir -p PROJECT/dev
-mkdir -p claude_{pma,backend,frontend,data,coordinator}
+mkdir -p PROJECT/dev/_user_input
+touch PROJECT/dev/project_activity.status
 ```
 
-### 2. Initialize Tracking Files
+### 2. Initialize Core Files
+
 ```bash
+# Create empty activity log (will be updated by robots)
+cat > PROJECT/dev/project_activity.status << 'EOF'
+project_name: "Your Project Name"
+last_updated: "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+updated_by: "setup"
+
+phases:
+  # Will be populated as each robot completes phases
+EOF
+
+# Create templates for next phases
 touch PROJECT/dev/data_model.md
 touch PROJECT/dev/use_cases.md
 touch PROJECT/dev/actionlist.md
-touch PROJECT/dev/project_activity.status
-touch PROJECT/dev/project_tasks.log
+touch PROJECT/dev/technical-decisions.md
 ```
 
-### 3. Create CLAUDE.md for Each Rodeo
-In each `claude_*` directory:
+### 3. Launch First Robot (Talib - Phase 1)
 
+Create robot workspace:
 ```bash
-cat > robot_reena/CLAUDE.md << 'EOF'
-Execute the following tasks:
-
-1) Read all documents in ../ROME folder
-2) Read data model: ../PROJECT/dev/data_model.md
-3) Read use cases: ../PROJECT/dev/use_cases.md
-4) Read your tasks in ../PROJECT/dev/actionlist.md
-5) Follow 6-step ROME protocol
-6) Add class annotations to all code
-7) Write integration tests at each layer
-8) Update status in ../PROJECT/dev/project_activity.status
-
-CRITICAL:
-- All source code in ../PROJECT/SOURCE/
-- Class annotations required: @Created, @Modified, @TestLevel, @Stable, @ComplexityLevel
-- Integration tests before feature completion
-- Get PMA approval for @Stable true changes
-EOF
+./scripts/create-robot.sh talib
 ```
 
-Repeat for other robots.
-
-### 4. 🚨 CRITICAL: Create Startup Scripts
-```bash
-# Create executable startup script for each robot
-for robot in pma backend frontend data coordinator; do
-  cat > claude_${robot}/__start.sh << 'EOF'
-#!/bin/bash
-echo "execute CLAUDE.md instructions" | claude "$@"
-EOF
-  chmod +x claude_${robot}/__start.sh
-done
+This creates:
+```
+robot_talib/
+├── .claude/
+│   ├── CLAUDE.md           ← Instructions for this robot
+│   └── settings.local.json ← Configuration
+├── notes/
+│   ├── current_work.md     ← Work state (P14a)
+│   ├── completed_features.md
+│   └── blockers.md
+└── README.md               ← Link to role specification
 ```
 
-### 5. 🚨 CRITICAL: Create Permission Files
+Launch Talib:
 ```bash
-# Create .claude directories
-for robot in pma backend frontend data coordinator; do
-  mkdir -p claude_${robot}/.claude
-done
+cd robot_talib
+# Claude reads CLAUDE.md automatically and starts Phase 1
+```
 
-# Copy appropriate permission template to each robot
-# See PERMISSIONS_SETUP_GUIDE.md for role-specific templates
+**What Talib Does:**
+- Reads raw requirements from `PROJECT/dev/_user_input/`
+- Analyzes across technical dimensions (P5 Quality Gates)
+- Refines specs into clear requirements
+- **Output**: `PROJECT/dev/requirements-matrix.yaml`
+
+---
+
+## 🏗️ Full Project Workflow (4-6 Weeks)
+
+### Phase 1: Requirements Refinement (Talib)
+
+**Duration**: 2-3 days
+
+**Talib's Checklist:**
+1. ✅ Read raw requirements from PROJECT/dev/_user_input/
+2. ✅ Ask clarifying questions about features, data, constraints
+3. ✅ Create requirements-matrix.yaml with user stories, features, acceptance criteria
+4. ✅ Document technical assumptions and risks
+5. ✅ Update PROJECT/dev/project_activity.status with completion
+
+**Setup Talib:**
+```bash
+./scripts/create-robot.sh talib
+cd robot_talib
+```
+
+**What Talib reads on startup:**
+- `.claude/CLAUDE.md` → Instructions
+- `PROJECT/dev/_user_input/*` → Your requirement documents
+- `ROME/02-phase1-requirements/role-talib.md` → Detailed role
+
+---
+
+### Phase 2: Architecture & Technical Decisions (PMA)
+
+**Duration**: 2-3 days
+
+**PMA's Checklist** (See role-pma.md for Phase 2 Technical Architecture Decisions Checklist):
+1. ✅ Read refined requirements from Talib's output
+2. ✅ Ask design questions (data model, workflows, performance)
+3. ✅ Create data_model.md with entities and relationships
+4. ✅ Create use_cases.md with user journeys
+5. ✅ Make technology stack decisions (See P13a Iterative Technical Decisions)
+6. ✅ Create technical-decisions.md with sponsor approvals
+7. ✅ Decompose into vertical feature slices
+8. ✅ Create actionlist.md with feature assignments
+9. ✅ Update project_activity.status
+
+**Setup PMA:**
+```bash
+./scripts/create-robot.sh pma
+cd robot_pma
+```
+
+**Key Output Files:**
+- `PROJECT/dev/data_model.md` - Entities, relationships, validation rules
+- `PROJECT/dev/use_cases.md` - User workflows and system scenarios
+- `PROJECT/dev/actionlist.md` - Features assigned to robots with API specs
+- `PROJECT/dev/technical-decisions.md` - Tech stack choices with sponsor approval
+
+---
+
+### Phase 2A: UX Design (Clara)
+
+**Duration**: 2-3 days (parallel with PMA if using Clara role)
+
+**Clara's Checklist:**
+1. ✅ Read PMA's data model and use cases
+2. ✅ Create design system with design tokens
+3. ✅ Create wireframes/prototypes for key flows
+4. ✅ Create component specifications
+5. ✅ Update project_activity.status
+
+**Setup Clara:**
+```bash
+./scripts/create-robot.sh clara
+cd robot_clara
 ```
 
 ---
 
-## Your First ROME 4.0 Project
+### Phase 2B: Design Validation Gate (Sarah)
 
-### ⚠️ CRITICAL: Read ROME-4.0-COMPLETE-GUIDE.md First
+**Duration**: 1 day
 
-The complete execution order is documented in [ROME-4.0-COMPLETE-GUIDE.md](ROME-4.0-COMPLETE-GUIDE.md) - Part A.
+**Sarah's Role** (P5 Quality Gates):
+- Validates PMA's architecture and Clara's design across 8 dimensions:
+  1. Data Model completeness
+  2. Application Flow & Use Cases
+  3. Authentication & Authorization
+  4. Caching Strategy
+  5. Technology Stack appropriateness
+  6. Target Platforms & Deployment
+  7. Testing Strategy
+  8. System Scope
 
-**Quick reminder of correct order:**
-1. 🎯 **Phase 1: Chaperone Phase 1** - Refine raw requirements into clear specs
-2. 📋 **Phase 2: PMA (Steps 1-6)** - Design using refined specs
-3. ✅ **Phase 2B: Chaperone Phase 2** - Validate design is practical (Gate)
-4. 🚀 **Phase 3: Development Robots** - Build with validated specs
+**Result**: ✅ APPROVED or 🚫 BLOCKED (if issues found)
 
-This quick start assumes Chaperone Phase 1 is already complete.
+**Setup Sarah:**
+```bash
+./scripts/create-robot.sh sarah
+cd robot_sarah
+```
 
 ---
 
-### Step 0: Launch Chaperone Phase 1 FIRST
+### Phase 3: Implementation (Ashok, Reena, Charlie)
 
-**Create the user input directory and add your requirement documents:**
+**Duration**: 2-3 weeks (parallel work per P8 Parallel Development)
 
+**Create all three robots:**
 ```bash
-# Create directory for raw requirements
-mkdir -p PROJECT/dev/_user_input
-
-# Add your documents (create or copy):
-# - product_requirements.md       (PRD, business needs)
-# - use_cases.md                  (user workflows, user stories)
-# - design_mockups/               (wireframes, screenshots - optional)
-# - technical_specs.md            (technical constraints - optional)
-# - business_context.md           (goals, constraints - optional)
-
-# Example: Create a simple PRD
-cat > PROJECT/dev/_user_input/product_requirements.md << 'EOF'
-# Product Requirements Document
-
-## Overview
-[Your project overview]
-
-## Features
-[Key features to build]
-
-## Success Criteria
-[How to measure success]
-EOF
+./scripts/create-robot.sh ashok
+./scripts/create-robot.sh reena
+./scripts/create-robot.sh charlie
 ```
 
-**Launch Chaperone Phase 1:**
-
+**Launch in separate iTerm windows:**
 ```bash
-cd robot_chaperone
-./__start.sh
-# Chaperone will:
-# 1. Read documents from PROJECT/dev/_user_input/
-# 2. Analyze across 8 technical dimensions
-# 3. Ask clarifying questions
-# 4. Produce refined specifications
-#
-# Produces:
-# - PROJECT/dev/specification_augmented.md
-# - PROJECT/dev/questions_and_answers.md
-# - PROJECT/dev/deferred_issues.md
+# Window 1: Data layer
+cd robot_ashok && # Claude reads CLAUDE.md and starts
+
+# Window 2: Backend layer
+cd robot_reena && # Claude reads CLAUDE.md and starts
+
+# Window 3: Frontend layer
+cd robot_charlie && # Claude reads CLAUDE.md and starts
 ```
 
-**⏳ Wait for Chaperone to complete before proceeding to Step 1.**
+**Each Robot's Workflow** (6-Step Protocol - RP-2 in robot-generic-protocols.md):
+1. **ANALYZE** - Read requirements, data model, assigned features
+2. **DESIGN** - Plan architecture/schema/UI for feature
+3. **IMPLEMENT** - Write code with @Created annotations
+4. **INTEGRATE** - Write integration tests at each layer
+5. **VALIDATE** - All tests pass, feature complete
+6. **REPORT** - Update PROJECT/dev/project_activity.status with completion
+
+**Session Continuity** (P14 Session Recovery):
+- Each robot maintains `notes/current_work.md` with exact work state
+- If session crashes: restart robot in same directory
+- Robot reads `current_work.md` and resumes from checkpoint
+- Recovery time: < 5 minutes
 
 ---
 
-### Step 1: PMA Analysis Phase (using Chaperone's refined specs)
+## 🤖 Robot Work State Documentation (P14a)
 
-**As PMA, ask extensive questions:**
+Each robot maintains work state for session continuity:
+
+### `current_work.md` Template
 ```markdown
-## Business Questions:
-- What are the core user workflows?
-- What data entities exist?
-- What are the validation rules?
-- What are the success criteria?
+# Current Work Status
 
-## Technical Questions:
-- What are the performance requirements?
-- What is the expected scale?
-- What are the deployment constraints?
-- What is the tech stack?
-```
+**Last Updated:** 2025-11-07 16:45 UTC
+**Robot:** robot_charlie
+**Session ID:** charlie-session-20251107-1
 
-### Step 2: Create Data Model
+## Work In Progress
 
-**Create `PROJECT/dev/data_model.md`:**
-```markdown
-# Core Entities
+**Feature:** FEAT-003 - User Profile Management
+**Task:** Implement profile form submission
 
-## Project
-- id: UUID (PK)
-- name: String (required, max 100 chars, unique per user)
-- description: Text (optional)
-- status: Enum [draft, active, archived]
-- user_id: UUID (FK to users)
-- created_at: Timestamp (auto)
-- updated_at: Timestamp (auto)
+**Current Location:**
+- File: `src/features/profile/ProfileForm.dart`
+- Line: 142
+- Function: `_submitProfile()`
 
-## Relationships
-- Project belongs to User (many-to-one)
+**What I'm Doing:**
+Step 3 of 5: Add server validation error handling to form submission
+- ✅ Step 1: Form structure complete
+- ✅ Step 2: Client-side validation working
+- 🔄 Step 3: Server error handling (IN PROGRESS)
+- ⏳ Step 4: Success message display
+- ⏳ Step 5: Integration test coverage
 
-## Validation Rules
-- Project name required
-- Project name unique per user
-- Status transitions: draft → active → archived
+**Progress:** 60% complete
 
-## Business Logic
-- Cannot archive project with active tasks
-- Project deletion cascades to tasks
-```
+**Next Steps:**
+1. Add try/catch block for API call
+2. Map server error codes to user messages
+3. Display errors in form
+4. Run integration tests
 
-### Step 3: Document Use Cases
-
-**Create `PROJECT/dev/use_cases.md`:**
-```markdown
-## UC-1: Create New Project
-
-**Actor:** Authenticated User
-
-**Preconditions:**
-- User is logged in
-- User has not reached project limit
-
-**Flow:**
-1. User clicks "New Project"
-2. User enters name and description
-3. System validates name uniqueness
-4. System creates project with 'draft' status
-5. System shows confirmation
-
-**Success:**
-- Project exists in database
-- User sees confirmation
-
-**Failure:**
-- Empty name: "Name is required"
-- Duplicate: "Project name already exists"
-```
-
-### Step 4: Create Action List
-
-**Populate `PROJECT/dev/actionlist.md`:**
-```markdown
-## Feature: Project Management | Priority: HIGH
-
-### Ashok (Database):
-- [ ] Create projects table
-  - Integration Test: CRUD + constraints
-  - Annotations: @TestLevel Integration, @ComplexityLevel Low
-
-### Reena (Backend):
-- [ ] Implement Project model
-  - Integration Test: Model ↔ DB
-  - Annotations: @TestLevel Integration, @ComplexityLevel Low
-- [ ] Create API endpoints
-  - Integration Test: API ↔ DB
-  - Annotations: @TestLevel Integration, @ComplexityLevel Low
-
-### Charlie (Frontend):
-- [ ] Data layer: ProjectRemoteDataSource
-  - Integration Test: Client ↔ API
-  - Annotations: @TestLevel Integration, @ComplexityLevel Low
-- [ ] Domain: Repository + Use Cases
-  - Integration Test: Use cases end-to-end
-  - Annotations: @TestLevel Integration, @ComplexityLevel Medium
-- [ ] UI: Project screens
-  - Integration Test: UI → API → DB
-  - Annotations: @TestLevel Integration, @ComplexityLevel Low
-
-### API Interface:
-POST /api/projects
-  Request: { name: string, description?: string }
-  Response: { success: boolean, data: Project }
-```
-
-### Step 5: Launch Chaperone Phase 2 (Design Inspection)
-
-**Before development, validate the design:**
-
-```bash
-# Chaperone Phase 2: Review PMA's design against refined specs
-cd robot_chaperone
-./__start.sh
-# Select: "Phase 2: Design Inspection & Validation"
-# Chaperone will validate:
-# - Technical feasibility
-# - Schedule realism
-# - Scope clarity
-
-# Produces: PROJECT/dev/design_approval.md
-# Status: ✅ APPROVED or 🚫 BLOCKED
-```
-
-**If Blocked:**
-- PMA must fix issues identified by Chaperone
-- Re-submit for Phase 2 validation
-
-**If Approved:**
-- Continue to Step 6 (launch robots)
-
----
-
-### Step 6: Launch Robots (with validated specs and approved design)
-
-**Launch in sequence:**
-
-```bash
-# 1. Data robot creates database schema
-cd robot_ashok && ./__start.sh
-
-# 2. Backend robot creates API (waits for DB)
-cd ../robot_reena && ./__start.sh
-
-# 3. Frontend robot creates UI (waits for API)
-cd ../robot_charlie && ./__start.sh
-
-# 4. Coordinator monitors progress
-cd ../robot_roma && ./__start.sh
-```
-
-### Step 6: Monitor Progress
-
-**Check status:**
-```bash
-# View current status
-cat PROJECT/dev/project_activity.status
-
-# Watch live updates
-tail -f PROJECT/dev/project_tasks.log
-
-# Check integration tests
-npm test -- tests/integration
-flutter_archive test test/integration
-```
-
-**Example status:**
-```
-Feature: Project Mgmt | Layer: Database | Status: COMPLETED | Ashok | 2025-10-07 09:00 | Integration
-Feature: Project Mgmt | Layer: Backend | Status: IN_PROGRESS | Reena | 2025-10-07 10:30 | Integration
-Feature: Project Mgmt | Layer: Frontend | Status: PENDING | Charlie | - | -
+**Expected completion:** 45 minutes
 ```
 
 ---
 
-## Integration Test Flow
+## 🔄 Session Recovery (P14c)
 
-### Layer 1: Database (Ashok)
+**If robot session crashes/times out:**
+
+1. **Restart robot in same directory:**
+   ```bash
+   cd robot_charlie
+   # Claude reads CLAUDE.md and initializes
+   ```
+
+2. **Robot automatically performs recovery (RP-7.6):**
+   - Reads `robot_charlie/notes/current_work.md` (exact work state)
+   - Reads `PROJECT/dev/project_activity.status` (phase context)
+   - Reads `git log` for code state
+   - Continues from exact checkpoint
+
+3. **Update session log:**
+   ```bash
+   # Append to current_work.md:
+   # Session Resumed: 2025-11-07 17:30 UTC
+   # Previous session ended at: Step 3 of 5 (60% complete)
+   # Continuing with: Server error handling implementation
+   ```
+
+No duplicate work. No lost context.
+
+---
+
+## 📊 Central Activity Log (P6 Central Coordination)
+
+**File**: `PROJECT/dev/project_activity.status`
+
+All robots update this log with progress. Example:
+```yaml
+project_name: "User Profile System"
+last_updated: "2025-11-07T17:45:00Z"
+updated_by: "robot_charlie"
+
+phases:
+  phase_1_talib:
+    status: completed
+    completion_date: "2025-11-01"
+    outputs_created:
+      - requirements-matrix.yaml
+    quality_gate: passed
+    notes: "All requirements refined and validated"
+
+  phase_2_pma:
+    status: completed
+    completion_date: "2025-11-05"
+    outputs_created:
+      - data_model.md
+      - use_cases.md
+      - actionlist.md
+      - technical-decisions.md
+    quality_gate: passed
+    notes: "All tech decisions approved by sponsor"
+
+  phase_2b_sarah:
+    status: completed
+    completion_date: "2025-11-06"
+    quality_gate: passed
+    gate_approved_by: "robot_sarah"
+    notes: "Design validation passed, no blockers"
+
+  phase_3_ashok:
+    status: in_progress
+    start_date: "2025-11-07"
+    current_work: "Creating projects table schema"
+    blockers: []
+    progress: "30%"
+
+  phase_3_reena:
+    status: pending
+    current_work: "Waiting for Ashok database schema"
+    blockers:
+      - depends_on: "phase_3_ashok"
+        expected_resolution: "2025-11-07 by 18:00"
+
+  phase_3_charlie:
+    status: pending
+    current_work: "Waiting for Reena API endpoints"
+    blockers:
+      - depends_on: "phase_3_reena"
+        expected_resolution: "2025-11-08 by 10:00"
+```
+
+---
+
+## 🔄 Evolutionary Iteration (P13 Evolutionary Development)
+
+**Design & development are iterative. If Phase 3 discovers unworkable constraint:**
+
+**Example - Performance Issue:**
+
+Charlie (Frontend) discovers: "API response time is 2 seconds; target is 500ms"
+
+**Amendment Request Process** (RP-1.2):
+1. Log amendment in project_activity.status with analysis
+2. Roma broadcasts to PMA
+3. PMA evaluates: "Need database index or caching strategy"
+4. PMA updates technical-decisions.md with iteration record
+5. Roma broadcasts decision to all robots
+6. Phase 3 robots continue with revised approach
+
+**All changes tracked** with justification → builds institutional knowledge
+
+---
+
+## ✅ Integration Testing (P7 Integration-First)
+
+Each robot tests at integration boundaries, not units:
+
+### Database Layer (Ashok)
 ```sql
--- @Created 2025-10-07 by Ashok
+-- @Created 2025-11-07 by Ashok
 -- @TestLevel Integration
 -- @Stable false
 -- @ComplexityLevel Low
 
-CREATE TABLE projects (...);
+CREATE TABLE projects (
+  id UUID PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  user_id UUID NOT NULL REFERENCES users(id),
+  status ENUM('draft','active','archived') DEFAULT 'draft',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Integration Test: Schema + constraints work
 ```
 
-**Test:**
-```javascript
-it('should create and retrieve project', async () => {
-  const result = await db.query('INSERT INTO projects...');
-  expect(result.rows[0]).toBeDefined();
-});
-```
-
-### Layer 2: Backend Model (Reena)
+### Backend Layer (Reena)
 ```javascript
 /**
- * @Created 2025-10-07 by Reena
+ * @Created 2025-11-07 by Reena
  * @TestLevel Integration
  * @Stable false
  * @ComplexityLevel Low
  */
-class Project {
-  static async create(data) { ... }
+class ProjectService {
+  async create(userId, name) {
+    const project = await db.query(
+      'INSERT INTO projects (user_id, name) VALUES ($1, $2) RETURNING *',
+      [userId, name]
+    );
+    return project.rows[0];
+  }
 }
+
+// Integration Test: Service ↔ Database works
 ```
 
-**Test:**
-```javascript
-it('should persist project to DB', async () => {
-  const project = await Project.create({ name: 'Test' });
-  expect(project.id).toBeDefined();
-});
-```
-
-### Layer 3: Backend API (Reena)
-```javascript
-/**
- * @Created 2025-10-07 by Reena
- * @TestLevel Integration
- * @Stable false
- * @ComplexityLevel Low
- */
-router.post('/api/projects', async (req, res) => { ... });
-```
-
-**Test:**
-```javascript
-it('should create project via API', async () => {
-  const response = await request(app)
-    .post('/api/projects')
-    .send({ name: 'API Test' });
-  expect(response.status).toBe(201);
-});
-```
-
-### Layer 4-6: Frontend (Charlie)
+### Frontend Layer (Charlie)
 ```dart
-/**
- * @Created 2025-10-07 by Charlie
- * @TestLevel Integration
- * @Stable false
- * @ComplexityLevel Low
- */
-class ProjectRemoteDataSource { ... }
-```
+/// @Created 2025-11-07 by Charlie
+/// @TestLevel Integration
+/// @Stable false
+/// @ComplexityLevel Low
+class ProjectRemoteDataSource {
+  Future<List<Project>> fetchProjects() async {
+    final response = await http.get('/api/projects');
+    return parseProjects(response.body);
+  }
+}
 
-**Test:**
-```dart
-test('should fetch from real API', () async {
-  final projects = await dataSource.fetchProjects();
-  expect(projects, isNotEmpty);
-});
+// Integration Test: UI ↔ API ↔ Database works end-to-end
 ```
 
 ---
 
-## Class Annotation Example
+## 📋 Class Annotations (P4 Traceability)
 
-### Initial Creation
+Every class annotated with metadata:
+
 ```typescript
 /**
- * @Created 2025-10-07 by Reena
- * @TestLevel None
- * @Stable false
- * @ComplexityLevel Low
- */
-class ProjectService { }
-```
-
-### After Integration Tests
-```typescript
-/**
- * @Created 2025-10-07 by Reena
- * @Modified 2025-10-07 by Reena
+ * @Created 2025-11-07 by Reena
+ * @Modified 2025-11-08 by Reena
  * @TestLevel Integration
  * @Stable false
  * @ComplexityLevel Low
- * 
- * Integration tests: test/integration/project_service_test.js
+ * @TestCoverage tests/integration/project_service_test.js
  */
 class ProjectService { ... }
 ```
 
-### Production Ready
-```typescript
-/**
- * @Created 2025-10-07 by Reena
- * @Modified 2025-10-08 by PMA
- * @TestLevel Integration
- * @Stable true
- * @ComplexityLevel Low
- * 
- * CHANGELOG:
- * 2025-10-08: Marked stable after UAT
- * 2025-10-07: Initial implementation
- */
-class ProjectService { ... }
-```
+**Annotations:**
+- **@Created** - Date and robot who created
+- **@Modified** - Date and robot who modified
+- **@TestLevel** - None | Integration | Unit | Both
+- **@Stable** - true (production-ready) | false (in development)
+- **@ComplexityLevel** - Low (integration tests only) | Medium | High (add unit tests)
 
 ---
 
-## Common Commands
+## 🚨 Critical Checkpoints
 
-### Check Annotations
+### Before Phase 2 Starts
+- [ ] Talib Phase 1 complete with refined requirements
+- [ ] project_activity.status updated: phase_1_talib.status = completed
+- [ ] requirements-matrix.yaml exists with clear, unambiguous requirements
+
+### Before Phase 3 Starts
+- [ ] PMA Phase 2 complete with design artifacts
+- [ ] Sarah Phase 2B (design validation) APPROVED
+- [ ] project_activity.status updated: phase_2b_sarah.quality_gate = passed
+- [ ] technical-decisions.md exists with sponsor approvals
+- [ ] All development robots created via `create-robot.sh`
+
+### Before Feature Deployment
+- [ ] All integration tests passing
+- [ ] All classes annotated with @TestLevel and @ComplexityLevel
+- [ ] Code review completed
+- [ ] PMA approval for @Stable true
+
+---
+
+## 📁 File Locations Reference
+
+| File | Purpose | Created By | Updated By |
+|------|---------|------------|------------|
+| PROJECT/dev/requirements-matrix.yaml | Requirements refined | Talib | - |
+| PROJECT/dev/data_model.md | Entities, relationships | PMA | PMA (if amended) |
+| PROJECT/dev/use_cases.md | User workflows | PMA | PMA (if amended) |
+| PROJECT/dev/actionlist.md | Feature assignments | PMA | Roma |
+| PROJECT/dev/technical-decisions.md | Tech choices w/ approval | PMA | PMA (iterations) |
+| PROJECT/dev/project_activity.status | Central activity log | All robots | All robots |
+| robot_[name]/notes/current_work.md | Work state (P14a) | [Robot] | [Robot] |
+| robot_[name]/notes/completed_features.md | Feature log | [Robot] | [Robot] |
+| robot_[name]/notes/blockers.md | Blocking issues | [Robot] | [Robot] |
+| PROJECT/SOURCE/\*\*/\*.js | Implementation | Phase 3 robots | Phase 3 robots |
+
+---
+
+## 🔧 Common Tasks
+
+### Check Project Status
 ```bash
-# Find unannotated classes
-grep -L "@Created" $(find PROJECT/SOURCE -name "*.js" -o -name "*.dart")
-
-# Find classes without tests
-grep -r "@TestLevel None" PROJECT/SOURCE/
-
-# Find unstable classes
-grep -r "@Stable false" PROJECT/SOURCE/
+cat PROJECT/dev/project_activity.status | grep "status:"
 ```
 
-### Run Tests
+### View Robot Work State
 ```bash
-# Backend integration tests
+cat robot_charlie/notes/current_work.md
+```
+
+### Check Blockers
+```bash
+grep -i "blocker\|blocked" robot_*/notes/blockers.md
+```
+
+### Run Integration Tests
+```bash
+# Backend
 npm test -- tests/integration
 
-# Frontend integration tests
-flutter_archive test test/integration
-
-# Specific test file
-npm test -- tests/integration/api/projects_test.js
+# Frontend
+flutter test test/integration
 ```
 
-### Check Status
+### Find Unannotated Code
 ```bash
-# Current feature status
-grep "Feature:" PROJECT/dev/actionlist.md
-
-# Find blockers
-grep "BLOCKED" PROJECT/dev/project_activity.status
-
-# Recent activity
-tail -20 PROJECT/dev/project_tasks.log
+grep -L "@Created" $(find PROJECT/SOURCE -name "*.js" -o -name "*.dart")
 ```
 
 ---
 
-## Troubleshooting
+## 📚 Next Steps
 
-### Robot Can't Launch
-- **Missing `__start.sh`**: Create executable startup script
-- **Permission denied**: Run `chmod +x __start.sh`
-- **Wrong permissions**: Check `.claude/settings.local.json`
-
-### Tests Failing
-- **Can't connect to DB**: Start database service
-- **Can't reach API**: Start backend server
-- **Import errors**: Install dependencies (`npm install`, `flutter pub get`)
-
-### Annotations Missing
-- **Robot didn't add**: Remind robot in next session
-- **Format wrong**: Check ROME_REFERENCE.md for template
-- **Update existing**: Add `@Modified` and update fields
+1. **Read operational-design-principles.md** - Understand 14 core principles (P1-P14)
+2. **Review role specifications** - role-talib.md, role-pma.md, role-charlie.md, etc.
+3. **Study robot-generic-protocols.md** - Detailed protocols (RP-1 through RP-8)
+4. **Launch Talib** - Start your first project
 
 ---
 
-## Tips for Success
+## ⚡ Expected Timeline
 
-### Do's ✅
-- Start with clear data model
-- Write integration tests at each layer
-- Add class annotations immediately
-- Monitor progress daily
-- Resolve blockers quickly
+| Phase | Robot | Duration | Output |
+|-------|-------|----------|--------|
+| 1 | Talib | 2-3 days | Refined requirements |
+| 2 | PMA | 2-3 days | Architecture, data model, feature list |
+| 2A | Clara | 2-3 days | Design system, wireframes (optional) |
+| 2B | Sarah | 1 day | Design approval or blockers |
+| 3 | Ashok + Reena + Charlie | 2-3 weeks | Working application with tests |
 
-### Don'ts ❌
-- Skip data modeling phase
-- Write code without tests
-- Forget class annotations
-- Ignore failing tests
-- Let blockers linger
+**Total**: 4-6 weeks from raw requirements to deployable product
 
 ---
 
-## Example: Complete Feature Timeline
+## 🎯 Philosophy
 
-**Day 1 - PMA:**
-- Ask stakeholder questions
-- Create data_model.md
-- Create use_cases.md
-- Create actionlist.md
-
-**Day 2 - Database (Ashok):**
-- 9:00 AM: Create schema
-- 10:00 AM: Write integration tests
-- 11:00 AM: Tests passing, mark complete
-
-**Day 2 - Backend (Reena):**
-- 11:30 AM: Create model (Layer 2)
-- 12:00 PM: Integration test model
-- 1:00 PM: Create API (Layer 3)
-- 2:00 PM: Integration test API
-- 3:00 PM: All tests passing, mark complete
-
-**Day 3 - Frontend (Charlie):**
-- 9:00 AM: Data layer
-- 10:00 AM: Integration test data layer
-- 11:00 AM: Domain layer
-- 12:00 PM: Integration test domain
-- 1:00 PM: Presentation layer
-- 3:00 PM: Integration test UI
-- 4:00 PM: All tests passing, mark complete
-
-**Day 4 - Review (PMA):**
-- Review all annotations
-- Run all integration tests
-- Mark @Stable true
-- Feature complete! 🎉
+ROME 6.0 emphasizes:
+- **Evolutionary Design** (P13) - Refine based on implementation insights
+- **Session Continuity** (P14) - Robot interruptions don't cause work loss
+- **Integration-First** (P7) - Real end-to-end testing from day 1
+- **Vertical Features** (P8) - Complete features, not layers
+- **Central Coordination** (P6) - Roma and activity logs synchronize all robots
 
 ---
 
-## Next Steps
+**Ready to launch your first ROME project?**
 
-- Read [rome-implementation-guide.md](rome-implementation-guide.md) for detailed examples
-- Review [rome-reference.md](rome-reference.md) for quick reference
-- Check role specifications for robot-specific guidance
-- See [start-here.md](start-here.md) for PMA complete workflow
+```bash
+./scripts/create-robot.sh talib
+cd robot_talib
+# Claude loads CLAUDE.md and starts Phase 1
+```
 
-**Ready to build software the ROME 3.0 way!**
+Good luck! 🚀
