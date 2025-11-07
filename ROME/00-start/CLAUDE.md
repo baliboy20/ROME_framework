@@ -105,29 +105,58 @@ EOF
 
 ---
 
-## 🤖 Step 4: Create Robot Workspaces
+## 🤖 Step 4: Create All 8 Robot Workspaces
 
-**For each robot, create directory with proper configuration:**
+**Critical**: Create ALL 8 robots, starting with **Roma first** (project coordinator needs to be ready).
 
 Robots to create (in order):
-1. **Talib** (📋 Requirements Engineer - Phase 1)
-2. **PMA** (🏗️ Project Manager/Architect - Phase 2)
-3. **Clara** (🎨 UX Designer - Phase 2A)
-4. **Sarah** (✅ System Auditor - Phase 2B)
-5. **Ashok** (🗄️ Data Architect - Phase 3)
-6. **Reena** (⚙️ Backend Engineer - Phase 3)
-7. **Charlie** (🖥️ Frontend Developer - Phase 3)
-8. **Roma** (🎯 Project Coordinator - All phases)
+1. **Roma** (🎯 Project Coordinator - All phases) **← CREATE FIRST**
+2. **Talib** (📋 Requirements Engineer - Phase 1)
+3. **PMA** (🏗️ Project Manager/Architect - Phase 2)
+4. **Clara** (🎨 UX Designer - Phase 2A - Optional)
+5. **Sarah** (✅ System Auditor - Phase 2B)
+6. **Ashok** (🗄️ Data Architect - Phase 3)
+7. **Reena** (⚙️ Backend Engineer - Phase 3)
+8. **Charlie** (🖥️ Frontend Developer - Phase 3)
 
-**For each robot, execute:**
+**Create robots in this exact order:**
 
 ```bash
-# For each ROBOT_NAME in list above:
-./ROME/scripts/create-robot.sh $ROBOT_NAME
+# 1. CREATE ROMA FIRST (Project Coordinator)
+./ROME/scripts/create-robot.sh roma
+ls -la robot_roma/.claude/CLAUDE.md
 
-# Verify creation
-ls -la robot_${ROBOT_NAME}/.claude/CLAUDE.md
+# 2. CREATE TALIB (Phase 1 - Requirements)
+./ROME/scripts/create-robot.sh talib
+ls -la robot_talib/.claude/CLAUDE.md
+
+# 3. CREATE PMA (Phase 2 - Architecture)
+./ROME/scripts/create-robot.sh pma
+ls -la robot_pma/.claude/CLAUDE.md
+
+# 4. CREATE CLARA (Phase 2A - UX Design, OPTIONAL)
+./ROME/scripts/create-robot.sh clara
+ls -la robot_clara/.claude/CLAUDE.md
+
+# 5. CREATE SARAH (Phase 2B - Quality Gate)
+./ROME/scripts/create-robot.sh sarah
+ls -la robot_sarah/.claude/CLAUDE.md
+
+# 6. CREATE ASHOK (Phase 3 - Data Layer)
+./ROME/scripts/create-robot.sh ashok
+ls -la robot_ashok/.claude/CLAUDE.md
+
+# 7. CREATE REENA (Phase 3 - Backend Layer)
+./ROME/scripts/create-robot.sh reena
+ls -la robot_reena/.claude/CLAUDE.md
+
+# 8. CREATE CHARLIE (Phase 3 - Frontend Layer)
+./ROME/scripts/create-robot.sh charlie
+ls -la robot_charlie/.claude/CLAUDE.md
 ```
+
+**Why Roma first?**
+Roma needs to be ready from the start to initialize `PROJECT/dev/project_activity.status` and begin monitoring as soon as Phase 1 (Talib) launches.
 
 **Expected structure per robot:**
 ```

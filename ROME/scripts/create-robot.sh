@@ -19,13 +19,14 @@ if [ -z "$ROBOT_NAME" ]; then
     echo "Example: $0 pma"
     echo ""
     echo "Available robots:"
-    echo "  - pma (Project Manager/Architect)"
-    echo "  - chaperone (Specification Specialist)"
-    echo "  - htm_decomposer (HTM Requirements Engineer)"
-    echo "  - clara (UX Designer)"
-    echo "  - charlie (Frontend Developer)"
-    echo "  - reena (Backend Engineer)"
-    echo "  - ashok (Data Architect)"
+    echo "  - talib (Requirements Engineer - Phase 1)"
+    echo "  - pma (Project Manager/Architect - Phase 2)"
+    echo "  - clara (UX Designer - Phase 2A)"
+    echo "  - sarah (System Auditor - Phase 2B)"
+    echo "  - ashok (Data Architect - Phase 3)"
+    echo "  - reena (Backend Engineer - Phase 3)"
+    echo "  - charlie (Frontend Developer - Phase 3)"
+    echo "  - roma (Project Coordinator - All Phases)"
     exit 1
 fi
 
@@ -67,6 +68,7 @@ case "$ROBOT_NAME" in
     ashok)      ROLE_PATH="ROME/06-phase3-development/role-ashok.md" ;;
     reena)      ROLE_PATH="ROME/06-phase3-development/role-reena.md" ;;
     charlie)    ROLE_PATH="ROME/06-phase3-development/role-charlie.md" ;;
+    roma)       ROLE_PATH="ROME/99-reference/role-roma.md" ;;
     *)          ROLE_PATH="" ;;
 esac
 
