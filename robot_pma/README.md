@@ -1,1 +1,1 @@
-../role-pma.md
+ROME/03-phase2-architecture/role-pma.md

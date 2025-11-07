@@ -57,16 +57,25 @@ else
     echo "     Create template first, then re-run this script"
 fi
 
+# Map robot names to their phase folders
+declare -A ROLE_PATHS
+ROLE_PATHS["talib"]="ROME/02-phase1-requirements/role-talib.md"
+ROLE_PATHS["pma"]="ROME/03-phase2-architecture/role-pma.md"
+ROLE_PATHS["clara"]="ROME/04-phase2a-ux/role-clara.md"
+ROLE_PATHS["sarah"]="ROME/05-phase2b-audit/role-sarah.md"
+ROLE_PATHS["chaperone"]="ROME/05-phase2b-audit/role-sarah.md"  # legacy name
+ROLE_PATHS["ashok"]="ROME/06-phase3-development/role-ashok.md"
+ROLE_PATHS["reena"]="ROME/06-phase3-development/role-reena.md"
+ROLE_PATHS["charlie"]="ROME/06-phase3-development/role-charlie.md"
+
 # Symlink README.md from role docs
-if [ -f "ROME/roles/role-${ROBOT_NAME}.md" ]; then
-    ln -sf ../ROME/roles/role-${ROBOT_NAME}.md ${ROBOT_DIR}/README.md
-    echo -e "  ${GREEN}✓${NC} Linked README from ROME/roles/role-${ROBOT_NAME}.md"
-elif [ -f "role-${ROBOT_NAME}.md" ]; then
-    ln -sf ../role-${ROBOT_NAME}.md ${ROBOT_DIR}/README.md
-    echo -e "  ${GREEN}✓${NC} Linked README from role-${ROBOT_NAME}.md"
+ROLE_PATH="${ROLE_PATHS[$ROBOT_NAME]}"
+if [ -n "$ROLE_PATH" ] && [ -f "$ROLE_PATH" ]; then
+    ln -sf ../$ROLE_PATH ${ROBOT_DIR}/README.md
+    echo -e "  ${GREEN}✓${NC} Linked README from $ROLE_PATH"
 else
     echo -e "  ${YELLOW}⚠${NC}  No role doc found for ${ROBOT_NAME}"
-    echo "     Create role doc first: role-${ROBOT_NAME}.md"
+    echo "     Expected: $ROLE_PATH"
 fi
 
 # Copy note templates
