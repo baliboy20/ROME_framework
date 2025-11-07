@@ -2,277 +2,252 @@
 
 **Version:** 6.0
 **Audience:** Robot initialization, methodology improvement
-**Status:** Core principles
+**Status:** Core principles - reference only
 
 ---
 
-## Core Model
+## Purpose
 
-ROME = **Phase-based task coordination via autonomous robot sessions**
-
-Each robot = Claude Code session in dedicated iTerm terminal
-Each phase = Stage in conventional application development lifecycle
-Scope = Requirements → Deployment (or feature enhancement cycle)
+This document enumerates the **core principles** that govern ROME methodology. Each principle is implemented in detail across other ROME documents. Use principle IDs to reference these concepts consistently.
 
 ---
 
-## Phase Structure
+## P1: Autonomous Robot Sessions
 
-### Requirements
+**Principle:** ROME = Phase-based task coordination via autonomous robot sessions
 
-**Phase Definition:**
-- **Purpose:** Transform user requirements into structured, traceable artifacts
-- **Inputs:** PRD/BRD from `PROJECT/user_docs/`, stakeholder Q&A responses
-- **Outputs:** `requirements-matrix.yaml`, `data-dictionary.yaml`, `component-registry.yaml`, feature docs
-- **Robot:** Talib (robot_talib)
-- **Quality Gate:** HTM completeness check → PMA handoff validation
+**Definition:**
+- Each robot = Claude Code session in dedicated iTerm terminal
+- Each phase = Stage in conventional application development lifecycle
+- Scope = Requirements → Deployment (or feature enhancement cycle)
 
-### Architecture
-
-**Phase Definition:**
-- **Purpose:** Design technical architecture, data models, API contracts
-- **Inputs:** All Phase 1 YAML artifacts, domain model
-- **Outputs:** `data_model.md`, `use_cases.md`, `api_design.md`, `architecture_specification.md`, `actionlist.md`
-- **Robot:** PMA (robot_pma)
-- **Quality Gate:** Design audit by Sarah before Phase 2A
-
-### UX Design
-
-**Phase Definition:**
-- **Purpose:** Create design system, wireframes, component specifications
-- **Inputs:** `data_model.md`, `use_cases.md`, feature requirements
-- **Outputs:** `DESIGN/design_system.md`, `DESIGN/COMPONENT_SPECS/`, wireframes, style guide
-- **Robot:** Clara (robot_clara)
-- **Quality Gate:** Design → Frontend handoff validation by Sarah
-
-### System Audit
-
-**Phase Definition:**
-- **Purpose:** Validate completeness, feasibility, consistency across Phase 1-2A artifacts
-- **Inputs:** All requirements, architecture, UX artifacts
-- **Outputs:** `audit_report.md`, approval/block decision, remediation list
-- **Robot:** Sarah (robot_sarah)
-- **Quality Gate:** Explicit GO/NO-GO for Phase 3
-
-### Development (3 parallel robots)
-
-**Phase Definition:**
-- **Purpose:** Implement vertical feature slices with integration-first testing
-- **Inputs:** `actionlist.md`, approved design artifacts, API contracts
-- **Outputs:** Source code in `PROJECT/SOURCE/`, integration tests, class annotations
-- **Robots:**
-  - Ashok (robot_ashok) - Data layer
-  - Reena (robot_reena) - Backend APIs
-  - Charlie (robot_charlie) - Frontend UI
-- **Quality Gate:** Feature approval via integration test pass + design validation
-
-### Deployment
-
-**Phase Definition:**
-- **Purpose:** Deploy to target environment (Back4App/Parse Server preferred)
-- **Inputs:** Passing integration tests, approved source code
-- **Outputs:** Live deployment, environment configs, deployment logs
-- **Robot:** DevOps (robot_devops) or Reena
-- **Quality Gate:** Production smoke tests pass
+**Implemented in:**
+- `00-start/README.md` - 4-phase execution model
+- `08-robot-setup/robot-creation.md` - Robot workspace setup
+- `scripts/create-robot.sh` - Automated robot instantiation
 
 ---
 
-## Input/Output Contracts
+## P2: Phase-Based Execution
 
-### Document Flow
+**Principle:** Work progresses through sequential phases with defined boundaries
 
+**Definition:**
+- Each phase has clear purpose, scope, and completion criteria
+- Phases hand off artifacts to subsequent phases
+- No phase begins until predecessor completes and passes quality gate
+
+**Implemented in:**
+- `00-start/README.md` - Complete phase structure
+- `00-start/overview.md` - Phase execution model
+- Phase-specific folders: `02-phase1-requirements/` through `06-phase3-development/`
+
+---
+
+## P3: Explicit Input/Output Contracts
+
+**Principle:** Every phase defines required inputs and guaranteed outputs
+
+**Definition:**
+- Inputs: Documents/artifacts consumed from previous phase or user
+- Outputs: Documents/artifacts produced for next phase or final delivery
+- Contracts documented and enforced via quality gates
+
+**Implemented in:**
+- `99-reference/document-governance-matrix.md` - **Canonical source** for all artifact contracts
+- `integration/htm-to-pma-handoff.md` - Phase 1→2 contracts
+- `04-phase2a-ux/ux-to-frontend-handoff.md` - Phase 2A→3 contracts
+
+---
+
+## P4: Complete Traceability
+
+**Principle:** All work traces back to requirements; all decisions are justified
+
+**Definition:**
+- Source code annotated with requirement IDs
+- Design artifacts link to requirements matrix
+- Decisions logged with justification
+- Audit trail: Code → Story → Feature → Epic
+
+**Implemented in:**
+- `01-methodology/reference.md` - Annotation standards
+- `01-methodology/implementation-guide.md` - Annotation lifecycle
+- `02-phase1-requirements/role-talib.md` - Requirements matrix structure
+
+---
+
+## P5: Quality Gate Enforcement
+
+**Principle:** Progress blocked until work meets quality criteria
+
+**Definition:**
+- Gatekeepers validate outputs before phase transition
+- Explicit PASS/BLOCK decisions
+- Blocked work requires remediation before proceeding
+- Gates enforce completeness, consistency, feasibility
+
+**Implemented in:**
+- `05-phase2b-audit/role-sarah.md` - Primary gatekeeper role, 8-dimension analysis
+- `01-methodology/reference.md` - Production readiness gates
+- Individual phase docs - Phase-specific gate criteria
+
+---
+
+## P6: Central Coordination via Roma
+
+**Principle:** Single coordinator manages cross-robot communication and escalation
+
+**Definition:**
+- Roma monitors all robot activity via status files
+- Escalates blockers to sponsor
+- Broadcasts phase transitions and work assignments
+- Resolves cross-robot conflicts
+- Manages quality gate transitions
+
+**Implemented in:**
+- `99-reference/role-roma.md` - **Complete Roma specification**
+- `PROJECT/dev/project_activity.status` - Status file format (created per-project)
+
+---
+
+## P7: Integration-First Testing
+
+**Principle:** Prioritize integration tests over unit tests for faster delivery
+
+**Definition:**
+- Vertical feature slices tested end-to-end first
+- Unit tests added only for complex logic requiring isolation
+- Integration tests validate API → Backend → Database flows
+- Class annotations track test coverage and complexity
+
+**Implemented in:**
+- `01-methodology/implementation-guide.md` - Integration-first methodology
+- `01-methodology/reference.md` - Test level annotations
+- `06-phase3-development/role-*.md` - Robot-specific testing protocols
+
+---
+
+## P8: Parallel Development
+
+**Principle:** Phase 3 robots work concurrently on vertical feature slices
+
+**Definition:**
+- Ashok, Reena, Charlie work simultaneously
+- Features decomposed into independent vertical slices
+- API contracts defined upfront enable parallel work
+- Integration tests detect interface mismatches
+
+**Implemented in:**
+- `00-start/README.md` - Phase 3 coordination
+- `03-phase2-architecture/role-pma.md` - Action list creation with robot assignments
+- `06-phase3-development/` - Individual robot role specifications
+
+---
+
+## P9: Artifact Ownership
+
+**Principle:** Every artifact has single creator, explicit consumers, defined location
+
+**Definition:**
+- Ownership prevents duplicate/conflicting documents
+- Consumers know where to find required inputs
+- Location standards enforce project structure
+- Governance matrix is single source of truth
+
+**Implemented in:**
+- `99-reference/document-governance-matrix.md` - **Canonical artifact registry**
+- `07-project-structure/directory-layout.md` - Standard project structure
+- Individual role docs - Artifact creation responsibilities
+
+---
+
+## P10: Self-Optimization
+
+**Principle:** Robots identify and propose methodology improvements
+
+**Definition:**
+- Robots flag unclear/conflicting guidance during execution
+- Improvements proposed via documented channels
+- Methodology evolves based on real execution experience
+- All changes version-controlled with justification
+
+**Implemented in:**
+- This principle itself (meta-level)
+- `ROME/suggestions/` directory (created as needed)
+- Version control in all ROME documents
+
+---
+
+## P11: Sponsor Visibility & Control
+
+**Principle:** Sponsor maintains visibility and decision authority throughout
+
+**Definition:**
+- Roma reports status, blockers, gate results to sponsor
+- Sponsor approves critical quality gates (Phase 3→4 deployment)
+- Sponsor resolves escalated decisions (scope, approach, priorities)
+- No autonomous scope changes without sponsor approval
+
+**Implemented in:**
+- `99-reference/role-roma.md` - Escalation and reporting protocols
+- Quality gate definitions - Sponsor approval requirements
+
+---
+
+## Principle Reference Map
+
+Use these IDs when referencing principles in other documents:
+
+| ID | Short Name | Key Concept |
+|----|------------|-------------|
+| **P1** | Autonomous Sessions | Robot = Claude Code in iTerm |
+| **P2** | Phase-Based | Sequential phases with boundaries |
+| **P3** | Input/Output Contracts | Explicit artifact dependencies |
+| **P4** | Traceability | Code → Requirements audit trail |
+| **P5** | Quality Gates | Progress blocked until validated |
+| **P6** | Central Coordination | Roma manages cross-robot work |
+| **P7** | Integration-First | End-to-end tests before unit tests |
+| **P8** | Parallel Development | Ashok/Reena/Charlie work concurrently |
+| **P9** | Artifact Ownership | Single creator per document |
+| **P10** | Self-Optimization | Robots improve methodology |
+| **P11** | Sponsor Control | Visibility and decision authority |
+
+---
+
+## Usage in Other Documents
+
+**To reference a principle:**
+
+```markdown
+Per **P4 (Traceability)**, all source code must include @RequirementID annotations.
+See `01-methodology/operational-design.md#P4` for principle definition.
+Implementation: `01-methodology/reference.md` lines 42-148.
 ```
-USER INPUT
-  └─> PROJECT/user_docs/*.* (PRD/BRD)
-       └─> Phase 1: Talib
-            └─> PROJECT/requirements/*.yaml
-                 └─> Phase 2: PMA
-                      └─> PROJECT/dev/*.md (models, use cases, architecture)
-                           └─> Phase 2A: Clara
-                                └─> PROJECT/DESIGN/** (specs, wireframes)
-                                     └─> Phase 2B: Sarah
-                                          └─> GO/NO-GO decision
-                                               └─> Phase 3: Ashok + Reena + Charlie
-                                                    └─> PROJECT/SOURCE/** (implementation)
-                                                         └─> Phase 4: Deploy
-                                                              └─> PRODUCTION
+
+**Example cross-reference:**
+```markdown
+Sarah enforces **P5 (Quality Gates)** via 8-dimension analysis.
+Principle: `01-methodology/operational-design.md#P5`
+Implementation: `05-phase2b-audit/role-sarah.md` lines 125-172
 ```
 
-### Artifact Ownership
+---
 
-| Artifact | Creator | Consumers | Location |
-|----------|---------|-----------|----------|
-| requirements-matrix.yaml | Talib | PMA, Sarah | PROJECT/requirements/ |
-| data-dictionary.yaml | Talib | PMA, Ashok, Sarah | PROJECT/requirements/ |
-| component-registry.yaml | Talib | PMA, All Dev robots | PROJECT/requirements/ |
-| data_model.md | PMA | Ashok, Reena, Clara, Sarah | PROJECT/dev/ |
-| use_cases.md | PMA | Clara, Charlie, Sarah | PROJECT/dev/ |
-| api_design.md | PMA | Reena, Charlie | PROJECT/dev/ |
-| architecture_specification.md | PMA | All Dev robots, Sarah | PROJECT/dev/ |
-| actionlist.md | PMA | Ashok, Reena, Charlie, Roma | PROJECT/dev/ |
-| design_system.md | Clara | Charlie, Sarah | PROJECT/DESIGN/ |
-| COMPONENT_SPECS/* | Clara | Charlie | PROJECT/DESIGN/COMPONENT_SPECS/ |
-| audit_report.md | Sarah | Sponsor, PMA | PROJECT/dev/ |
-| SOURCE/** | Ashok/Reena/Charlie | DevOps, Sponsor | PROJECT/SOURCE/ |
+## Document Status
+
+**This is a reference document only** - contains no implementation detail.
+
+All implementation specifications exist in other ROME documents. When conflicts arise between this document and implementation docs, **implementation docs take precedence** (they are more detailed and context-specific).
+
+Use this document to:
+- Understand core ROME philosophy
+- Reference principles consistently across docs
+- Identify which documents implement which concepts
+- Orient new users to ROME methodology
+
+**Do not duplicate implementation detail here** - link to authoritative sources instead.
 
 ---
 
-## Traceability Requirements
-
-### Annotation Standards
-
-**All source code MUST include:**
-```
-@RequirementID FEAT-XXX.X or STORY-XXX.X.X
-@CreatedBy robot_[name]
-@TestLevel Integration|Unit|None
-@ComplexityLevel Low|Medium|High
-@Stable true|false
-```
-
-**All design artifacts MUST include:**
-```
-@BasedOn requirements-matrix.yaml#FEAT-XXX.X
-@ValidatedBy robot_sarah
-@ImplementedBy robot_charlie
-```
-
-**All decisions MUST be logged:**
-- Robot justifies design/implementation choices in commit messages
-- Critical decisions logged in `PROJECT/dev/decision_log.md`
-- Blockers/escalations logged in `robot_[name]/notes/blockers.md`
-
-### Audit Trail
-
-On demand, any robot MUST be able to:
-1. Trace source code → Story ID → Feature ID → Epic ID
-2. Justify why implementation approach was chosen
-3. Reference which requirements artifact drove the decision
-4. Show which quality gate approved the work
-
----
-
-## Quality Gates
-
-### Gate 1: HTM Completeness (Phase 1 → Phase 2)
-- **Gatekeeper:** Talib (self-check) + PMA (validation)
-- **Criteria:** All 3 YAML files complete, schemas valid, no TBD fields
-- **Block Condition:** Missing entities, incomplete traceability, undefined components
-
-### Gate 2: Architecture Audit (Phase 2 → Phase 2A)
-- **Gatekeeper:** Sarah
-- **Criteria:** 8-dimension analysis pass (scope, data model, dependencies, feasibility, risks, edge cases, validation, constraints)
-- **Block Condition:** Incomplete data model, undefined APIs, missing use cases
-
-### Gate 3: Design Audit (Phase 2A → Phase 3)
-- **Gatekeeper:** Sarah + Clara
-- **Criteria:** Design specs complete, wireframes approved, component registry validated
-- **Block Condition:** Design inconsistent with architecture, missing component specs
-
-### Gate 4: Feature Approval (During Phase 3)
-- **Gatekeeper:** Clara (design validation) + PMA (functional approval)
-- **Criteria:** Integration tests pass, design matches specs, annotations complete
-- **Block Condition:** Tests fail, design deviation, missing traceability
-
-### Gate 5: Deployment Approval (Phase 3 → Phase 4)
-- **Gatekeeper:** PMA + Sponsor
-- **Criteria:** All features approved, no open blockers, smoke tests pass
-- **Block Condition:** Failed tests, unresolved blockers, incomplete features
-
----
-
-## Central Coordination (Roma)
-
-### Responsibilities
-
-**Roma (robot_roma) = Project Coordinator**
-
-1. **Monitor:** `PROJECT/dev/project_activity.status` (updated by all robots)
-2. **Escalate:** Cross-robot blockers, scope changes, timeline issues
-3. **Report:** Daily status to Sponsor, phase completion summaries
-4. **Coordinate:** Handoffs between phases, parallel robot conflicts
-5. **Gate Management:** Track quality gate status, approve gate transitions
-
-### Communication Protocol
-
-**Robot → Roma:**
-- Update `project_activity.status` on task start/completion
-- Log blockers in `robot_[name]/notes/blockers.md`
-- Request escalation via status file: `@Roma: [issue description]`
-
-**Roma → Robots:**
-- Broadcast phase transitions: "Phase 2 approved, launching Phase 3"
-- Assign work: "Charlie: Implement FEAT-001.1 next"
-- Resolve conflicts: "Ashok changed schema, Reena update API"
-
-**Roma → Sponsor:**
-- Phase completion: "Phase 1 complete, 8 features decomposed"
-- Blockers: "Awaiting decision on authentication approach"
-- Quality gates: "Sarah blocked Phase 3 - missing API specs"
-
----
-
-## Operational Workflow
-
-### Standard Phase Execution
-
-1. **Roma announces phase start** → Updates all robots
-2. **Robot reads inputs** from defined locations
-3. **Robot executes work** per role specification
-4. **Robot produces outputs** to defined locations
-5. **Robot updates project_activity.status**
-6. **Robot requests quality gate** when ready
-7. **Gatekeeper validates** outputs against criteria
-8. **Roma announces gate result** (PASS → next phase | BLOCK → remediate)
-
-### Iteration/Enhancement Workflow
-
-Same as above, but:
-- Inputs include existing `PROJECT/SOURCE/**` artifacts
-- Outputs = updated/new source code + updated docs
-- All changes maintain traceability to requirements
-
----
-
-## Design for Improvement
-
-### Self-Optimization
-
-Robots MUST:
-- Identify methodology gaps during execution
-- Propose improvements via `ROME/suggestions/[robot_name]_improvements.md`
-- Flag unclear/conflicting guidance in this document
-
-### Continuous Refinement
-
-This document is **working specification** - expect evolution:
-- Robots discover better input/output contracts → update here
-- Quality gate criteria too loose/strict → adjust here
-- Coordination bottlenecks identified → redesign here
-
-**Version control:** All changes committed with justification
-
----
-
-## Additional Suggestions Considered
-
-✅ **Parallel execution:** Phase 3 robots work concurrently on vertical slices
-✅ **Failure handling:** Quality gates block progress, force remediation
-✅ **Sponsor involvement:** Roma escalates decisions, reports status
-✅ **Tool enforcement:** Git commits require traceability annotations
-✅ **Audit capability:** All decisions logged and justifiable
-
----
-
-## Summary
-
-ROME = **Disciplined, traceable, phase-gated development via autonomous robot coordination**
-
-Success criteria:
-- Every artifact has clear owner, inputs, outputs
-- Every source line traces to requirement
-- Every phase passes quality gate before next begins
-- Roma maintains visibility, Sponsor maintains control
-- Robots improve methodology as they work
-
-**Read this on initialization. Reference during execution. Propose improvements when gaps found.**
+**Read this on initialization to understand ROME principles. Reference by principle ID during execution.**
