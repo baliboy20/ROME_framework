@@ -6,24 +6,44 @@
 
 ---
 
-## ⚡ Quick Start (30 minutes)
+## 🚀 Automated Project Setup (Recommended)
+
+**For new ROME projects, use the automated Project Launcher:**
+
+```bash
+cd 00-start
+claude
+```
+
+This launches a Claude session that will:
+1. **Gather project information** from your sponsor
+2. **Create project structure** with symlinks to sponsor directory
+3. **Initialize all 8 robot workspaces** (Talib, PMA, Clara, Sarah, Ashok, Reena, Charlie, Roma)
+4. **Launch iTerm with split-pane layout** showing all robots
+5. **Coordinate with Roma** for project monitoring
+6. **Guide sponsor** through uploading requirements and starting Phase 1
+
+**See `CLAUDE.md` in this folder for detailed launcher instructions.**
+
+---
+
+## ⚡ Quick Start (30 minutes - Manual)
+
+**If you prefer manual setup, or for adding individual robots later:**
 
 **Prerequisites:**
 - Raw requirements document(s)
 - Project directory created
 - Claude Code installed
 
-**Launch your first robot:**
+**Launch Talib robot:**
 ```bash
-mkdir -p PROJECT/dev/_user_input
-# Add your requirements to PROJECT/dev/_user_input/
-
 ./scripts/create-robot.sh talib
 cd robot_talib
 # Claude reads CLAUDE.md and starts Phase 1
 ```
 
-That's it! Talib will refine your requirements and guide you through Phase 2.
+Then Talib will refine your requirements and guide you through Phase 2.
 
 ---
 
