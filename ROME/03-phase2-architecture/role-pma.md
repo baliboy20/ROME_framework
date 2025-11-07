@@ -485,14 +485,197 @@ When feature complete:
  */
 ```
 
+## Phase 2 Technical Architecture Decisions Checklist
+
+Before completing Phase 2, PMA must systematically address these core architectural decisions and validate with sponsor. Each decision should be documented in `PROJECT/dev/architecture_specification.md` with justification.
+
+### 1. Technology Stack & Deployment
+**Decisions Required:**
+- [ ] Backend language/framework selected and justified
+- [ ] Frontend framework selected and justified
+- [ ] Database technology selected and justified
+- [ ] Cloud provider/deployment platform decided
+- [ ] Containerization strategy defined (Docker, K8s, etc.)
+- [ ] CI/CD pipeline architecture documented
+- [ ] Environment strategy (dev/staging/prod) defined
+
+**Sponsor Approval:** Required for tech stack selections
+**Question Template:** "Why [technology] over alternatives? What are the constraints that drove this choice?"
+
+---
+
+### 2. Core App Foundations
+
+#### Authentication & Authorization
+- [ ] Authentication pattern selected (OAuth, JWT, API keys, etc.)
+- [ ] Authorization model defined (roles, permissions, scopes)
+- [ ] Session management strategy documented
+- [ ] Password policies and security requirements specified
+
+**Sponsor Approval:** Yes - impacts user security and compliance
+
+#### Error Logging & Monitoring Infrastructure
+- [ ] Error tracking tool selected (Sentry, CloudWatch, custom, etc.)
+- [ ] Log aggregation strategy defined
+- [ ] Error severity levels and alerting rules documented
+- [ ] Log retention policy specified
+- [ ] PII/sensitive data handling in logs addressed
+
+**Sponsor Approval:** Yes - impacts debugging, compliance, data privacy
+
+#### Performance Monitoring Strategy
+- [ ] Performance metrics to track defined:
+  - [ ] Response time targets (API endpoints)
+  - [ ] Memory usage targets
+  - [ ] App size targets (mobile/web)
+  - [ ] Database query performance thresholds
+  - [ ] Cache hit ratio targets (if applicable)
+- [ ] Monitoring tool selected (DataDog, New Relic, custom, etc.)
+- [ ] Performance baseline established
+- [ ] Alerting thresholds defined
+- [ ] Memory profiling approach documented
+- [ ] App bundle size optimization strategy defined
+
+**Sponsor Approval:** Yes - impacts user experience and infrastructure costs
+
+---
+
+### 3. Library & Expert Selection Framework
+
+**Decision Process:**
+
+For each critical library/pattern decision:
+
+**Step 1: Identify Candidates**
+- What are the top 3 options for this decision?
+- What are the key differences between them?
+
+**Step 2: Evaluation Criteria**
+- Performance impact
+- Team expertise available
+- Community support & maintenance
+- Bundle size impact (for web/mobile)
+- Learning curve
+- Integration with other chosen libraries
+- Long-term maintenance burden
+- Cost (open source vs commercial)
+
+**Step 3: Expert Consultation**
+- Does this require expert guidance? (State management, caching patterns, architecture decisions)
+- If yes: Document which expert is consulted and why
+- If no: Justify why team expertise is sufficient
+
+**Step 4: Documentation**
+```markdown
+## Library Decision: [Name]
+
+**Selected:** [Library Name]
+
+**Alternatives Considered:**
+1. [Alternative 1] - Why rejected: [reason]
+2. [Alternative 2] - Why rejected: [reason]
+
+**Justification:**
+- Performance: [metric/data]
+- Team expertise: [who knows this]
+- Community: [maturity, activity]
+- Bundle impact: [size estimate]
+- Integration: [compatibility with other choices]
+
+**Expert Consulted:** [Name/Source if applicable]
+
+**Decision Date:** YYYY-MM-DD
+```
+
+**Examples of Decisions Requiring Expert Input:**
+- State management library (Redux, Riverpod, Provider, Pinia, Zustand)
+- ORM/Query builder (Prisma, TypeORM, SQLAlchemy)
+- Testing framework beyond integration tests
+- Real-time communication (WebSockets, SSE, polling)
+- Authentication library selection
+- Caching strategy (Redis, Memcached, in-memory, none)
+
+**Sponsor Approval:** Required for major library decisions affecting architecture
+
+---
+
+### 4. Testing & Quality Strategy
+
+#### Integration Testing
+- [ ] Integration test framework selected
+- [ ] Test database strategy defined (fixtures, seeders)
+- [ ] API contract testing approach defined
+- [ ] End-to-end test scope defined
+- [ ] Test environment setup documented
+- [ ] Coverage targets defined (per feature, per layer)
+
+#### Quality Standards
+- [ ] Code annotation standards enforced (@Created, @TestLevel, @ComplexityLevel, @Stable)
+- [ ] Class stability promotion criteria defined
+- [ ] Complex logic unit test requirements specified
+- [ ] Code review process documented
+- [ ] Performance regression testing approach defined
+
+**Sponsor Approval:** Not required, but communicate approach
+
+---
+
+### 5. Mandatory Sponsor Decision Gates
+
+**Before Phase 2A (Design) begins, PMA must validate these decisions with sponsor:**
+
+| Decision Area | Sponsor Question | Must Have Written Approval? |
+|---|---|---|
+| Tech Stack | "Approved selections for [backend/frontend/database]?" | ✅ Yes |
+| Deployment | "Approved deployment to [platform] with [scaling strategy]?" | ✅ Yes |
+| Core Auth | "Approved [auth method] for user authentication?" | ✅ Yes |
+| Error/Monitoring | "Approved error tracking via [tool] with [data privacy approach]?" | ✅ Yes |
+| Performance Targets | "Approved performance targets: [response time/memory/size]?" | ✅ Yes |
+| Major Libraries | "Approved [library] for [purpose] with [justification]?" | ⚠️ Only for major decisions |
+| Testing Approach | "Reviewed and understood integration-first testing strategy?" | ✅ Yes |
+
+**Documentation:** Create `PROJECT/dev/technical-decisions.md` as decision log:
+```yaml
+decisions:
+  - title: "Backend Framework Selection"
+    date: "2025-11-07"
+    chosen: "Node.js + Express"
+    alternatives: ["Python/Django", "Go/Gin"]
+    justification: "Team expertise, ecosystem maturity, real-time capability"
+    sponsor_approved: true
+    approval_date: "2025-11-08"
+
+  - title: "Database Selection"
+    date: "2025-11-07"
+    chosen: "PostgreSQL"
+    alternatives: ["MongoDB", "Parse Server/Back4App"]
+    justification: "Complex data model, relational integrity requirements"
+    sponsor_approved: true
+    approval_date: "2025-11-08"
+```
+
+---
+
+### Implementation Notes
+
+1. **Early Validation** - Complete decisions BEFORE Phase 2A design begins; don't force design team to work with uncertain tech choices
+2. **Document Justification** - Every decision needs "why" not just "what"
+3. **Flexibility Built In** - Per **P13 (Evolutionary Development)**, this is Phase 2 baseline; later iterations can reconsider decisions if new information emerges
+4. **Expert Input** - For uncertain areas, explicitly identify external expert or MCP server used to inform decision
+5. **Communication** - Update robot work contexts (CLAUDE.md) with approved decisions before Phase 3 begins
+
+---
+
 ## Key Deliverables
 
 1. **data_model.md** - Entities, relationships, validation rules
 2. **use_cases.md** - User workflows and system scenarios
 3. **actionlist.md** - Feature-based task assignments (vertical slices)
-4. **Robot Configuration** - Workspaces with feature context
-5. **Integration Test Strategy** - Testing approach per feature
-6. **Quality Audits** - Regular annotation and test verification
+4. **architecture_specification.md** - Tech stack, deployment, core foundations decisions
+5. **technical-decisions.md** - Decision log with sponsor approvals (new)
+6. **Robot Configuration** - Workspaces with feature context
+7. **Integration Test Strategy** - Testing approach per feature
+8. **Quality Audits** - Regular annotation and test verification
 
 ## Success Criteria
 

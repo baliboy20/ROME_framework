@@ -238,6 +238,99 @@ Use human names in all documentation, code annotations, and communication. Direc
 
 ---
 
+## P13: Evolutionary & Iterative Development
+
+**Principle:** Design and development are evolutionary; ROME accommodates refinement, iteration, and course correction
+
+**Definition:**
+- Phase 2 technical decisions (P13a) are starting point, not absolute constraints
+- As Phase 3 robots implement, new technical insights may emerge
+- Design decisions can be revisited if justified by new information
+- Changes are tracked and documented in activity logs for continuity
+- Each iteration improves baseline for next phase or cycle
+
+**P13a - Iterative Technical Decisions:**
+- PMA Phase 2 establishes baseline tech stack, architecture, library selections
+- If Phase 3 robots discover unworkable constraint (performance, incompatibility, etc.)
+- Can propose revision with full analysis (why original failed, why alternative works)
+- Requires approval per **P12 (Amendment Protocol)** - return control to PMA
+- Change tracked in `technical-decisions.md` with iteration history
+
+**P13b - Meaningful Change Tracking:**
+- All artifacts include version history or changelog
+- Not just file timestamps: capture *what changed and why*
+- Format: Dated entries with description of change, author, business/technical reason
+- Example: "2025-11-15 - Added Redis caching to data model (performance requirement emerged in Phase 3)"
+- Activity logs in `PROJECT/dev/project_activity.status` track cumulative changes per phase
+
+**P13c - Continuous Feedback Loop:**
+- Robots flag issues/learnings during implementation
+- Documented in project activity log with impact assessment
+- Coordinated through **P6 (Roma)** for cross-phase synchronization
+- Sponsor notified of significant refinements
+
+**Implemented in:**
+- `robot-protocols/robot-generic-protocols.md#RP-6` - Coordination patterns for change requests
+- `PROJECT/dev/project_activity.status` - Change log and amendment tracking
+- `PROJECT/dev/technical-decisions.md` - Decision iteration history
+- Role definitions with flexibility built into phase boundaries
+
+---
+
+## P14: Robot Session Continuity & Recovery
+
+**Principle:** Robot sessions can be interrupted/terminated; successor session resumes seamlessly with full context
+
+**Definition:**
+- Each robot maintains comprehensive work state documentation
+- Session loss (crash, timeout, termination) results in minimal context loss
+- New session can pick up exact work state within minutes
+- No duplicate work; no missed tasks; no conflicting changes
+
+**P14a - Session State Documentation:**
+- Each robot maintains real-time work state in `robot_[name]/notes/` directory:
+  - `current_work.md` - Exactly what robot is working on (statement of work, code location, progress %)
+  - `completed_features.md` - Cumulative log of all completed work with dates
+  - `blockers.md` - Current blockers, pending decisions, waiting items
+- Updated after each work session or when state changes
+
+**P14b - Activity Log Integration:**
+- Robot status also reflected in `PROJECT/dev/project_activity.status` (activity log)
+- Phase-level status: in_progress/blocked/completed
+- Current work summary in log
+- Blockers listed with dates and dependencies
+
+**P14c - Session Restart Protocol:**
+1. New session starts, reads `robot_[name]/.claude/CLAUDE.md` (role definition)
+2. Reads `robot_[name]/notes/current_work.md` for exact work state
+3. Reads `PROJECT/dev/project_activity.status` for phase-level context and dependencies
+4. Reads commit history for latest code changes (`git log --oneline --decorate` for branch state)
+5. Continues from exact checkpoint (line number, feature, test, etc.)
+6. Updates `current_work.md` with session timestamp: "Resumed at 2025-11-07 14:32 UTC from [previous state]"
+
+**P14d - Work Checkpoint Standards:**
+- Code saved and committed (or staged with clear checkpoint message)
+- Test status clear: "Integration tests passing" vs "Adding test for feature X"
+- Feature state explicit: "Feature complete, awaiting code review" vs "In progress: Step 3 of 5"
+- No work-in-progress without checkpoint
+- Critical decisions documented with decision date and rationale
+
+**P14e - Continuity Best Practices:**
+- Each commit message includes work state snapshot if interrupted
+- Example: "Add user authentication step 2 of 3: Implement JWT validation (tests pending)"
+- Never commit incomplete logic without test or TODO comment
+- Always reference feature ID and action item number
+- Notes updated simultaneously with code changes
+
+**Implemented in:**
+- `robot-protocols/robot-generic-protocols.md#RP-7` - Session startup and state management
+- `robot_[name]/notes/` - Work state documentation templates
+- `PROJECT/dev/project_activity.status` - Centralized activity log tracking all robots
+- Git commit messages with checkpoint information
+- Role-specific setup in `robot_[name]/.claude/CLAUDE.md`
+
+---
+
 ## Principle Reference Map
 
 Use these IDs when referencing principles in other documents:
@@ -256,6 +349,8 @@ Use these IDs when referencing principles in other documents:
 | **P10** | Self-Optimization | Robots improve methodology |
 | **P11** | Sponsor Control | Visibility and decision authority |
 | **P12** | Global Visibility, Phase-Scoped Amendments | All can read, only creator phase can amend |
+| **P13** | Evolutionary Development | Design/dev iterative; changes tracked & documented |
+| **P14** | Session Continuity | Sessions resume seamlessly with full context |
 
 ---
 

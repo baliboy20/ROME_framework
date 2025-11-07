@@ -838,6 +838,240 @@ PROJECT/
 
 ---
 
+### RP-7.5: Session State Documentation (P14a)
+
+**Required on every session close or when work state changes:**
+
+#### `current_work.md` Template
+
+```markdown
+# Current Work Status
+
+**Last Updated:** 2025-11-07 16:45 UTC
+**Robot:** robot_charlie
+**Session ID:** charlie-session-20251107-1
+
+## Work In Progress
+
+**Feature:** FEAT-003 - User Profile Management
+**Task:** Implement profile form submission
+
+**Current Location:**
+- File: `src/features/profile/ProfileForm.dart`
+- Line: 142
+- Function: `_submitProfile()`
+
+**What I'm Doing:**
+Step 3 of 5: Add server validation error handling to form submission
+- ✅ Step 1: Form structure complete
+- ✅ Step 2: Client-side validation working
+- 🔄 Step 3: Server error handling (IN PROGRESS)
+- ⏳ Step 4: Success message display
+- ⏳ Step 5: Integration test coverage
+
+**Progress:** 60% complete
+
+**Next Steps:**
+1. Add try/catch block for API call
+2. Map server error codes to user-friendly messages
+3. Display errors in form
+4. Run integration tests
+
+**Code Checkpoint:**
+- Last commit: `Add client validation to profile form (step 2 complete)`
+- Staged changes: None
+- Uncommitted work: [Lines 142-180] function body started
+
+**Expected completion:** 45 minutes
+```
+
+#### `completed_features.md` Template
+
+```markdown
+# Completed Features Log
+
+## 2025-11-07
+
+### FEAT-003.1 - Profile Form UI
+- **Completed:** 2025-11-07 14:22 UTC
+- **Robot:** robot_charlie
+- **Lines of Code:** 245
+- **Files:** ProfileForm.dart, profile_model.dart
+- **Tests:** Integration test passing (user can open form, fill fields, see validation)
+- **Status:** Awaiting code review
+- **Commit:** a3f2c8e
+
+### FEAT-003.2 - Form Validation Logic
+- **Completed:** 2025-11-07 15:30 UTC
+- **Robot:** robot_charlie
+- **Tests:** Integration test passing (validation triggers on field blur, shows errors)
+- **Status:** Awaiting code review
+- **Commit:** c9e2a1d
+
+## 2025-11-06
+
+### FEAT-002 - User Settings Page
+- **Completed:** 2025-11-06 17:45 UTC
+- **Status:** Code review approved, merged to develop
+- **Commit:** b4a6d7f
+```
+
+#### `blockers.md` Template
+
+```markdown
+# Current Blockers
+
+## Active Blockers
+
+### BLOCKER-1: API Endpoint Not Yet Implemented
+- **Date Logged:** 2025-11-07 16:30 UTC
+- **Issue:** POST /api/profile endpoint doesn't exist yet (Reena's responsibility)
+- **Impact:** Can't test form submission end-to-end
+- **Workaround:** Using mock API response
+- **Depends On:** robot_reena completing FEAT-003 backend
+- **Expected Resolution:** 2025-11-08 by 10:00 UTC
+- **Status:** Waiting
+
+### BLOCKER-2: Design Token Value Unclear
+- **Date Logged:** 2025-11-07 14:15 UTC
+- **Issue:** Clara's design doesn't specify margin size for form buttons
+- **Impact:** Button spacing doesn't match other UI
+- **Depends On:** Clara amendment request (submitted)
+- **Expected Resolution:** 2025-11-07 by 18:00 UTC
+- **Status:** Amendment pending
+
+## Resolved (This Session)
+
+### BLOCKER-3: Form Library Selection (RESOLVED)
+- **Logged:** 2025-11-07 09:00 UTC
+- **Issue:** Unclear whether to use Riverpod or Provider for form state
+- **Resolution:** PMA approved Riverpod decision via amendment
+- **Resolved:** 2025-11-07 10:15 UTC
+```
+
+---
+
+### RP-7.6: Session Restart Protocol (P14c)
+
+**When starting a new session (after interruption, timeout, or context reset):**
+
+**Step 1: Read Role Instructions**
+```bash
+cat robot_[name]/.claude/CLAUDE.md
+```
+Understand: phase, responsibilities, assigned features
+
+**Step 2: Check Current Work State**
+```bash
+cat robot_[name]/notes/current_work.md
+```
+Answer these questions:
+- What feature was being worked on?
+- What step was in progress?
+- What's the exact code location (file, line, function)?
+- What's the progress percentage?
+- What are the next steps?
+
+**Step 3: Check Activity Log**
+```bash
+cat PROJECT/dev/project_activity.status | grep -A 20 "[robot_name]"
+```
+Understand: phase-level status, blockers, pending decisions from Roma
+
+**Step 4: Check Git State**
+```bash
+git log --oneline --decorate -5
+git status
+```
+Understand: latest commits, uncommitted changes, branch state
+
+**Step 5: Check Blockers**
+```bash
+cat robot_[name]/notes/blockers.md
+```
+Understand: what's waiting on external dependencies
+
+**Step 6: Resume from Checkpoint**
+```bash
+# Open the exact file and line from current_work.md
+# Review the function context
+# Continue from "Next Steps" outlined in current_work.md
+```
+
+**Step 7: Update Session Log**
+```markdown
+Append to current_work.md:
+
+**Session Resumed:** 2025-11-07 17:30 UTC
+- Previous session ended at: Step 3 of 5 (60% complete)
+- Previous commit: a3f2c8e
+- Continuing with: Server error handling implementation
+- Code location: src/features/profile/ProfileForm.dart:142
+```
+
+**Step 8: Validate Continuity**
+- [ ] All blockers from previous session still current? Update if resolved
+- [ ] Any amendments approved? Check PROJECT/dev/project_activity.status
+- [ ] Any new feature dependencies? Check actionlist.md
+- [ ] Code compiles from checkpoint? Run build if needed
+- [ ] Ready to continue? Resume at exact code location
+
+---
+
+### RP-7.7: Checkpoint Best Practices
+
+**Never end a session without:**
+
+1. **Commit or stage code with descriptive checkpoint message**
+   ```bash
+   git commit -m "Add profile form validation (step 2 of 5 complete)
+
+   Progress:
+   - ✅ Form structure complete
+   - ✅ Client-side validation working
+   - Next: Server error handling"
+   ```
+
+2. **Update current_work.md with exact state**
+   - What was accomplished this session
+   - What's the next immediate task (first 3 steps)
+   - Where in the code to resume
+   - Any new blockers encountered
+
+3. **Update completed_features.md if feature finished**
+   - Exactly when it was completed
+   - What tests pass
+   - Status (ready for review, awaiting merge, etc.)
+
+4. **Update blockers.md if new blockers found**
+   - Date and time logged
+   - What the blocker is
+   - Which feature depends on resolution
+   - Expected resolution date
+
+5. **No incomplete work without context**
+   - If stopping mid-function: add TODO comment with context
+   - If stopping mid-feature: note percentage complete
+   - If stopping due to blocker: document exact blocker
+
+**Checkpoint Message Format:**
+```
+[FEATURE-ID] [Brief description] (step N of M complete, NN% done)
+
+Accomplished:
+- Item 1
+- Item 2
+
+Next Steps:
+1. First step
+2. Second step
+3. Third step
+
+Status: [In Progress / Waiting on Blocker / Ready for Review]
+```
+
+---
+
 ## RP-8: SPECIAL PROTOCOLS
 
 ### RP-8.1: Design-to-Implementation Handoff (Clara → Charlie)
