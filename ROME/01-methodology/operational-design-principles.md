@@ -12,6 +12,20 @@ This document enumerates the **core principles** that govern ROME methodology. E
 
 ---
 
+## Naming Convention
+
+**All robots referred to by human names only:**
+- Phase 1: Talib (HTM Requirements Engineer)
+- Phase 2: PMA (Project Manager/Architect)
+- Phase 2A: Clara (UX Designer)
+- Phase 2B: Sarah (System Auditor)
+- Phase 3: Ashok (Data), Reena (Backend), Charlie (Frontend)
+- Coordination: Roma (Project Coordinator)
+
+Use human names in all documentation, code annotations, and communication. Directory names follow pattern: `robot_[firstname_lowercase]`.
+
+---
+
 ## P1: Autonomous Robot Sessions
 
 **Principle:** ROME = Phase-based task coordination via autonomous robot sessions
@@ -36,10 +50,12 @@ This document enumerates the **core principles** that govern ROME methodology. E
 - Each phase has clear purpose, scope, and completion criteria
 - Phases hand off artifacts to subsequent phases
 - No phase begins until predecessor completes and passes quality gate
+- **Phase 2B is a mandatory quality gate, not a sequential phase**: Sarah validates Phase 2A design before Phase 3 begins. If blocked, work returns to Clara. If approved, Phase 3 launches.
 
 **Implemented in:**
-- `00-start/README.md` - Complete phase structure
+- `00-start/README.md` - Complete phase structure (Phase 2B as gate)
 - `00-start/overview.md` - Phase execution model
+- `05-phase2b-audit/role-sarah.md` - Gate validation protocol
 - Phase-specific folders: `02-phase1-requirements/` through `06-phase3-development/`
 
 ---
@@ -195,6 +211,30 @@ This document enumerates the **core principles** that govern ROME methodology. E
 
 ---
 
+## P12: Global Artifact Visibility with Phase-Scoped Amendments
+
+**Principle:** All artifacts have global visibility but can only be amended within their originating phase
+
+**Definition:**
+- Artifacts created in a phase are visible to all subsequent phases
+- Amendments require returning control to originating phase for modification
+- Phase progression and parallel activities coordinated through centralized logs
+- Information flow one-directional forward; control flow backward only for amendments
+
+**Examples:**
+- Talib creates `requirements-matrix.yaml` (Phase 1 artifact)
+- PMA can READ requirements-matrix but CANNOT amend it
+- If requirements need change, PMA requests amendment from Talib
+- Phase 2B Sarah can READ design artifacts but cannot amend them; changes require Clara
+- Phase 3 (Ashok/Reena/Charlie) can READ all prior artifacts; cannot amend any
+
+**Implemented in:**
+- `robot-protocol.md` (to be created) - Phase amendment request protocol
+- `99-reference/document-governance-matrix.md` - Artifact creation phase ownership
+- Activity logs and status files - Central coordination mechanism
+
+---
+
 ## Principle Reference Map
 
 Use these IDs when referencing principles in other documents:
@@ -212,6 +252,7 @@ Use these IDs when referencing principles in other documents:
 | **P9** | Artifact Ownership | Single creator per document |
 | **P10** | Self-Optimization | Robots improve methodology |
 | **P11** | Sponsor Control | Visibility and decision authority |
+| **P12** | Global Visibility, Phase-Scoped Amendments | All can read, only creator phase can amend |
 
 ---
 
