@@ -602,5 +602,5 @@ Detail-oriented advocate for user experience. Validates continuously rather than
 - [guide-ux-to-frontend-integration.md](guide-ux-to-frontend-integration.md) - **UX Design → Frontend Integration Protocol** (How to hand off design artifacts to frontend developers and validate implementation)
 - [role-frontend.md](role-frontend.md) - Frontend Developer (Charlie) role specification
 - [role-pma.md](role-pma.md) - PMA role specification (partner in design approval)
-- [role-chaperone.md](role-chaperone.md) - Chaperone role specification (validates design in Phase 2)
+- [role-sarah.md](../05-phase2b-audit/role-sarah.md) - Sarah (System Auditor) role specification (validates design in Phase 2B)
 - [rome-implementation-guide.md](rome-implementation-guide.md) - Integration-first testing and class annotations

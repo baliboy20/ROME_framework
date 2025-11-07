@@ -524,7 +524,7 @@ Recommendation: [Your suggestion]
 - `/ROME/guide-question-option-completeness.md` - Question guidelines
 
 ### Role Specification
-- `/role-htm-decomposer.md` - Full role details
+- `../../../ROME/02-phase1-requirements/role-talib.md` - Full role details
 
 ### Templates
 - `/ROME/templates/project/` - Project artifact templates

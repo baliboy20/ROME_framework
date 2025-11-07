@@ -59,7 +59,7 @@ Before starting, ensure you have:
 
 1. **Open HTM Decomposer Claude instance**
    ```bash
-   cd robot_htm_decomposer
+   cd robot_talib
    ./start.sh
    ```
 
@@ -512,10 +512,10 @@ After completing all phases, you should have:
 ### After This Guide
 
 1. **Read role documents:**
-   - `/ROME/roles/role-htm-decomposer.md`
-   - `/ROME/role-pma.md`
-   - `/ROME/role-ux-clara.md`
-   - `/ROME/role-chaperone.md`
+   - `ROME/02-phase1-requirements/role-talib.md`
+   - `ROME/03-phase2-architecture/role-pma.md`
+   - `ROME/04-phase2a-ux/role-clara.md`
+   - `ROME/05-phase2b-audit/role-sarah.md`
 
 2. **Review integration details:**
    - `/ROME/integration/htm-to-pma-handoff.md`

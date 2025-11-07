@@ -1,0 +1,9 @@
+# Project-specific files (not in git)
+notes/current_work.md
+notes/completed_features.md
+notes/blockers.md
+.claude/settings.local.json
+
+# Keep template structure in git
+!notes/.gitkeep
+!.claude/.gitkeep

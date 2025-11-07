@@ -621,7 +621,7 @@ components:
 
 - `/ROME/integration/htm-rome-integration-guide.md` - Overall workflow
 - `/ROME/integration/htm-to-pma-handoff.md` - Handoff protocol
-- `/role-htm-decomposer.md` - HTM Decomposer role
+- `ROME/02-phase1-requirements/role-talib.md` - HTM Decomposer (Talib) role
 - `/HTM/HTM-Master-Workflow.md` - HTM methodology
 
 ---

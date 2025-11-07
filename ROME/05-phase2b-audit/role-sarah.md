@@ -58,7 +58,7 @@ robot_chaperone/
 **Key Coordination Points**:
 - Phase 1: Receives raw requirements from user/stakeholder, hands off to `robot_pma`
 - Phase 2: Reviews `robot_pma` design, can BLOCK if issues found
-- References: See `../ROME/role-chaperone.md` for detailed 8-dimension analysis framework
+- References: See this document (role-sarah.md) for detailed 8-dimension analysis framework
 - Question Completeness: Reference `../ROME/guide-question-option-completeness.md` for structured Q&A approach
 
 ## Implementation Guides & References

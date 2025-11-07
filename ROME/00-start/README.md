@@ -455,12 +455,12 @@ robot_[name]/
 ```
 
 See individual role specifications for robot-specific directory details:
-- `role-pma.md` - robot_pma directory structure
-- `role-chaperone.md` - robot_chaperone directory structure
-- `role-frontend.md` - robot_charlie directory structure
-- `role-backend.md` - robot_reena directory structure
-- `role-data.md` - robot_ashok directory structure
-- `role-ux-clara.md` - robot_clara directory structure
+- `../03-phase2-architecture/role-pma.md` - robot_pma directory structure
+- `../05-phase2b-audit/role-sarah.md` - robot_chaperone directory structure
+- `../06-phase3-development/role-charlie.md` - robot_charlie directory structure
+- `../06-phase3-development/role-reena.md` - robot_reena directory structure
+- `../06-phase3-development/role-ashok.md` - robot_ashok directory structure
+- `../04-phase2a-ux/role-clara.md` - robot_clara directory structure
 
 **Reference**: See `guide-robot-naming-conventions.md` (Part 1.3) for complete directory structure standards
 
@@ -640,12 +640,12 @@ For state machines, algorithms, complex calculations:
 - [rome-reference.md](ROME/rome-reference.md) - Quick reference
 
 **Role Specifications:**
-- [role-pma.md](ROME/role-pma.md) - Your role
-- [role-chaperone.md](ROME/role-chaperone.md) - Chaperone role
-- [role-backend.md](ROME/role-backend.md) - Backend Engineer
-- [role-frontend.md](ROME/role-frontend.md) - Frontend Engineer
-- [role-data.md](ROME/role-data.md) - Data Architect
-- [role-ux-clara.md](ROME/role-ux-clara.md) - UX Designer
+- [role-pma.md](../03-phase2-architecture/role-pma.md) - Project Manager/Architect
+- [role-sarah.md](../05-phase2b-audit/role-sarah.md) - System Auditor (Sarah)
+- [role-reena.md](../06-phase3-development/role-reena.md) - Backend Engineer
+- [role-charlie.md](../06-phase3-development/role-charlie.md) - Frontend Engineer
+- [role-ashok.md](../06-phase3-development/role-ashok.md) - Data Architect
+- [role-clara.md](../04-phase2a-ux/role-clara.md) - UX Designer
 
 **Governance & Integration Guides (New):**
 - [document-governance-matrix.md](ROME/document-governance-matrix.md) - **START HERE** for document management - central reference showing all project documents, who creates/uses them, phases, locations, success criteria

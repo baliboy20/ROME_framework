@@ -330,7 +330,7 @@ robot_roma (Throughout)
 
 ### Phase 3: Update Documentation
 - [ ] Update all files in `ROME/` that reference old names
-- [ ] Update robot role specifications (role-pma.md, role-chaperone.md)
+- [ ] Update robot role specifications (role-pma.md, role-sarah.md)
 - [ ] Add naming conventions to role specifications
 - [ ] Update quick-start guides with new directory names
 
@@ -367,7 +367,7 @@ robot_roma (Throughout)
 | rome-quickstart.md | Update all robot directory references |
 | USER-QUICKSTART.md | Update all robot directory references |
 | role-pma.md | Add naming context: "Also known as robot_pma" |
-| role-chaperone.md | Add naming context: "Also known as robot_chaperone" |
+| role-sarah.md | Add naming context: "Also known as robot_chaperone" |
 | document-management-strategy.md | Update artifact location references |
 | chaperone-comprehensive-guide.md | Update all directory references |
 

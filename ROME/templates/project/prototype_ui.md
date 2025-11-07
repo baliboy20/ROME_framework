@@ -281,7 +281,7 @@ As prototype was created, verify:
 - [Augmented Technical Specification](specification_augmented.md) - Complete technical analysis
 - [Data Model](data_model.md) - Entity definitions and relationships
 - [Use Cases](use_cases.md) - User workflows and journeys
-- [role-chaperone.md](../ROME/role-chaperone.md) - Chaperone methodology
+- [role-sarah.md](../ROME/05-phase2b-audit/role-sarah.md) - Sarah (System Auditor) methodology
 
 ---
 

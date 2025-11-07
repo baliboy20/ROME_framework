@@ -340,7 +340,7 @@ Blocking: [Yes/No]
 - `/ROME/integration/htm-rome-integration-guide.md` - Overall v5.0 workflow
 - `/ROME/integration/quick-start-htm-rome.md` - Step-by-step guide
 - `/ROME/role-pma.md` - PMA role specification
-- `/ROME/roles/role-htm-decomposer.md` - HTM Decomposer role specification
+- `ROME/02-phase1-requirements/role-talib.md` - HTM Decomposer (Talib) role specification
 - `/ROME/integration/yaml-schema-definitions.md` - YAML artifact schemas
 
 ---

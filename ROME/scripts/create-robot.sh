@@ -57,19 +57,20 @@ else
     echo "     Create template first, then re-run this script"
 fi
 
-# Map robot names to their phase folders
-declare -A ROLE_PATHS
-ROLE_PATHS["talib"]="ROME/02-phase1-requirements/role-talib.md"
-ROLE_PATHS["pma"]="ROME/03-phase2-architecture/role-pma.md"
-ROLE_PATHS["clara"]="ROME/04-phase2a-ux/role-clara.md"
-ROLE_PATHS["sarah"]="ROME/05-phase2b-audit/role-sarah.md"
-ROLE_PATHS["chaperone"]="ROME/05-phase2b-audit/role-sarah.md"  # legacy name
-ROLE_PATHS["ashok"]="ROME/06-phase3-development/role-ashok.md"
-ROLE_PATHS["reena"]="ROME/06-phase3-development/role-reena.md"
-ROLE_PATHS["charlie"]="ROME/06-phase3-development/role-charlie.md"
+# Map robot names to their phase folders (compatible with macOS bash)
+case "$ROBOT_NAME" in
+    talib)      ROLE_PATH="ROME/02-phase1-requirements/role-talib.md" ;;
+    pma)        ROLE_PATH="ROME/03-phase2-architecture/role-pma.md" ;;
+    clara)      ROLE_PATH="ROME/04-phase2a-ux/role-clara.md" ;;
+    sarah)      ROLE_PATH="ROME/05-phase2b-audit/role-sarah.md" ;;
+    chaperone)  ROLE_PATH="ROME/05-phase2b-audit/role-sarah.md" ;;  # legacy name
+    ashok)      ROLE_PATH="ROME/06-phase3-development/role-ashok.md" ;;
+    reena)      ROLE_PATH="ROME/06-phase3-development/role-reena.md" ;;
+    charlie)    ROLE_PATH="ROME/06-phase3-development/role-charlie.md" ;;
+    *)          ROLE_PATH="" ;;
+esac
 
 # Symlink README.md from role docs
-ROLE_PATH="${ROLE_PATHS[$ROBOT_NAME]}"
 if [ -n "$ROLE_PATH" ] && [ -f "$ROLE_PATH" ]; then
     ln -sf ../$ROLE_PATH ${ROBOT_DIR}/README.md
     echo -e "  ${GREEN}✓${NC} Linked README from $ROLE_PATH"

@@ -559,7 +559,7 @@ Strategic thinker who asks deep questions to understand business needs. Designs 
 - [rome-overview.md](rome-overview.md) - ROME methodology overview
 - [start-here.md](start-here.md) - ROME 4.0 complete initialization guide
 - [guide-question-option-completeness.md](guide-question-option-completeness.md) - **Question & Option Completeness Framework** (How to ask probing questions with appropriate options and ensure adequate answers)
-- [role-chaperone.md](role-chaperone.md) - Chaperone role specification (partner role - validates specs then design)
+- [role-sarah.md](../05-phase2b-audit/role-sarah.md) - Sarah (System Auditor) role specification (partner role - validates specs then design)
 - [role-ux-clara.md](role-ux-clara.md) - UX Designer (Clara) role specification (design partner)
 - [role-data.md](role-data.md) - Data Architect (Ashok) role specification (implements data models)
 - [role-backend.md](role-backend.md) - Backend Engineer (Reena) role specification (implements APIs)

@@ -1,0 +1,1 @@
+../../ROME/templates/claude-md/clara.md
