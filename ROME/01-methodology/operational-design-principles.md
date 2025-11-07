@@ -123,6 +123,8 @@ Use human names in all documentation, code annotations, and communication. Direc
 
 **Implemented in:**
 - `99-reference/role-roma.md` - **Complete Roma specification**
+- `robot-protocols/robot-generic-protocols.md#RP-1` - Activity log structure and status update protocols
+- `robot-protocols/robot-generic-protocols.md#RP-6` - Coordination patterns for phase progression and blocker escalation
 - `PROJECT/dev/project_activity.status` - Status file format (created per-project)
 
 ---
@@ -229,9 +231,10 @@ Use human names in all documentation, code annotations, and communication. Direc
 - Phase 3 (Ashok/Reena/Charlie) can READ all prior artifacts; cannot amend any
 
 **Implemented in:**
-- `robot-protocol.md` (to be created) - Phase amendment request protocol
+- `robot-protocols/robot-generic-protocols.md#RP-1.2` - Amendment request protocol (5-step process with examples)
+- `robot-protocols/robot-generic-protocols.md#RP-6` - Quality gate amendments and coordination
 - `99-reference/document-governance-matrix.md` - Artifact creation phase ownership
-- Activity logs and status files - Central coordination mechanism
+- `PROJECT/dev/project_activity.status` - Activity logs tracking amendment requests and resolution
 
 ---
 

@@ -36,30 +36,99 @@ This document consolidates common protocols, patterns, and workflows that apply 
 - Gatekeeper: READ/WRITE access to gate section
 - Sponsor: READ access via Roma reports
 
+**Synchronization via Logs (Not Real-Time Chat):**
+
+Activity log is authoritative source, not robot-to-robot chat. This enables:
+- Asynchronous operation (robots work independent times)
+- Clear audit trail (every action timestamped in log)
+- Roma visibility (can monitor all activity)
+- Sponsor oversight (can see exact state anytime)
+- Amendment traceability (which robot requested what, who approved)
+
+Robots check log:
+- At phase start (understand dependencies)
+- At phase completion (request gate validation)
+- When blocked (log blocker, wait for Roma action)
+- When returning from amendment (check for updates)
+
 **Log Entry Template:**
 
 ```yaml
+project_name: "Example Project"
+last_updated: "2025-11-07T10:30:00Z"
+updated_by: "robot_talib"
+
 phases:
-  phase_X_[robot]:
-    status: pending|in_progress|completed
-    start_date: "YYYY-MM-DD"
-    completion_date: "YYYY-MM-DD" (if completed)
+  phase_1_talib:
+    status: completed|in_progress|not_started
+    start_date: "2025-11-01"
+    completion_date: "2025-11-05" (if completed)
     outputs_created:
-      - artifact_name_1.ext
-      - artifact_name_2.ext
+      - requirements-matrix.yaml
+      - data-dictionary.yaml
+      - component-registry.yaml
     current_work: "Description of current work" (if in_progress)
-    blockers:
-      - blocker_id: BLK-001
-        title: "Blocker title"
-        status: awaiting_roma_action|escalated_to_sponsor|...
-    amendment_requests:
-      - amendment_id: AMD-001
-        affected_artifact: filename
-        status: pending_[phase]_review|completed|...
-    quality_gate: pending|passed|blocked
-    gate_blocking_issues: [ ]
-    gate_approved_by: "robot_name"
-    notes: "Freeform notes about phase status"
+    blockers: [ ]
+    amendment_requests: [ ]
+    quality_gate: passed|pending|blocked
+    gate_approved_by: "robot_pma"
+    notes: "All 8 features decomposed, traceability complete"
+
+  phase_2_pma:
+    status: in_progress
+    start_date: "2025-11-05"
+    outputs_created:
+      - data_model.md
+      - use_cases.md
+      - api_design.md
+    current_work: "Finalizing architecture specification"
+    blockers: [ ]
+    amendment_requests: [ ]
+    estimated_completion: "2025-11-08"
+
+  phase_2a_clara:
+    status: not_started
+    dependencies:
+      - phase: phase_2_pma
+        status: awaiting
+
+  phase_2b_sarah_gate:
+    status: not_started
+    dependencies:
+      - phase: phase_2a_clara
+        status: awaiting
+
+  phase_3_development:
+    status: not_started
+    dependencies:
+      - phase: phase_2b_sarah_gate
+        status: awaiting
+    team:
+      - robot_ashok
+      - robot_reena
+      - robot_charlie
+```
+
+**Information Flow:**
+```
+Phase 1 (Talib)
+  ↓ outputs visible to all
+Phase 2 (PMA)
+  ↓ outputs visible to all
+Phase 2A (Clara)
+  ↓ outputs visible to all
+Phase 2B (Sarah) - Quality Gate
+  ↓ (IF APPROVED)
+Phase 3 (Ashok, Reena, Charlie)
+```
+
+**Control Flow (Backward for Amendments Only):**
+```
+Phase 3 needs Phase 1 change
+  → Phase 3 logs amendment request in activity log
+  → Roma broadcasts to Talib
+  → Talib amends, updates activity log
+  → Roma notifies Phase 3 change is complete
 ```
 
 ---
@@ -861,6 +930,100 @@ All features tested per **RP-5.4: Testing by Layer**:
 
 Reference: ROME/robot-protocols/robot-generic-protocols.md#RP-5.4
 ```
+
+---
+
+## EXAMPLE WORKFLOW TRACE
+
+**Complete workflow from phase start through amendment resolution:**
+
+```
+2025-11-01 08:00 - Talib starts Phase 1
+  → Updates activity log: phase_1_talib.status = in_progress
+
+2025-11-05 17:00 - Talib completes Phase 1
+  → Updates activity log: phase_1_talib.status = completed
+  → Lists 3 outputs: requirements-matrix.yaml, data-dictionary.yaml, component-registry.yaml
+  → Requests gate validation: phase_1_talib.quality_gate = pending
+
+2025-11-05 17:15 - Roma reads log, broadcasts to PMA
+  "Phase 1 complete, reviewing gate. PMA review requested."
+
+2025-11-05 18:00 - PMA (gatekeeper for P1→P2) validates
+  → Reviews requirements files
+  → Updates log: phase_1_talib.quality_gate = passed
+  → Logs: phase_2_pma.status = in_progress
+
+2025-11-05 18:05 - Roma reads updated log, broadcasts
+  "Phase 1 gate: PASS. Phase 2 approved. PMA proceeding."
+
+2025-11-05 19:00 - PMA starts Phase 2 work
+  → Updates log: phase_2_pma.current_work = "Analyzing requirements"
+
+2025-11-07 09:15 - Charlie (Phase 3) identifies need for Phase 1 change
+  → Logs amendment request AMD-001 in activity log
+  → Logs: phase_3_development.amendment_requests[0].status = pending_talib_review
+
+2025-11-07 09:20 - Roma reads log, sees amendment request
+  → Broadcasts to Talib: "Amendment request AMD-001 needs your response"
+
+2025-11-07 10:00 - Talib reviews amendment, provides clarification
+  → Updates log: phase_1_talib.amendment_requests[AMD-001].status = completed
+
+2025-11-07 10:05 - Roma reads updated log
+  → Broadcasts to Charlie: "Amendment AMD-001 complete, requirements clarified"
+
+2025-11-07 10:30 - Charlie acknowledges amendment completion
+  → Closes amendment in activity log
+  → Resumes Phase 3 work
+```
+
+---
+
+## SPECIAL: QUALITY GATE AMENDMENTS
+
+If a gatekeeper blocks a phase AND requires amendment to prior phase:
+
+```yaml
+phase_2b_sarah_gate:
+  quality_gate: blocked
+  gate_blocking_issues:
+    - issue: "API design incomplete for Feature FEAT-001.3"
+      required_amendment: "PMA must clarify API contract before design approval"
+      amendment_requested: true
+      amendment_target: phase_2_pma
+```
+
+Roma broadcasts:
+```
+Gate BLOCK: Phase 2B (Sarah) requires amendment to Phase 2 (PMA)
+  Issue: API design incomplete for FEAT-001.3
+  Action: Amendment request AMD-003 created for PMA
+  PMA: Please clarify API contract, update api_design.md
+  Status: Phase 2A design BLOCKED until amendment complete
+```
+
+---
+
+## SUMMARY
+
+**Activity log is the robot coordination mechanism:**
+- Single source of truth for phase state
+- Asynchronous (no real-time dependencies)
+- Complete audit trail (timestamped, who did what)
+- Amendment tracking (which artifacts changed, why)
+- Blocker escalation path (to Roma, then sponsor)
+- Enables P6 (central coordination) and P12 (global visibility, phase-scoped amendments)
+
+**Update frequency:**
+- On phase start/completion: immediate
+- On blocker detection: immediate
+- On amendment request: immediate
+- On amendment completion: immediate
+- On quality gate decision: immediate
+- Routine status updates: daily
+
+**Roma monitors continuously** and broadcasts state changes to robots and sponsor.
 
 ---
 
