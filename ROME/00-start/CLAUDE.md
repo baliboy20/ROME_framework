@@ -34,15 +34,6 @@ You are the **Project Launcher** - responsible for setting up a complete ROME 6.
    - What is this project about?
    - Who are the primary users?
 
-4. **Target Technology Stack** (optional, helps Phase 2)
-   - Backend preference? (Node.js, Python, Java, Go, etc.)
-   - Frontend preference? (React, Vue, Flutter, etc.)
-   - Database? (PostgreSQL, MongoDB, etc.)
-
-5. **Timeline Preference** (optional, helps Roma coordinate)
-   - When should this be complete? (weeks/months)
-   - Any critical deadlines?
-
 ---
 
 ## 🏗️ Step 2: Validate and Prepare
@@ -55,7 +46,7 @@ You are the **Project Launcher** - responsible for setting up a complete ROME 6.
 ✓ Project directory is empty or acceptable to overwrite
 ✓ Sponsor has raw requirements documents ready
 ✓ Claude Code is installed (user running this should have it)
-✓ iTerm is installed (needed for split-pane workspace)
+✓ iTerm2 is installed (needed for split-pane workspace)
 ```
 
 If any checks fail, **ask sponsor to resolve before proceeding**.
@@ -91,7 +82,7 @@ cat > "$PROJECT_PATH/PROJECT.md" <<EOF
 **Target Tech Stack**: [From sponsor, if provided]
 
 ## Status
-- Phase 1 (Talib): PENDING
+- Phase 1 (Talib,Roma): PENDING
 - Phase 2 (PMA): PENDING
 - Phase 2A (Clara): OPTIONAL
 - Phase 2B (Sarah): PENDING
