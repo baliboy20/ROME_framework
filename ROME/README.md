@@ -15,12 +15,10 @@ ROME/
 ├── 04-phase2a-ux/         → Phase 2A: UX Design (Clara)
 ├── 05-phase2b-audit/      → Phase 2B: System Audit (Sarah)
 ├── 06-phase3-development/ → Phase 3: Development (Ashok/Reena/Charlie)
-├── 07-project-structure/  → Conventions & standards
-├── 08-robot-setup/        → Robot infrastructure
-├── 99-reference/          → Archive & reference docs
+├── 99-reference/          → Archive & reference materials
 ├── templates/             → Robot & project templates
 ├── scripts/               → Automation scripts
-└── integration/           → HTM integration docs
+└── robot-protocols/       → Generic robot protocols
 ```
 
 ---
@@ -28,13 +26,12 @@ ROME/
 ## 🚀 Quick Start
 
 **New to ROME?** Start here:
-1. [`00-start/README.md`](00-start/README.md) - Main entry point
-2. [`00-start/overview.md`](00-start/overview.md) - Methodology overview
-3. [`07-project-structure/directory-layout.md`](07-project-structure/directory-layout.md) - Project structure
-
-**Setup workspace:**
-- [`scripts/setup-workspace.sh`](scripts/setup-workspace.sh) - Automated iTerm workspace
-- [`08-robot-setup/robot-creation.md`](08-robot-setup/robot-creation.md) - Manual robot setup
+1. **Automated Project Setup**: `cd 00-start && claude`
+   - Reads [`00-start/CLAUDE.md`](00-start/CLAUDE.md) - Launches interactive project setup
+   - Creates all robot workspaces automatically
+   - Sets up iTerm with split-pane workspace
+2. [`00-start/README.md`](00-start/README.md) - Project launch guide
+3. Phase-specific docs once your project is created
 
 ---
 
@@ -57,11 +54,11 @@ ROME/
 - Design system
 - Component specifications
 
-### Phase 2B: System Audit (Sarah - Optional)
+### Phase 2B: Quality Gate (Sarah)
 **Folder:** [`05-phase2b-audit/`](05-phase2b-audit/)
-- Design validation
-- Quality gate
-- Risk assessment
+- Design validation across 8 technical dimensions
+- Mandatory quality gate before Phase 3
+- Can APPROVE, BLOCK, or ESCALATE design
 
 ### Phase 3: Development
 **Folder:** [`06-phase3-development/`](06-phase3-development/)
@@ -82,25 +79,20 @@ ROME/
 | **Ashok** | 3.1 | [`06-phase3-development/`](06-phase3-development/) | [role-ashok.md](06-phase3-development/role-ashok.md) |
 | **Reena** | 3.2 | [`06-phase3-development/`](06-phase3-development/) | [role-reena.md](06-phase3-development/role-reena.md) |
 | **Charlie** | 3.3 | [`06-phase3-development/`](06-phase3-development/) | [role-charlie.md](06-phase3-development/role-charlie.md) |
+| **Roma** | All | [`99-reference/`](99-reference/) | [role-roma.md](99-reference/role-roma.md) |
 
 ---
 
 ## 📚 Documentation Sections
 
-### [`00-start/`](00-start/) - Getting Started
-Entry point for new users
+### [`00-start/`](00-start/) - Project Launcher
+Entry point: Automated setup of new ROME projects via `claude` session
 
 ### [`01-methodology/`](01-methodology/) - Core Concepts
-ROME methodology, testing philosophy, workflow
+ROME 6.0 governance principles, testing philosophy, workflow patterns
 
-### [`07-project-structure/`](07-project-structure/) - Conventions
-Directory layout, naming, file locations
-
-### [`08-robot-setup/`](08-robot-setup/) - Infrastructure
-Robot creation, workspace automation
-
-### [`99-reference/`](99-reference/) - Archive
-Legacy docs, comprehensive guides
+### [`99-reference/`](99-reference/) - Additional References
+Roma coordinator guide, document governance, architectural history
 
 ---
 
@@ -108,17 +100,18 @@ Legacy docs, comprehensive guides
 
 | Task | Documentation |
 |------|---------------|
-| Start new project | [`00-start/README.md`](00-start/README.md) |
-| Transform PRD | [`02-phase1-requirements/`](02-phase1-requirements/) |
-| Design architecture | [`03-phase2-architecture/`](03-phase2-architecture/) |
-| Create UX designs | [`04-phase2a-ux/`](04-phase2a-ux/) |
-| Audit specifications | [`05-phase2b-audit/`](05-phase2b-audit/) |
-| Build database | [`06-phase3-development/role-ashok.md`](06-phase3-development/role-ashok.md) |
-| Build APIs | [`06-phase3-development/role-reena.md`](06-phase3-development/role-reena.md) |
-| Build frontend | [`06-phase3-development/role-charlie.md`](06-phase3-development/role-charlie.md) |
-| Setup robots | [`08-robot-setup/`](08-robot-setup/) |
+| Start new project | `cd 00-start && claude` (Automated launcher) |
+| Phase 1: Requirements | [`02-phase1-requirements/`](02-phase1-requirements/) (Talib) |
+| Phase 2: Architecture | [`03-phase2-architecture/`](03-phase2-architecture/) (PMA) |
+| Phase 2A: UX Design | [`04-phase2a-ux/`](04-phase2a-ux/) (Clara, optional) |
+| Phase 2B: Quality Gate | [`05-phase2b-audit/`](05-phase2b-audit/) (Sarah) |
+| Phase 3: Data Layer | [`06-phase3-development/role-ashok.md`](06-phase3-development/role-ashok.md) (Ashok) |
+| Phase 3: APIs | [`06-phase3-development/role-reena.md`](06-phase3-development/role-reena.md) (Reena) |
+| Phase 3: Frontend | [`06-phase3-development/role-charlie.md`](06-phase3-development/role-charlie.md) (Charlie) |
+| Coordinate project | [`99-reference/role-roma.md`](99-reference/role-roma.md) (Roma) |
 
 ---
 
 **Version:** 6.0
-**Last Updated:** 2025-11-06
+**Last Updated:** 2025-11-08
+**Status:** Documentation modernized - All obsolete references removed, Sarah integrated as Phase 2B quality gate
