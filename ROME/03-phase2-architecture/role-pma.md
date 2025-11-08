@@ -1,6 +1,7 @@
-# PMA (Project Manager/Architect)
-**Version**: 3.0 - Data-First, Integration-First
-**Last Updated**: 2025-10-07
+# PMA: Project Manager/Architect
+**Version**: 6.0 - Architecture & Design Phase
+**Phase**: 2 (Architecture & Technical Decisions)
+**Last Updated**: 2025-11-08
 
 ## Role Overview
 
@@ -31,17 +32,18 @@ robot_pma/
 
 **Your CLAUDE.md Instructions** should include:
 1. Read all ROME methodology docs from `../ROME/`
-2. Read refined specifications from `../PROJECT/dev/specification_augmented.md`
-3. Execute Phases 1-9 as documented in `start-here.md`
+2. Read refined requirements from `../PROJECT/dev/requirements-matrix.yaml` (from Talib, Phase 1)
+3. Execute Phase 2 (Architecture & Technical Decisions)
 4. Create design artifacts in `../PROJECT/dev/` directory
-5. Coordinate with design robot (robot_clara) and implementation robots (robot_ashok, robot_reena, robot_charlie)
-6. Output action list to `../PROJECT/dev/actionlist.md`
+5. Coordinate with design robot (robot_clara) if Phase 2A is running
+6. Submit design for Phase 2B validation by robot_sarah
+7. Output: data_model.md, use_cases.md, actionlist.md, technical-decisions.md
 
 **Key Coordination Points**:
-- Receives specifications from `robot_chaperone` (Phase 1)
-- Coordinates design with `robot_clara` (throughout Phase 2)
-- Submits design to `robot_chaperone` for Phase 2 validation
-- Launches implementation robots: `robot_ashok` (data), `robot_reena` (backend), `robot_charlie` (frontend)
+- Receives requirements from `robot_talib` (Phase 1 output: requirements-matrix.yaml)
+- Optionally coordinates design with `robot_clara` (Phase 2A, UX design)
+- Submits design to `robot_sarah` (Phase 2B) for validation
+- Once Sarah APPROVES: Phase 3 robots can begin (robot_ashok, robot_reena, robot_charlie)
 
 ## Implementation Guides & References
 
@@ -262,12 +264,13 @@ PROJECT/
 ├── robot_clara/
 ├── robot_roma/
 ├── robot_pma/
-└── robot_chaperone/
+├── robot_talib/
+└── robot_sarah/
 ```
 
 **Step-by-Step Setup:**
 
-For each robot (Charlie, Reena, Ashok, Clara, Roma, Chaperone):
+For each robot (Talib, PMA, Clara, Sarah, Ashok, Reena, Charlie, Roma):
 
 **1. Create directory structure:**
 ```bash
@@ -359,13 +362,14 @@ Use these values for each robot:
 
 | Robot | $PATH_TO_DIR | $ROBOT_NAME$ |
 |-------|--------------|--------------|
-| Charlie (Frontend) | `PROJECT/robot_charlie` | `robot_charlie - Frontend Developer` |
-| Reena (Backend) | `PROJECT/robot_reena` | `robot_reena - Backend Engineer` |
-| Ashok (Data) | `PROJECT/robot_ashok` | `robot_ashok - Data Architect` |
+| Talib (Requirements) | `PROJECT/robot_talib` | `robot_talib - Requirements Engineer` |
+| PMA (Architecture) | `PROJECT/robot_pma` | `robot_pma - Project Manager/Architect` |
 | Clara (UX) | `PROJECT/robot_clara` | `robot_clara - UX Designer` |
+| Sarah (Quality Gate) | `PROJECT/robot_sarah` | `robot_sarah - System Auditor` |
+| Ashok (Data) | `PROJECT/robot_ashok` | `robot_ashok - Data Architect` |
+| Reena (Backend) | `PROJECT/robot_reena` | `robot_reena - Backend Engineer` |
+| Charlie (Frontend) | `PROJECT/robot_charlie` | `robot_charlie - Frontend Developer` |
 | Roma (Coordinator) | `PROJECT/robot_roma` | `robot_roma - Project Coordinator` |
-| PMA | `PROJECT/robot_pma` | `robot_pma - Project Manager/Architect` |
-| Chaperone | `PROJECT/robot_chaperone` | `robot_chaperone - Specification Specialist` |
 
 **Example - Launch Charlie's session:**
 ```bash
@@ -423,13 +427,15 @@ All of these are in PROJECT/, so robots launched in PROJECT/robot_[name]/ can ac
 
 Keep a list of active robot sessions:
 ```
-Active Robots:
-├─ robot_charlie (iTerm window: "robot_charlie - Frontend Developer")
-├─ robot_reena (iTerm window: "robot_reena - Backend Engineer")
-├─ robot_ashok (iTerm window: "robot_ashok - Data Architect")
-├─ robot_clara (iTerm window: "robot_clara - UX Designer")
-├─ robot_roma (iTerm window: "robot_roma - Project Coordinator")
-└─ Chaperone & PMA launched as needed for phases 1 & 2
+Active Robots (ROME 6.0):
+├─ robot_talib (Phase 1 - Requirements Engineer)
+├─ robot_pma (Phase 2 - Project Manager/Architect)
+├─ robot_clara (Phase 2A - UX Designer, optional)
+├─ robot_sarah (Phase 2B - Quality Gate)
+├─ robot_ashok (Phase 3 - Data Architect)
+├─ robot_reena (Phase 3 - Backend Engineer)
+├─ robot_charlie (Phase 3 - Frontend Developer)
+└─ robot_roma (All Phases - Project Coordinator)
 ```
 
 **Troubleshooting Robot Sessions:**
