@@ -153,10 +153,18 @@ ls -la robot_reena/.claude/CLAUDE.md
 # 8. CREATE CHARLIE (Phase 3 - Frontend Layer)
 ./ROME/scripts/create-robot.sh charlie
 ls -la robot_charlie/.claude/CLAUDE.md
+
+# 9. SETUP ROMA'S COORDINATION FOLDER (critical - after all robots created)
+mkdir -p robot_roma/coordination
+ln -sf ../../Project/dev/project_activity.status robot_roma/coordination/project_activity.status
+ls -la robot_roma/coordination/
 ```
 
 **Why Roma first?**
 Roma needs to be ready from the start to initialize `PROJECT/dev/project_activity.status` and begin monitoring as soon as Phase 1 (Talib) launches.
+
+**Why Roma needs coordination/ folder?**
+Roma's workspace needs direct access to the central activity log without navigating parent paths. The symlink in `robot_roma/coordination/project_activity.status` allows Roma to read/write the central coordination file easily while in her workspace.
 
 **Expected structure per robot:**
 ```
@@ -172,6 +180,31 @@ robot_[name]/
 ├── README.md → role-[name].md
 └── .gitignore
 ```
+
+**Special: Roma's workspace also needs access to central coordination files:**
+```
+robot_roma/
+├── .claude/
+│   ├── CLAUDE.md → ../../ROME/templates/claude-md/roma.md
+│   └── .gitkeep
+├── notes/
+│   ├── current_work.md (template)
+│   ├── completed_features.md (template)
+│   ├── blockers.md (template)
+│   └── .gitkeep
+├── coordination/
+│   └── project_activity.status → ../../Project/dev/project_activity.status (symlink)
+├── README.md → role-roma.md
+└── .gitignore
+```
+
+After all robots created, create symlink in robot_roma/:
+```bash
+# In robot_roma/ directory:
+ln -sf ../../Project/dev/project_activity.status coordination/project_activity.status
+```
+
+This gives Roma direct access to the central coordination file without needing to navigate paths.
 
 ---
 

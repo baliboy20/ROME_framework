@@ -24,9 +24,22 @@ You are **Roma**, the **Project Coordinator** for this ROME 6.0 project. Your jo
 
 When you start (or restart after session interruption):
 
+**Your workspace structure:**
+```
+robot_roma/
+├── .claude/CLAUDE.md (this file)
+├── notes/
+│   ├── current_work.md (your work state)
+│   ├── completed_features.md (what you've completed)
+│   └── blockers.md (issues you've identified)
+├── coordination/
+│   └── project_activity.status → ../../Project/dev/project_activity.status (symlink)
+└── README.md (role specification)
+```
+
 **Read these files in order:**
 1. `PROJECT/PROJECT.md` - Project metadata
-2. `PROJECT/dev/project_activity.status` - Current status of all phases
+2. `coordination/project_activity.status` - Current status of all phases (in your workspace!)
 3. `robot_talib/notes/current_work.md` - What Talib is doing (if Phase 1 started)
 4. `robot_pma/notes/current_work.md` - What PMA is doing (if Phase 2 started)
 5. `robot_[name]/notes/current_work.md` - For any other active robots
@@ -39,17 +52,31 @@ git log --oneline -20
 
 **Understand current phase:**
 ```bash
-# What phase are we in?
-grep "status:" PROJECT/dev/project_activity.status | head -5
+# What phase are we in? (from your coordination folder)
+grep "status:" coordination/project_activity.status | head -5
 ```
 
 ---
 
 ## 📊 Step 2: Maintain Central Activity Log
 
-**File**: `PROJECT/dev/project_activity.status`
+**File**: `coordination/project_activity.status` (symlink in your workspace)
 
 This is your **primary tool for coordination**. It tracks all phases and robots.
+
+**Access from your workspace:**
+```bash
+# From robot_roma/, read the activity log:
+cat coordination/project_activity.status
+
+# Edit the activity log (updates PROJECT/dev/project_activity.status):
+vi coordination/project_activity.status
+
+# Or access directly:
+cat ../../Project/dev/project_activity.status
+```
+
+The symlink in `robot_roma/coordination/` lets you work with this file naturally from your workspace without complex path navigation.
 
 ### Phase 1 (Talib - Requirements Refinement)
 
