@@ -13,7 +13,7 @@ const Table = require('cli-table3');
 const chalk = require('chalk');
 
 // Constants
-const ACTIVITY_LOG_PATH = path.join(__dirname, '../templates/project-activity-status.json');
+const ACTIVITY_LOG_PATH = path.join(__dirname, '../../ROME/templates/project-activity-status.json');
 const VALID_STATUSES = ['PENDING', 'IN_PROGRESS', 'COMPLETED', 'BLOCKED'];
 const VALID_SEVERITIES = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 const VALID_ROBOTS = ['talib', 'pma', 'clara', 'sarah', 'ashok', 'reena', 'charlie', 'roma'];

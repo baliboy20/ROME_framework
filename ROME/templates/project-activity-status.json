@@ -1,7 +1,7 @@
 {
   "project": "ProjectName",
   "version": "6.0",
-  "lastUpdated": "2025-11-09T14:30:00Z",
+  "lastUpdated": "2025-11-09T21:18:24.250Z",
   "entries": [
     {
       "id": "FEAT-001-db",
@@ -11,16 +11,16 @@
       "phase": "3",
       "layer": "database",
       "robot": "ashok",
-      "status": "PENDING",
+      "status": "COMPLETED",
       "priority": "HIGH",
       "testLevel": null,
       "designValidation": null,
       "blocker": null,
       "amendment": null,
-      "startDate": null,
-      "lastUpdate": "2025-11-09T14:00:00Z",
-      "completionDate": null,
-      "notes": ""
+      "startDate": "2025-11-09T21:17:29.516Z",
+      "lastUpdate": "2025-11-09T21:18:11.183Z",
+      "completionDate": "2025-11-09T21:18:11.184Z",
+      "notes": "Schema complete, tests passing"
     },
     {
       "id": "FEAT-001-api",
@@ -30,11 +30,11 @@
       "phase": "3",
       "layer": "backend",
       "robot": "reena",
-      "status": "PENDING",
+      "status": "BLOCKED",
       "priority": "HIGH",
       "testLevel": null,
       "designValidation": null,
-      "blocker": "BLOCK-001",
+      "blocker": "BLOCK-002",
       "amendment": null,
       "startDate": null,
       "lastUpdate": null,
@@ -82,6 +82,18 @@
       "createdDate": "2025-11-09T10:00:00Z",
       "decidedDate": null,
       "decision": null
+    },
+    {
+      "id": "BLOCK-002",
+      "type": "blocker",
+      "severity": "MEDIUM",
+      "feature": "FEAT-001",
+      "story": null,
+      "description": "Need password hashing library decision",
+      "robot": "reena",
+      "status": "OPEN",
+      "createdDate": "2025-11-09T21:18:24.249Z",
+      "resolvedDate": null
     }
   ]
 }

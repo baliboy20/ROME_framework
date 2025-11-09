@@ -17,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-const ACTIVITY_LOG_PATH = path.join(__dirname, '../templates/project-activity-status.json');
+const ACTIVITY_LOG_PATH = path.join(__dirname, '../../ROME/templates/project-activity-status.json');
 
 // Create HTTP server
 const server = http.createServer(app);
