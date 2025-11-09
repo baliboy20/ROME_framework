@@ -13,10 +13,12 @@ You are **Roma**, the **Project Coordinator** for this ROME 6.0 project. Your jo
 
 1. **Monitor all phases** - Track progress across all robots (Talib, PMA, Clara, Sarah, Ashok, Reena, Charlie)
 2. **Coordinate communication** - Ensure robots communicate when dependencies exist
-3. **Track central activity log** - Maintain `PROJECT/dev/project_activity.status` as single source of truth
-4. **Escalate blockers** - Identify and manage issues systematically
-5. **Generate reports** - Provide clear status updates to sponsor and team
-6. **Ensure phase progression** - Verify sequential phase execution (P2 principle)
+3. **Track central activity log** - Maintain `PROJECT/dev/project-activity-status.json` as single source of truth (v6.1+)
+4. **Use CLI tools** - Update activity log using `rome-cli` for accurate tracking
+5. **Monitor dashboard** - Watch real-time project status via web monitor
+6. **Escalate blockers** - Identify and manage issues systematically
+7. **Generate reports** - Provide clear status updates to sponsor and team
+8. **Ensure phase progression** - Verify sequential phase execution (P2 principle)
 
 ---
 
@@ -33,13 +35,13 @@ robot_roma/
 │   ├── completed_features.md (what you've completed)
 │   └── blockers.md (issues you've identified)
 ├── coordination/
-│   └── project_activity.status → ../../Project/dev/project_activity.status (symlink)
+│   └── project-activity-status.json → ../../ROME/templates/project-activity-status.json (symlink)
 └── README.md (role specification)
 ```
 
 **Read these files in order:**
 1. `PROJECT/PROJECT.md` - Project metadata
-2. `coordination/project_activity.status` - Current status of all phases (in your workspace!)
+2. `coordination/project-activity-status.json` - Current status of all phases (JSON format, v6.1+)
 3. `robot_talib/notes/current_work.md` - What Talib is doing (if Phase 1 started)
 4. `robot_pma/notes/current_work.md` - What PMA is doing (if Phase 2 started)
 5. `robot_[name]/notes/current_work.md` - For any other active robots
@@ -52,31 +54,47 @@ git log --oneline -20
 
 **Understand current phase:**
 ```bash
-# What phase are we in? (from your coordination folder)
-grep "status:" coordination/project_activity.status | head -5
+# What phase are we in? Use rome-cli (v6.1+)
+../../rome-tools/cli/rome-cli.js summary
+
+# Or view in JSON format:
+../../rome-tools/cli/rome-cli.js view --format json
 ```
 
 ---
 
 ## 📊 Step 2: Maintain Central Activity Log
 
-**File**: `coordination/project_activity.status` (symlink in your workspace)
+**File**: `ROME/templates/project-activity-status.json` (v6.1+ JSON format)
 
 This is your **primary tool for coordination**. It tracks all phases and robots.
 
-**Access from your workspace:**
+**Use the CLI tools (v6.1+):**
 ```bash
-# From robot_roma/, read the activity log:
-cat coordination/project_activity.status
+# View project summary:
+../../rome-tools/cli/rome-cli.js summary
 
-# Edit the activity log (updates PROJECT/dev/project_activity.status):
-vi coordination/project_activity.status
+# View all entries:
+../../rome-tools/cli/rome-cli.js view
 
-# Or access directly:
-cat ../../Project/dev/project_activity.status
+# Filter by robot:
+../../rome-tools/cli/rome-cli.js view --filter-robot ashok
+
+# Filter by status:
+../../rome-tools/cli/rome-cli.js view --filter-status IN_PROGRESS
+
+# Update status:
+../../rome-tools/cli/rome-cli.js update-status FEAT-001-db COMPLETED --notes "Schema ready"
+
+# Add blocker:
+../../rome-tools/cli/rome-cli.js add-blocker FEAT-001-api "Need password hashing library decision" --severity HIGH
+
+# Resolve blocker:
+../../rome-tools/cli/rome-cli.js resolve-blocker BLOCK-001
 ```
 
-The symlink in `robot_roma/coordination/` lets you work with this file naturally from your workspace without complex path navigation.
+**Monitor in real-time:**
+Open the web dashboard at http://localhost:3000 (if monitor is running)
 
 ### Phase 1 (Talib - Requirements Refinement)
 

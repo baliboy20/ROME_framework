@@ -107,7 +107,7 @@ Artifact templates that robots use:
 ├── data_model.md                    ← From existing /ROME/template-data-model.txt
 ├── use_cases.md                     ← From existing /ROME/template-use-cases.txt
 ├── actionlist.md                    ← From existing /ROME/template-actionlist.md
-├── activity_status.txt              ← From existing /ROME/template-activity-status.txt
+├── project-activity-status.json     ← JSON format activity log (v6.1+)
 ├── augmented_specification.md       ← From existing /ROME/template-augmented-specification.md
 ├── prototype_ui.md                  ← From existing /ROME/template-prototype-ui.md
 └── README.md                        ← Index of project templates
@@ -277,7 +277,7 @@ ln -sf ../ROME/role-chaperone.md robot_chaperone/README.md
 - `/ROME/template-data-model.txt`
 - `/ROME/template-use-cases.txt`
 - `/ROME/template-actionlist.md`
-- `/ROME/template-activity-status.txt`
+- `/ROME/templates/project-activity-status.json` (v6.1+ JSON format)
 - `/ROME/template-augmented-specification.md`
 - `/ROME/template-prototype-ui.md`
 - `/ROME/template-claude-md.txt`
@@ -293,7 +293,7 @@ mkdir -p ROME/templates/robot-notes
 mv ROME/template-data-model.txt ROME/templates/project/data_model.md
 mv ROME/template-use-cases.txt ROME/templates/project/use_cases.md
 mv ROME/template-actionlist.md ROME/templates/project/actionlist.md
-mv ROME/template-activity-status.txt ROME/templates/project/activity_status.txt
+# Note: activity_status.txt replaced by project-activity-status.json in v6.1
 mv ROME/template-augmented-specification.md ROME/templates/project/augmented_specification.md
 mv ROME/template-prototype-ui.md ROME/templates/project/prototype_ui.md
 mv ROME/template-claude-md.txt ROME/templates/claude-md/_base-template.md
@@ -392,7 +392,7 @@ Robot directories are ephemeral and can be regenerated.
 │   │   ├── data_model.md
 │   │   ├── use_cases.md
 │   │   ├── actionlist.md
-│   │   ├── activity_status.txt
+│   │   ├── project-activity-status.json (v6.1+ JSON format)
 │   │   ├── augmented_specification.md
 │   │   ├── prototype_ui.md
 │   │   └── README.md

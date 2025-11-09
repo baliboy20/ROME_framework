@@ -147,15 +147,15 @@ ls -la robot_charlie/.claude/CLAUDE.md
 
 # 9. SETUP ROMA'S COORDINATION FOLDER (critical - after all robots created)
 mkdir -p robot_roma/coordination
-ln -sf ../../Project/dev/project_activity.status robot_roma/coordination/project_activity.status
+ln -sf ../../ROME/templates/project-activity-status.json robot_roma/coordination/project-activity-status.json
 ls -la robot_roma/coordination/
 ```
 
 **Why Roma first?**
-Roma needs to be ready from the start to initialize `PROJECT/dev/project_activity.status` and begin monitoring as soon as Phase 1 (Talib) launches.
+Roma needs to be ready from the start to initialize `ROME/templates/project-activity-status.json` and begin monitoring as soon as Phase 1 (Talib) launches.
 
 **Why Roma needs coordination/ folder?**
-Roma's workspace needs direct access to the central activity log without navigating parent paths. The symlink in `robot_roma/coordination/project_activity.status` allows Roma to read/write the central coordination file easily while in her workspace.
+Roma's workspace needs direct access to the central activity log without navigating parent paths. The symlink in `robot_roma/coordination/project-activity-status.json` allows Roma to use the CLI tools easily while in her workspace.
 
 **Expected structure per robot:**
 ```
@@ -184,7 +184,7 @@ robot_roma/
 │   ├── blockers.md (template)
 │   └── .gitkeep
 ├── coordination/
-│   └── project_activity.status → ../../Project/dev/project_activity.status (symlink)
+│   └── project-activity-status.json → ../../ROME/templates/project-activity-status.json (symlink)
 ├── README.md → role-roma.md
 └── .gitignore
 ```
@@ -192,10 +192,10 @@ robot_roma/
 After all robots created, create symlink in robot_roma/:
 ```bash
 # In robot_roma/ directory:
-ln -sf ../../Project/dev/project_activity.status coordination/project_activity.status
+ln -sf ../../ROME/templates/project-activity-status.json coordination/project-activity-status.json
 ```
 
-This gives Roma direct access to the central coordination file without needing to navigate paths.
+This gives Roma direct access to the central coordination file without needing to navigate paths. Roma can then use rome-cli commands from her workspace.
 
 ---
 
@@ -245,16 +245,17 @@ Roma (Project Coordinator) needs to set up central monitoring:
 claude
 
 # Tell Roma:
-"Project setup is complete. Please initialize project_activity.status
-and begin monitoring. Project name: [PROJECT_NAME].
+"Project setup is complete. Please initialize project-activity-status.json
+using rome-cli and begin monitoring. Project name: [PROJECT_NAME].
 Talib is ready to start Phase 1 when sponsor provides requirements."
 ```
 
 **Roma will:**
-- Create `PROJECT/dev/project_activity.status` with all phases marked PENDING
-- Monitor all robot sessions
+- Initialize `ROME/templates/project-activity-status.json` with all phases marked PENDING
+- Use rome-cli tools to update activity log
+- Monitor real-time dashboard at http://localhost:3000
 - Coordinate between phases
-- Escalate blockers
+- Escalate blockers using CLI blocker commands
 - Track progress across all robots
 
 ---
@@ -283,8 +284,8 @@ Talib is ready to start Phase 1 when sponsor provides requirements."
    ```
 
 3. **Monitor progress via Roma:**
-   - Roma will track completion in `project_activity.status`
-   - Roma will flag any blockers
+   - Roma will track completion using rome-cli and web dashboard
+   - Roma will flag any blockers using CLI blocker commands
    - Roma will coordinate between phases
 
 ---
@@ -343,7 +344,6 @@ $PROJECT_PATH/
 ├── PROJECT.md                 (Project metadata)
 ├── dev/
 │   ├── _user_input/          (Sponsor requirements - input here)
-│   ├── project_activity.status (Roma's status log - created by Roma)
 │   ├── requirements-matrix.yaml (Created by Talib)
 │   ├── data_model.md         (Created by PMA)
 │   ├── use_cases.md          (Created by PMA)
@@ -405,12 +405,13 @@ ROME/
 **Remember (P14 - Session Continuity):**
 - Each robot maintains work state in `notes/current_work.md`
 - If any robot session crashes, restart it - recovery is automatic
-- Roma monitors all activity via `project_activity.status`
+- Roma monitors all activity via rome-cli and web dashboard
 
-**Remember (P6 - Central Coordination):**
-- All robots update `PROJECT/dev/project_activity.status`
-- Roma reads this file to coordinate
-- Blockers are escalated systematically
+**Remember (P6 - Central Coordination - v6.1+):**
+- All robots update `ROME/templates/project-activity-status.json` using rome-cli
+- Roma monitors using CLI and web dashboard
+- Blockers are created/resolved using CLI commands
+- Real-time updates visible at http://localhost:3000
 
 **Remember (P2 - Phase-Based Execution):**
 - Phases are sequential and mandatory

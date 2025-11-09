@@ -81,9 +81,17 @@ Add initial annotations:
 - Annotations complete and accurate
 
 ### Step 6: REPORT
-Update tracking files:
-- `../PROJECT/dev/project_activity.status`
-- `../PROJECT/dev/project_tasks.log`
+Update tracking files using CLI tools (v6.1+):
+```bash
+# Update feature status:
+../../rome-tools/cli/rome-cli.js update-status FEAT-001-db COMPLETED --notes "Tests passing"
+
+# Add blocker if needed:
+../../rome-tools/cli/rome-cli.js add-blocker FEAT-001-api "Description" --severity HIGH
+
+# Request amendment if needed:
+../../rome-tools/cli/rome-cli.js request-amendment FEAT-001 "Amendment description" --target-phase 2
+```
 
 ## 5. Class Annotation Requirements
 

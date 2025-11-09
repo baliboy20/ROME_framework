@@ -9,7 +9,7 @@ This directory contains templates for project deliverables used throughout ROME 
 | **data_model.md** | PMA | Phase 2 | Database schema and entity definitions |
 | **use_cases.md** | PMA | Phase 2 | User workflows and scenarios |
 | **actionlist.md** | PMA | Phase 2 | Feature assignments to robots |
-| **activity_status.txt** | All Robots | Throughout | Project activity log |
+| **project-activity-status.json** | All Robots | Throughout | Project activity log (JSON format) |
 | **augmented_specification.md** | Chaperone | Phase 1/2B | Enhanced technical specification |
 | **prototype_ui.md** | UX Clara | Phase 2A | UI designs and wireframes |
 
