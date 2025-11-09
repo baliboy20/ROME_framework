@@ -1,0 +1,417 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ROME Project Activity Status",
+  "description": "Flat, parseable activity log for real-time project monitoring. Tracks features down to user story level across all phases and layers.",
+  "type": "object",
+  "required": ["project", "version", "lastUpdated", "entries"],
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Project name"
+    },
+    "version": {
+      "type": "string",
+      "description": "ROME version (e.g. '6.0')"
+    },
+    "lastUpdated": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp of last update"
+    },
+    "entries": {
+      "type": "array",
+      "description": "Flat list of all activity entries (features, stories, blockers, amendments)",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "#/definitions/featureEntry"
+          },
+          {
+            "$ref": "#/definitions/storyEntry"
+          },
+          {
+            "$ref": "#/definitions/blockerEntry"
+          },
+          {
+            "$ref": "#/definitions/amendmentEntry"
+          },
+          {
+            "$ref": "#/definitions/phaseEntry"
+          }
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "featureEntry": {
+      "type": "object",
+      "description": "Feature work across a single layer (database|backend|frontend)",
+      "required": ["id", "type", "feature", "featureName", "phase", "layer", "robot", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^FEAT-[0-9]+-(db|api|ui)$",
+          "description": "Unique ID: FEAT-XXX-db|api|ui"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["feature"],
+          "description": "Entry type"
+        },
+        "feature": {
+          "type": "string",
+          "pattern": "^FEAT-[0-9]+$",
+          "description": "Parent feature ID (e.g. FEAT-001)"
+        },
+        "featureName": {
+          "type": "string",
+          "description": "Human-readable feature name"
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["1", "2", "2a", "2b", "3"],
+          "description": "ROME phase"
+        },
+        "layer": {
+          "type": "string",
+          "enum": ["database", "backend", "frontend"],
+          "description": "Implementation layer"
+        },
+        "robot": {
+          "type": "string",
+          "enum": ["talib", "pma", "clara", "sarah", "ashok", "reena", "charlie", "roma"],
+          "description": "Assigned robot"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "IN_PROGRESS", "COMPLETED", "BLOCKED"],
+          "description": "Current status"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"],
+          "description": "Feature priority"
+        },
+        "testLevel": {
+          "type": "string",
+          "enum": ["None", "Integration", "Unit", "Both"],
+          "description": "Test coverage level"
+        },
+        "designValidation": {
+          "type": "string",
+          "enum": ["PENDING", "IN_PROGRESS", "PASS", "BLOCKED"],
+          "description": "Clara's design validation status (frontend only)"
+        },
+        "blocker": {
+          "type": ["string", "null"],
+          "pattern": "^BLOCK-[0-9]+$",
+          "description": "ID of blocking issue, if any"
+        },
+        "amendment": {
+          "type": ["string", "null"],
+          "pattern": "^AMD-[0-9]+$",
+          "description": "ID of pending amendment, if any"
+        },
+        "startDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Work start date"
+        },
+        "lastUpdate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Last activity timestamp"
+        },
+        "completionDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Completion timestamp"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Status notes or dependencies"
+        }
+      }
+    },
+    "storyEntry": {
+      "type": "object",
+      "description": "User story within a feature, tracked at layer level",
+      "required": ["id", "type", "feature", "story", "storyName", "phase", "layer", "robot", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^STORY-[0-9]+-[0-9]+-[0-9]+-(db|api|ui)$",
+          "description": "Unique ID: STORY-XXX-Y-Z-db|api|ui"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["story"],
+          "description": "Entry type"
+        },
+        "feature": {
+          "type": "string",
+          "pattern": "^FEAT-[0-9]+$",
+          "description": "Parent feature ID"
+        },
+        "story": {
+          "type": "string",
+          "pattern": "^STORY-[0-9]+-[0-9]+-[0-9]+$",
+          "description": "Story ID (e.g. STORY-001-1-1)"
+        },
+        "storyName": {
+          "type": "string",
+          "description": "User story description (e.g. 'As a user, I want to login')"
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["1", "2", "2a", "2b", "3"],
+          "description": "ROME phase"
+        },
+        "layer": {
+          "type": "string",
+          "enum": ["database", "backend", "frontend"],
+          "description": "Implementation layer"
+        },
+        "robot": {
+          "type": "string",
+          "enum": ["talib", "pma", "clara", "sarah", "ashok", "reena", "charlie", "roma"],
+          "description": "Assigned robot"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING", "IN_PROGRESS", "COMPLETED", "BLOCKED"],
+          "description": "Current status"
+        },
+        "priority": {
+          "type": "string",
+          "enum": ["LOW", "MEDIUM", "HIGH"],
+          "description": "Story priority within feature"
+        },
+        "testLevel": {
+          "type": "string",
+          "enum": ["None", "Integration", "Unit", "Both"],
+          "description": "Test coverage level"
+        },
+        "designValidation": {
+          "type": "string",
+          "enum": ["PENDING", "IN_PROGRESS", "PASS", "BLOCKED"],
+          "description": "Clara's validation status"
+        },
+        "blocker": {
+          "type": ["string", "null"],
+          "pattern": "^BLOCK-[0-9]+$",
+          "description": "ID of blocking issue"
+        },
+        "amendment": {
+          "type": ["string", "null"],
+          "pattern": "^AMD-[0-9]+$",
+          "description": "ID of pending amendment"
+        },
+        "startDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Work start date"
+        },
+        "lastUpdate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Last activity timestamp"
+        },
+        "completionDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Completion timestamp"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Story-specific notes"
+        }
+      }
+    },
+    "blockerEntry": {
+      "type": "object",
+      "description": "Blocker or issue preventing progress",
+      "required": ["id", "type", "severity", "robot", "status", "createdDate"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^BLOCK-[0-9]+$",
+          "description": "Unique blocker ID"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["blocker"],
+          "description": "Entry type"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Blocker severity"
+        },
+        "feature": {
+          "type": ["string", "null"],
+          "pattern": "^FEAT-[0-9]+$",
+          "description": "Related feature ID, if applicable"
+        },
+        "story": {
+          "type": ["string", "null"],
+          "pattern": "^STORY-[0-9]+-[0-9]+-[0-9]+$",
+          "description": "Related story ID, if applicable"
+        },
+        "description": {
+          "type": "string",
+          "description": "What is blocked and why"
+        },
+        "robot": {
+          "type": "string",
+          "enum": ["talib", "pma", "clara", "sarah", "ashok", "reena", "charlie", "roma"],
+          "description": "Robot who reported blocker"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["OPEN", "ESCALATED", "RESOLVED"],
+          "description": "Blocker status"
+        },
+        "createdDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When blocker was reported"
+        },
+        "resolvedDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When blocker was resolved"
+        }
+      }
+    },
+    "amendmentEntry": {
+      "type": "object",
+      "description": "Change request to prior phase work",
+      "required": ["id", "type", "severity", "requestedBy", "status", "createdDate"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^AMD-[0-9]+$",
+          "description": "Unique amendment ID"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["amendment"],
+          "description": "Entry type"
+        },
+        "severity": {
+          "type": "string",
+          "enum": ["CRITICAL", "HIGH", "MEDIUM", "LOW"],
+          "description": "Amendment impact severity"
+        },
+        "feature": {
+          "type": ["string", "null"],
+          "pattern": "^FEAT-[0-9]+$",
+          "description": "Related feature ID"
+        },
+        "story": {
+          "type": ["string", "null"],
+          "pattern": "^STORY-[0-9]+-[0-9]+-[0-9]+$",
+          "description": "Related story ID"
+        },
+        "description": {
+          "type": "string",
+          "description": "What needs to change and why"
+        },
+        "requestedBy": {
+          "type": "string",
+          "enum": ["talib", "pma", "clara", "sarah", "ashok", "reena", "charlie", "roma"],
+          "description": "Robot who requested amendment"
+        },
+        "targetPhase": {
+          "type": "string",
+          "enum": ["1", "2", "2a", "2b"],
+          "description": "Which phase work needs amendment"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["PENDING_REVIEW", "APPROVED", "REJECTED"],
+          "description": "Amendment status"
+        },
+        "createdDate": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When amendment was requested"
+        },
+        "decidedDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "When amendment was decided"
+        },
+        "decision": {
+          "type": ["string", "null"],
+          "enum": ["APPROVED", "REJECTED"],
+          "description": "Final decision"
+        }
+      }
+    },
+    "phaseEntry": {
+      "type": "object",
+      "description": "Phase-level status (gate decisions, phase completion)",
+      "required": ["id", "type", "phase", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^PHASE-[0-9a-z]+$",
+          "description": "Unique ID: PHASE-1, PHASE-2, PHASE-2a, etc."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["phase"],
+          "description": "Entry type"
+        },
+        "phase": {
+          "type": "string",
+          "enum": ["1", "2", "2a", "2b", "3"],
+          "description": "Phase identifier"
+        },
+        "phaseName": {
+          "type": "string",
+          "description": "Phase name (e.g. 'Requirements', 'Quality Gate')"
+        },
+        "robot": {
+          "type": "string",
+          "enum": ["talib", "pma", "clara", "sarah", "ashok", "reena", "charlie"],
+          "description": "Lead robot for phase"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["NOT_STARTED", "IN_PROGRESS", "COMPLETED"],
+          "description": "Phase status"
+        },
+        "gateDecision": {
+          "type": ["string", "null"],
+          "enum": ["APPROVED", "BLOCKED", "ESCALATED"],
+          "description": "Quality gate decision (Phase 2B only)"
+        },
+        "blockingIssues": {
+          "type": ["array", "null"],
+          "items": {
+            "type": "string",
+            "pattern": "^BLOCK-[0-9]+$"
+          },
+          "description": "List of blocking issues if BLOCKED"
+        },
+        "startDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Phase start date"
+        },
+        "completionDate": {
+          "type": ["string", "null"],
+          "format": "date-time",
+          "description": "Phase completion date"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Phase notes"
+        }
+      }
+    }
+  }
+}

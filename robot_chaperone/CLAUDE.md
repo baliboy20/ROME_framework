@@ -1,1 +1,0 @@
-../ROME/templates/claude-md/chaperone.md
