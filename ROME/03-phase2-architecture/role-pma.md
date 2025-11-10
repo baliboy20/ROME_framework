@@ -567,9 +567,29 @@ For each critical library/pattern decision:
 - Cost (open source vs commercial)
 
 **Step 3: Expert Consultation**
-- Does this require expert guidance? (State management, caching patterns, architecture decisions)
-- If yes: Document which expert is consulted and why
-- If no: Justify why team expertise is sufficient
+
+**ASK SPONSOR for expert guidance:**
+```
+"Which expert guidance should I follow for [state management/API design/database architecture]?
+ Do you have organizational standards or preferred patterns I should follow?"
+```
+
+**Sponsor responses:**
+- **Has expert docs**: "Use /Experts/expert_flutter/bloc-architecture.md"
+- **Has MCP server**: "Use mcp://expert_flutter for Flutter guidance"
+- **No formal docs**: "We prefer Bloc. Avoid Riverpod and GetX."
+  → PMA documents sponsor's verbal guidance in technical-decisions.md
+
+**Expert document sources:**
+- Organization's `/Experts/` documentation
+- MCP servers with domain expertise
+- Industry best practices repositories
+- Company standards documentation
+
+**PMA's role with experts:**
+- REFERENCE existing expert docs (don't create them)
+- DOCUMENT sponsor's verbal guidance if no formal docs exist
+- ENSURE all technical decisions align with expert guidance
 
 **Step 4: Documentation**
 ```markdown
@@ -602,6 +622,139 @@ For each critical library/pattern decision:
 - Caching strategy (Redis, Memcached, in-memory, none)
 
 **Sponsor Approval:** Required for major library decisions affecting architecture
+
+---
+
+### 3A. Layer-Specific Technical Standards (NEW - v6.2)
+
+**Purpose:** Define explicit mandated and forbidden technologies/patterns per layer to prevent developers from using incompatible approaches.
+
+**For each layer (Database, Backend, Frontend), PMA must document:**
+
+1. **Mandated Technologies/Patterns**
+   - Required libraries, frameworks, tools
+   - Architecture patterns to follow
+   - Coding standards (naming, structure)
+
+2. **Forbidden Anti-Patterns**
+   - Libraries/patterns NOT to use
+   - Rationale for each forbidden item
+   - Common mistakes to avoid
+
+3. **Expert References**
+   - Links to expert documents (if available)
+   - MCP server references (if available)
+   - Sponsor's verbal guidance (if no formal docs)
+
+4. **Coding Standards**
+   - Naming conventions
+   - File organization
+   - Architecture patterns
+
+**Output:** Add "Layer-Specific Technical Standards" section to `technical-decisions.md`
+
+**Template:** Use `/ROME/templates/technical-standards-template.md`
+
+**Example:**
+```markdown
+## Layer-Specific Technical Standards
+
+### Frontend Layer (Charlie)
+
+**Mandated:**
+- Flutter 3.x with Bloc state management
+- Dio for HTTP client
+- Repository pattern matching backend
+- Exception handling with try/catch
+- Equatable for value objects
+
+**Forbidden:**
+- Riverpod (anti-pattern - incompatible with Bloc architecture)
+- Dartz/Either (use exceptions instead)
+- Provider (use Bloc)
+- GetX (anti-pattern)
+
+**Expert References:**
+- /Experts/expert_flutter/bloc-architecture.md
+- mcp://expert_flutter/anti-patterns
+
+**Coding Standards:**
+- BLoC naming: `{Feature}Bloc`, `{Feature}Event`, `{Feature}State`
+- Repository naming: `{Entity}Repository`
+- File structure: feature-first organization
+```
+
+**Why this matters:**
+- Prevents developers from using incompatible patterns
+- Sarah can validate compliance in Phase 2B
+- Developers have clear "rules of the game"
+- Reduces rework from wrong technology choices
+
+---
+
+### 3B. Test Data Strategy (NEW - v6.2)
+
+**Purpose:** Define canonical test datasets that all developers use for integration tests to ensure consistency across layers.
+
+**PMA creates:**
+
+1. **Canonical Test Datasets**
+   - Test users (3-5 personas with IDs, roles, credentials)
+   - Test entities for core domain (products, orders, etc.)
+   - Test relationships (user-project, order-items, etc.)
+   - Deterministic IDs (e.g., `test-user-001`, `test-prod-001`)
+
+2. **Usage Rules**
+   - All integration tests MUST use canonical data
+   - New test data requires PMA approval
+   - Tests must reset to seed state before running
+
+3. **Seed Data Specifications**
+   - Location: `PROJECT/dev/test-data/`
+   - Format: JSON tables with IDs
+   - Ashok implements as seed.sql in Phase 3
+
+**Output:** Add "Test Data Strategy" section to `technical-decisions.md`
+
+**Template:** Use `/ROME/templates/test-data-strategy-template.md`
+
+**Example:**
+```markdown
+## Test Data Strategy
+
+### Canonical Test Users
+
+| Email | Password | Role | ID | Notes |
+|-------|----------|------|-----|-------|
+| admin@test.com | test123 | admin | test-user-001 | Full access |
+| user1@test.com | test123 | user | test-user-002 | Regular user |
+| user2@test.com | test123 | premium | test-user-003 | Premium features |
+
+### Canonical Test Products
+
+| Name | SKU | Category | Price | ID | Stock |
+|------|-----|----------|-------|-----|-------|
+| Laptop Pro | LAPTOP-001 | Electronics | 999.99 | test-prod-001 | 10 |
+| Python Book | BOOK-001 | Books | 29.99 | test-prod-002 | 50 |
+
+### Seed Data Location
+
+- `PROJECT/dev/test-data/users.json`
+- `PROJECT/dev/test-data/products.json`
+- `PROJECT/dev/test-data/seed.sql` (created by Ashok in Phase 3)
+
+### Usage Rules
+
+1. DO NOT create ad-hoc test data
+2. DO reference canonical IDs in all tests
+3. DO reset database to seed state before test suites
+```
+
+**Why this matters:**
+- Consistent test data across Database/Backend/Frontend
+- Integration tests use same entities and IDs
+- Easier debugging (reproducible scenarios)
+- Ashok knows exactly what seed data to create
 
 ---
 

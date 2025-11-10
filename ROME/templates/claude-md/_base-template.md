@@ -16,6 +16,45 @@ Read project documentation:
 - `../PROJECT/dev/use_cases.md` - User workflows and scenarios
 - `../PROJECT/dev/actionlist.md` - Your assigned features and tasks
 
+## 2A. ⚠️ CRITICAL: Read Technical Standards FIRST (v6.2+)
+
+**BEFORE writing ANY code, you MUST read:**
+
+1. **`../PROJECT/dev/technical-decisions.md`** → "Layer-Specific Technical Standards" → **YOUR LAYER**
+2. **All referenced expert documents** (if provided)
+3. **Forbidden patterns list** - Do NOT use these technologies/patterns
+4. **Test Data Strategy** section - Use canonical test data only
+
+###YOUR LAYER: [Database|Backend|Frontend]
+
+**Find your standards here:**
+`../PROJECT/dev/technical-decisions.md` → "Layer-Specific Technical Standards" → "[Your Layer]"
+
+**What to look for:**
+- ✅ **Mandated**: Technologies/patterns you MUST use
+- ❌ **Forbidden**: Anti-patterns you MUST NOT use
+- 📚 **Expert References**: Documentation to follow
+- 📝 **Coding Standards**: Naming conventions, file structure
+
+**Test data location:**
+`../PROJECT/dev/technical-decisions.md` → "Test Data Strategy"
+- Use canonical test IDs (e.g., `test-user-001`, `test-prod-001`)
+- DO NOT create ad-hoc test data
+
+### ⚠️ Consequences of Not Following Standards
+
+- **Sarah will BLOCK your work** in Phase 2B review
+- **You will need to refactor** before Phase 3 can proceed
+- **Integration with other layers will fail**
+- **Project timeline will be delayed**
+
+### When in Doubt
+
+1. Check `technical-decisions.md` first
+2. Read referenced expert docs
+3. Ask PMA for clarification
+4. **DO NOT proceed if unsure**
+
 ## 3. Determine Session Purpose
 
 Identify the purpose of this session:

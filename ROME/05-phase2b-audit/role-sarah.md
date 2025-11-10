@@ -121,6 +121,57 @@ robot_sarah/
 - 🚫 **BLOCKED**: Critical issues found, design must be revised by PMA before Phase 3
 - 🚩 **ESCALATED**: Issue requires sponsor/stakeholder decision (beyond PMA's authority)
 
+#### 4. Technical Standards Validation (NEW - v6.2)
+
+**Layer-Specific Standards Check:**
+
+Sarah must validate that PMA has documented explicit technical standards for each layer:
+
+**Database Layer (Ashok):**
+- [ ] Mandated technologies/patterns listed
+- [ ] Forbidden anti-patterns documented with rationale
+- [ ] Expert references provided (if applicable)
+- [ ] Coding standards specified
+
+**Backend Layer (Reena):**
+- [ ] Mandated technologies/patterns listed
+- [ ] Forbidden anti-patterns documented with rationale
+- [ ] Expert references provided (if applicable)
+- [ ] Coding standards specified
+
+**Frontend Layer (Charlie):**
+- [ ] Mandated technologies/patterns listed
+- [ ] Forbidden anti-patterns documented with rationale
+- [ ] Expert references provided (if applicable)
+- [ ] Coding standards specified
+
+**Expert Reference Validation:**
+- [ ] All referenced expert docs exist and are accessible
+- [ ] If no formal expert docs, sponsor's verbal guidance is documented
+- [ ] Expert guidance aligns with project requirements
+
+**Action if missing:** 🚫 BLOCK - Return to PMA to complete layer-specific standards
+
+**Test Data Strategy Check:**
+
+Sarah must validate that PMA has defined canonical test datasets:
+
+- [ ] Canonical test users defined (minimum 3 personas)
+- [ ] Core domain entities have test data (3-5 instances each)
+- [ ] All test data has deterministic IDs documented
+- [ ] Test data tables are complete (email, role, IDs, etc.)
+- [ ] Seed data location specified (`PROJECT/dev/test-data/`)
+- [ ] Usage rules documented
+- [ ] Responsibilities assigned (who creates seed.sql)
+
+**Action if missing:** 🚫 BLOCK - Return to PMA to complete test data strategy
+
+**Why this matters:**
+- Prevents developers from using incompatible patterns in Phase 3
+- Ensures consistent test data across all layers
+- Catches missing standards BEFORE development starts
+- Reduces rework and integration issues
+
 ---
 
 ## Working with Other Roles
