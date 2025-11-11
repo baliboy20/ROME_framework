@@ -4,7 +4,14 @@
 # Example: ./ROME/scripts/create-robot.sh pma
 
 ROBOT_NAME=$1
-ROBOT_DIR="robot_${ROBOT_NAME}"
+
+# Find ROME root directory (where this script lives)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROME_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$ROME_ROOT/.." && pwd)"
+
+# Robot directories should be created in PROJECT_ROOT (ROME's parent)
+ROBOT_DIR="${PROJECT_ROOT}/robot_${ROBOT_NAME}"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -50,41 +57,44 @@ mkdir -p ${ROBOT_DIR}/.claude
 mkdir -p ${ROBOT_DIR}/notes
 
 # Symlink CLAUDE.md from templates
-if [ -f "ROME/templates/claude-md/${ROBOT_NAME}.md" ]; then
+CLAUDE_TEMPLATE="${ROME_ROOT}/templates/claude-md/${ROBOT_NAME}.md"
+if [ -f "$CLAUDE_TEMPLATE" ]; then
     ln -sf ../../ROME/templates/claude-md/${ROBOT_NAME}.md ${ROBOT_DIR}/.claude/CLAUDE.md
     echo -e "  ${GREEN}✓${NC} Linked CLAUDE.md template"
 else
-    echo -e "  ${YELLOW}⚠${NC}  No template found: ROME/templates/claude-md/${ROBOT_NAME}.md"
+    echo -e "  ${YELLOW}⚠${NC}  No template found: ${CLAUDE_TEMPLATE}"
     echo "     Create template first, then re-run this script"
 fi
 
 # Map robot names to their phase folders (compatible with macOS bash)
 case "$ROBOT_NAME" in
-    talib)      ROLE_PATH="ROME/02-phase1-requirements/role-talib.md" ;;
-    pma)        ROLE_PATH="ROME/03-phase2-architecture/role-pma.md" ;;
-    clara)      ROLE_PATH="ROME/04-phase2a-ux/role-clara.md" ;;
-    sarah)      ROLE_PATH="ROME/05-phase2b-audit/role-sarah.md" ;;
-    chaperone)  ROLE_PATH="ROME/05-phase2b-audit/role-sarah.md" ;;  # legacy name
-    ashok)      ROLE_PATH="ROME/06-phase3-development/role-ashok.md" ;;
-    reena)      ROLE_PATH="ROME/06-phase3-development/role-reena.md" ;;
-    charlie)    ROLE_PATH="ROME/06-phase3-development/role-charlie.md" ;;
-    roma)       ROLE_PATH="ROME/99-reference/role-roma.md" ;;
+    talib)      ROLE_PATH="${ROME_ROOT}/02-phase1-requirements/role-talib.md" ;;
+    pma)        ROLE_PATH="${ROME_ROOT}/03-phase2-architecture/role-pma.md" ;;
+    clara)      ROLE_PATH="${ROME_ROOT}/04-phase2a-ux/role-clara.md" ;;
+    sarah)      ROLE_PATH="${ROME_ROOT}/05-phase2b-audit/role-sarah.md" ;;
+    chaperone)  ROLE_PATH="${ROME_ROOT}/05-phase2b-audit/role-sarah.md" ;;  # legacy name
+    ashok)      ROLE_PATH="${ROME_ROOT}/06-phase3-development/role-ashok.md" ;;
+    reena)      ROLE_PATH="${ROME_ROOT}/06-phase3-development/role-reena.md" ;;
+    charlie)    ROLE_PATH="${ROME_ROOT}/06-phase3-development/role-charlie.md" ;;
+    roma)       ROLE_PATH="${ROME_ROOT}/99-reference/role-roma.md" ;;
     *)          ROLE_PATH="" ;;
 esac
 
-# Symlink README.md from role docs
+# Symlink README.md from role docs (relative symlink)
 if [ -n "$ROLE_PATH" ] && [ -f "$ROLE_PATH" ]; then
-    ln -sf ../$ROLE_PATH ${ROBOT_DIR}/README.md
-    echo -e "  ${GREEN}✓${NC} Linked README from $ROLE_PATH"
+    # Extract just the relative path from ROME root
+    ROLE_RELATIVE_PATH=$(echo "$ROLE_PATH" | sed "s|${ROME_ROOT}/||")
+    ln -sf ../ROME/$ROLE_RELATIVE_PATH ${ROBOT_DIR}/README.md
+    echo -e "  ${GREEN}✓${NC} Linked README from ROME/$ROLE_RELATIVE_PATH"
 else
     echo -e "  ${YELLOW}⚠${NC}  No role doc found for ${ROBOT_NAME}"
     echo "     Expected: $ROLE_PATH"
 fi
 
 # Copy note templates
-cp ROME/templates/robot-notes/current_work.md ${ROBOT_DIR}/notes/
-cp ROME/templates/robot-notes/completed_features.md ${ROBOT_DIR}/notes/
-cp ROME/templates/robot-notes/blockers.md ${ROBOT_DIR}/notes/
+cp ${ROME_ROOT}/templates/robot-notes/current_work.md ${ROBOT_DIR}/notes/
+cp ${ROME_ROOT}/templates/robot-notes/completed_features.md ${ROBOT_DIR}/notes/
+cp ${ROME_ROOT}/templates/robot-notes/blockers.md ${ROBOT_DIR}/notes/
 echo -e "  ${GREEN}✓${NC} Created notes directory with templates"
 
 # Create gitignore for project-specific files
