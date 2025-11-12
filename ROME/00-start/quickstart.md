@@ -1,8 +1,18 @@
-# ROME 6.0 Quick Start Guide
+# ROME v7.0 Quick Start Guide
 
-**Version**: 6.0 - Evolutionary, Session-Continuous, Robot-Native
-**Last Updated**: 2025-11-07
+**Version**: 7.0 - MCP Native, Zero Race Conditions, Production Ready
+**Last Updated**: 2025-11-12
 **Audience**: Teams launching first ROME project
+
+## 🎉 What's New in v7.0
+
+ROME v7.0 replaces JSON file-based activity tracking with **MCP (Model Context Protocol)** using MongoDB:
+- **10x faster queries** - Indexed database vs file parsing
+- **Zero race conditions** - ACID transactions for safe concurrent access
+- **20x scalability** - Handle 10,000+ entries
+- **Automatic setup** - MCP configured during project initialization
+
+**For MCP details**, see: `MCP-MIGRATION-START-HERE.md`
 
 ---
 

@@ -391,9 +391,322 @@ Unit tests added at project end for complex logic only.
 
 ---
 
-## RP-3: FILE & ARTIFACT HANDLING
+## RP-3: STAKEHOLDER QUESTIONING PATTERNS
 
-### RP-3.1: Input File Reading Patterns
+### RP-3.1: Improved Question-Option Completeness Protocol
+
+**Purpose:** When gathering requirements or making design decisions, ensure questions provide complete options while allowing for open-ended responses when necessary.
+
+**Problem Solved:** Closed-choice questions may not capture edge cases, novel approaches, or domain-specific nuances that don't fit predefined options.
+
+**Core Principle:** Balance structured guidance with flexibility for stakeholder expertise.
+
+---
+
+#### When to Use Structured vs. Open-Ended Questions
+
+**Use Structured Options When:**
+- Domain is well-known and options are enumerable
+- Decision has standard industry approaches
+- Constraining choices helps stakeholder understanding
+- Examples: Authentication methods, database types, deployment platforms
+
+**Use Open-Ended Questions When:**
+- Domain is novel or highly specialized
+- Stakeholder has deep expertise you're discovering
+- Multiple valid approaches with significant trade-offs
+- Examples: Business workflows, custom integrations, regulatory requirements
+
+---
+
+#### Question Design Pattern
+
+**Step 1: Start with Structured Options (if applicable)**
+
+```markdown
+**Question:** What authentication method should we use?
+
+Options:
+A) OAuth 2.0 / OpenID Connect (industry standard, third-party identity)
+B) JWT (stateless, token-based authentication)
+C) Session-based (traditional, server-side sessions)
+D) Magic Link (passwordless, email-based)
+E) Other (please specify)
+
+Please select one option, or choose "Other" to describe a different approach.
+```
+
+**Step 2: Always Include "Other (please specify)" Option**
+
+This captures:
+- Edge cases not covered by standard options
+- Novel approaches specific to this domain
+- Hybrid solutions combining multiple approaches
+- Vendor-specific or regulatory requirements
+
+**Step 3: Follow Up with Open-Ended Clarification**
+
+Even when stakeholder selects a standard option, probe deeper:
+
+```markdown
+**Follow-up Questions:**
+- Why is this approach preferred for your use case?
+- Are there any constraints or requirements that influenced this choice?
+- Do you foresee any challenges with this approach in your environment?
+- [Option-specific questions]
+  - For OAuth: Which identity providers should we support?
+  - For JWT: What's your token refresh strategy?
+  - For Sessions: What's your session storage mechanism?
+```
+
+---
+
+#### Handling "Other" Responses
+
+**When stakeholder selects "Other", use this template:**
+
+```markdown
+Thank you for selecting "Other". To ensure I understand your requirements:
+
+1. **Describe the approach:**
+   - What authentication method are you envisioning?
+   - How would it work from the user's perspective?
+
+2. **Rationale:**
+   - Why is this approach better suited than standard options?
+   - What constraints or requirements make this necessary?
+
+3. **Technical details:**
+   - What technologies or protocols would this involve?
+   - Are there existing systems this needs to integrate with?
+
+4. **Trade-offs:**
+   - What are the advantages of this approach for your use case?
+   - What challenges or risks do you foresee?
+
+5. **Precedents:**
+   - Have you seen this approach used successfully elsewhere?
+   - Are there any references or examples you can share?
+```
+
+---
+
+#### Conditional Questioning Flow
+
+Use decision trees to adapt questions based on previous answers:
+
+```markdown
+**Q1:** What's the primary user base for this application?
+  A) Internal employees
+  B) External customers
+  C) Partners/vendors
+  D) Mixed (multiple user types)
+  E) Other (please specify)
+
+[If A selected → Ask about corporate directory integration]
+[If B selected → Ask about self-service registration]
+[If C selected → Ask about B2B/SSO requirements]
+[If D selected → Ask about role separation strategy]
+[If E selected → Use "Other" template above]
+```
+
+---
+
+#### Documenting Unusual Choices
+
+When stakeholders choose non-standard options or provide "Other" responses:
+
+**Create Decision Log Entry:**
+
+```markdown
+## Decision: [Topic] - [Chosen Approach]
+
+**Date:** YYYY-MM-DD
+**Decision Maker:** [Stakeholder name/role]
+**Robot:** [Robot name - e.g., PMA, Talib]
+
+**Question Asked:**
+[Original question with options]
+
+**Response:** Option E (Other) - [Brief description]
+
+**Full Stakeholder Response:**
+[Capture complete explanation from follow-up questions]
+
+**Rationale:**
+- Why this approach was chosen
+- What constraints drove the decision
+- What alternatives were considered
+
+**Implications:**
+- Technical dependencies this creates
+- Integration points this requires
+- Risks or challenges to monitor
+
+**Approval:** [Stakeholder approval confirmation]
+
+**Future Reference:**
+This decision should be reviewed if:
+- [Condition 1 that might invalidate choice]
+- [Condition 2 that might suggest reconsideration]
+```
+
+---
+
+#### Example: Complete Questioning Flow
+
+**Initial Question (Structured):**
+
+```markdown
+**Architecture Question 3: Data Persistence Strategy**
+
+How should we handle data persistence for this application?
+
+A) Relational Database (PostgreSQL, MySQL) - Structured data, ACID compliance
+B) Document Database (MongoDB, CouchDB) - Flexible schema, JSON documents
+C) Key-Value Store (Redis, DynamoDB) - Simple lookups, caching
+D) Graph Database (Neo4j) - Complex relationships, graph traversal
+E) Time-Series Database (InfluxDB, TimescaleDB) - Temporal data, metrics
+F) Other (please specify)
+
+Select the option that best fits your data model and access patterns.
+```
+
+**Stakeholder Response:** "F - Other"
+
+**Follow-Up (Open-Ended):**
+
+```markdown
+Thank you. Let's explore your data persistence needs:
+
+1. **Describe your approach:**
+   What database or persistence strategy are you considering?
+
+2. **Data characteristics:**
+   - What types of data will you store?
+   - What are the typical access patterns?
+   - What's the expected data volume and growth rate?
+
+3. **Why this approach:**
+   - What makes standard databases insufficient?
+   - What specific requirements drove this choice?
+
+4. **Technical integration:**
+   - What existing systems need to access this data?
+   - Are there compliance or regulatory requirements?
+   - What's your backup and disaster recovery strategy?
+
+5. **Team expertise:**
+   - Does your team have experience with this technology?
+   - What's the operational overhead?
+```
+
+**Stakeholder Detailed Response:**
+
+```
+We need a hybrid approach: PostgreSQL for transactional data (orders, users)
+and Elasticsearch for product search/filtering. Our legacy system already
+uses PostgreSQL, and we need advanced full-text search capabilities that
+SQL can't efficiently provide. We'll use CDC (Change Data Capture) to
+keep Elasticsearch in sync.
+```
+
+**PMA Documentation:**
+
+```markdown
+## Decision: Hybrid Data Persistence (PostgreSQL + Elasticsearch)
+
+**Date:** 2025-11-12
+**Decided By:** Technical Stakeholder
+**Robot:** robot_pma
+
+**Original Question:** Data Persistence Strategy
+
+**Response:** Option F (Other) - Hybrid: PostgreSQL + Elasticsearch
+
+**Full Requirements:**
+- PostgreSQL for transactional data (orders, customers, inventory)
+- Elasticsearch for product search and filtering
+- CDC pipeline to sync PostgreSQL → Elasticsearch
+- Legacy system already on PostgreSQL (migration constraint)
+- Advanced search requirements (fuzzy matching, faceted filtering)
+
+**Rationale:**
+- Cannot migrate legacy PostgreSQL without significant risk
+- SQL full-text search insufficient for product catalog (millions of SKUs)
+- Real-time search performance critical (< 200ms response time)
+- Elasticsearch proven in similar e-commerce contexts
+
+**Technical Implications:**
+- Need CDC tool (Debezium, AWS DMS, or custom)
+- Data consistency challenges (eventual consistency for search)
+- Operational complexity (two databases to monitor/backup)
+- Additional infrastructure cost
+
+**Risks to Monitor:**
+- CDC pipeline failures causing search staleness
+- Elasticsearch cluster scaling under load
+- Data model divergence between systems
+
+**Approval:** Confirmed by CTO [Stakeholder Name]
+
+**Review Triggers:**
+- If search performance requirements change
+- If PostgreSQL full-text search improves significantly
+- If operational complexity becomes untenable
+```
+
+---
+
+#### Integration with Phase Workflow
+
+**Phase 1 (Talib):** Use structured + "Other" approach for requirements gathering
+- Capture all stakeholder context
+- Document unusual requirements with full justification
+- Create decision log entries for non-standard choices
+
+**Phase 2 (PMA):** Use conditional questioning for architecture decisions
+- Build on Phase 1 decision logs
+- Ask option-specific follow-ups based on Phase 1 choices
+- Validate feasibility of "Other" responses
+
+**Phase 2B (Sarah):** Validate decision log completeness
+- Ensure "Other" responses have full documentation
+- Check that unusual choices have stakeholder approval
+- Verify implications are understood and acceptable
+
+**Phase 3 (Ashok/Reena/Charlie):** Reference decision logs during implementation
+- Understand why non-standard approaches were chosen
+- Flag if implementation reveals unforeseen challenges
+- Request amendments if assumptions proven invalid
+
+---
+
+#### Summary Checklist
+
+When asking stakeholders questions:
+
+- [ ] **Start structured** (if domain is well-known)
+- [ ] **Always include "Other (please specify)"** option
+- [ ] **Follow up with open-ended clarification** (even for standard options)
+- [ ] **Use conditional questioning** based on previous answers
+- [ ] **Document "Other" responses thoroughly** with full context
+- [ ] **Create decision log entries** for non-standard choices
+- [ ] **Get stakeholder approval** for unusual/risky approaches
+- [ ] **Note future review triggers** for decisions
+
+This protocol ensures:
+✅ Stakeholders aren't constrained by incomplete option lists
+✅ Novel approaches are captured with full context
+✅ Non-standard choices are documented and justified
+✅ Future robots understand why decisions were made
+✅ Amendments have clear decision history to reference
+
+---
+
+## RP-4: FILE & ARTIFACT HANDLING
+
+### RP-4.1: Input File Reading Patterns
 
 **Standard Input Files:**
 
@@ -418,7 +731,7 @@ Unit tests added at project end for complex logic only.
 
 ---
 
-### RP-3.2: Output Creation Patterns
+### RP-4.2: Output Creation Patterns
 
 **Output File Locations:**
 
@@ -457,7 +770,7 @@ PROJECT/
 
 ---
 
-### RP-3.3: File Naming Conventions
+### RP-4.3: File Naming Conventions
 
 **Code File Naming:**
 - Database schema: `schema.sql`, migrations as `YYYYMMDD_description.sql`
@@ -477,7 +790,7 @@ PROJECT/
 
 ---
 
-### RP-3.4: Version Control Patterns
+### RP-4.4: Version Control Patterns
 
 **Commit Message Standards:**
 - Include amendment ID if fixing amendment: `"Clarify FEAT-003.2 sorting behavior (AMD-001)"`
@@ -492,9 +805,9 @@ PROJECT/
 
 ---
 
-## RP-4: DOCUMENTATION REQUIREMENTS
+## RP-5: DOCUMENTATION REQUIREMENTS
 
-### RP-4.1: Code Annotations (Universal)
+### RP-5.1: Code Annotations (Universal)
 
 **Required for all classes/modules:**
 
@@ -531,7 +844,7 @@ PROJECT/
 
 ---
 
-### RP-4.2: SQL File Annotations
+### RP-5.2: SQL File Annotations
 
 **File Header Format:**
 ```sql
@@ -548,7 +861,7 @@ CREATE TABLE [name] ( ... );
 
 ---
 
-### RP-4.3: Design-Aware Code Annotations
+### RP-5.3: Design-Aware Code Annotations
 
 **For frontend implementation:**
 
@@ -573,7 +886,7 @@ CREATE TABLE [name] ( ... );
 
 ---
 
-### RP-4.4: Activity Log Update Responsibilities
+### RP-5.4: Activity Log Update Responsibilities
 
 **Roma (Daily):**
 - Monitor all phases for status changes
@@ -597,9 +910,9 @@ CREATE TABLE [name] ( ... );
 
 ---
 
-## RP-5: QUALITY & VALIDATION
+## RP-6: QUALITY & VALIDATION
 
-### RP-5.1: Universal Quality Checklist
+### RP-6.1: Universal Quality Checklist
 
 Before feature marked COMPLETED:
 - [ ] All assigned layers/components implemented
@@ -613,7 +926,7 @@ Before feature marked COMPLETED:
 
 ---
 
-### RP-5.2: Integration Test Template
+### RP-6.2: Integration Test Template
 
 ```javascript
 describe('[Feature] [Layer] Integration', () => {
@@ -642,7 +955,7 @@ describe('[Feature] [Layer] Integration', () => {
 
 ---
 
-### RP-5.3: Self-Check Commands
+### RP-6.3: Self-Check Commands
 
 ```bash
 # Find all unstable classes
@@ -664,7 +977,7 @@ flutter test test/integration
 
 ---
 
-### RP-5.4: Testing by Layer
+### RP-6.4: Testing by Layer
 
 **Database (Ashok):**
 - Schema creation successful
@@ -705,9 +1018,9 @@ flutter test test/integration
 
 ---
 
-## RP-6: COORDINATION PATTERNS
+## RP-7: COORDINATION PATTERNS
 
-### RP-6.1: Phase Progression Protocol
+### RP-7.1: Phase Progression Protocol
 
 **Standard Flow:**
 
@@ -724,7 +1037,7 @@ flutter test test/integration
 
 ---
 
-### RP-6.2: Status Update Format
+### RP-7.2: Status Update Format
 
 ```
 Format: Feature | Layer | Status | Robot | Timestamp | TestLevel
@@ -733,7 +1046,7 @@ Example: Project Management | API | COMPLETED | Reena | 2025-10-07 10:30 | Integ
 
 ---
 
-### RP-6.3: Blocker Communication Format
+### RP-7.3: Blocker Communication Format
 
 ```markdown
 🔴 BLOCKED: [Feature Name] - [Layer]
@@ -745,9 +1058,9 @@ Status: [Current annotation state]
 
 ---
 
-## RP-7: ENVIRONMENT & SETUP
+## RP-8: ENVIRONMENT & SETUP
 
-### RP-7.1: Robot Directory Structure
+### RP-8.1: Robot Directory Structure
 
 **Standard Template:**
 
@@ -767,7 +1080,7 @@ PROJECT/
 
 ---
 
-### RP-7.2: CLAUDE.md Template
+### RP-8.2: CLAUDE.md Template
 
 ```markdown
 # [Robot Name] Instructions
@@ -809,7 +1122,7 @@ PROJECT/
 
 ---
 
-### RP-7.3: Settings File Template
+### RP-8.3: Settings File Template
 
 ```json
 {
@@ -827,7 +1140,7 @@ PROJECT/
 
 ---
 
-### RP-7.4: Robot Notes Directory
+### RP-8.4: Robot Notes Directory
 
 | File | Purpose | Content |
 |------|---------|---------|
@@ -838,7 +1151,7 @@ PROJECT/
 
 ---
 
-### RP-7.5: Session State Documentation (P14a)
+### RP-8.5: Session State Documentation (P14a)
 
 **Required on every session close or when work state changes:**
 
@@ -951,7 +1264,7 @@ Step 3 of 5: Add server validation error handling to form submission
 
 ---
 
-### RP-7.6: Session Restart Protocol (P14c)
+### RP-8.6: Session Restart Protocol (P14c)
 
 **When starting a new session (after interruption, timeout, or context reset):**
 
@@ -1018,7 +1331,7 @@ Append to current_work.md:
 
 ---
 
-### RP-7.7: Checkpoint Best Practices
+### RP-8.7: Checkpoint Best Practices
 
 **Never end a session without:**
 
@@ -1072,9 +1385,9 @@ Status: [In Progress / Waiting on Blocker / Ready for Review]
 
 ---
 
-## RP-8: SPECIAL PROTOCOLS
+## RP-9: SPECIAL PROTOCOLS
 
-### RP-8.1: Design-to-Implementation Handoff (Clara → Charlie)
+### RP-9.1: Design-to-Implementation Handoff (Clara → Charlie)
 
 **3-Checkpoint Validation:**
 
@@ -1092,7 +1405,7 @@ Status: [In Progress / Waiting on Blocker / Ready for Review]
 
 ---
 
-### RP-8.2: Phase Amendment When Blocker Found
+### RP-9.2: Phase Amendment When Blocker Found
 
 If gatekeeper blocks and requires amendment:
 
@@ -1109,7 +1422,7 @@ Roma broadcasts to affected phase robot with amendment request format (RP-1.2).
 
 ---
 
-### RP-8.3: Vertical Feature Slice Definition
+### RP-9.3: Vertical Feature Slice Definition
 
 **Feature = Complete Stack Implementation:**
 

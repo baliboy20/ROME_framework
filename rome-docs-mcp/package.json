@@ -1,0 +1,33 @@
+{
+  "name": "rome-docs-mcp",
+  "version": "1.0.0",
+  "description": "MCP server providing ROME methodology documentation as resources",
+  "type": "module",
+  "main": "src/index.js",
+  "bin": {
+    "rome-docs-mcp": "./src/index.js"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "test": "node --test src/test/*.test.js"
+  },
+  "keywords": [
+    "mcp",
+    "rome",
+    "methodology",
+    "documentation",
+    "ai-agents"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4"
+  },
+  "devDependencies": {
+    "node:test": "*"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

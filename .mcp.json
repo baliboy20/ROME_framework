@@ -1,14 +1,13 @@
 {
   "mcpServers": {
-    "rome-mcp": {
-      "command": "npx",
-      "args": [
-        "tsx",
-        "./claude_pma/services/mcp-server/src/index.ts"
-      ],
-      "env": {
-        "VDB_SERVICE_URL": "http://localhost:8081"
+      "activity-log": {
+        "command": "dart",
+        "args": [
+          "run",
+          "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/activity_log_mcp/bin/server_with_web.dart"
+        ],
+        "disabled": false
       }
-    }
+
   }
 }
