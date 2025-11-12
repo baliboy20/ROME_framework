@@ -66,6 +66,16 @@ else
     echo "     Create template first, then re-run this script"
 fi
 
+# Copy .mcp.json for MCP server configuration
+MCP_TEMPLATE="${ROME_ROOT}/templates/.mcp.json"
+if [ -f "$MCP_TEMPLATE" ]; then
+    cp "$MCP_TEMPLATE" ${ROBOT_DIR}/.claude/.mcp.json
+    echo -e "  ${GREEN}✓${NC} Copied .mcp.json for MCP server access"
+else
+    echo -e "  ${YELLOW}⚠${NC}  No .mcp.json template found: ${MCP_TEMPLATE}"
+    echo "     MCP functions may not be available in this robot"
+fi
+
 # Map robot names to their phase folders (compatible with macOS bash)
 case "$ROBOT_NAME" in
     talib)      ROLE_PATH="${ROME_ROOT}/02-phase1-requirements/role-talib.md" ;;
@@ -108,6 +118,7 @@ notes/blockers.md
 # Keep template structure in git
 !notes/.gitkeep
 !.claude/.gitkeep
+!.claude/.mcp.json
 EOF
 echo -e "  ${GREEN}✓${NC} Created .gitignore"
 

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+      "activity-log": {
+        "command": "dart",
+        "args": [
+          "run",
+          "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/activity_log_mcp/bin/server_with_web.dart"
+        ],
+        "disabled": false
+      }
+
+  }
+}

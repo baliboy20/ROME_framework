@@ -248,6 +248,7 @@ ls -d robot_* | wc -l  # Should show 8
 robot_[name]/
 ├── .claude/
 │   ├── CLAUDE.md → (MCP functions included automatically)
+│   ├── .mcp.json → (MCP server configuration)
 │   └── .gitkeep
 ├── notes/
 │   ├── current_work.md
@@ -256,7 +257,7 @@ robot_[name]/
 └── README.md → role specification
 ```
 
-**All robots automatically use MCP** - No additional configuration needed!
+**All robots automatically use MCP** - MCP server configuration (`.mcp.json`) is copied to each robot's `.claude/` directory, enabling immediate access to all MCP activity log functions!
 
 ---
 
