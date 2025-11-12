@@ -156,9 +156,9 @@ For each feature, mark:
 - [OUT] Not in scope
 ```
 
-**Output:** Create `PROJECT/requirements/htm-ready-prd.md` with all 6 sections complete
+**Output:** Create `PROJECT/dev/htm-ready-prd.md` with all 6 sections complete
 
-**Note:** `PROJECT/requirements/` is for your generated artifacts, not the original user documents.
+**Note:** `PROJECT/dev/` is for all Phase 1 artifacts per ROME handoff protocol.
 
 ---
 
@@ -321,7 +321,7 @@ epics:
         # ... (full structure from decomposition)
 ```
 
-**Save to:** `PROJECT/requirements/requirements-matrix.yaml`
+**Save to:** `PROJECT/dev/requirements-matrix.yaml` (PRIMARY HANDOFF ARTIFACT)
 
 #### 2. data-dictionary.yaml
 
@@ -343,7 +343,7 @@ entities:
       - [Rule]
 ```
 
-**Save to:** `PROJECT/requirements/data-dictionary.yaml`
+**Save to:** `PROJECT/dev/data-dictionary.yaml` (Optional - only if complex domain entities)
 
 #### 3. component-registry.yaml
 
@@ -359,11 +359,11 @@ components:
       - COMP-XXX-XXX
 ```
 
-**Save to:** `PROJECT/requirements/component-registry.yaml`
+**Save to:** `PROJECT/dev/component-registry.yaml` (Optional - only if UI component mapping needed)
 
 #### 4. Feature Documentation
 
-**For each feature, create:** `PROJECT/requirements/docs/features/FEAT-XXX.X.md`
+**For each feature, create:** `PROJECT/dev/requirements/features/FEAT-XXX.X.md` (Optional - detailed feature docs)
 
 **Structure:**
 ```markdown
@@ -427,9 +427,11 @@ Artifacts Generated:
 - component-registry.yaml: ✅ [M components mapped]
 - Feature docs: ✅ [Y files created]
 
-Location: PROJECT/requirements/
+Location: PROJECT/dev/
 
 STATUS: READY FOR PHASE 2 HANDOFF (PMA)
+
+CRITICAL: Ensure requirements-matrix.yaml is in PROJECT/dev/ per handoff protocol!
 ```
 
 **What PMA receives:**

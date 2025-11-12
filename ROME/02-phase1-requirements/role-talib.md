@@ -300,18 +300,20 @@ The HTM Decomposer transforms Product Requirements Documents (PRDs) into structu
 
 **Output Structure:**
 ```
-PROJECT/requirements/
-├── requirements-matrix.yaml
-├── data-dictionary.yaml
-├── component-registry.yaml
-├── htm-ready-prd.md (if transformed)
-└── docs/
+PROJECT/dev/
+├── requirements-matrix.yaml          # Primary handoff artifact to PMA
+├── data-dictionary.yaml              # Optional (if complex domain entities)
+├── component-registry.yaml           # Optional (if UI component mapping needed)
+├── htm-ready-prd.md                  # Only if PRD was transformed
+└── requirements/                     # Optional feature detail docs
     └── features/
         ├── FEAT-001.1.md
         ├── FEAT-001.2.md
         ├── FEAT-002.1.md
         └── ...
 ```
+
+**CRITICAL**: Primary handoff artifact `requirements-matrix.yaml` MUST be in `PROJECT/dev/` per Phase 1→2 handoff protocol.
 
 ---
 
