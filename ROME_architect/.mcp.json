@@ -1,0 +1,32 @@
+{
+  "mcpServers": {
+    "activity-log": {
+      "command": "dart",
+      "args": [
+        "run",
+        "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/activity_log_mcp/bin/server_with_web.dart"
+      ],
+      "disabled": false
+    },
+    "Seez": {
+      "command": "dart",
+      "args": [
+        "run",
+        "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/seez_mcp/bin/mcp_server.dart"
+      ],
+      "description": "Seez v2 - MCP server for visualizing Mermaid diagrams and Markdown content in tabbed views"
+    },
+    "rome-terminal": {
+          "command": "dart",
+          "args": ["run", "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/ro-term/bin/mcp_bridge_server.dart"]
+        },
+    "setup-robots": {
+      "command": "go",
+      "args": [
+        "run",
+        "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/setup_robots_mcp/make-robot-folders.go"
+      ],
+      "disabled": false
+    }
+  }
+}

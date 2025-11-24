@@ -1,0 +1,176 @@
+# ROME Framework: UID Registry
+
+| Field | Value |
+|-------|-------|
+| **Document UID** | ROME-GOV-002 |
+| **Version** | 1.2 |
+| **Date** | 2025-11-21T00:00:00Z |
+| **Status** | Draft |
+| **Document Type** | Governance |
+| **Author** | Framework Analyst & Architect |
+| **Changes Approved** | false |
+
+---
+
+## Purpose
+
+Maintains the authoritative registry of all Document UIDs within the ROME framework. Ensures uniqueness, prevents conflicts, and tracks allocation.
+
+## Scope
+
+- All documents within `/ROME/` requiring persistent identification
+- Temporary/draft documents in `/ROME_architect/` may use ROME-REV-### series
+
+---
+
+## UID Format
+
+```
+ROME-[TYPE]-[NUMBER]
+```
+
+- **TYPE**: 2-5 character code indicating document category
+- **NUMBER**: 3-digit zero-padded sequence (001-999)
+
+---
+
+## Type Codes
+
+| Code | Category | Reserved Range | Description |
+|------|----------|----------------|-------------|
+| PRIN | Principles | 001-099 | Core framework principles |
+| IMPL | Implementation/Policy | 001-099 | Principle implementation policies |
+| LEX | Lexicon | 001-009 | Terminology definitions |
+| PROC | Procedure | 001-099 | Operational procedures |
+| PHASE | Phase Specification | 001-010 | Phase definitions |
+| ROBOT | Robot Definition | 001-020 | Robot role definitions |
+| GOV | Governance | 001-020 | Framework governance documents |
+| CFG | Configuration | 001-020 | Environment/channel configuration |
+| DEF | Definition | 001-099 | Role/concept definitions |
+| REV | Review | 001-999 | Temporary review documents |
+
+---
+
+## Allocated UIDs
+
+### Foundation Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-PRIN-001 | Core Principles | `/ROME/foundation/core-principles.md` | Draft |
+| ROME-IMPL-001 | Core Principles Policy | `/ROME/foundation/core-principles-policy.md` | Draft |
+| ROME-LEX-001 | Lexicon | `/ROME/foundation/lexicon.md` | Draft |
+
+### Governance Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-GOV-001 | Document Standards | `/ROME/framework-governance/document-standards.md` | Draft |
+| ROME-GOV-002 | UID Registry | `/ROME/framework-governance/uid-registry.md` | Draft |
+| ROME-GOV-003 | Amendment Procedures | `/ROME/framework-governance/amendment-procedures.md` | Draft |
+| ROME-GOV-004 | Terminology Management | `/ROME/framework-governance/terminology-management.md` | Draft |
+| ROME-GOV-005 | Document Architecture | `/ROME/framework-governance/document-architecture.md` | Draft |
+| ROME-GOV-006 | Sponsor Interaction Policy | `/ROME/framework-governance/sponsor-interaction-policy.md` | Draft |
+| ROME-GOV-007 | Framework Fidelity | `/ROME/framework-governance/framework-fidelity.md` | Draft |
+
+### Configuration Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-CFG-001 | Sponsor Interaction Config | `/ROME/framework-governance/sponsor-interaction-config.md` | Draft |
+
+### Procedure Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-PROC-002 | Sponsor Interaction Protocol | `/ROME/robot-templates/robot-operations-protocols/sponsor-interaction-protocol.md` | Draft |
+| ROME-PROC-005 | Activity Logging Protocol | `/ROME/robot-templates/robot-operations-protocols/activity-logging-protocol.md` | Draft |
+
+### Phase Specifications
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-PHASE-001 | Phase 0 - Bootup | `/ROME/life-cycle/P00-bootup/operations-guidelines.md` | Draft |
+| ROME-PHASE-002 | Phase 1 - Ingest | `/ROME/life-cycle/P01-ingest/operations-guidelines.md` | Placeholder |
+| ROME-PHASE-003 | Phase 2 - Analysis | `/ROME/life-cycle/P02-analysis/operations-guidelines.md` | Placeholder |
+| ROME-PHASE-004 | Phase 3 - Design | `/ROME/life-cycle/P03-design/operations-guidelines.md` | Placeholder |
+| ROME-PHASE-005 | Phase 4 - Config | `/ROME/life-cycle/P04-config/operations-guidelines.md` | Placeholder |
+| ROME-PHASE-006 | Phase 5 - Generation | `/ROME/life-cycle/P05-generation/operations-guidelines.md` | Placeholder |
+
+### Robot Definitions
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-ROBOT-001 | Bootstrap Robot | `/ROME/robot-templates/bootstrap/CLAUDE.md` | Draft |
+| ROME-ROBOT-002 | Talib Robot | `/ROME/robot-templates/talib/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-003 | PMA Robot | `/ROME/robot-templates/pma/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-004 | Roma Robot | `/ROME/robot-templates/roma/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-005 | Sarah Robot | `/ROME/robot-templates/sarah/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-006 | Clara Robot | `/ROME/robot-templates/clara/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-007 | Charlie Robot | `/ROME/robot-templates/charlie/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-008 | Reena Robot | `/ROME/robot-templates/reena/CLAUDE.md` | Placeholder |
+
+### Role Definitions
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-DEF-001 | Framework Analyst & Architect | `/ROME_architect/CLAUDE.md` | Draft |
+
+### Review Documents (Temporary)
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-REV-002 | Git Activity Tracking Review | `/ROME_architect/git-activity-tracking-review.md` | Complete |
+| ROME-REV-003 | Activity Log Compliance Review | `/ROME_architect/activity-log-compliance-review.md` | Complete |
+| ROME-REV-004 | Activity Log MCP Source Review | `/ROME_architect/activity-log-mcp-source-review.md` | Complete |
+
+---
+
+## Allocation Rules
+
+### New UID Allocation
+
+1. Check this registry for next available number in category
+2. Reserve UID by adding entry to this document
+3. Create document with reserved UID
+4. Update registry entry with location and status
+
+### UID Persistence
+
+- UIDs are **permanent** - never reassigned after allocation
+- Deprecated documents retain their UID
+- Document relocation updates location in registry, UID unchanged
+
+### Reserved Ranges
+
+| Range | Purpose |
+|-------|---------|
+| ROME-*-000 | Reserved (never use) |
+| ROME-REV-* | Temporary documents, may be recycled after 90 days |
+
+---
+
+## Maintenance
+
+### Update Triggers
+
+This registry MUST be updated when:
+- New document created
+- Document relocated
+- Document status changes
+- Document deprecated
+
+### Responsibility
+
+- Framework Analyst & Architect maintains this registry
+- Robots creating documents must request UID allocation
+
+---
+
+## Revision History
+
+| Version | Date | Summary of Changes |
+|---------|------|-------------------|
+| 1.0 | 2025-11-21T00:00:00Z | Initial registry creation |
+| 1.1 | 2025-11-21T00:00:00Z | Updated ROME-PHASE-001 and ROME-ROBOT-001 status to Draft |
+| 1.2 | 2025-11-21T00:00:00Z | Added ROME-GOV-007 (Framework Fidelity) |
