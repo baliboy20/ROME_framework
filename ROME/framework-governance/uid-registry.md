@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-002 |
-| **Version** | 1.2 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 1.9 |
+| **Date** | 2025-11-24T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -85,6 +85,7 @@ ROME-[TYPE]-[NUMBER]
 |-----|----------|----------|--------|
 | ROME-PROC-002 | Sponsor Interaction Protocol | `/ROME/robot-templates/robot-operations-protocols/sponsor-interaction-protocol.md` | Draft |
 | ROME-PROC-005 | Activity Logging Protocol | `/ROME/robot-templates/robot-operations-protocols/activity-logging-protocol.md` | Draft |
+| ROME-PROC-006 | Quality Gate Protocol | `/ROME/life-cycle/cross-phase-procedures/quality-gate-protocol.md` | Draft |
 
 ### Phase Specifications
 
@@ -94,21 +95,23 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PHASE-002 | Phase 1 - Ingest | `/ROME/life-cycle/P01-ingest/operations-guidelines.md` | Placeholder |
 | ROME-PHASE-003 | Phase 2 - Analysis | `/ROME/life-cycle/P02-analysis/operations-guidelines.md` | Placeholder |
 | ROME-PHASE-004 | Phase 3 - Design | `/ROME/life-cycle/P03-design/operations-guidelines.md` | Placeholder |
-| ROME-PHASE-005 | Phase 4 - Config | `/ROME/life-cycle/P04-config/operations-guidelines.md` | Placeholder |
-| ROME-PHASE-006 | Phase 5 - Generation | `/ROME/life-cycle/P05-generation/operations-guidelines.md` | Placeholder |
+| ROME-PHASE-005 | Phase 4 - Config | `/ROME/life-cycle/P04-config/operations-guidelines.md` | Draft |
+| ROME-PHASE-006 | Phase 5 - Generation | `/ROME/life-cycle/P05-generation/operations-guidelines.md` | Draft |
 
 ### Robot Definitions
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
 | ROME-ROBOT-001 | Bootstrap Robot | `/ROME/robot-templates/bootstrap/CLAUDE.md` | Draft |
-| ROME-ROBOT-002 | Talib Robot | `/ROME/robot-templates/talib/CLAUDE.md` | Placeholder |
-| ROME-ROBOT-003 | PMA Robot | `/ROME/robot-templates/pma/CLAUDE.md` | Placeholder |
-| ROME-ROBOT-004 | Roma Robot | `/ROME/robot-templates/roma/CLAUDE.md` | Placeholder |
-| ROME-ROBOT-005 | Sarah Robot | `/ROME/robot-templates/sarah/CLAUDE.md` | Placeholder |
-| ROME-ROBOT-006 | Clara Robot | `/ROME/robot-templates/clara/CLAUDE.md` | Placeholder |
-| ROME-ROBOT-007 | Charlie Robot | `/ROME/robot-templates/charlie/CLAUDE.md` | Placeholder |
-| ROME-ROBOT-008 | Reena Robot | `/ROME/robot-templates/reena/CLAUDE.md` | Placeholder |
+| ROME-ROBOT-002 | Talib Robot | `/ROME/robot-templates/talib/CLAUDE.md` | Draft |
+| ROME-ROBOT-003 | PMA Robot | `/ROME/robot-templates/pma/CLAUDE.md` | Draft |
+| ROME-ROBOT-004 | Roma Robot | `/ROME/robot-templates/roma/CLAUDE.md` | Draft |
+| ROME-ROBOT-005 | Sarah Robot | `/ROME/robot-templates/sarah/CLAUDE.md` | Draft |
+| ROME-ROBOT-006 | Clara Robot | `/ROME/robot-templates/clara/CLAUDE.md` | Draft |
+| ROME-ROBOT-007 | Charlie Robot | `/ROME/robot-templates/charlie/CLAUDE.md` | Draft |
+| ROME-ROBOT-008 | Reena Robot | `/ROME/robot-templates/reena/CLAUDE.md` | Draft |
+| ROME-ROBOT-009 | Lucien Robot | `/ROME/robot-templates/lucien/CLAUDE.md` | Draft |
+| ROME-ROBOT-010 | Ashok Robot | `/ROME/robot-templates/ashok/CLAUDE.md` | Draft |
 
 ### Role Definitions
 
@@ -174,3 +177,10 @@ This registry MUST be updated when:
 | 1.0 | 2025-11-21T00:00:00Z | Initial registry creation |
 | 1.1 | 2025-11-21T00:00:00Z | Updated ROME-PHASE-001 and ROME-ROBOT-001 status to Draft |
 | 1.2 | 2025-11-21T00:00:00Z | Added ROME-GOV-007 (Framework Fidelity) |
+| 1.3 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-003 (PMA) and ROME-ROBOT-006 (Clara) status to Draft |
+| 1.4 | 2025-11-24T00:00:00Z | Added ROME-ROBOT-009 (Lucien), updated ROME-PHASE-005 status to Draft |
+| 1.5 | 2025-11-24T00:00:00Z | Added ROME-ROBOT-010 (Ashok), updated ROME-ROBOT-008 (Reena) and ROME-PHASE-006 status to Draft |
+| 1.6 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-007 (Charlie) status to Draft |
+| 1.7 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-002 (Talib) and ROME-ROBOT-005 (Sarah) status to Draft |
+| 1.8 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-004 (Roma) status to Draft |
+| 1.9 | 2025-11-24T00:00:00Z | Added ROME-PROC-006 (Quality Gate Protocol) |

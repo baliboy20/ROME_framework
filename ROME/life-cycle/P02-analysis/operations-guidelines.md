@@ -83,10 +83,13 @@ Phase 2 MAY NOT transition to P3 until ALL criteria are met:
 | Handover complete | `phase2-handover.md` with all sections | Yes |
 | Activity log updated | PHASE-2 status = COMPLETED | Yes |
 | Roma verification | Orchestrator confirms phase complete | Yes |
+| **GATE-P2 APPROVED** | Sarah audit passed (ROME-PROC-006) | Yes |
 
 ---
 
 ## Quality Gates
+
+**Note:** Internal quality gates (below) are validated by Talib during execution. GATE-P2 (Sarah audit) validates the complete phase output before P3 transition.
 
 ### Gate 1: Dimension Coverage
 

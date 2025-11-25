@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-002 |
-| **Version** | 3.0 |
+| **Version** | 3.2 |
 | **Date** | 2025-11-24T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
@@ -93,7 +93,7 @@ For each document, record:
 - Category (functional/technical/design)
 - 1-2 sentence summary
 
-Output: `ARTIFACTS/dev/requirements/document-catalog.md`
+Output: `ARTIFACTS/01-ingest/source-materials/document-catalog.md`
 
 ### Step 5: Create Ingest Summary
 
@@ -102,7 +102,7 @@ Summarize:
 - Content coverage by category
 - Identified gaps (queue for P2)
 
-Output: `ARTIFACTS/dev/requirements/ingest-summary.md`
+Output: `ARTIFACTS/01-ingest/intake-logs/ingest-summary.md`
 
 ### Step 6: Log Completion
 
@@ -112,7 +112,13 @@ mcp__activity-log__update_entry
   updates: {status: "COMPLETED", completionDate: "[ISO-8601]"}
 ```
 
-### Step 7: Request Roma Verification
+### Step 7: Notify Sponsor
+
+```bash
+terminal-notifier -title "ROME: P1 Ingest Complete" -message "All sponsor materials ingested. Document catalog ready for review." -sound Ping
+```
+
+### Step 8: Request Roma Verification
 
 ```
 mcp__Seez__show_doc({label: "P1 Exit", content: "[Exit criteria status]"})
@@ -220,15 +226,15 @@ mcp__activity-log__update_entry
 ### Step 6: Create Artifacts
 
 Produce all outputs per ROME-PHASE-003:
-- requirements-matrix.yaml
-- user-stories.md
-- acceptance-criteria.md
-- non-functional-requirements.md
+- `ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml`
+- `ARTIFACTS/02-analysis/requirements/user-stories.md`
+- `ARTIFACTS/02-analysis/requirements/acceptance-criteria.md`
+- `ARTIFACTS/02-analysis/requirements/non-functional-requirements.md`
 
 ### Step 7: Prepare Handover
 
 Copy template: `/ROME/robot-templates/talib/handover-template.md`
-To: `ARTIFACTS/dev/requirements/phase2-handover.md`
+To: `ARTIFACTS/02-analysis/requirements/phase2-handover.md`
 
 Complete all 12 sections.
 
@@ -240,7 +246,13 @@ mcp__activity-log__update_entry
   updates: {status: "COMPLETED", completionDate: "[ISO-8601]"}
 ```
 
-### Step 9: Request Phase Gate Approval
+### Step 9: Notify Sponsor
+
+```bash
+terminal-notifier -title "ROME: P2 Analysis Complete" -message "Requirements analysis complete. Ready for gate review and design phase." -sound Ping
+```
+
+### Step 10: Request Phase Gate Approval
 
 ```
 mcp__Seez__show_doc({
@@ -376,3 +388,5 @@ mcp__Seez__close_tab(tab_id)
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition |
 | 2.0 | 2025-11-24T00:00:00Z | Added decomposition, sponsor interaction, handover |
 | 3.0 | 2025-11-24T00:00:00Z | Refactored: HOW only (WHAT moved to phase docs) |
+| 3.1 | 2025-11-24T00:00:00Z | Fixed output paths to use phase-based ARTIFACTS structure |
+| 3.2 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notifications at P1/P2 completion |

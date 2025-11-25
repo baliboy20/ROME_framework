@@ -99,7 +99,7 @@ Defines policies that operationalize core principles from `core-principles.md` (
 
 ---
 
-### Phase 0: Ingest
+### Phase 1: Ingest
 
 **Purpose:** Intake and organize raw user materials (PRDs, BRDs, notes) into structured corpus.
 
@@ -166,7 +166,7 @@ Defines policies that operationalize core principles from `core-principles.md` (
 
 ---
 
-### Phase 1: Analysis
+### Phase 2: Analysis
 
 **Purpose:** Transform raw inputs into atomic logical requirements.
 
@@ -230,7 +230,7 @@ Defines policies that operationalize core principles from `core-principles.md` (
 
 ---
 
-### Phase 2: Design
+### Phase 3: Design
 
 **Purpose:** Convert requirements into architectural schemas and logic flows.
 
@@ -297,7 +297,7 @@ Defines policies that operationalize core principles from `core-principles.md` (
 
 ---
 
-### Phase 3: Config
+### Phase 4: Config
 
 **Purpose:** Define technical constraints, environment variables, scaffolding instructions.
 
@@ -361,7 +361,7 @@ Defines policies that operationalize core principles from `core-principles.md` (
 
 ---
 
-### Phase 4: Generation
+### Phase 5: Generation
 
 **Purpose:** Mechanical production of executable code based strictly on Phase 3 outputs.
 

@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-001 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 1.2 |
+| **Date** | 2025-11-24T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -146,7 +146,7 @@ EOF
 echo "✓ Created .rome-project.json"
 
 # Create robots/ directory structure
-ROBOTS=("bootstrap" "roma" "talib" "pma" "sarah" "clara" "charlie" "reena")
+ROBOTS=("bootstrap" "roma" "talib" "pma" "sarah" "clara" "lucien" "ashok" "charlie" "reena")
 mkdir -p "$PROJECT_PATH/robots"
 
 for robot in "${ROBOTS[@]}"; do
@@ -175,6 +175,11 @@ mkdir -p "$PROJECT_PATH/SOURCE/tests"
 mkdir -p "$PROJECT_PATH/SOURCE/config"
 touch "$PROJECT_PATH/SOURCE/.gitkeep"
 echo "✓ Created SOURCE/"
+
+# Create _user_input/ directory
+mkdir -p "$PROJECT_PATH/_user_input/raw-requirements"
+touch "$PROJECT_PATH/_user_input/.gitkeep"
+echo "✓ Created _user_input/"
 
 # Create ARTIFACTS/ directory structure
 ARTIFACT_DIRS=(
@@ -324,3 +329,5 @@ After bootstrap completes:
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-21T00:00:00Z | Restructured for independent operation with embedded procedures |
+| 1.1 | 2025-11-24T00:00:00Z | Added _user_input/raw-requirements/ directory creation |
+| 1.2 | 2025-11-24T00:00:00Z | Added lucien and ashok to robot workspace creation list |

@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PROC-005 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2025-11-24T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Procedure |
 | **Author** | Framework Analyst & Architect |
@@ -34,6 +34,21 @@ Applies to ALL robots during ALL phases. This protocol is NON-OPTIONAL.
 ### Overview
 
 ROME v10 uses the activity-log MCP server for activity tracking with the following amendments to align with the current phase model:
+
+### Database Discovery
+
+**All robots MUST read the activity log database name from `.rome-project.json` in the project root:**
+
+```json
+{
+  "projectName": "my_project",
+  "activityLog": {
+    "database": "rome_my_project"
+  }
+}
+```
+
+The MCP server uses this database name to connect. Bootstrap creates this file during project initialization (P00-bootup).
 
 **Phase Mapping (activity-log → ROME v10):**
 
@@ -429,3 +444,4 @@ mcp__activity-log__validate_entry(entry)
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-11-21T00:00:00Z | Initial protocol definition for ROME v10 |
+| 1.1 | 2025-11-24T00:00:00Z | Added Database Discovery section documenting .rome-project.json activityLog config |
