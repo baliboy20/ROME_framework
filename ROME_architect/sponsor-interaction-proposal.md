@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-REV-005 |
-| **Version** | 0.1 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 0.2 |
+| **Date** | 2025-11-25T00:00:00Z |
 | **Status** | Draft Proposal |
 | **Document Type** | Review |
 | **Author** | Framework Analyst & Architect |
@@ -128,11 +128,59 @@ Tier 3: Operations
 ```markdown
 ## Interaction Procedures
 
+### Question Design Principles
+
+**MANDATORY: Alternative Answer Option**
+
+ALL questions (radio, checkbox, or structured options) MUST include mechanism for sponsor to provide alternative/custom answer.
+
+**Rationale:** Predefined options may not capture sponsor's actual intent. Sponsors must never be constrained by robot assumptions.
+
+**Implementation:**
+- Seez `ask_questions`: "Other" option automatically provided by tool
+- Text-based questions: Always include optional textarea for elaboration
+- Multiple choice: Include "Other (specify)" as final option
+
+**Examples:**
+
+❌ **Incorrect - No Alternative:**
+```javascript
+{
+  type: "radio",
+  label: "Which authentication method?",
+  options: [
+    { label: "OAuth", description: "..." },
+    { label: "JWT", description: "..." }
+  ]
+}
+```
+
+✓ **Correct - Alternative Enabled:**
+```javascript
+{
+  type: "radio",
+  label: "Which authentication method?",
+  options: [
+    { label: "OAuth", description: "..." },
+    { label: "JWT", description: "..." }
+    // Note: "Other" option automatically added by Seez tool
+  ]
+}
+// Plus separate text field for details:
+{
+  type: "textarea",
+  label: "Additional context or alternative approach",
+  required: false
+}
+```
+
+---
+
 ### Initiating Contact
 
 Step 1: Determine interaction type (Progress/Clarification/Approval/Escalation)
 Step 2: Check if Roma should mediate (default: yes)
-Step 3: Prepare structured request (see templates)
+Step 3: Prepare structured request (see templates - follow Question Design Principles)
 Step 4: Log interaction initiation in activity log
 Step 5: Send request via appropriate channel
 Step 6: Await response with timeout handling
@@ -395,7 +443,15 @@ mcp__Seez__ask_questions({
         { label: "Password only", description: "Standard username/password authentication" },
         { label: "Optional MFA", description: "Users can enable MFA if desired" },
         { label: "Mandatory MFA", description: "All users must use MFA" }
+        // Note: "Other" option automatically provided by Seez tool
       ]
+    },
+    {
+      id: "additional_context",
+      type: "textarea",
+      label: "Additional authentication requirements or alternative approach",
+      required: false,
+      placeholder: "e.g., specific MFA methods, SSO integration, biometrics..."
     }
   ],
   submitLabel: "Confirm Requirement"
@@ -532,6 +588,7 @@ mcp__Seez__ask_questions({
         { label: "Provide Stripe key", description: "I'll provide API keys below" },
         { label: "Use different provider", description: "Switch to alternative payment provider" },
         { label: "Defer feature", description: "Skip payment for now, add later" }
+        // Note: "Other" option automatically provided by Seez tool
       ]
     },
     {
@@ -544,9 +601,9 @@ mcp__Seez__ask_questions({
     {
       id: "notes",
       type: "textarea",
-      label: "Additional notes",
+      label: "Additional notes or alternative resolution approach",
       required: false,
-      placeholder: "e.g., prod key will follow, alternative provider preference..."
+      placeholder: "e.g., prod key will follow, alternative provider preference, different approach entirely..."
     }
   ],
   submitLabel: "Resolve Escalation",
@@ -687,4 +744,5 @@ Before finalizing:
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
+| 0.2 | 2025-11-25T00:00:00Z | Added Question Design Principles - mandatory alternative answer option |
 | 0.1 | 2025-11-21T00:00:00Z | Initial draft proposal |
