@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-003 |
-| **Version** | 1.6 |
+| **Version** | 1.7 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
@@ -516,6 +516,239 @@ mcp__Seez__show_chart({
 
 **Output:** `ARTIFACTS/03-design/architecture/system-architecture.md`
 
+### Step 10.5: Design Test Architecture
+
+**Input:** use-cases.md, ui-requirements.md, data-dictionary.yaml
+
+**Output:** test-architecture.md
+
+**Procedure:**
+
+#### 1. Map Screens to Page Objects
+
+- List all screens from use-cases.md and ui-requirements.md
+- For each screen, define Page Object class name
+- Identify interactive widgets requiring keys (buttons, inputs, checkboxes, dropdowns, etc.)
+- Define finder list per Page Object
+- Define action methods (login, submit, navigate, selectItem, etc.)
+- Define assertion methods (expectVisible, expectError, expectEnabled, etc.)
+
+**Example:**
+```yaml
+page_objects:
+  - screen: LoginScreen
+    page_object: LoginPage
+    finders:
+      - login_email_field
+      - login_password_field
+      - login_submit_button
+      - login_error_message
+    actions:
+      - enterEmail(tester, email)
+      - enterPassword(tester, password)
+      - submit(tester)
+      - login(tester, email, password)
+    assertions:
+      - expectErrorVisible(tester)
+      - expectSubmitEnabled(tester)
+```
+
+#### 2. Map User Journeys to Flow Objects
+
+- Identify multi-screen user journeys from use-cases.md
+- For each journey, define Flow Object class name
+- List Page Objects involved in sequence
+- Define flow completion method signature
+
+**Example:**
+```yaml
+flow_objects:
+  - journey: User Authentication Flow
+    flow: AuthFlow
+    screens: [LoginPage, HomePage]
+    flow_method: complete(tester)
+
+  - journey: Purchase Checkout Flow
+    flow: CheckoutFlow
+    screens: [ProductListPage, CartPage, CheckoutPage, ConfirmationPage]
+    flow_method: complete(tester)
+```
+
+#### 3. Define Widget Key Strategy
+
+- Establish naming convention: `ValueKey('[screen]_[element]_[type]')`
+- Provide examples per screen type
+- Document key stability requirements
+
+**Example:**
+```yaml
+widget_key_strategy:
+  pattern: "ValueKey('[screen]_[element]_[type]')"
+  examples:
+    - "ValueKey('login_email_field')"
+    - "ValueKey('login_password_field')"
+    - "ValueKey('login_submit_button')"
+    - "ValueKey('profile_save_button')"
+    - "ValueKey('cart_item_remove_button')"
+  stability_rules:
+    - Keys must not change with UI refactors
+    - Keys describe purpose, not position
+    - Keys use lowercase with underscores
+```
+
+#### 4. Specify Test Fixtures
+
+- For each entity in data-dictionary.yaml, define Fixture class
+- Specify fixture variants: valid, invalid, edge cases
+- List fields included in fixtures
+
+**Example:**
+```yaml
+fixtures:
+  - entity: User
+    fixture: UserFixture
+    variants:
+      - validUser: Standard user with all valid fields
+      - invalidEmail: User with malformed email
+      - invalidPassword: User with too-short password
+      - adminUser: User with admin role
+    fields: [id, email, password, name, role, createdAt]
+
+  - entity: Product
+    fixture: ProductFixture
+    variants:
+      - validProduct: Standard product
+      - outOfStock: Product with quantity = 0
+      - expensiveProduct: Product with high price
+    fields: [id, name, price, quantity, category]
+```
+
+#### 5. Document Mock Services
+
+- Identify external services requiring mocking (APIs, storage, payment processors, etc.)
+- Define Mock class names
+- List endpoints/methods to mock
+
+**Example:**
+```yaml
+mock_services:
+  - service: StripeAPI
+    mock_class: MockStripeAPI
+    endpoints:
+      - createPaymentIntent
+      - confirmPayment
+      - refund
+
+  - service: EmailService
+    mock_class: MockEmailService
+    endpoints:
+      - sendVerificationEmail
+      - sendPasswordReset
+```
+
+#### 6. Define Test Environment
+
+- Specify test database strategy (in-memory, test DB, fixtures)
+- Specify API test strategy (mock HTTP client, test server)
+- Specify storage strategy (temporary files, mock storage)
+
+**Example:**
+```yaml
+test_environment:
+  database: "In-memory SQLite for fast tests, reset between tests"
+  api: "Mock HTTP client with deterministic responses"
+  storage: "Temporary directory cleared after each test run"
+  authentication: "Mock auth provider bypassing actual authentication"
+```
+
+#### 7. Create test-architecture.md
+
+- Location: `ARTIFACTS/dev/design/test-architecture.md`
+- Use schema from ROME-PHASE-004
+- Include all sections with complete mappings
+
+**File Structure:**
+```markdown
+# Test Architecture
+
+## Directory Structure
+[YAML structure per schema]
+
+## Page Objects
+[All screen → Page Object mappings]
+
+## Flow Objects
+[All journey → Flow Object mappings]
+
+## Test Fixtures
+[All entity → Fixture mappings]
+
+## Widget Key Strategy
+[Naming convention with examples]
+
+## Mock Services
+[All external service mocks]
+
+## Test Environment
+[Database, API, storage strategies]
+```
+
+#### 8. Update actionlist.md with Test Stories
+
+For each feature, add test stories:
+- Ashok: `STORY-[EPIC]-[FEAT]-#-db` for test fixtures
+- Reena: `STORY-[EPIC]-[FEAT]-#-api` for API tests
+- Charlie: `STORY-[EPIC]-[FEAT]-#-ui` for Page Objects, Flow Objects, tests
+
+Estimate test effort: 15-20% of implementation effort
+Use even-numbered story sequences for test artifacts
+
+**Example:**
+```yaml
+features:
+  FEAT-001:
+    epic: EPIC-001
+    title: "User Authentication"
+
+assigned_to:
+  ashok:
+    - story: "STORY-001-001-1-db"
+      title: "User and Session tables"
+      estimate: "2h"
+    - story: "STORY-001-001-2-db"
+      title: "User test fixtures"
+      estimate: "1h"
+
+  reena:
+    - story: "STORY-001-001-1-api"
+      title: "Login and logout endpoints"
+      estimate: "3h"
+    - story: "STORY-001-001-2-api"
+      title: "Auth API integration tests"
+      estimate: "2h"
+
+  charlie:
+    - story: "STORY-001-001-1-ui"
+      title: "Login screen implementation"
+      estimate: "4h"
+    - story: "STORY-001-001-2-ui"
+      title: "LoginPage object"
+      estimate: "1h"
+    - story: "STORY-001-001-3-ui"
+      title: "Auth flow tests"
+      estimate: "2h"
+```
+
+**Quality Check:**
+- Every screen has Page Object mapping
+- Every multi-screen journey has Flow Object mapping
+- Every entity has Fixture specification
+- Widget key convention is clear and consistent
+- Mock services cover all external dependencies
+- Test stories added to actionlist with estimates
+
+**Handover:** test-architecture.md available for Lucien (P4 scaffolding) and P5 robots (test generation).
+
 ### Step 11: Consistency Check
 
 **Before proceeding to Stage 3, verify:**
@@ -667,6 +900,14 @@ mcp__Seez__show_doc({
 |----------|--------|
 | [Decision 1] | [Choice] |
 | [Decision 2] | [Choice] |
+
+## Test Architecture
+| Aspect | Summary |
+|--------|---------|
+| Page Objects | [N] screens mapped to Page Object classes |
+| Flow Objects | [N] user journeys defined |
+| Test Fixtures | [N] entities with fixture variants |
+| Widget Keys | Naming convention: [pattern] |
 
 ## Implementation Plan
 - MVP features: [list]
@@ -959,3 +1200,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.4 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notification at P3 completion |
 | 1.5 | 2025-12-18T00:00:00Z | Updated artifact schemas per ROME-PROP-004: declarative tech stack, concise use cases/API design, added template references |
 | 1.6 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Added Epic identification (Step 12.1), updated Story ID pattern, added Epic field to features |
+| 1.7 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-006: Added Step 10.5 test architecture design, updated actionlist with test stories, added test architecture to sponsor review |

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-002 |
-| **Version** | 2.0 |
+| **Version** | 2.4 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -73,6 +73,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-GOV-005 | Document Architecture | `/ROME/framework-governance/document-architecture.md` | Draft |
 | ROME-GOV-006 | Sponsor Interaction Policy | `/ROME/framework-governance/sponsor-interaction-policy.md` | Draft |
 | ROME-GOV-007 | Framework Fidelity | `/ROME/framework-governance/framework-fidelity.md` | Draft |
+| ROME-GOV-008 | Activity Log Format | `/ROME/framework-governance/activity-log-format.md` | Draft |
 
 ### Configuration Documents
 
@@ -129,6 +130,8 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-003 | Multi-Agent Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-003-multi-agent-optimization.md` | Proposal |
 | ROME-PROP-004 | Design Artifact Conciseness | `/ROME_framework_maintenance/proposals/ROME-PROP-004-design-artifact-conciseness.md` | Implemented |
 | ROME-PROP-005 | Story ID Semantic Correction | `/ROME_framework_maintenance/proposals/ROME-PROP-005-story-id-semantic-correction.md` | Implemented |
+| ROME-PROP-006 | Integration Testing Framework | `/ROME_framework_maintenance/proposals/ROME-PROP-006-integration-testing-framework.md` | Proposal |
+| ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | Proposal |
 
 ### Review Documents (Temporary)
 
@@ -197,3 +200,6 @@ This registry MUST be updated when:
 | 1.9 | 2025-11-24T00:00:00Z | Added ROME-PROC-006 (Quality Gate Protocol) |
 | 2.0 | 2025-12-18T00:00:00Z | Added PROP type code, registered ROME-PROP-001 through ROME-PROP-004 |
 | 2.1 | 2025-12-18T00:00:00Z | Registered ROME-PROP-005, updated ROME-PROP-004 and ROME-PROP-005 status to Implemented |
+| 2.2 | 2025-12-18T00:00:00Z | Registered ROME-PROP-006 (Integration Testing Framework) |
+| 2.3 | 2025-12-18T00:00:00Z | Registered ROME-PROP-007 (Event Log Activity Tracking) |
+| 2.4 | 2025-12-18T00:00:00Z | Registered ROME-GOV-008 (Activity Log Format) |

@@ -1,5 +1,5 @@
 # Timeout Strategy Guide
-## The Art Deco Bakery - Flutter Application
+
 
 ### Overview
 This guide establishes timeout thresholds, retry strategies, and user communication patterns for network operations and long-running tasks.

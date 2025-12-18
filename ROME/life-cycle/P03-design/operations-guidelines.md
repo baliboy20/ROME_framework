@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-004 |
-| **Version** | 2.1 |
+| **Version** | 2.2 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Phase Specification |
@@ -218,6 +218,10 @@ Phase 3 MAY NOT transition to P4 until ALL criteria are met:
 | Use cases elaborated | `use-cases.md` for all features | Yes |
 | System architecture | `system-architecture.md` with diagrams | Yes |
 | Work breakdown complete | `actionlist.md` with workspaces and assignments | Yes |
+| Test architecture complete | `test-architecture.md` with all sections | Yes |
+| Widget key strategy defined | Key naming convention documented | Yes |
+| Page/Flow Objects mapped | All screens and journeys mapped | Yes |
+| Test fixtures specified | Fixture per entity defined | Yes |
 | Test data specified | `test-data-specification.md` | Yes |
 | All requirements covered | 100% mapping to architecture | Yes |
 | Technical requests addressed | All sponsor tech requirements incorporated | Yes |
@@ -312,6 +316,7 @@ Phase 3 MAY NOT transition to P4 until ALL criteria are met:
 | use-cases.md | `ARTIFACTS/dev/design/` | Detailed workflows for all features |
 | system-architecture.md | `ARTIFACTS/dev/design/` | High-level architecture with diagrams |
 | actionlist.md | `ARTIFACTS/dev/design/` | Workspaces and work breakdown |
+| test-architecture.md | `ARTIFACTS/dev/design/` | Test architecture schema: Page Objects, Flow Objects, fixtures |
 | test-data-specification.md | `ARTIFACTS/dev/design/` | Realistic test data requirements |
 | phase3-handover.md | `ARTIFACTS/dev/design/` | Complete handover for P4 |
 | diagrams/ | `ARTIFACTS/dev/design/diagrams/` | Mermaid architecture diagrams |
@@ -399,6 +404,80 @@ entities:
         enforced_by: [database|api|ui]
 ```
 
+### Test Architecture Schema
+
+test-architecture.md MUST include:
+
+| Section | Content |
+|---------|---------|
+| Directory Structure | integration_test/ folder hierarchy |
+| Page Objects | Screen → Page Object class mappings |
+| Flow Objects | User journey → Flow Object class mappings |
+| Test Fixtures | Entity → Fixture class mappings |
+| Widget Key Strategy | Key naming convention pattern |
+| Mock Services | Service → Mock class mappings |
+| Test Environment | Database, API, storage test strategies |
+
+**Format:**
+
+```yaml
+directory_structure:
+  integration_test/
+    config/:    # test_environment.dart, mock_services.dart
+    pages/:     # [screen]_page.dart per UI screen
+    flows/:     # [journey]_flow.dart per user journey
+    fixtures/:  # [entity]_fixture.dart per data entity
+    tests/:     # [feature]_test.dart per feature
+
+page_objects:
+  - screen: "[ScreenName]"
+    page_object: "[ClassName]"
+    finders: ["[key_list]"]
+    actions: ["[method_list]"]
+    assertions: ["[assertion_list]"]
+
+flow_objects:
+  - journey: "[Journey Name]"
+    flow: "[ClassName]"
+    screens: ["[PageObject list]"]
+
+fixtures:
+  - entity: "[EntityName]"
+    fixture: "[ClassName]"
+    variants: ["[variant_list]"]
+    fields: ["[field_list]"]
+
+widget_key_strategy:
+  pattern: "ValueKey('[screen]_[element]_[type]')"
+  examples:
+    - "ValueKey('login_email_field')"
+    - "ValueKey('profile_save_button')"
+
+mock_services:
+  - service: "[ServiceName]"
+    mock_class: "Mock[ServiceName]"
+    endpoints: ["[endpoint_list]"]
+
+test_environment:
+  database: "[test db strategy]"
+  api: "[test api strategy]"
+  storage: "[test storage strategy]"
+```
+
+**Purpose:**
+- **Page Objects:** Test abstraction per screen with widget finders, user actions, assertions
+- **Flow Objects:** Multi-screen user journey abstractions composing Page Objects
+- **Test Fixtures:** Deterministic test data classes per entity with valid/invalid/edge variants
+- **Widget Keys:** Stable semantic keys for finding UI elements in tests
+- **Mock Services:** Test implementations of external dependencies
+- **Test Environment:** Strategy for test database, API, storage setup
+
+**Usage:**
+- Lucien (P4) uses this to scaffold test directory structure
+- Ashok (P5) generates fixtures per entity specification
+- Reena (P5) generates mock services per specification
+- Charlie (P5) generates Page Objects, Flow Objects, integration tests per specification
+
 ### Actionlist Schema
 
 actionlist.md MUST define:
@@ -425,6 +504,23 @@ features:
       robot-name:
         - story: "STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER]"
           estimate: "[duration]"
+
+# Test Stories: Include test-related stories in assignment
+# - Data layer: Test fixtures (even-numbered stories)
+# - Backend layer: API tests (even-numbered stories)
+# - Frontend layer: Page Objects, Flow Objects, integration tests (even-numbered stories)
+#
+# Example:
+#   charlie:
+#     - story: "STORY-001-001-1-ui"
+#       title: "Login screen implementation"
+#       estimate: "4h"
+#     - story: "STORY-001-001-2-ui"
+#       title: "LoginPage object"
+#       estimate: "1h"
+#     - story: "STORY-001-001-3-ui"
+#       title: "Login flow tests"
+#       estimate: "2h"
 
 phases:
   mvp:
@@ -623,3 +719,4 @@ For each feature in actionlist.md:
 | 1.1 | 2025-11-24T00:00:00Z | Added iterative workflow structure, UX design loop, test data spec vs generation |
 | 2.0 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-004: Declarative artifact schemas, removed justification requirements, added concise use case and API design formats |
 | 2.1 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Updated Story ID pattern to STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] |
+| 2.2 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-006: Added test architecture schema, test-related exit criteria, actionlist test stories guidance |

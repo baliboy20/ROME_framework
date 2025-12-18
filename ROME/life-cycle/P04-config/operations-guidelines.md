@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-005 |
-| **Version** | 1.2 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 1.3 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
@@ -69,6 +69,7 @@ Phase 4 MAY NOT begin until ALL criteria are met:
 | GATE-P3 approved | Sarah audit passed |
 | Tech stack documented | `tech-stack.md` complete |
 | Data dictionary complete | `data-dictionary.yaml` complete |
+| Test architecture documented | `test-architecture.md` complete |
 | Actionlist complete | `actionlist.md` with workspace definitions |
 | Handover received | `phase3-handover.md` complete |
 | Roma assignment | Lucien assigned to P4 |
@@ -88,6 +89,10 @@ Phase 4 MAY NOT transition to P5 until ALL criteria are met:
 | Data workspace prepared | Directory structure ready for Ashok | Yes |
 | CI/CD configured | Pipeline files created and validated | Yes |
 | Environment configs created | All environments documented | Yes |
+| Test directories created | Test directory structure per test-architecture.md | Yes |
+| Test dependencies installed | Test frameworks configured | Yes |
+| Test environment configured | .env.test created, test config files exist | Yes |
+| Test commands documented | Test execution commands in technical-specs.md | Yes |
 | Technical specs documented | `technical-specs.md` complete | Yes |
 | Scaffolding manifest complete | `scaffolding-manifest.md` documents all artifacts | Yes |
 | Handover complete | `phase4-handover.md` with all sections | Yes |
