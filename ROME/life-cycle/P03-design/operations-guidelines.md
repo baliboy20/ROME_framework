@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-004 |
-| **Version** | 2.0 |
+| **Version** | 2.1 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Phase Specification |
@@ -423,7 +423,7 @@ features:
         - "[Work item 2]"
     assigned_to:
       robot-name:
-        - story: "STORY-###"
+        - story: "STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER]"
           estimate: "[duration]"
 
 phases:
@@ -622,3 +622,4 @@ For each feature in actionlist.md:
 | 1.0 | 2025-11-24T00:00:00Z | Complete phase specification with schemas and quality gates |
 | 1.1 | 2025-11-24T00:00:00Z | Added iterative workflow structure, UX design loop, test data spec vs generation |
 | 2.0 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-004: Declarative artifact schemas, removed justification requirements, added concise use case and API design formats |
+| 2.1 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Updated Story ID pattern to STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] |

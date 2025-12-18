@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-003 |
-| **Version** | 1.5 |
+| **Version** | 1.6 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
@@ -539,7 +539,13 @@ mcp__Seez__show_chart({
 
 **Process:**
 
-1. **Define Workspaces:**
+1. **Identify Epics:**
+   - Group related features into business capability clusters
+   - Epic spans multiple features with cohesive purpose
+   - Examples: "User Management", "Product Catalog", "Order Processing"
+   - Assign Epic IDs: EPIC-001, EPIC-002, etc.
+
+2. **Define Workspaces:**
    ```yaml
    workspaces:
      - name: "[workspace-name]"
@@ -550,10 +556,11 @@ mcp__Seez__show_chart({
        entry_point: "[main file/directory]"
    ```
 
-2. **Map Features to Workspaces:**
+3. **Map Features to Workspaces:**
    ```yaml
    features:
      FEAT-###:
+       epic: EPIC-###
        title: "[Feature name]"
        priority: HIGH|MEDIUM|LOW
        phase: MVP|future
@@ -563,15 +570,15 @@ mcp__Seez__show_chart({
            - "[Work item 2]"
    ```
 
-3. **Assign to Robots:**
+4. **Assign to Robots:**
    ```yaml
    assigned_to:
      robot-name:
-       - story: "STORY-###"
+       - story: "STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER]"
          estimate: "[duration]"
    ```
 
-4. **Define Implementation Order:**
+5. **Define Implementation Order:**
    - Dependencies between features
    - MVP vs future phases
 
@@ -951,3 +958,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.3 | 2025-11-24T00:00:00Z | Fixed all paths to use phase-based ARTIFACTS structure (02-analysis, 03-design subdirs) |
 | 1.4 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notification at P3 completion |
 | 1.5 | 2025-12-18T00:00:00Z | Updated artifact schemas per ROME-PROP-004: declarative tech stack, concise use cases/API design, added template references |
+| 1.6 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Added Epic identification (Step 12.1), updated Story ID pattern, added Epic field to features |

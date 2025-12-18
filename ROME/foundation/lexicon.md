@@ -124,6 +124,49 @@ Centralized definition of all framework-specific terms to ensure terminological 
 - Mapping between framework-specific terms and standard software engineering terminology where overlap exists
 - Scope: External terminology alignment reference
 
+### Work Decomposition
+
+**Epic**
+- Highest-level work grouping containing multiple related features
+- Delivers coherent business capability spanning weeks to months
+- ID Pattern: EPIC-### (e.g., EPIC-001)
+- Scope: Business capability cluster
+- Standard hierarchy: Epic > Feature > Story
+
+**Feature**
+- User-facing functionality implementing one or more requirements across system layers
+- Vertical slice spanning database, backend, and frontend
+- Delivers complete user value in days to weeks
+- ID Pattern: FEAT-### (e.g., FEAT-001)
+- Parent: Epic
+- Scope: Single coherent user-facing capability
+
+**Story**
+- Atomic implementable work unit within specific layer
+- 1-4 hour development task with clear acceptance criteria
+- ID Pattern: STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] (e.g., STORY-001-003-2-api)
+- Parent: Feature
+- Scope: Minimum granularity implementable unit
+
+**Story ID Components:**
+- EPIC: Epic number (001-999)
+- FEAT: Feature number within project (001-999)
+- SEQ: Story sequence within feature-layer combination (1-99)
+- LAYER: database | backend | frontend
+
+**Example Hierarchy:**
+```
+EPIC-001: User Management
+  ├── FEAT-001: User Authentication
+  │   ├── STORY-001-001-1-db: User table
+  │   ├── STORY-001-001-2-db: Session table
+  │   ├── STORY-001-001-1-api: Login endpoint
+  │   └── STORY-001-001-1-ui: Login form
+  └── FEAT-003: Password Reset
+      ├── STORY-001-003-1-db: Reset tokens table
+      └── STORY-001-003-1-api: Request reset endpoint
+```
+
 ### Activity Tracking
 
 **Activity Log**
@@ -139,8 +182,8 @@ Centralized definition of all framework-specific terms to ensure terminological 
 
 **Story Entry**
 - Activity log entry tracking user story implementation within a feature
-- ID Pattern: STORY-###-#-#-db|api|ui (e.g., STORY-001-1-1-api)
-- Hierarchical relationship to parent feature
+- ID Pattern: STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] (e.g., STORY-001-003-2-api)
+- Hierarchical relationship: Epic > Feature > Story > Layer
 - Scope: Story-level work tracking
 
 **Blocker Entry**
@@ -193,3 +236,4 @@ Centralized definition of all framework-specific terms to ensure terminological 
 - "Requirements" aligns with standard software engineering usage
 - "Architecture" aligns with standard software engineering usage
 - "Code Generation" aligns with standard software engineering usage
+- "Epic > Feature > Story" aligns with Agile, Scrum, SAFe, and standard project management tools (Jira, Azure DevOps)

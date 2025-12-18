@@ -127,7 +127,8 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-001 | Parallel Development | `/ROME_framework_maintenance/proposals/ROME-PROP-001-parallel-development.md` | Proposal |
 | ROME-PROP-002 | Code Traceability Protocol | `/ROME_framework_maintenance/proposals/ROME-PROP-002-code-traceability.md` | Proposal |
 | ROME-PROP-003 | Multi-Agent Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-003-multi-agent-optimization.md` | Proposal |
-| ROME-PROP-004 | Design Artifact Conciseness | `/ROME_framework_maintenance/proposals/ROME-PROP-004-design-artifact-conciseness.md` | Proposal |
+| ROME-PROP-004 | Design Artifact Conciseness | `/ROME_framework_maintenance/proposals/ROME-PROP-004-design-artifact-conciseness.md` | Implemented |
+| ROME-PROP-005 | Story ID Semantic Correction | `/ROME_framework_maintenance/proposals/ROME-PROP-005-story-id-semantic-correction.md` | Implemented |
 
 ### Review Documents (Temporary)
 
@@ -195,3 +196,4 @@ This registry MUST be updated when:
 | 1.8 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-004 (Roma) status to Draft |
 | 1.9 | 2025-11-24T00:00:00Z | Added ROME-PROC-006 (Quality Gate Protocol) |
 | 2.0 | 2025-12-18T00:00:00Z | Added PROP type code, registered ROME-PROP-001 through ROME-PROP-004 |
+| 2.1 | 2025-12-18T00:00:00Z | Registered ROME-PROP-005, updated ROME-PROP-004 and ROME-PROP-005 status to Implemented |
