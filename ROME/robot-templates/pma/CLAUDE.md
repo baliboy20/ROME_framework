@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-003 |
-| **Version** | 1.4 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 1.5 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -306,10 +306,10 @@ mcp__activity-log__add_entry({
    ```
 
 3. **Document in tech-stack.md**
-   - Justification for each choice
-   - Alternatives considered
-   - Trade-offs acknowledged
-   - Risk assessment
+   - Use declarative YAML format (see ROME-PHASE-004 v2.0 Technology Stack Schema)
+   - Technology selections with versions
+   - Critical blocking constraints only
+   - Template: `/ROME/life-cycle/P03-design/artifact-templates/tech-stack-template.yaml`
 
 4. **Confirm with Sponsor (if FLEXIBLE items)**
    ```
@@ -421,27 +421,24 @@ mcp__Seez__show_chart({
 1. **Identify Operations** from use cases and user stories
 
 2. **For Each Endpoint, Define:**
-   - Resource path
-   - HTTP method (or equivalent)
-   - Request payload (reference data dictionary)
-   - Response payload (reference data dictionary)
-   - Error responses
+   - Pattern reference (REST CRUD, Parse Cloud Function, etc.)
+   - Input/Output entity references (point to data-dictionary.yaml)
+   - Error codes with brief descriptions
    - Authentication requirements
+   - Template: `/ROME/life-cycle/P03-design/artifact-templates/api-design-template.md`
 
-3. **Protocol-Agnostic Format:**
+3. **Concise Format (ROME-PHASE-004 v2.0):**
    ```markdown
-   ## [Resource Name]
+   ### [METHOD] /api/[resource]
 
-   ### Create [Resource]
-   **Operation:** CREATE
-   **Path:** /[resources]
-   **Auth:** Required
-   **Request:**
-   - [field]: [type] (from data-dictionary)
-   **Response:**
-   - Success: [Resource] object
-   - Error: [Error codes]
+   Pattern: [Pattern reference]
+   Input: [Entity/fields from data-dictionary.yaml]
+   Output: [Entity/fields from data-dictionary.yaml]
+   Errors: [HTTP codes with brief descriptions]
+   Auth: [Authentication requirement]
    ```
+
+   **Note:** Full JSON examples only when complex nested structures require clarification
 
 **Output:** `ARTIFACTS/03-design/api-contracts/api-design.md`
 
@@ -450,37 +447,33 @@ mcp__Seez__show_chart({
 **Process:**
 
 1. **For Each Feature** from requirements-matrix.yaml:
-   - Create detailed use case
-   - Define actor, preconditions, postconditions
-   - Document main flow and alternatives
-   - Specify UI requirements
-   - Specify API requirements
-   - Specify data requirements
+   - Create concise use case with action → response flow
+   - Define actor and trigger event
+   - Document flow and variants
+   - Specify requirements (UI, API, Data)
+   - Template: `/ROME/life-cycle/P03-design/artifact-templates/use-case-template.md`
 
-2. **Follow Schema** from ROME-PHASE-004:
+2. **Follow Concise Schema from ROME-PHASE-004 v2.0:**
    ```markdown
-   ## UC-###: [Use Case Title]
+   ## UC-###: [Title]
 
-   **Actor**: [User role]
-   **Preconditions**: [Required state before]
-   **Postconditions**: [State after completion]
+   Actor: [Role]
+   Trigger: [Event or user action initiating flow]
 
-   **Main Flow**:
-   1. [Step 1]
-   2. [Step 2]
+   Flow:
+   1. [Action] → [System response]
+   2. [Action] → [System response]
 
-   **Alternative Flows**:
-   - [Condition]: [Alternative path]
+   Variants:
+   - [Condition]: [Step deviation]
 
-   **UI Requirements**:
-   - [UI element specifications]
-
-   **API Requirements**:
-   - [Endpoint]: [Method, payload, response]
-
-   **Data Requirements**:
-   - [Entity operations]
+   Requirements:
+   - UI: [Component type, key interactions, data bindings]
+   - API: [Endpoint pattern reference]
+   - Data: [Entity CRUD operations]
    ```
+
+   **Note:** Preconditions/postconditions implicit in first/last flow steps. No verbose descriptions.
 
 **Output:** `ARTIFACTS/03-design/design-decisions/use-cases.md`
 
@@ -643,11 +636,15 @@ mcp__Seez__show_doc({
 **Date:** [ISO-8601]
 
 ## Technology Stack
-| Layer | Technology | Rationale |
-|-------|------------|-----------|
-| Frontend | [Tech] | [Brief] |
-| Backend | [Tech] | [Brief] |
-| Database | [Tech] | [Brief] |
+| Layer | Technology |
+|-------|------------|
+| Frontend | [Tech with version] |
+| Backend | [Tech with version] |
+| Database | [Tech with version] |
+
+## Critical Constraints
+- [Blocking constraint 1]
+- [Blocking constraint 2]
 
 ## Data Model Overview
 [Mermaid ER diagram or summary]
@@ -659,10 +656,10 @@ mcp__Seez__show_doc({
 - Auth approach: [summary]
 
 ## Key Architecture Decisions
-| Decision | Choice | Alternative Considered |
-|----------|--------|----------------------|
-| [Decision 1] | [Choice] | [Alternative] |
-| [Decision 2] | [Choice] | [Alternative] |
+| Decision | Choice |
+|----------|--------|
+| [Decision 1] | [Choice] |
+| [Decision 2] | [Choice] |
 
 ## Implementation Plan
 - MVP features: [list]
@@ -953,3 +950,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.2 | 2025-11-24T00:00:00Z | Restructured into 3 stages with iteration support, clarified test data spec vs generation |
 | 1.3 | 2025-11-24T00:00:00Z | Fixed all paths to use phase-based ARTIFACTS structure (02-analysis, 03-design subdirs) |
 | 1.4 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notification at P3 completion |
+| 1.5 | 2025-12-18T00:00:00Z | Updated artifact schemas per ROME-PROP-004: declarative tech stack, concise use cases/API design, added template references |

@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-004 |
-| **Version** | 1.1 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
@@ -211,7 +211,7 @@ Phase 3 MAY NOT transition to P4 until ALL criteria are met:
 
 | Criterion | Verification | Blocking |
 |-----------|--------------|----------|
-| Tech stack documented | `tech-stack.md` with justifications | Yes |
+| Tech stack documented | `tech-stack.md` with technology selections and constraints | Yes |
 | Data dictionary complete | `data-dictionary.yaml` single source of truth | Yes |
 | Data model documented | `data-model.md` with diagrams | Yes |
 | API design complete | `api-design.md` with all endpoints | Yes |
@@ -249,9 +249,9 @@ Phase 3 MAY NOT transition to P4 until ALL criteria are met:
 **Check:** All technology choices are actively maintained and appropriate.
 
 **Pass Criteria:**
-- Each technology validated (GitHub health, community)
-- Justification documented for each choice
-- Risks identified and mitigation planned
+- Each technology validated (GitHub health, community activity, maintenance status)
+- Technology selections clearly specified with versions
+- Critical blocking constraints documented
 - Stack meets all requirements (performance, security, scale)
 
 **Failure Action:** Re-evaluate technology choices
@@ -318,18 +318,42 @@ Phase 3 MAY NOT transition to P4 until ALL criteria are met:
 
 ### Technology Stack Schema
 
-tech-stack.md MUST include:
+tech-stack.md MUST use declarative YAML format:
 
-| Section | Content |
-|---------|---------|
-| Technology Health | Validation that all technologies are active |
-| Application Layer | Frontend technology with rationale |
-| API Layer | Backend technology with rationale |
-| Data Layer | Database technology with rationale |
-| Additional Technologies | Hosting, CI/CD, monitoring |
-| Alternatives Considered | Other options and why rejected |
-| Trade-offs | Known compromises and mitigations |
-| Risk Assessment | Technology risks and mitigations |
+```yaml
+tech_stack:
+  application_layer:
+    framework: [name version]
+    state_management: [library version]
+    dependency_injection: [library version]
+    routing: [library version]
+    # Additional application-specific libraries
+
+  api_layer:
+    platform: [technology version]
+    hosting: [provider | deployment model]
+    authentication: [mechanism]
+    # Additional API-specific technologies
+
+  data_layer:
+    database: [technology version]
+    # Additional data persistence technologies
+
+  additional_technologies:
+    - [library version] ([purpose])
+    - [library version] ([purpose])
+
+  critical_constraints:
+    - [Blocking constraint or dependency requirement]
+    - [Version compatibility requirement]
+```
+
+**Required Elements:**
+- Technology Health: Validation that all technologies are actively maintained
+- Technology Selections: Unambiguous technology and version specifications
+- Critical Constraints: Only blocking technical constraints or compatibility requirements
+
+**Excluded:** Rationale, alternatives considered, trade-off discussions (context available via git history/sponsor interaction logs)
 
 ### Data Dictionary Schema
 
@@ -413,31 +437,59 @@ dependencies:
 
 ### Use Case Schema
 
-Each use case MUST include:
+Each use case MUST use concise format:
 
 ```markdown
-## UC-###: [Use Case Title]
+## UC-###: [Title]
 
-**Actor**: [User role]
-**Preconditions**: [Required state before]
-**Postconditions**: [State after completion]
+Actor: [Role]
+Trigger: [Event or user action initiating flow]
 
-**Main Flow**:
-1. [Step 1]
-2. [Step 2]
+Flow:
+1. [Action] → [System response]
+2. [Action] → [System response]
+3. [Action] → [System response]
 
-**Alternative Flows**:
-- [Condition]: [Alternative path]
+Variants:
+- [Condition]: [Step deviation]
+- [Error case]: [Alternative path]
 
-**UI Requirements**:
-- [UI element specifications]
-
-**API Requirements**:
-- [Endpoint]: [Method, payload, response]
-
-**Data Requirements**:
-- [Entity operations]
+Requirements:
+- UI: [Component type, key interactions, data bindings]
+- API: [Endpoint pattern reference, e.g., "REST CRUD", "Parse Cloud Function"]
+- Data: [Entity CRUD operations]
 ```
+
+**Format Rules:**
+- Flow: Action → Response pairs (preconditions/postconditions implicit in first/last steps)
+- Variants: Deviations from main flow only
+- UI Requirements: Component types and interactions, not layout details
+- API Requirements: Pattern references, not full payload examples (unless ambiguous)
+- Data Requirements: Entity operations (Create/Read/Update/Delete)
+
+**Excluded:** Verbose preconditions, postconditions, detailed payload examples
+
+### API Design Schema
+
+api-design.md MUST use concise endpoint specifications:
+
+```markdown
+### [METHOD] /api/[resource]
+
+Pattern: [Pattern reference, e.g., "REST CRUD", "Parse Cloud Function", "GraphQL Query"]
+Input: [Entity/fields from data-dictionary.yaml]
+Output: [Entity/fields from data-dictionary.yaml]
+Errors: [HTTP codes with brief descriptions]
+Auth: [Authentication requirement]
+```
+
+**Format Rules:**
+- Pattern Reference: Name established pattern (REST, RPC, etc.) rather than explaining
+- Entity References: Point to data-dictionary.yaml entries (single source of truth)
+- Concise Error Codes: HTTP status + brief description only
+- Example Payloads: Include ONLY when complex nested structures require clarification
+
+**Excluded:** Full JSON payload examples (unless ambiguous), verbose descriptions, implementation details
 
 ### Test Data Specification Schema
 
@@ -569,3 +621,4 @@ For each feature in actionlist.md:
 | 0.1 | 2025-11-20T00:00:00Z | Initial phase specification placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete phase specification with schemas and quality gates |
 | 1.1 | 2025-11-24T00:00:00Z | Added iterative workflow structure, UX design loop, test data spec vs generation |
+| 2.0 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-004: Declarative artifact schemas, removed justification requirements, added concise use case and API design formats |

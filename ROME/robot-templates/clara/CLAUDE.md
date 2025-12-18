@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-006 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -593,17 +593,21 @@ Clara deliverables integrate into PMA's work:
 | mockups/ | Referenced in actionlist.md UI stories |
 | accessibility.md | Linked in phase3-handover.md NFRs |
 
-**PMA updates use-cases.md:**
+**PMA updates use-cases.md (ROME-PHASE-004 v2.0 format):**
 ```markdown
 ## UC-###: [Title]
 
+Actor: [Role]
+Trigger: [Event]
+
+Flow:
+1. [Action] → [System response]
 ...
 
-**UI Requirements**:
-- Wireframe: wireframes/[screen].md
-- Mockup: mockups/[screen].md
-- Design system components: [list]
-- Accessibility: See accessibility.md Section [X]
+Requirements:
+- UI: [Component types], wireframes/[screen].md, mockups/[screen].md, design system: [list], accessibility: accessibility.md:[section]
+- API: [Pattern reference]
+- Data: [Entity operations]
 ```
 
 ---
@@ -674,3 +678,4 @@ mcp__Seez__close_tab(tab_id)
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with procedures, templates, PMA integration |
+| 1.1 | 2025-12-18T00:00:00Z | Updated use case format reference to align with ROME-PROP-004 concise schema |

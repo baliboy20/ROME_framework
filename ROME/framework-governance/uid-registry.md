@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-002 |
-| **Version** | 1.9 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -47,6 +47,7 @@ ROME-[TYPE]-[NUMBER]
 | GOV | Governance | 001-020 | Framework governance documents |
 | CFG | Configuration | 001-020 | Environment/channel configuration |
 | DEF | Definition | 001-099 | Role/concept definitions |
+| PROP | Proposal | 001-099 | Framework modification proposals |
 | REV | Review | 001-999 | Temporary review documents |
 
 ---
@@ -119,6 +120,15 @@ ROME-[TYPE]-[NUMBER]
 |-----|----------|----------|--------|
 | ROME-DEF-001 | Framework Analyst & Architect | `/ROME_architect/CLAUDE.md` | Draft |
 
+### Proposal Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-PROP-001 | Parallel Development | `/ROME_framework_maintenance/proposals/ROME-PROP-001-parallel-development.md` | Proposal |
+| ROME-PROP-002 | Code Traceability Protocol | `/ROME_framework_maintenance/proposals/ROME-PROP-002-code-traceability.md` | Proposal |
+| ROME-PROP-003 | Multi-Agent Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-003-multi-agent-optimization.md` | Proposal |
+| ROME-PROP-004 | Design Artifact Conciseness | `/ROME_framework_maintenance/proposals/ROME-PROP-004-design-artifact-conciseness.md` | Proposal |
+
 ### Review Documents (Temporary)
 
 | UID | Document | Location | Status |
@@ -184,3 +194,4 @@ This registry MUST be updated when:
 | 1.7 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-002 (Talib) and ROME-ROBOT-005 (Sarah) status to Draft |
 | 1.8 | 2025-11-24T00:00:00Z | Updated ROME-ROBOT-004 (Roma) status to Draft |
 | 1.9 | 2025-11-24T00:00:00Z | Added ROME-PROC-006 (Quality Gate Protocol) |
+| 2.0 | 2025-12-18T00:00:00Z | Added PROP type code, registered ROME-PROP-001 through ROME-PROP-004 |
