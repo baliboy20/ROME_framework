@@ -1,0 +1,1 @@
+/Users/will/flutterProjects/Exercises/nov/romev10/ROME/robot-templates/robot_shell_utils/setup-mcp-servers-v3.sh

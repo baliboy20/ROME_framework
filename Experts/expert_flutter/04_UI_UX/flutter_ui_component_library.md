@@ -521,134 +521,47 @@ class VoidCallbackIntent extends Intent {
 
 ## 🌈 **THEMING & STYLING**
 
-### **Dynamic Theme Provider**
+For comprehensive theme architecture including ThemeProvider, unified spacing, decorations library, and status colors, see the [Platform Theme Architecture Guide](platform_theme_architecture_guide.md).
+
+The theme architecture guide provides the complete theming system including:
+
+**Core Theme Components**:
+- **Unified Spacing Scale** - Consistent 4px base unit system
+- **Decorations Library** - Standardized border radius, shadows, elevation
+- **Status Color Mapping** - Semantic colors for order/payment/booking statuses
+- **ThemeProvider** - Dynamic theme switching with platform adaptations
+
+**Component-Level Theming** (for UI components in this library):
+
+When building reusable UI components, apply theme values from the context:
 
 ```dart
-// core/theme/theme_provider.dart
+class ThemedCard extends StatelessWidget {
+  final Widget child;
 
-class ThemeProvider extends ChangeNotifier {
-  ThemeMode _themeMode = ThemeMode.system;
-  Color _accentColor = Color(0xFF1976D2);
-  bool _useMaterial3 = true;
-  
-  ThemeMode get themeMode => _themeMode;
-  Color get accentColor => _accentColor;
-  bool get useMaterial3 => _useMaterial3;
-  
-  void setThemeMode(ThemeMode mode) {
-    _themeMode = mode;
-    notifyListeners();
-    _savePreferences();
-  }
-  
-  void setAccentColor(Color color) {
-    _accentColor = color;
-    notifyListeners();
-    _savePreferences();
-  }
-  
-  void toggleMaterial3() {
-    _useMaterial3 = !_useMaterial3;
-    notifyListeners();
-    _savePreferences();
-  }
-  
-  ThemeData getLightTheme(BuildContext context) {
-    final platform = PlatformDetector.current;
-    
-    return ThemeData(
-      useMaterial3: _useMaterial3,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: _accentColor,
-        brightness: Brightness.light,
-      ).copyWith(
-        // Platform-specific surface colors
-        surface: platform == AppPlatform.macOS
-          ? Color(0xFFF5F5F7)
-          : platform == AppPlatform.windows
-            ? Color(0xFFF3F3F3)
-            : Colors.white,
-      ),
-      // Platform-specific component themes
-      appBarTheme: _getAppBarTheme(platform, Brightness.light),
-      cardTheme: _getCardTheme(platform, Brightness.light),
-      elevatedButtonTheme: _getButtonTheme(platform, Brightness.light),
-      inputDecorationTheme: _getInputTheme(platform, Brightness.light),
-    );
-  }
-  
-  ThemeData getDarkTheme(BuildContext context) {
-    final platform = PlatformDetector.current;
-    
-    return ThemeData(
-      useMaterial3: _useMaterial3,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: _accentColor,
-        brightness: Brightness.dark,
-      ).copyWith(
-        // Platform-specific dark surface colors
-        surface: platform == AppPlatform.macOS
-          ? Color(0xFF1C1C1E)
-          : platform == AppPlatform.windows
-            ? Color(0xFF202020)
-            : Color(0xFF121212),
-      ),
-      // Platform-specific component themes
-      appBarTheme: _getAppBarTheme(platform, Brightness.dark),
-      cardTheme: _getCardTheme(platform, Brightness.dark),
-      elevatedButtonTheme: _getButtonTheme(platform, Brightness.dark),
-      inputDecorationTheme: _getInputTheme(platform, Brightness.dark),
-    );
-  }
-  
-  AppBarTheme _getAppBarTheme(AppPlatform platform, Brightness brightness) {
-    return AppBarTheme(
-      elevation: 0,
-      centerTitle: platform == AppPlatform.macOS ? false : null,
-      toolbarHeight: platform == AppPlatform.macOS ? 52 :
-                    platform == AppPlatform.windows ? 48 : 56,
-      backgroundColor: Colors.transparent,
-    );
-  }
-  
-  CardTheme _getCardTheme(AppPlatform platform, Brightness brightness) {
-    return CardTheme(
-      elevation: platform == AppPlatform.macOS ? 0 : 2,
+  const ThemedCard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      color: theme.colorScheme.surface,
+      elevation: 2,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(
-          platform == AppPlatform.macOS ? 8 :
-          platform == AppPlatform.windows ? 4 : 12,
-        ),
-        side: platform == AppPlatform.macOS
-          ? BorderSide(
-              color: brightness == Brightness.light
-                ? Colors.grey.shade300
-                : Colors.grey.shade700,
-              width: 0.5,
-            )
-          : BorderSide.none,
+        borderRadius: BorderRadius.circular(12), // From decorations library
       ),
+      child: child,
     );
-  }
-  
-  Future<void> _savePreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('themeMode', _themeMode.index);
-    await prefs.setInt('accentColor', _accentColor.value);
-    await prefs.setBool('useMaterial3', _useMaterial3);
-  }
-  
-  Future<void> loadPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    _themeMode = ThemeMode.values[prefs.getInt('themeMode') ?? 0];
-    _accentColor = Color(prefs.getInt('accentColor') ?? 0xFF1976D2);
-    _useMaterial3 = prefs.getBool('useMaterial3') ?? true;
-    notifyListeners();
   }
 }
 ```
+
+**Quick Reference**:
+- **Theme System**: See [Platform Theme Architecture](platform_theme_architecture_guide.md)
+- **Spacing Values**: Use `AppSpacing` constants (8, 12, 16, 20, 24, 32, 48)
+- **Status Colors**: Use `StatusColorMapper.forOrderStatus()`, `forPaymentStatus()`, etc.
+- **Location**: `/lib/core/theme/`
 
 ---
 

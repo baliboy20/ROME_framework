@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # ROME v10 MCP Server Setup Script v2
 # Adds required MCP servers to Claude Code configuration
@@ -42,10 +43,13 @@ echo ""
 log_info "Adding MCP servers..."
 echo ""
 
+
+
+
 # Add activity-log MCP server
 echo "1. Adding activity-log MCP server..."
-claude mcp add --transport stdio activity-log -- \
-  dart run /Users/will/flutterProjects/Apps/Local/mcps/rome/version7/activity_log_mcp/bin/server_with_web.dart \
+claude mcp add --transport stdio activity-log-file -- \
+dart run /Users/will/flutterProjects/Apps/Local/mcps/rome/version7/activity_log_file_mcp/bin/server.dart \
   || log_warning "activity-log may already exist or failed to add"
 log_success "activity-log configured"
 

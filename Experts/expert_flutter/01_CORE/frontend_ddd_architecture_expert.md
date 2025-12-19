@@ -169,48 +169,26 @@ abstract class ProductRepository {
 }
 ```
 
-**Result Type** (using Dart sealed classes and records):
+**Result Type** (using Dart sealed classes for type-safe error handling):
+
+For complete Result<T> pattern implementation and usage, see [Error Handling Patterns](error_handling_patterns_expert.md#2-result-type-pattern).
+
+The Result<T> type provides type-safe error handling without external dependencies:
+- `Success<T>` - contains the result value
+- `Error<T>` - contains error message
+- Methods: `map()`, `fold()`, `when()`, `isSuccess`, `isError`
+
+**Quick Example**:
 ```dart
-// 📁 lib/core/types/result.dart
-
-/// Sealed class for type-safe error handling without external dependencies
-sealed class Result<T> {
-  const Result();
-
-  /// Transform the success value
-  Result<U> map<U>(U Function(T) transform) {
-    return switch (this) {
-      Success(value: final value) => Success(transform(value)),
-      Error(message: final message) => Error(message),
-    };
-  }
-
-  /// Handle both success and error cases
-  U fold<U>(
-    U Function(T) onSuccess,
-    U Function(String) onError,
-  ) {
-    return switch (this) {
-      Success(value: final value) => onSuccess(value),
-      Error(message: final message) => onError(message),
-    };
-  }
-}
-
-/// Success case - contains the result value
-final class Success<T> extends Result<T> {
-  final T value;
-
-  const Success(this.value);
-}
-
-/// Error case - contains error message
-final class Error<T> extends Result<T> {
-  final String message;
-
-  const Error(this.message);
-}
+Result<User> result = await userRepository.getUser(id);
+return result.when(
+  success: (user) => UserLoaded(user),
+  error: (message) => UserError(message),
+);
 ```
+
+**Location**: `/lib/core/types/result.dart`
+**See**: [Error Handling Patterns](error_handling_patterns_expert.md) for full implementation
 
 **Key Patterns**:
 - Always use `abstract class` for repository contracts

@@ -179,19 +179,50 @@
 
 **Priority: AS-NEEDED - Reference when implementing platform-specific features**
 
-### Platform-Specific Folder
-- **[06_PLATFORM_SPECIFIC/](06_PLATFORM_SPECIFIC/)** (New)
-  - iOS, Android, Web, macOS, Windows, Linux specific patterns
-  - Native bridge implementations (MethodChannel, Platform Views)
-  - Platform-specific APIs and integrations
-  - When to use: Implementing platform-specific features
-  - Related: Flutter UI/UX Platform Guide
+### Core Cross-Platform Patterns
+- **[Cross-Platform UI Core](04_UI_UX/cross_platform_ui_core.md)** (667 lines)
+  - Design System Architecture & Design Tokens
+  - Platform Detection & Adaptation system
+  - Responsive Design System with breakpoints
+  - Platform-Aware Animations
+  - When to use: Foundation for all platform-specific UI work
+  - Related: All platform-specific UI guides below
 
-**Note**: Documentation to be added based on project needs:
-- `ios_integration_patterns.md` - iOS-specific features
-- `android_integration_patterns.md` - Android-specific features
-- `web_integration_patterns.md` - Web-specific features
-- `platform_detection_guide.md` - Cross-platform detection
+### Web Platform
+- **[Web UI Patterns](06_PLATFORM_SPECIFIC/web_ui_patterns.md)** (753 lines)
+  - Material Design 3 for web
+  - Web navigation, buttons, dialogs with hover effects
+  - Image lazy loading, virtual scrolling, code splitting
+  - Web-specific optimizations and caching
+  - When to use: Building Flutter web applications
+  - Related: Cross-Platform UI Core
+
+### Windows Platform
+- **[Windows UI Patterns](06_PLATFORM_SPECIFIC/windows_ui_patterns.md)** (849 lines)
+  - Fluent Design-inspired theme
+  - Windows Navigation View, acrylic effects, reveal hover
+  - Window management (minimize, maximize, close)
+  - Command-based keyboard shortcuts
+  - When to use: Building Flutter Windows desktop apps
+  - Related: Cross-Platform UI Core
+
+### macOS Platform
+- **[macOS UI Patterns](06_PLATFORM_SPECIFIC/macos_ui_patterns.md)** (877 lines)
+  - Native macOS-inspired theme
+  - macOS Sidebar, traffic lights, vibrancy effects
+  - Command-based keyboard shortcuts
+  - macOS Toolbar patterns
+  - When to use: Building Flutter macOS desktop apps
+  - Related: Cross-Platform UI Core
+
+### Mobile Platforms (iOS/Android)
+- **[Mobile UI Patterns](06_PLATFORM_SPECIFIC/mobile_ui_patterns.md)** (905 lines)
+  - iOS Cupertino and Android Material 3 themes
+  - Adaptive navigation, buttons, app bars, dialogs
+  - Platform-specific gestures and scroll physics
+  - Safe area handling and memory management
+  - When to use: Building Flutter mobile apps
+  - Related: Cross-Platform UI Core
 
 ---
 
