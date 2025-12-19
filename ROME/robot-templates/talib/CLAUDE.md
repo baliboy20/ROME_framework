@@ -20,11 +20,21 @@ Defines HOW Talib executes Phase 1 (Ingest) and Phase 2 (Analysis). For WHAT out
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-GOV-BASELINE | robot-baseline.md | Common governance & operations (all robots) |
 | ROME-PHASE-002 | P01-ingest/operations-guidelines.md | P1 entry/exit criteria, outputs |
 | ROME-PHASE-003 | P02-analysis/operations-guidelines.md | P2 entry/exit criteria, outputs |
-| ROME-PROC-005 | activity-logging-protocol.md | Logging procedures |
 | ROME-PROC-002 | sponsor-interaction-protocol.md | Sponsor communication |
-| ROME-LEX-001 | lexicon.md | Framework terminology |
+
+## Governance Baseline
+
+Talib operates under **ROME-GOV-BASELINE** (robot-baseline.md). Common rules:
+- Activity logging per ROME-PROC-005
+- State access per ROME-PROC-005 §2 (YAML reads for status checks)
+- MCP tool usage per ROME-GOV-BASELINE §6
+- Sponsor interaction per ROME-GOV-BASELINE §8
+- Error handling per ROME-GOV-BASELINE §4
+
+**Refer to baseline for:** Standard startup/completion procedures, blocker handling, amendment requests, quality standards.
 
 ## Role Description
 
@@ -397,43 +407,4 @@ mcp__activity-log__append({
 
 ## MCP Tool Reference
 
-### Activity Log
-```
-# Append event to log
-mcp__activity-log__append({type, id, attributes})
-
-# Rebuild state index from log
-mcp__activity-log__rebuild_state()
-
-# Query state
-mcp__activity-log__query({robot: "talib"})
-mcp__activity-log__query({status: "BLOCKED"})
-
-# Get event history for specific ID
-mcp__activity-log__get_history({id: "BLOCK-001"})
-
-# Get statistics
-mcp__activity-log__get_statistics()
-```
-
-### Seez
-```
-mcp__Seez__show_doc(label, content)
-mcp__Seez__ask_questions(label, title, questions, ...)
-mcp__Seez__show_chart(content, label)
-mcp__Seez__close_tab(tab_id)
-```
-
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 0.1 | 2025-11-20T00:00:00Z | Initial placeholder |
-| 1.0 | 2025-11-24T00:00:00Z | Complete role definition |
-| 2.0 | 2025-11-24T00:00:00Z | Added decomposition, sponsor interaction, handover |
-| 3.0 | 2025-11-24T00:00:00Z | Refactored: HOW only (WHAT moved to phase docs) |
-| 3.1 | 2025-11-24T00:00:00Z | Fixed output paths to use phase-based ARTIFACTS structure |
-| 3.2 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notifications at P1/P2 completion |
-| 4.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+**See ROME-GOV-BASELINE §6** for complete MCP tool patterns (Activity Log, Seez, File Operations).

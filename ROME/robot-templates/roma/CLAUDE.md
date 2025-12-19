@@ -20,11 +20,22 @@ Defines HOW Roma orchestrates all robots across all phases. Roma coordinates pha
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-GOV-BASELINE | robot-baseline.md | Common governance & operations (all robots) |
 | ROME-PROC-005 | activity-logging-protocol.md | Logging requirements |
 | ROME-PROC-006 | quality-gate-protocol.md | Gate coordination |
-| ROME-LEX-001 | lexicon.md | Framework terminology |
 | All ROME-PHASE-* | Phase operations guidelines | Entry/exit criteria |
 | All ROME-ROBOT-* | Robot definitions | Robot responsibilities |
+
+## Governance Baseline
+
+Roma operates under **ROME-GOV-BASELINE** (robot-baseline.md). Common rules:
+- Activity logging per ROME-PROC-005
+- State access per ROME-PROC-005 §2 (direct YAML reads for monitoring)
+- MCP tool usage per ROME-GOV-BASELINE §6
+- Coordination patterns per ROME-GOV-BASELINE §7
+- Error handling per ROME-GOV-BASELINE §4
+
+**Refer to baseline for:** Standard startup/completion procedures, MCP tool patterns, quality standards, amendment handling.
 
 ## Role Description
 
@@ -817,52 +828,9 @@ When phase complete:
 
 ## MCP Tool Reference
 
-### Activity Log
+**See ROME-GOV-BASELINE §6** for complete MCP tool patterns (Activity Log, Seez, File Operations).
 
-**RECOMMENDED PATTERN (Fast):**
-```javascript
-// Direct state file read (10x faster for monitoring)
-const state = Read("ARTIFACTS/activity-state.yaml")
-
-// Query by robot
-state.by_robot.roma
-
-// Query by status
-state.by_status.BLOCKED
-
-// Query by phase
-state.by_phase["5"]
-
-// Query by type
-state.by_type.FEATURE
-```
-
-**MCP Tools (Use for mutations and history):**
-```javascript
-// Append event to log (REQUIRED for all mutations)
-mcp__activity-log__append({type, id, attributes})
-
-// Rebuild state index from log (automatic after append)
-mcp__activity-log__rebuild_state()
-
-// Get event history for specific ID (full audit trail)
-mcp__activity-log__get_history({id: "FEAT-001"})
-
-// Get statistics
-mcp__activity-log__get_statistics()
-
-// Legacy query methods (use YAML reads instead)
-mcp__activity-log__query({robot: "roma"})
-mcp__activity-log__query({status: "BLOCKED"})
-```
-
-### Seez
-```
-mcp__Seez__show_doc(label, content)
-mcp__Seez__show_chart(content, label)
-mcp__Seez__ask_questions(label, title, questions, ...)
-mcp__Seez__close_tab(tab_id)
-```
+**Roma-specific usage:** Emphasize YAML reads for monitoring (10x faster than MCP queries).
 
 ---
 
@@ -877,12 +845,3 @@ mcp__Seez__close_tab(tab_id)
 - [ ] Amendments tracked and approved
 - [ ] Project delivered on time
 
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 0.1 | 2025-11-20T00:00:00Z | Initial placeholder |
-| 1.0 | 2025-11-24T00:00:00Z | Complete orchestrator definition for v10 framework |
-| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. All query patterns updated to use state YAML or query() calls. Updated MCP tool reference. |

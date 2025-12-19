@@ -351,21 +351,30 @@ Step 3: Request approval from Roma or relevant robot
 
 ## Verification Requirements
 
-### After Every Log Update
+### Verification Strategy
 
-You MUST verify the log update was successful:
+**Inline verification after appends is NOT required.** Event log appends are atomic and fail-fast.
 
-```
-→ mcp__activity-log__find_by_id(id: "[ENTRY-ID]")
-→ Confirm returned entry reflects your changes
-```
+**Rationale:**
+- File append operations are synchronous and atomic
+- MCP tool returns error immediately on failure
+- State rebuild is automatic after successful append
+- Inline verification adds 50% latency without preventing failures
 
-### If Verification Fails
+### Verification Timing
 
-1. **Retry** the update operation
-2. **Report** failure to orchestrator (Roma)
-3. **Do not proceed** with work until logging confirmed
-4. **Document** logging failure in session notes
+**Phase Gates (Comprehensive):**
+- Verify state integrity before phase transitions
+- Verify event log consistency
+- Validate all work items accounted for
+- Check for orphaned entries or status mismatches
+
+**On Append Failure:**
+If `mcp__activity-log__append()` returns error:
+1. Retry operation once
+2. If retry fails, create blocker entry
+3. Report to Roma
+4. Do not proceed until resolved
 
 ---
 
@@ -430,6 +439,47 @@ Before ANY phase transition, Roma verifies:
 
 **Phase transition is BLOCKED until all blocking checks pass.**
 
+### Gate Verification Procedures
+
+**Comprehensive verification at phase gates:**
+
+```javascript
+GATE_VERIFICATION:
+  // 1. State consistency check
+  state = Read("ARTIFACTS/activity-state.yaml")
+  eventLog = Read("ARTIFACTS/activity-log.txt")
+
+  // Verify state was rebuilt from log
+  stateTimestamp = state.metadata.generated
+  if stateTimestamp <15 minutes old:
+    WARN("State may be stale, rebuild recommended")
+
+  // 2. Work completeness
+  phaseWork = state.by_phase[CURRENT_PHASE]
+  incomplete = phaseWork.filter(w => w.status != COMPLETED)
+  if incomplete.length > 0:
+    GATE_BLOCKED("Incomplete work items: " + incomplete.map(w => w.id))
+
+  // 3. Blocker resolution
+  blockers = state.by_status.BLOCKED || []
+  openBlockers = blockers.filter(b => b.status == OPEN)
+  if openBlockers.length > 0:
+    GATE_BLOCKED("Unresolved blockers: " + openBlockers.map(b => b.id))
+
+  // 4. Amendment disposition
+  amendments = state.by_type.AMENDMENT || []
+  pendingAmendments = amendments.filter(a => a.status == PENDING_REVIEW)
+  if pendingAmendments.length > 0:
+    GATE_BLOCKED("Pending amendments: " + pendingAmendments.map(a => a.id))
+
+  // 5. Event log integrity
+  eventCount = count_lines(eventLog)
+  if eventCount < state.metadata.event_count:
+    GATE_BLOCKED("Event log/state mismatch - possible corruption")
+
+  GATE_APPROVED
+```
+
 ---
 
 ## Error Handling
@@ -468,16 +518,16 @@ If work performed without entry:
 ### Do
 
 - Log status changes IMMEDIATELY, within same conversation turn
-- VERIFY logging success before proceeding
+- Handle MCP errors immediately (retry, create blocker if persistent)
 - Include meaningful notes explaining decisions
 - Reference related items (parent feature, blocked story)
 - Use consistent ISO 8601 timestamps
-- Query existing state before making updates
+- Read state file directly for status checks (faster than MCP queries)
 
 ### Don't
 
 - Delay logging until end of session
-- Assume logging succeeded without verification
+- Verify every append inline (done at phase gates instead)
 - Leave entries in IN_PROGRESS when blocked
 - Create blocker entries AFTER attempting workarounds
 - Forget to resolve blockers when issue fixed
