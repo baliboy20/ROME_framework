@@ -144,27 +144,27 @@ Centralized definition of all framework-specific terms to ensure terminological 
 **Story**
 - Atomic implementable work unit within specific layer
 - 1-4 hour development task with clear acceptance criteria
-- ID Pattern: STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] (e.g., STORY-001-003-2-api)
+- ID Pattern: STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] (e.g., STORY-001-003-02-api)
 - Parent: Feature
 - Scope: Minimum granularity implementable unit
 
 **Story ID Components:**
-- EPIC: Epic number (001-999)
-- FEAT: Feature number within project (001-999)
-- SEQ: Story sequence within feature-layer combination (1-99)
+- EPIC: Epic number (001-999, zero-padded)
+- FEAT: Feature number within project (001-999, zero-padded)
+- SEQ: Story sequence within feature-layer combination (01-99, zero-padded)
 - LAYER: database | backend | frontend
 
 **Example Hierarchy:**
 ```
 EPIC-001: User Management
   ├── FEAT-001: User Authentication
-  │   ├── STORY-001-001-1-db: User table
-  │   ├── STORY-001-001-2-db: Session table
-  │   ├── STORY-001-001-1-api: Login endpoint
-  │   └── STORY-001-001-1-ui: Login form
+  │   ├── STORY-001-001-01-db: User table
+  │   ├── STORY-001-001-02-db: Session table
+  │   ├── STORY-001-001-01-api: Login endpoint
+  │   └── STORY-001-001-01-ui: Login form
   └── FEAT-003: Password Reset
-      ├── STORY-001-003-1-db: Reset tokens table
-      └── STORY-001-003-1-api: Request reset endpoint
+      ├── STORY-001-003-01-db: Reset tokens table
+      └── STORY-001-003-01-api: Request reset endpoint
 ```
 
 ### Activity Tracking

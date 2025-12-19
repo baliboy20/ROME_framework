@@ -2,13 +2,26 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-001 |
+| **Document UID** | DEPRECATED |
 | **Version** | 1.0 |
 | **Date** | 2025-11-20T00:00:00Z |
-| **Status** | Draft |
+| **Status** | Deprecated |
 | **Document Type** | Foundation |
 | **Author** | Framework Analyst & Architect |
 | **Changes Approved** | false |
+| **Superseded By** | ROME-GOV-001 (document-standards.md) |
+
+---
+
+## ⚠️ DEPRECATION NOTICE
+
+This document has been superseded by **ROME-GOV-001** (`/ROME/framework-governance/document-standards.md`).
+
+Use document-standards.md for all current document governance requirements.
+
+This file is retained for historical reference only.
+
+---
 
 ## Purpose
 Defines document classification, naming conventions, folder placement rules, UID allocation, approval workflows, and lifecycle management for all ROME framework documents. Serves as authoritative Single Source of Truth for document governance (Principle 6).
@@ -75,11 +88,6 @@ ROME-[TYPE]-[NUMBER]
 - `CLAUDE.md` - Framework Analyst & Architect role definition (ROME-DEF-001)
 
 ## Folder Structure & Placement Rules
-
-### Directory Hierarchy
-```
-
-```
 
 ### Placement Rules
 
@@ -164,22 +172,6 @@ All ROME documents must include this header format:
 | Document Type | Yes | String | Classification from system |
 | Author | Yes | String | Role or name of author |
 | Changes Approved | Yes | Boolean | true/false approval state |
-
-## Lifecycle State Definitions
-
-<!-- To be reviewed and refined -->
-
-### State Descriptions
-
-<!-- Content to be reviewed -->
-
-### State Transition Rules
-
-<!-- Content to be reviewed -->
-
-## Approval Workflows by Document Class
-
-<!-- Content to be reviewed -->
 
 ## Revision History Management
 
@@ -355,3 +347,4 @@ All robots operating within ROME must:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-11-20T00:00:00Z | Initial document creation |
+| 1.1 | 2025-12-19T00:00:00Z | Document deprecated - superseded by ROME-GOV-001 (document-standards.md) |
