@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-007 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -169,11 +169,16 @@ Check:
 
 ### Step 2: Log Work Start
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-5",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "charlie",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 3: Read Inputs and Find Workspace
@@ -470,11 +475,16 @@ For each use case in use-cases.md, implement the corresponding screen:
 
 **8.1 Log Feature Start**
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "FEATURE",
   id: "FEAT-###-frontend",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "charlie",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 **8.2 Build Screen from Use Case**
@@ -600,12 +610,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
 **8.3 Log Feature Completion**
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "FEATURE",
   id: "FEAT-###-frontend",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "charlie",
+    completed: "[ISO-8601]",
     notes: "All screens implemented, integrated with API"
   }
 )
@@ -848,15 +860,17 @@ mcp__Seez__show_doc({
 
 When all assigned features are complete:
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-5-frontend",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "charlie",
+    completed: "[ISO-8601]",
     notes: "All frontend features implemented, tests passing"
   }
-)
+})
 ```
 
 ---
@@ -865,15 +879,17 @@ mcp__activity-log__update_entry(
 
 **When issue discovered:**
 
-```
-mcp__activity-log__add_entry({
+```javascript
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "LOW|MEDIUM|HIGH|CRITICAL",
-  description: "[Issue]",
-  robot: "charlie",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "LOW|MEDIUM|HIGH|CRITICAL",
+    title: "[Issue]",
+    robot: "charlie",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -944,11 +960,19 @@ Before marking work complete:
 ## MCP Tool Reference
 
 ### Activity Log
-```
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__find_by_robot("charlie")
-mcp__activity-log__find_by_layer("frontend")
+```javascript
+// Append event
+mcp__activity-log__append({type, id, attributes})
+
+// Rebuild state index
+mcp__activity-log__rebuild_state()
+
+// Query
+mcp__activity-log__query({robot: "charlie"})
+mcp__activity-log__query({status: "IN_PROGRESS"})
+
+// Get history
+mcp__activity-log__get_history({id: "FEAT-001"})
 ```
 
 ### Seez
@@ -965,3 +989,4 @@ mcp__Seez__ask_questions(label, title, questions, ...)
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with P5 procedures, code patterns, testing |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

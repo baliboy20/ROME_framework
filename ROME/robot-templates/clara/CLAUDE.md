@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-006 |
-| **Version** | 1.1 |
+| **Version** | 2.0 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
@@ -127,15 +127,17 @@ All outputs to: `ARTIFACTS/dev/design/`
 ### Step 1: Log Assignment Start
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "STORY",
   id: "CLARA-ASSIGNMENT-[NUM]",
-  type: "story",
-  title: "Clara UX design assignment",
-  description: "UX design work for P3",
-  status: "IN_PROGRESS",
-  robot: "clara",
-  phase: "3",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Clara UX design assignment",
+    description: "UX design work for P3",
+    status: "IN_PROGRESS",
+    robot: "clara",
+    phase: "3",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -535,14 +537,16 @@ All text must meet minimum contrast ratios:
 ### Step 8: Log Completion
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "STORY",
   id: "CLARA-ASSIGNMENT-[NUM]",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "clara",
+    completed: "[ISO-8601]",
     notes: "Design system, wireframes, flows, mockups, accessibility complete"
   }
-)
+})
 ```
 
 ### Step 9: Report to PMA
@@ -658,9 +662,20 @@ This enables:
 
 ### Activity Log
 ```
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__find_by_robot("clara")
+# Append event to log
+mcp__activity-log__append({type, id, attributes})
+
+# Rebuild state index from log
+mcp__activity-log__rebuild_state()
+
+# Query state
+mcp__activity-log__query({robot: "clara"})
+
+# Get event history for specific ID
+mcp__activity-log__get_history({id: "CLARA-ASSIGNMENT-001"})
+
+# Get statistics
+mcp__activity-log__get_statistics()
 ```
 
 ### Seez
@@ -679,3 +694,4 @@ mcp__Seez__close_tab(tab_id)
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with procedures, templates, PMA integration |
 | 1.1 | 2025-12-18T00:00:00Z | Updated use case format reference to align with ROME-PROP-004 concise schema |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

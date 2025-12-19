@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-010 |
-| **Version** | 1.1 |
-| **Date** | 2025-11-25T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -150,11 +150,20 @@ Check:
 
 ### Step 2: Log Phase Start
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "FEATURE",
   id: "FEAT-[xxx]-database",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]", robot: "ashok"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "ashok",
+    started: "[ISO-8601]"
+  }
+})
+
+// Verify append
+Read last 3 lines of ARTIFACTS/activity-log.txt
+// Should show your event
 ```
 
 ### Step 3: Discover Project Configuration
@@ -266,17 +275,19 @@ module.exports = mongoose.model('[Entity]', [Entity]Schema);
 
 **5.3 Log Schema Creation**
 
-```
-mcp__activity-log__add_entry({
+```javascript
+mcp__activity-log__append({
+  type: "STORY",
   id: "STORY-DB-SCHEMA",
-  type: "story",
-  title: "Database schema created",
-  description: "[N] tables, [N] relationships, [N] indexes",
-  status: "COMPLETED",
-  robot: "ashok",
-  phase: "5",
-  layer: "database",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Database schema created",
+    description: "[N] tables, [N] relationships, [N] indexes",
+    status: "COMPLETED",
+    robot: "ashok",
+    phase: 5,
+    layer: "database",
+    completed: "[ISO-8601]"
+  }
 })
 ```
 
@@ -356,17 +367,19 @@ INSERT INTO users (id, email, display_name, role) VALUES
 
 **8.3 Log Seed Creation**
 
-```
-mcp__activity-log__add_entry({
+```javascript
+mcp__activity-log__append({
+  type: "STORY",
   id: "STORY-DB-SEEDS",
-  type: "story",
-  title: "Seed data created",
-  description: "Dev and test seeds covering [N] scenarios",
-  status: "COMPLETED",
-  robot: "ashok",
-  phase: "5",
-  layer: "database",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Seed data created",
+    description: "Dev and test seeds covering [N] scenarios",
+    status: "COMPLETED",
+    robot: "ashok",
+    phase: 5,
+    layer: "database",
+    completed: "[ISO-8601]"
+  }
 })
 ```
 
@@ -547,15 +560,20 @@ terminal-notifier -title "ROME: P5 Database Complete" -message "Database schema,
 
 **13.2 Log Completion**
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "FEATURE",
   id: "FEAT-[xxx]-database",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "ashok",
+    completed: "[ISO-8601]",
     notes: "Schema, migrations, seeds, tests complete. Ready for Reena."
   }
-)
+})
+
+// Verify
+Read last 3 lines of ARTIFACTS/activity-log.txt
 ```
 
 ---
@@ -564,15 +582,17 @@ mcp__activity-log__update_entry(
 
 **When issue discovered:**
 
-```
-mcp__activity-log__add_entry({
+```javascript
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "LOW|MEDIUM|HIGH|CRITICAL",
-  description: "[Issue]",
-  robot: "ashok",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "LOW|MEDIUM|HIGH|CRITICAL",
+    title: "[Issue]",
+    robot: "ashok",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -636,11 +656,19 @@ mcp__Seez__ask_questions({
 ## MCP Tool Reference
 
 ### Activity Log
-```
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__find_by_robot("ashok")
-mcp__activity-log__find_by_layer("database")
+```javascript
+// Append event
+mcp__activity-log__append({type, id, attributes})
+
+// Rebuild state index
+mcp__activity-log__rebuild_state()
+
+// Query
+mcp__activity-log__query({robot: "ashok"})
+mcp__activity-log__query({status: "IN_PROGRESS"})
+
+// Get history
+mcp__activity-log__get_history({id: "STORY-001"})
 ```
 
 ### Seez
@@ -658,3 +686,4 @@ mcp__Seez__close_tab(tab_id)
 |---------|------|-------------------|
 | 1.0 | 2025-11-24T00:00:00Z | Initial v10 role definition - all database artifacts including seeds |
 | 1.1 | 2025-11-25T00:00:00Z | Added project config discovery (.rome-project.json) and terminal-notifier sponsor alert |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

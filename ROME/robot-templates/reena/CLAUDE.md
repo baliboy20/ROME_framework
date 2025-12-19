@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-008 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -137,11 +137,16 @@ Check:
 
 ### Step 2: Log Work Start
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-5",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "reena",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 3: Read Inputs and Find Workspace
@@ -185,11 +190,16 @@ For each feature assigned in actionlist.md:
 
 **5.1 Log Feature Start**
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "FEATURE",
   id: "FEAT-###-backend",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "reena",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 **5.2 Implement Endpoints**
@@ -455,15 +465,17 @@ describe('POST /api/resources', () => {
 
 **5.5 Log Feature Completion**
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "FEATURE",
   id: "FEAT-###-backend",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "reena",
+    completed: "[ISO-8601]",
     notes: "All endpoints implemented, tests passing"
   }
-)
+})
 ```
 
 ### Step 6: Document API
@@ -625,15 +637,17 @@ npm run lint
 
 When all assigned features are complete:
 
-```
-mcp__activity-log__update_entry(
+```javascript
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-5-backend",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "reena",
+    completed: "[ISO-8601]",
     notes: "All backend features implemented, tests passing"
   }
-)
+})
 ```
 
 ---
@@ -642,15 +656,17 @@ mcp__activity-log__update_entry(
 
 **When issue discovered:**
 
-```
-mcp__activity-log__add_entry({
+```javascript
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "LOW|MEDIUM|HIGH|CRITICAL",
-  description: "[Issue]",
-  robot: "reena",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "LOW|MEDIUM|HIGH|CRITICAL",
+    title: "[Issue]",
+    robot: "reena",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -751,11 +767,19 @@ DELETE /api/resources/:id  → Delete resource
 ## MCP Tool Reference
 
 ### Activity Log
-```
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__find_by_robot("reena")
-mcp__activity-log__find_by_layer("backend")
+```javascript
+// Append event
+mcp__activity-log__append({type, id, attributes})
+
+// Rebuild state index
+mcp__activity-log__rebuild_state()
+
+// Query
+mcp__activity-log__query({robot: "reena"})
+mcp__activity-log__query({status: "IN_PROGRESS"})
+
+// Get history
+mcp__activity-log__get_history({id: "FEAT-001"})
 ```
 
 ### Seez
@@ -772,3 +796,4 @@ mcp__Seez__ask_questions(label, title, questions, ...)
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with P5 procedures, code patterns, testing |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

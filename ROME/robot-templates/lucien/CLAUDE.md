@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-009 |
-| **Version** | 1.5 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -139,10 +139,15 @@ Check:
 ### Step 2: Log Phase Start
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-4",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "lucien",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 3: Read All P3 Outputs
@@ -266,16 +271,18 @@ npm install -D jest @types/jest ts-jest
 **5.5 Log Workspace Creation**
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "STORY",
   id: "CONFIG-WS-[workspace]",
-  type: "story",
-  title: "[workspace] workspace scaffolded",
-  description: "Project structure, dependencies, configuration",
-  status: "COMPLETED",
-  robot: "lucien",
-  phase: "4",
-  layer: "[database|backend|frontend]",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "[workspace] workspace scaffolded",
+    description: "Project structure, dependencies, configuration",
+    status: "COMPLETED",
+    robot: "lucien",
+    phase: "4",
+    layer: "[database|backend|frontend]",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -321,16 +328,18 @@ DATABASE_TEST_URL=postgresql://localhost:5432/[project]_test
 **6.4 Log Workspace Preparation**
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "STORY",
   id: "CONFIG-DATA-WS",
-  type: "story",
-  title: "Data workspace prepared for Ashok",
-  description: "Directory structure, connection templates. Schema/migrations/seeds created by Ashok in P5.",
-  status: "COMPLETED",
-  robot: "lucien",
-  phase: "4",
-  layer: "database",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Data workspace prepared for Ashok",
+    description: "Directory structure, connection templates. Schema/migrations/seeds created by Ashok in P5.",
+    status: "COMPLETED",
+    robot: "lucien",
+    phase: "4",
+    layer: "database",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -671,14 +680,16 @@ cd SOURCE/[app-workspace]
 ### Step 12: Log Phase Completion
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-4",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[ISO-8601]",
+    robot: "lucien",
+    completed: "[ISO-8601]",
     notes: "[N] workspaces scaffolded, data workspace prepared, CI/CD configured"
   }
-)
+})
 ```
 
 ### Step 13: Notify Sponsor
@@ -717,14 +728,16 @@ Notify Roma to initiate GATE-P4 (Sarah audit).
 **When issue discovered:**
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "LOW|MEDIUM|HIGH|CRITICAL",
-  description: "[Issue]",
-  robot: "lucien",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "LOW|MEDIUM|HIGH|CRITICAL",
+    title: "[Issue]",
+    robot: "lucien",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -822,10 +835,21 @@ go mod init [module]
 
 ### Activity Log
 ```
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__find_by_phase("4")
-mcp__activity-log__find_by_robot("lucien")
+# Append event to log
+mcp__activity-log__append({type, id, attributes})
+
+# Rebuild state index from log
+mcp__activity-log__rebuild_state()
+
+# Query state
+mcp__activity-log__query({robot: "lucien"})
+mcp__activity-log__query({phase: "4"})
+
+# Get event history for specific ID
+mcp__activity-log__get_history({id: "PHASE-4"})
+
+# Get statistics
+mcp__activity-log__get_statistics()
 ```
 
 ### Seez
@@ -847,3 +871,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.3 | 2025-11-24T00:00:00Z | Fixed all paths to use phase-based ARTIFACTS structure (03-design, 04-config subdirs) |
 | 1.4 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notification at P4 completion |
 | 1.5 | 2025-11-24T00:00:00Z | Clarified: Only scaffold workspace root, NOT internal src/tests structure (P5 creates) |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

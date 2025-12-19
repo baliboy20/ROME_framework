@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-002 |
-| **Version** | 2.4 |
+| **Version** | 2.5 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -48,6 +48,7 @@ ROME-[TYPE]-[NUMBER]
 | CFG | Configuration | 001-020 | Environment/channel configuration |
 | DEF | Definition | 001-099 | Role/concept definitions |
 | PROP | Proposal | 001-099 | Framework modification proposals |
+| MIG | Migration | 001-099 | Migration guides and procedures |
 | REV | Review | 001-999 | Temporary review documents |
 
 ---
@@ -131,7 +132,13 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-004 | Design Artifact Conciseness | `/ROME_framework_maintenance/proposals/ROME-PROP-004-design-artifact-conciseness.md` | Implemented |
 | ROME-PROP-005 | Story ID Semantic Correction | `/ROME_framework_maintenance/proposals/ROME-PROP-005-story-id-semantic-correction.md` | Implemented |
 | ROME-PROP-006 | Integration Testing Framework | `/ROME_framework_maintenance/proposals/ROME-PROP-006-integration-testing-framework.md` | Proposal |
-| ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | Proposal |
+| ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
+
+### Migration Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-MIG-001 | MongoDB to Event Log Migration Guide | `/ROME_framework_maintenance/migration/MIGRATION-GUIDE.md` | Complete |
 
 ### Review Documents (Temporary)
 
@@ -203,3 +210,4 @@ This registry MUST be updated when:
 | 2.2 | 2025-12-18T00:00:00Z | Registered ROME-PROP-006 (Integration Testing Framework) |
 | 2.3 | 2025-12-18T00:00:00Z | Registered ROME-PROP-007 (Event Log Activity Tracking) |
 | 2.4 | 2025-12-18T00:00:00Z | Registered ROME-GOV-008 (Activity Log Format) |
+| 2.5 | 2025-12-18T00:00:00Z | Added MIG type code, registered ROME-MIG-001 (Migration Guide), updated ROME-PROP-007 status to "In Progress (40%)" |

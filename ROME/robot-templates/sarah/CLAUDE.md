@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-005 |
-| **Version** | 1.2 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -80,13 +80,15 @@ Defines HOW Sarah executes quality gate audits at phase transitions. For WHAT mu
 #### Step 1: Log Gate Start
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "PHASE",
   id: "GATE-P2",
-  type: "phase",
-  description: "Quality gate: P2 Analysis → P3 Design",
-  robot: "sarah",
-  status: "IN_PROGRESS",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Quality gate: P2 Analysis → P3 Design",
+    robot: "sarah",
+    status: "IN_PROGRESS",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -188,15 +190,17 @@ mcp__Seez__show_doc({
 
 **If APPROVE:**
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "GATE-P2",
-  updates: {
+  attributes: {
     status: "COMPLETED",
+    robot: "sarah",
     gateDecision: "APPROVE",
-    completionDate: "[ISO-8601]",
+    completed: "[ISO-8601]",
     notes: "P2 outputs validated. PMA can proceed with P3."
   }
-)
+})
 ```
 
 ```bash
@@ -205,26 +209,30 @@ terminal-notifier -title "ROME: GATE-P2 APPROVED" -message "Analysis phase valid
 
 **If BLOCK:**
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "GATE-P2",
-  updates: {
+  attributes: {
     status: "COMPLETED",
+    robot: "sarah",
     gateDecision: "BLOCK",
-    completionDate: "[ISO-8601]",
+    completed: "[ISO-8601]",
     notes: "[Summary of blockers]"
   }
-)
+})
 
 // Create blocker for each issue
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-###",
-  type: "blocker",
-  severity: "HIGH",
-  description: "[Specific issue]",
-  robot: "sarah",
-  assignedTo: "talib",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "HIGH",
+    title: "[Specific issue]",
+    robot: "sarah",
+    assignedTo: "talib",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -250,13 +258,15 @@ mcp__Seez__show_doc({
 #### Step 1: Log Gate Start
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "PHASE",
   id: "GATE-P3",
-  type: "phase",
-  description: "Quality gate: P3 Design → P4 Config",
-  robot: "sarah",
-  status: "IN_PROGRESS",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Quality gate: P3 Design → P4 Config",
+    robot: "sarah",
+    status: "IN_PROGRESS",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -418,17 +428,19 @@ Security is unclear
 ### Blocker Template
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "CRITICAL/HIGH/MEDIUM",
-  title: "[Specific issue title]",
-  description: "Requirement: [REQ-ID]. Issue: [specific problem]. Required action: [what must be done].",
-  robot: "sarah",
-  assignedTo: "[responsible robot]",
-  phase: "[current phase]",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "CRITICAL/HIGH/MEDIUM",
+    title: "[Specific issue title]",
+    description: "Requirement: [REQ-ID]. Issue: [specific problem]. Required action: [what must be done].",
+    robot: "sarah",
+    assignedTo: "[responsible robot]",
+    phase: "[current phase]",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -445,13 +457,15 @@ When blockers are resolved:
 5. If still issues: Keep BLOCK, update notes
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "GATE-P#",
-  updates: {
+  attributes: {
+    robot: "sarah",
     gateDecision: "APPROVE",
     notes: "Re-reviewed after fixes. All blockers resolved."
   }
-)
+})
 ```
 
 ---
@@ -496,10 +510,21 @@ mcp__Seez__ask_questions({
 
 ### Activity Log
 ```
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__find_by_id(id)
-mcp__activity-log__find_by_status(status)
+# Append event to log
+mcp__activity-log__append({type, id, attributes})
+
+# Rebuild state index from log
+mcp__activity-log__rebuild_state()
+
+# Query state
+mcp__activity-log__query({robot: "sarah"})
+mcp__activity-log__query({status: "BLOCKED"})
+
+# Get event history for specific ID
+mcp__activity-log__get_history({id: "GATE-P2"})
+
+# Get statistics
+mcp__activity-log__get_statistics()
 ```
 
 ### Seez
@@ -519,3 +544,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with gate procedures |
 | 1.1 | 2025-11-24T00:00:00Z | Fixed input paths to use phase-based ARTIFACTS structure |
 | 1.2 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notifications at GATE-P2 approve/block decisions |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

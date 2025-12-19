@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-004 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -135,9 +135,12 @@ Verify:
 
 ### Step 3: Check Phase Status
 
-```
+```javascript
+// Read state index
+const state = Read("ARTIFACTS/activity-state.yaml")
+
 For each phase (P0-P5):
-  mcp__activity-log__find_by_id("PHASE-[N]")
+  const phaseStatus = state.phases["PHASE-[N]"].status
 
   Verify status is valid:
   - PENDING (not started)
@@ -194,7 +197,8 @@ If all met:
 
 **Check Progress:**
 ```
-mcp__activity-log__find_by_robot("talib")
+const state = Read("ARTIFACTS/activity-state.yaml")
+const talibWork = state.by_robot.talib
 
 Check for:
 - PHASE-1 status
@@ -227,8 +231,9 @@ If all met:
 
 **Check Progress:**
 ```
-mcp__activity-log__find_by_robot("talib")
-mcp__activity-log__find_by_status("BLOCKED")
+const state = Read("ARTIFACTS/activity-state.yaml")
+const talibWork = state.by_robot.talib
+const blockers = state.by_status.BLOCKED
 
 Monitor:
 - Ambiguity resolution
@@ -272,8 +277,9 @@ Wait for Sarah decision:
 
 **Check Progress:**
 ```
-mcp__activity-log__find_by_robot("pma")
-mcp__activity-log__find_by_robot("clara")
+const state = Read("ARTIFACTS/activity-state.yaml")
+const pmaWork = state.by_robot.pma
+const claraWork = state.by_robot.clara
 
 Monitor:
 - data-dictionary.yaml progress
@@ -327,7 +333,8 @@ Wait for Sarah decision:
 
 **Check Progress:**
 ```
-mcp__activity-log__find_by_robot("lucien")
+const state = Read("ARTIFACTS/activity-state.yaml")
+const lucienWork = state.by_robot.lucien
 
 Monitor:
 - Workspace creation from actionlist.md
@@ -398,14 +405,17 @@ Parse actionlist.md for feature assignments:
 
 For each feature (FEAT-###):
   Create feature entry:
-    mcp__activity-log__add_entry({
-      type: "feature",
+    mcp__activity-log__append({
+      type: "FEATURE",
       id: "FEAT-[xxx]",
-      title: "[Feature Title]",
-      priority: "HIGH|MEDIUM|LOW",
-      status: "PENDING",
-      phase: "5",
-      createdDate: "[ISO-8601]"
+      attributes: {
+        title: "[Feature Title]",
+        priority: "HIGH|MEDIUM|LOW",
+        status: "PENDING",
+        robot: "roma",
+        phase: "5",
+        created: "[ISO-8601]"
+      }
     })
 
   Create layer stories:
@@ -423,14 +433,16 @@ Notify robots:
 ```
 Daily check:
 
+const state = Read("ARTIFACTS/activity-state.yaml")
+
 Ashok status:
-  ashokWork = mcp__activity-log__find_by_robot("ashok")
+  ashokWork = state.by_robot.ashok
   ashokComplete = count(status = COMPLETED)
   ashokInProgress = count(status = IN_PROGRESS)
   ashokBlocked = count(status = BLOCKED)
 
 Reena status:
-  reenaWork = mcp__activity-log__find_by_robot("reena")
+  reenaWork = state.by_robot.reena
   reenaComplete = count(status = COMPLETED)
 
   Check dependency:
@@ -438,7 +450,7 @@ Reena status:
   - If Ashok blocked: Notify Reena of delay
 
 Charlie status:
-  charlieWork = mcp__activity-log__find_by_robot("charlie")
+  charlieWork = state.by_robot.charlie
   charlieComplete = count(status = COMPLETED)
 
   Check dependency:
@@ -473,14 +485,18 @@ When integration issues arise:
    Example: "Charlie's UI requires API field not in Reena's endpoint"
 
 2. Create coordination entry:
-   mcp__activity-log__add_entry({
-     type: "blocker",
-     title: "API contract mismatch",
-     description: "Charlie needs [field] from Reena's [endpoint]",
-     severity: "MEDIUM",
-     assignedTo: "reena",
-     robot: "roma",
-     status: "OPEN"
+   mcp__activity-log__append({
+     type: "BLOCKER",
+     id: "BLOCK-[NUM]",
+     attributes: {
+       title: "API contract mismatch",
+       description: "Charlie needs [field] from Reena's [endpoint]",
+       severity: "MEDIUM",
+       assignedTo: "reena",
+       robot: "roma",
+       status: "OPEN",
+       created: "[ISO-8601]"
+     }
    })
 
 3. Coordinate fix:
@@ -521,9 +537,10 @@ Wait for Sarah decision:
 
 ```
 Daily scan:
-  blockers = mcp__activity-log__find_by_status("BLOCKED")
-  openBlockers = mcp__activity-log__list_all_entries({
-    type: "blocker",
+  const state = Read("ARTIFACTS/activity-state.yaml")
+  blockers = state.by_status.BLOCKED
+  openBlockers = mcp__activity-log__query({
+    type: "BLOCKER",
     status: "OPEN"
   })
 ```
@@ -560,14 +577,16 @@ For each blocker:
    If sponsor: Escalate via protocol
 
 4. Track resolution
-   mcp__activity-log__update_entry(
+   mcp__activity-log__append({
+     type: "BLOCKER",
      id: "BLOCK-[NUM]",
-     updates: {
+     attributes: {
        status: "RESOLVED",
-       resolvedDate: "[ISO-8601]",
+       robot: "roma",
+       resolved: "[ISO-8601]",
        resolutionNotes: "[How resolved]"
      }
-   )
+   })
 
 5. Unblock dependent work
    Notify affected robots
@@ -674,14 +693,18 @@ Output: ARTIFACTS/phase-reports/phase-[N]-summary.md
 When robot requests amendment:
 
 1. Robot logs amendment:
-   mcp__activity-log__add_entry({
-     type: "amendment",
-     title: "[What needs changing]",
-     description: "[Why needed]",
-     requestedBy: "[robot]",
-     targetPhase: "[phase to amend]",
-     status: "PENDING_REVIEW",
-     createdDate: "[ISO-8601]"
+   mcp__activity-log__append({
+     type: "AMENDMENT",
+     id: "AMEND-[NUM]",
+     attributes: {
+       title: "[What needs changing]",
+       description: "[Why needed]",
+       requestedBy: "[robot]",
+       robot: "roma",
+       targetPhase: "[phase to amend]",
+       status: "PENDING_REVIEW",
+       created: "[ISO-8601]"
+     }
    })
 
 2. Roma triages:
@@ -712,21 +735,23 @@ When robot requests amendment:
 ```
 Check for violations:
 
+const state = Read("ARTIFACTS/activity-state.yaml")
+
 1. Stale IN_PROGRESS entries
-   entries = mcp__activity-log__find_by_status("IN_PROGRESS")
+   entries = state.by_status.IN_PROGRESS
    For each entry:
      If no update > 24 hours:
        Flag to robot
        Create reminder
 
 2. Missing completion dates
-   entries = mcp__activity-log__find_by_status("COMPLETED")
+   entries = state.by_status.COMPLETED
    For each entry:
-     If completionDate = null:
+     If completed = null:
        Flag violation
 
 3. Orphaned blockers
-   blockers = mcp__activity-log__list_all_entries({type: "blocker"})
+   blockers = mcp__activity-log__query({type: "BLOCKER"})
    For each blocker:
      If status = OPEN and age > 7 days:
        Escalate
@@ -797,15 +822,26 @@ When phase complete:
 
 ### Activity Log
 ```
+# Append event to log
+mcp__activity-log__append({type, id, attributes})
+
+# Rebuild state index from log
+mcp__activity-log__rebuild_state()
+
+# Query state (various filters)
+mcp__activity-log__query({robot: "roma"})
+mcp__activity-log__query({status: "BLOCKED"})
+mcp__activity-log__query({type: "FEATURE"})
+mcp__activity-log__query({phase: "5"})
+
+# Get event history for specific ID
+mcp__activity-log__get_history({id: "FEAT-001"})
+
+# Get statistics
 mcp__activity-log__get_statistics()
-mcp__activity-log__find_by_robot(robot)
-mcp__activity-log__find_by_feature(featureId)
-mcp__activity-log__find_by_status(status)
-mcp__activity-log__find_by_phase(phase)
-mcp__activity-log__find_by_id(id)
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__list_all_entries(filters)
+
+# Direct state file read (faster for monitoring)
+Read("ARTIFACTS/activity-state.yaml")
 ```
 
 ### Seez
@@ -837,3 +873,4 @@ mcp__Seez__close_tab(tab_id)
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete orchestrator definition for v10 framework |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. All query patterns updated to use state YAML or query() calls. Updated MCP tool reference. |

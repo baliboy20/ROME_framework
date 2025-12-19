@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-002 |
-| **Version** | 3.2 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 4.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -77,9 +77,15 @@ Check:
 ### Step 2: Log Phase Start
 
 ```
-mcp__activity-log__update_entry
-  id: "PHASE-1"
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
+mcp__activity-log__append({
+  type: "PHASE",
+  id: "PHASE-1",
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "talib",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 3: Read All Materials
@@ -107,9 +113,15 @@ Output: `ARTIFACTS/01-ingest/intake-logs/ingest-summary.md`
 ### Step 6: Log Completion
 
 ```
-mcp__activity-log__update_entry
-  id: "PHASE-1"
-  updates: {status: "COMPLETED", completionDate: "[ISO-8601]"}
+mcp__activity-log__append({
+  type: "PHASE",
+  id: "PHASE-1",
+  attributes: {
+    status: "COMPLETED",
+    robot: "talib",
+    completed: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 7: Notify Sponsor
@@ -141,9 +153,15 @@ Check:
 ### Step 2: Log Phase Start
 
 ```
-mcp__activity-log__update_entry
-  id: "PHASE-2"
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
+mcp__activity-log__append({
+  type: "PHASE",
+  id: "PHASE-2",
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "talib",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 3: Perform Functional Decomposition
@@ -164,14 +182,16 @@ mcp__activity-log__update_entry
 
 ```
 1. Log blocker
-   mcp__activity-log__add_entry({
+   mcp__activity-log__append({
+     type: "BLOCKER",
      id: "BLOCK-[NUM]",
-     type: "blocker",
-     severity: "MEDIUM",
-     description: "[Issue]",
-     robot: "talib",
-     status: "OPEN",
-     createdDate: "[ISO-8601]"
+     attributes: {
+       severity: "MEDIUM",
+       title: "[Issue]",
+       robot: "talib",
+       status: "OPEN",
+       created: "[ISO-8601]"
+     }
    })
 
 2. Ask sponsor via Seez
@@ -241,9 +261,15 @@ Complete all 12 sections.
 ### Step 8: Log Completion
 
 ```
-mcp__activity-log__update_entry
-  id: "PHASE-2"
-  updates: {status: "COMPLETED", completionDate: "[ISO-8601]"}
+mcp__activity-log__append({
+  type: "PHASE",
+  id: "PHASE-2",
+  attributes: {
+    status: "COMPLETED",
+    robot: "talib",
+    completed: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 9: Notify Sponsor
@@ -320,23 +346,30 @@ mcp__Seez__show_doc({
 ## Blocker Handling
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "LOW|MEDIUM|HIGH|CRITICAL",
-  description: "[Issue]",
-  robot: "talib",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "LOW|MEDIUM|HIGH|CRITICAL",
+    title: "[Issue]",
+    robot: "talib",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
 **On resolution:**
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  updates: {status: "RESOLVED", resolvedDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "RESOLVED",
+    robot: "talib",
+    resolved: "[ISO-8601]"
+  }
+})
 ```
 
 ---
@@ -346,14 +379,17 @@ mcp__activity-log__update_entry(
 When P1 materials need modification:
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "AMENDMENT",
   id: "AMD-[NUM]",
-  type: "amendment",
-  description: "[Change needed]",
-  requestedBy: "talib",
-  targetPhase: "1",
-  status: "PENDING_REVIEW",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "[Change needed]",
+    requestedBy: "talib",
+    robot: "talib",
+    targetPhase: "1",
+    status: "PENDING_REVIEW",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -363,11 +399,21 @@ mcp__activity-log__add_entry({
 
 ### Activity Log
 ```
-mcp__activity-log__find_by_robot(robot: "talib")
-mcp__activity-log__find_by_id(id)
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__validate_entry(entry)
+# Append event to log
+mcp__activity-log__append({type, id, attributes})
+
+# Rebuild state index from log
+mcp__activity-log__rebuild_state()
+
+# Query state
+mcp__activity-log__query({robot: "talib"})
+mcp__activity-log__query({status: "BLOCKED"})
+
+# Get event history for specific ID
+mcp__activity-log__get_history({id: "BLOCK-001"})
+
+# Get statistics
+mcp__activity-log__get_statistics()
 ```
 
 ### Seez
@@ -390,3 +436,4 @@ mcp__Seez__close_tab(tab_id)
 | 3.0 | 2025-11-24T00:00:00Z | Refactored: HOW only (WHAT moved to phase docs) |
 | 3.1 | 2025-11-24T00:00:00Z | Fixed output paths to use phase-based ARTIFACTS structure |
 | 3.2 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notifications at P1/P2 completion |
+| 4.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |

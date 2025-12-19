@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-001 |
-| **Version** | 1.2 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
@@ -38,7 +38,7 @@ Bootstrap robot prepares the project environment for ROME-based application deve
 - Create project folder structure
 - Create ROME symlink to framework
 - Initialize all robot workspaces
-- Initialize activity-log database
+- Initialize activity log event system
 - Validate MCP server connectivity
 - Notify sponsor of completion
 - Hand off to Roma orchestrator
@@ -63,7 +63,7 @@ Bootstrap robot prepares the project environment for ROME-based application deve
 - Project folder creation
 - ROME symlink creation
 - Robot workspace initialization
-- Activity-log database initialization
+- Activity log initialization
 - MCP server validation
 - Sponsor notification
 
@@ -82,7 +82,7 @@ Before starting, confirm:
 - [ ] ROME framework location known (e.g., `/path/to/ROME`)
 - [ ] Project name defined
 - [ ] Project path determined
-- [ ] MCP servers running (activity-log, Seez, rome-terminal)
+- [ ] MCP servers running (activity-log-file, Seez, rome-terminal)
 
 **Auto-Config:** If launched via `ignite_bootstrap-robot.sh`, check for `.bootstrap-config` file in current directory - it contains PROJECT_NAME, PROJECT_PATH, and ROME_PATH.
 
@@ -137,9 +137,6 @@ cat > "$PROJECT_PATH/.rome-project.json" << EOF
     "P03-design": "NOT_STARTED",
     "P04-config": "NOT_STARTED",
     "P05-generation": "NOT_STARTED"
-  },
-  "activityLog": {
-    "database": "rome_$PROJECT_NAME"
   }
 }
 EOF
@@ -230,27 +227,61 @@ echo "Project '$PROJECT_NAME' created at: $PROJECT_PATH"
 echo "=========================================="
 ```
 
-### Step 2: Initialize Activity-Log Database
+### Step 2: Initialize Activity Log
 
 After folder creation, run:
 
-```javascript
-// Initialize database
-mcp__activity-log__initialize_database({
-  databaseName: "rome_[project_name]"
-})
+**Create activity log file with header:**
 
-// Create phase entry
-mcp__activity-log__add_entry({
-  entry: {
-    id: "PHASE-0",
-    type: "phase",
-    phase: "0",
+```bash
+# Navigate to project root
+cd "$PROJECT_PATH"
+
+# Create activity log file with header
+cat > "ARTIFACTS/activity-log.txt" << EOF
+# ROME Activity Log
+# Project: $PROJECT_NAME
+# Created: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
+# Format: TIMESTAMP | TYPE | ID | ATTRIBUTES
+
+EOF
+
+echo "✓ Created ARTIFACTS/activity-log.txt"
+```
+
+**Append first event (Phase 0 start):**
+
+```javascript
+// Append PHASE-0 IN_PROGRESS event
+mcp__activity-log__append({
+  type: "PHASE",
+  id: "PHASE-0",
+  attributes: {
     status: "IN_PROGRESS",
-    description: "Project bootup and initialization",
-    startDate: "[current ISO timestamp]"
+    robot: "bootstrap",
+    phase: 0,
+    description: "Project bootup and initialization"
   }
 })
+```
+
+**Generate initial state index:**
+
+```javascript
+// Rebuild state index from event log
+mcp__activity-log__rebuild_state()
+```
+
+**Verify initialization:**
+
+```bash
+# Check event log
+tail -5 ARTIFACTS/activity-log.txt
+# Should show: [timestamp] | PHASE | PHASE-0 | status:IN_PROGRESS | robot:bootstrap | ...
+
+# Check state index
+head -20 ARTIFACTS/activity-state.yaml
+# Should contain PHASE-0 entry
 ```
 
 ### Step 3: Validate MCP Connectivity
@@ -262,28 +293,64 @@ mcp__Seez__list_tabs()
 mcp__rome-terminal__list_terminals()
 ```
 
+**Expected results:**
+- `activity-log`: Returns statistics with event_count: 1
+- `Seez`: Returns empty tabs list or current tabs
+- `rome-terminal`: Returns terminals list
+
 ### Step 4: Notify Sponsor
 
 ```bash
-terminal-notifier -title "ROME: Bootup Complete" -message "Project [name] bootstrapped successfully." -sound Ping
+terminal-notifier -title "ROME: Bootup Complete" -message "Project $PROJECT_NAME bootstrapped successfully." -sound Ping
 ```
 
 ### Step 5: Complete Phase and Hand Off
 
+**Append PHASE-0 COMPLETED event:**
+
 ```javascript
 // Mark bootup complete
-mcp__activity-log__update_entry({
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-0",
-  updates: {
+  attributes: {
     status: "COMPLETED",
-    completionDate: "[current ISO timestamp]"
+    robot: "bootstrap",
+    end: "[current ISO timestamp]"
   }
 })
 ```
 
-Update `.rome-project.json`:
-- Set `currentPhase` to `P01-ingest`
-- Set `phaseStatus.P00-bootup` to `COMPLETED`
+**Rebuild state index:**
+
+```javascript
+mcp__activity-log__rebuild_state()
+```
+
+**Update `.rome-project.json`:**
+
+```json
+{
+  "currentPhase": "P01-ingest",
+  "phaseStatus": {
+    "P00-bootup": "COMPLETED",
+    "P01-ingest": "NOT_STARTED",
+    ...
+  }
+}
+```
+
+**Verify completion:**
+
+```javascript
+// Check Phase 0 status
+mcp__activity-log__query({ id: "PHASE-0" })
+// Should show: status: "COMPLETED"
+
+// Get history
+mcp__activity-log__get_history({ id: "PHASE-0" })
+// Should show 2 events: IN_PROGRESS → COMPLETED
+```
 
 **Hand off:** Notify Roma orchestrator that project is ready for Phase 1.
 
@@ -293,10 +360,12 @@ Update `.rome-project.json`:
 
 Before marking bootup complete:
 - [ ] All folders created per structure specification
-- [ ] All 8 robot workspaces initialized
+- [ ] All 10 robot workspaces initialized
 - [ ] ROME symlink functional (read access verified)
 - [ ] .rome-project.json created with correct metadata
-- [ ] Activity-log database initialized
+- [ ] Activity log initialized with header
+- [ ] PHASE-0 events logged (IN_PROGRESS → COMPLETED)
+- [ ] State index generated
 - [ ] MCP server connectivity verified
 - [ ] Sponsor notified
 
@@ -304,12 +373,18 @@ Before marking bootup complete:
 
 ## Activity Logging
 
-Bootstrap logs using `roma` as robot identifier with notes indicating bootstrap context.
+Bootstrap logs using `bootstrap` as robot identifier.
 
 **Log events:**
 - PHASE-0 IN_PROGRESS when starting
 - PHASE-0 COMPLETED when all validation passes
 - Any blockers immediately upon discovery
+
+**Event format:**
+```
+[timestamp] | PHASE | PHASE-0 | status:IN_PROGRESS | robot:bootstrap | phase:0 | description:"Project bootup"
+[timestamp] | PHASE | PHASE-0 | status:COMPLETED | robot:bootstrap | end:[timestamp]
+```
 
 ---
 
@@ -321,6 +396,53 @@ After bootstrap completes:
 3. Sponsor materials go to `ARTIFACTS/01-ingest/source-materials/`
 4. Phase 1 (Ingest) can begin
 
+**Activity log files:**
+- `ARTIFACTS/activity-log.txt` - Append-only event log
+- `ARTIFACTS/activity-state.yaml` - Current state (auto-generated)
+
+---
+
+## Troubleshooting
+
+### Activity log creation fails
+
+```bash
+# Ensure ARTIFACTS directory exists
+mkdir -p ARTIFACTS
+
+# Check write permissions
+ls -la ARTIFACTS
+
+# Retry file creation
+cat > "ARTIFACTS/activity-log.txt" << EOF
+# ROME Activity Log
+...
+EOF
+```
+
+### MCP server not responding
+
+```bash
+# Check MCP server is running
+ps aux | grep mcp
+
+# Check Claude Code MCP configuration
+cat ~/.config/claude-code/mcp-config.json
+# Should include "activity-log-file" server
+
+# Restart Claude Code if needed
+```
+
+### State index missing
+
+```javascript
+// Regenerate from event log
+mcp__activity-log__rebuild_state()
+
+// Verify
+Read("ARTIFACTS/activity-state.yaml")
+```
+
 ---
 
 ## Revision History
@@ -331,3 +453,4 @@ After bootstrap completes:
 | 1.0 | 2025-11-21T00:00:00Z | Restructured for independent operation with embedded procedures |
 | 1.1 | 2025-11-24T00:00:00Z | Added _user_input/raw-requirements/ directory creation |
 | 1.2 | 2025-11-24T00:00:00Z | Added lucien and ashok to robot workspace creation list |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Replaced MongoDB initialization with event log system (ROME-PROP-007). Initialize activity-log.txt and activity-state.yaml instead of database. |

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-003 |
-| **Version** | 1.7 |
+| **Version** | 2.0 |
 | **Date** | 2025-12-18T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Robot Definition |
@@ -118,10 +118,15 @@ Check:
 ### Step 2: Log Phase Start
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-3",
-  updates: {status: "IN_PROGRESS", startDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "pma",
+    started: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 3: Read All P2 Outputs
@@ -278,14 +283,17 @@ mcp__Seez__ask_questions({
 
 **Log sponsor decision:**
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "AMENDMENT",
   id: "DECISION-P3-001",
-  type: "amendment",
-  description: "Design approach: [APPROVED/MODIFIED]. Feedback: [details]",
-  requestedBy: "sponsor",
-  targetPhase: "3",
-  status: "RESOLVED",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    title: "Design approach: [APPROVED/MODIFIED]. Feedback: [details]",
+    requestedBy: "sponsor",
+    robot: "pma",
+    targetPhase: "3",
+    status: "RESOLVED",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -980,14 +988,17 @@ mcp__Seez__ask_questions({
 
 2. **Log sponsor sign-off:**
    ```
-   mcp__activity-log__add_entry({
+   mcp__activity-log__append({
+     type: "AMENDMENT",
      id: "DECISION-P3-SIGNOFF",
-     type: "amendment",
-     description: "Architecture sign-off: [APPROVED/MINOR/MAJOR]. Changes: [summary]",
-     requestedBy: "sponsor",
-     targetPhase: "3",
-     status: "RESOLVED",
-     createdDate: "[ISO-8601]"
+     attributes: {
+       title: "Architecture sign-off: [APPROVED/MINOR/MAJOR]. Changes: [summary]",
+       requestedBy: "sponsor",
+       robot: "pma",
+       targetPhase: "3",
+       status: "RESOLVED",
+       created: "[ISO-8601]"
+     }
    })
    ```
 
@@ -1006,25 +1017,33 @@ Complete all sections for P4 (Config) and P5 (Generation) robots.
 
 ```
 For each feature in actionlist.md:
-  mcp__activity-log__add_entry({
+  mcp__activity-log__append({
+    type: "FEATURE",
     id: "FEAT-###-[layer]",
-    type: "feature",
-    title: "[Feature title]",
-    status: "PENDING",
-    phase: "4",
-    layer: "database|backend|frontend",
-    workspaces: [list],
-    createdDate: "[ISO-8601]"
+    attributes: {
+      title: "[Feature title]",
+      status: "PENDING",
+      robot: "pma",
+      phase: "4",
+      layer: "database|backend|frontend",
+      workspaces: [list],
+      created: "[ISO-8601]"
+    }
   })
 ```
 
 ### Step 18: Log Phase Completion
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "PHASE",
   id: "PHASE-3",
-  updates: {status: "COMPLETED", completionDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "COMPLETED",
+    robot: "pma",
+    completed: "[ISO-8601]"
+  }
+})
 ```
 
 ### Step 19: Notify Sponsor
@@ -1067,14 +1086,16 @@ Notify Roma to initiate GATE-P3 (Sarah audit).
 **When issue discovered:**
 
 ```
-mcp__activity-log__add_entry({
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  type: "blocker",
-  severity: "LOW|MEDIUM|HIGH|CRITICAL",
-  description: "[Issue]",
-  robot: "pma",
-  status: "OPEN",
-  createdDate: "[ISO-8601]"
+  attributes: {
+    severity: "LOW|MEDIUM|HIGH|CRITICAL",
+    title: "[Issue]",
+    robot: "pma",
+    status: "OPEN",
+    created: "[ISO-8601]"
+  }
 })
 ```
 
@@ -1102,10 +1123,15 @@ mcp__Seez__ask_questions({
 **On resolution:**
 
 ```
-mcp__activity-log__update_entry(
+mcp__activity-log__append({
+  type: "BLOCKER",
   id: "BLOCK-[NUM]",
-  updates: {status: "RESOLVED", resolvedDate: "[ISO-8601]"}
-)
+  attributes: {
+    status: "RESOLVED",
+    robot: "pma",
+    resolved: "[ISO-8601]"
+  }
+})
 ```
 
 ---
@@ -1171,11 +1197,22 @@ For projects requiring UX design:
 
 ### Activity Log
 ```
-mcp__activity-log__find_by_id(id)
-mcp__activity-log__update_entry(id, updates)
-mcp__activity-log__add_entry(entry)
-mcp__activity-log__find_by_phase(phase)
-mcp__activity-log__find_by_status(status)
+# Append event to log
+mcp__activity-log__append({type, id, attributes})
+
+# Rebuild state index from log
+mcp__activity-log__rebuild_state()
+
+# Query state
+mcp__activity-log__query({robot: "pma"})
+mcp__activity-log__query({phase: "3"})
+mcp__activity-log__query({status: "BLOCKED"})
+
+# Get event history for specific ID
+mcp__activity-log__get_history({id: "FEAT-001"})
+
+# Get statistics
+mcp__activity-log__get_statistics()
 ```
 
 ### Seez
@@ -1201,3 +1238,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.5 | 2025-12-18T00:00:00Z | Updated artifact schemas per ROME-PROP-004: declarative tech stack, concise use cases/API design, added template references |
 | 1.6 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Added Epic identification (Step 12.1), updated Story ID pattern, added Epic field to features |
 | 1.7 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-006: Added Step 10.5 test architecture design, updated actionlist with test stories, added test architecture to sponsor review |
+| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
