@@ -535,177 +535,35 @@ Parse.Cloud.define('handlePaymentWebhook', async (request) => {
 
 ## 6. Card Validators & Formatters
 
-Input validation for card fields.
+For card validation and formatting implementation, see the [Input Validators Consolidation Guide](../05_REFERENCE/input_validators_consolidation_guide.md).
+
+The validators consolidation guide provides the canonical implementation of all card validators and formatters including:
+
+**Card Validators** (Section 3 in Validators Guide):
+- `validateCardNumber()` - Luhn algorithm validation
+- `validateExpiry()` - MM/YY format with expiration check
+- `validateCVV()` - 3-4 digit validation
+- `validateCardholderName()` - Name validation
+
+**Card Formatters** (Section 4 in Validators Guide):
+- `CardNumberInputFormatter` - Auto-formats with spaces (XXXX XXXX XXXX XXXX)
+- `ExpiryInputFormatter` - Auto-formats as MM/YY
+- `CVVInputFormatter` - Limits to 3-4 digits
+
+**Quick Integration Example**:
 
 ```dart
-// 📁 lib/features/checkout/presentation/validators/card_validators.dart
-
-class CardValidators {
-  /// Validate card number using Luhn algorithm
-  static String? validateCardNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Card number is required';
-    }
-
-    final cleanedNumber = value.replaceAll(' ', '');
-
-    // Check length (typically 13-19 digits)
-    if (cleanedNumber.length < 13 || cleanedNumber.length > 19) {
-      return 'Card number must be 13-19 digits';
-    }
-
-    // Luhn algorithm validation
-    if (!_luhnCheck(cleanedNumber)) {
-      return 'Card number is invalid';
-    }
-
-    return null;
-  }
-
-  /// Validate expiry date (MM/YY format)
-  static String? validateExpiry(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Expiry date is required';
-    }
-
-    if (!RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
-      return 'Expiry date must be MM/YY';
-    }
-
-    final parts = value.split('/');
-    final month = int.tryParse(parts[0]);
-    final year = int.tryParse(parts[1]);
-
-    if (month == null || month < 1 || month > 12) {
-      return 'Month must be 01-12';
-    }
-
-    final now = DateTime.now();
-    final cardYear = 2000 + (year ?? 0);
-
-    if (cardYear < now.year || (cardYear == now.year && month < now.month)) {
-      return 'Card has expired';
-    }
-
-    return null;
-  }
-
-  /// Validate CVV (3-4 digits)
-  static String? validateCVV(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'CVV is required';
-    }
-
-    if (!RegExp(r'^\d{3,4}$').hasMatch(value)) {
-      return 'CVV must be 3-4 digits';
-    }
-
-    return null;
-  }
-
-  /// Validate cardholder name
-  static String? validateCardholderName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Cardholder name is required';
-    }
-
-    if (value.length < 3) {
-      return 'Name must be at least 3 characters';
-    }
-
-    return null;
-  }
-
-  /// Luhn algorithm for card number validation
-  static bool _luhnCheck(String cardNumber) {
-    int sum = 0;
-    bool isEven = false;
-
-    for (int i = cardNumber.length - 1; i >= 0; i--) {
-      int n = int.parse(cardNumber[i]);
-
-      if (isEven) {
-        n *= 2;
-        if (n > 9) {
-          n -= 9;
-        }
-      }
-
-      sum += n;
-      isEven = !isEven;
-    }
-
-    return sum % 10 == 0;
-  }
-}
+// Use the consolidated validators
+TextFormField(
+  decoration: InputDecoration(labelText: 'Card Number'),
+  keyboardType: TextInputType.number,
+  inputFormatters: [CardNumberInputFormatter()],
+  validator: CardValidators.validateCardNumber,
+)
 ```
 
----
-
-## 7. Input Formatters for Card Fields
-
-```dart
-// 📁 lib/features/checkout/presentation/input_formatters/card_number_input_formatter.dart
-
-class CardNumberInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    var text = newValue.text;
-
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
-    }
-
-    var buffer = StringBuffer();
-    for (int i = 0; i < text.length; i++) {
-      buffer.write(text[i]);
-      var nonZeroIndex = i + 1;
-      if (nonZeroIndex % 4 == 0 && nonZeroIndex != text.length) {
-        buffer.write(' ');
-      }
-    }
-
-    var string = buffer.toString();
-    return newValue.copyWith(
-      text: string,
-      selection: TextSelection.collapsed(offset: string.length),
-    );
-  }
-}
-
-// 📁 lib/features/checkout/presentation/input_formatters/expiry_input_formatter.dart
-
-class ExpiryInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-    TextEditingValue oldValue,
-    TextEditingValue newValue,
-  ) {
-    var text = newValue.text;
-
-    if (newValue.selection.baseOffset == 0) {
-      return newValue;
-    }
-
-    var buffer = StringBuffer();
-    for (int i = 0; i < text.length; i++) {
-      buffer.write(text[i]);
-      if (i == 1) {
-        buffer.write('/');
-      }
-    }
-
-    var string = buffer.toString();
-    return newValue.copyWith(
-      text: string,
-      selection: TextSelection.collapsed(offset: string.length),
-    );
-  }
-}
-```
+**Location**: `/lib/core/utils/validators.dart`
+**See**: [Input Validators Guide](../05_REFERENCE/input_validators_consolidation_guide.md) for complete implementation
 
 ---
 

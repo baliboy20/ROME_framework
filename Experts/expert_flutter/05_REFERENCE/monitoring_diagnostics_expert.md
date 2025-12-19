@@ -69,113 +69,14 @@ void main() async {
 
 ### **Error Boundary Widget**
 
-```dart
-// core/error/error_boundary.dart
+For error boundary implementation and usage, see the [Error Handling Patterns Guide](../01_CORE/error_handling_patterns_expert.md#7-error-boundary-widget).
 
-class ErrorBoundary extends StatefulWidget {
-  final Widget child;
-  final Widget Function(FlutterErrorDetails)? errorBuilder;
-  
-  const ErrorBoundary({
-    Key? key,
-    required this.child,
-    this.errorBuilder,
-  }) : super(key: key);
-  
-  @override
-  State<ErrorBoundary> createState() => _ErrorBoundaryState();
-}
+The ErrorBoundary widget catches Flutter framework errors that escape normal error handling and prevents entire app crashes. It should be placed at strategic points in your widget tree based on your error isolation strategy.
 
-class _ErrorBoundaryState extends State<ErrorBoundary> {
-  FlutterErrorDetails? _errorDetails;
-  
-  @override
-  void initState() {
-    super.initState();
-    // Override the error widget builder
-    ErrorWidget.builder = (FlutterErrorDetails details) {
-      // Log error in debug mode
-      if (kDebugMode) {
-        return ErrorWidget(details.exception);
-      }
-      
-      // Show custom error UI in production
-      setState(() {
-        _errorDetails = details;
-      });
-      
-      // Report to crash analytics
-      CrashReporting.recordFlutterError(details);
-      
-      return _buildErrorWidget(details);
-    };
-  }
-  
-  Widget _buildErrorWidget(FlutterErrorDetails details) {
-    if (widget.errorBuilder != null) {
-      return widget.errorBuilder!(details);
-    }
-    
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        body: Center(
-          child: Container(
-            padding: EdgeInsets.all(32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.red,
-                  size: 64,
-                ),
-                SizedBox(height: 16),
-                Text(
-                  'Something went wrong',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  kDebugMode 
-                    ? details.exception.toString()
-                    : 'We\'re working on fixing this issue.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey[600],
-                  ),
-                ),
-                SizedBox(height: 24),
-                ElevatedButton(
-                  onPressed: () {
-                    // Attempt to recover
-                    setState(() {
-                      _errorDetails = null;
-                    });
-                  },
-                  child: Text('Try Again'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    if (_errorDetails != null) {
-      return _buildErrorWidget(_errorDetails!);
-    }
-    return widget.child;
-  }
-}
-```
+**Quick Reference**:
+- **Implementation**: See Section 7.1 in Error Handling Patterns
+- **Placement Strategy**: See [Error Boundary Placement Strategy](../02_PATTERNS/error_boundary_placement_strategy.md)
+- **Location**: `/lib/core/presentation/widgets/error_boundary.dart`
 
 ---
 
