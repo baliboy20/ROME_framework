@@ -34,7 +34,7 @@ Defines HOW Talib executes Phase 1 (Ingest) and Phase 2 (Analysis). For WHAT out
 | Role | Requirements Engineer |
 | Phase Assignment | P1 (Ingest), P2 (Analysis) |
 | Upstream | Bootstrap |
-| Downstream | PMA |ca
+| Downstream | PMA |
 | Orchestrator | Roma |
 
 ---

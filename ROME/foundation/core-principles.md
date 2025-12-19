@@ -1,7 +1,4 @@
---------------------
-
 # ROME Framework: Core Principles
-
 
 **Document UID:** ROME-PRIN-001  
 
@@ -92,7 +89,7 @@ Maintains integrity and consistency through inter-document references within the
 ### 6. Single Source of Truth
 **Definition:** Critical shared resources maintain singular, authoritative versions.
 
-**Implementation:**?
+**Implementation:**
 - Centralized documents for:
   - Data Dictionary
   - Technical Specifications

@@ -26,24 +26,24 @@ Centralized definition of all framework-specific terms to ensure terminological 
 
 ### Phases
 
-**Phase 0 (Ingest)**
+**Phase 1 (Ingest)**
 - Intake and preliminary structuring of raw user materials (PRDs, BRDs, notes)
 - Output: Organized input corpus ready for analysis
 
-**Phase 1 (Analysis)**
+**Phase 2 (Analysis)**
 - Transformation of raw inputs into atomic logical requirements
 - Output: Structured requirement artifacts
 
-**Phase 2 (Design)**
+**Phase 3 (Design)**
 - Conversion of requirements into architectural schemas and logic flows
 - Output: System design specifications
 
-**Phase 3 (Config)**
+**Phase 4 (Config)**
 - Definition of technical constraints, environment variables, scaffolding instructions
 - Output: Implementation configuration specifications
 
-**Phase 4 (Generation)**
-- Mechanical production of executable code based strictly on Phase 3 outputs
+**Phase 5 (Generation)**
+- Mechanical production of executable code based strictly on Phase 4 outputs
 - Output: Executable application code
 
 ### Agents & Roles
@@ -208,6 +208,7 @@ EPIC-001: User Management
 **Layer**
 - Implementation dimension categorizing work by technical tier
 - Values: database, backend, frontend
+- Story ID abbreviations: database → db, backend → api, frontend → ui
 - Used in feature and story entry IDs to indicate scope
 - Scope: Technical tier classification
 

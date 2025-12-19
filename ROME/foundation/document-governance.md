@@ -20,8 +20,7 @@ Defines document classification, naming conventions, folder placement rules, UID
 | Type Code | Full Name | Purpose | Examples |
 |-----------|-----------|---------|----------|
 | DEF | Definition | Framework role and concept definitions | ROME-DEF-001 (Role Definition) |
-| PRIN | Principles | Core operational principles | ROME-PRIN-001 (Core Principles) |,State Transition Rules
-
+| PRIN | Principles | Core operational principles | ROME-PRIN-001 (Core Principles) |
 | IMPL | Implementation | Principle implementation across lifecycle | ROME-IMPL-001 (Core Principles Implementation) |
 | LEX | Lexicon | Terminology definitions and glossary | ROME-LEX-001 (Lexicon) |
 | GOV | Governance | Document and process governance | ROME-GOV-001 (this document) |
