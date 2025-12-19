@@ -539,10 +539,7 @@ Wait for Sarah decision:
 Daily scan:
   const state = Read("ARTIFACTS/activity-state.yaml")
   blockers = state.by_status.BLOCKED
-  openBlockers = mcp__activity-log__query({
-    type: "BLOCKER",
-    status: "OPEN"
-  })
+  openBlockers = blockers.filter(b => b.status === "OPEN")
 ```
 
 ### Blocker Triage
@@ -751,7 +748,7 @@ const state = Read("ARTIFACTS/activity-state.yaml")
        Flag violation
 
 3. Orphaned blockers
-   blockers = mcp__activity-log__query({type: "BLOCKER"})
+   blockers = state.by_type.BLOCKER || state.by_status.BLOCKED
    For each blocker:
      If status = OPEN and age > 7 days:
        Escalate
@@ -821,27 +818,42 @@ When phase complete:
 ## MCP Tool Reference
 
 ### Activity Log
+
+**RECOMMENDED PATTERN (Fast):**
+```javascript
+// Direct state file read (10x faster for monitoring)
+const state = Read("ARTIFACTS/activity-state.yaml")
+
+// Query by robot
+state.by_robot.roma
+
+// Query by status
+state.by_status.BLOCKED
+
+// Query by phase
+state.by_phase["5"]
+
+// Query by type
+state.by_type.FEATURE
 ```
-# Append event to log
+
+**MCP Tools (Use for mutations and history):**
+```javascript
+// Append event to log (REQUIRED for all mutations)
 mcp__activity-log__append({type, id, attributes})
 
-# Rebuild state index from log
+// Rebuild state index from log (automatic after append)
 mcp__activity-log__rebuild_state()
 
-# Query state (various filters)
-mcp__activity-log__query({robot: "roma"})
-mcp__activity-log__query({status: "BLOCKED"})
-mcp__activity-log__query({type: "FEATURE"})
-mcp__activity-log__query({phase: "5"})
-
-# Get event history for specific ID
+// Get event history for specific ID (full audit trail)
 mcp__activity-log__get_history({id: "FEAT-001"})
 
-# Get statistics
+// Get statistics
 mcp__activity-log__get_statistics()
 
-# Direct state file read (faster for monitoring)
-Read("ARTIFACTS/activity-state.yaml")
+// Legacy query methods (use YAML reads instead)
+mcp__activity-log__query({robot: "roma"})
+mcp__activity-log__query({status: "BLOCKED"})
 ```
 
 ### Seez

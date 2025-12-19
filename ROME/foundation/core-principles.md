@@ -243,10 +243,3 @@ Major modifications requiring a fresh ROME cycle.
 - Version control maintains relationship between cycles
 - Traceability links refinements to source decisions
 
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 1.0 | 2025-11-20T00:00:00Z | Initial document creation |

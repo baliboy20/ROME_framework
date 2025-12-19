@@ -96,6 +96,85 @@ The MCP server uses this database name to connect. Bootstrap creates this file d
 
 ---
 
+## State Access Standard
+
+### Purpose
+
+Defines optimal methods for accessing activity state to maximize performance while maintaining data integrity.
+
+### Access Patterns
+
+| Operation Type | Method | Tool/File | Rationale |
+|----------------|--------|-----------|-----------|
+| **Mutations** | MCP append | `mcp__activity-log__append()` | Maintains event log integrity, triggers state rebuild |
+| **Real-time monitoring** | Direct file read | `ARTIFACTS/activity-state.yaml` | 10x faster than MCP query, zero network latency |
+| **Historical queries** | MCP query | `mcp__activity-log__query()` | Access complete event history from log file |
+| **Bulk status checks** | Direct file read | `ARTIFACTS/activity-state.yaml` | Efficient for checking multiple items |
+| **Single item verification** | Direct file read | `ARTIFACTS/activity-state.yaml` | Faster than MCP for simple reads |
+
+### Implementation Guidelines
+
+**For Mutations (All Robots):**
+```javascript
+// ALWAYS use MCP for mutations
+mcp__activity-log__append({
+  type: "STATUS_UPDATE",
+  id: work_id,
+  attributes: {status: IN_PROGRESS, start: NOW}
+})
+// State automatically rebuilt by MCP server
+```
+
+**For Monitoring (Primarily Roma):**
+```javascript
+// Read state file directly (fast path)
+const state = Read("ARTIFACTS/activity-state.yaml")
+
+// Query by status
+const blockers = state.by_status.BLOCKED
+
+// Query by robot
+const romaWork = state.by_robot.roma
+
+// Query by phase
+const phase2Work = state.by_phase["2"]
+```
+
+**For Historical Analysis:**
+```javascript
+// Use MCP to query event log when you need history
+const history = mcp__activity-log__get_history({id: "FEAT-001"})
+// Returns: All events for FEAT-001 across time
+```
+
+### Performance Characteristics
+
+| Method | Latency | Use Case |
+|--------|---------|----------|
+| Direct YAML read | <10ms | Monitoring, status checks, coordination |
+| MCP query (state) | ~100ms | Legacy queries, compatibility |
+| MCP query (history) | ~200ms | Audit trails, historical analysis |
+| MCP append | ~50ms | All mutations (required) |
+
+### Rules
+
+**MUST:**
+- Use MCP append for ALL mutations
+- Use direct YAML reads for monitoring and status checks
+- Verify YAML file exists before reading
+
+**MUST NOT:**
+- Edit `activity-log.txt` or `activity-state.yaml` manually
+- Use MCP queries when YAML read suffices
+- Cache state across multiple operations (always read fresh)
+
+**MAY:**
+- Use MCP queries for complex historical analysis
+- Read event log file directly for grep-based searches
+- Parse YAML programmatically for custom queries
+
+---
+
 ## Mandatory Logging Events
 
 ### Trigger Points
@@ -436,12 +515,3 @@ mcp__activity-log__list_entry_types()
 mcp__activity-log__get_entry_instructions(type)
 mcp__activity-log__validate_entry(entry)
 ```
-
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 1.0 | 2025-11-21T00:00:00Z | Initial protocol definition for ROME v10 |
-| 1.1 | 2025-11-24T00:00:00Z | Added Database Discovery section documenting .rome-project.json activityLog config |
