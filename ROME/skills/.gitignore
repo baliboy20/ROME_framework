@@ -1,0 +1,14 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Test coverage
+coverage/
+*.log
+
+# IDE
+.idea/
+.vscode/
+
+# OS
+.DS_Store
