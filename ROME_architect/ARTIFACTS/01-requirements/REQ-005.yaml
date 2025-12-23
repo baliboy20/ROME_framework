@@ -1,0 +1,70 @@
+ID: REQ-005
+
+Actor: ProjectManager
+
+Intent: delete task
+
+Preconditions:
+  - ProjectManager authenticated
+  - Task exists
+  - ProjectManager is project owner
+
+Conditions:
+  - Task not in 'completed' status OR ProjectManager has admin role
+
+Postconditions:
+  - Task marked as deleted (soft delete)
+  - Task removed from active task lists
+  - Audit log entry created
+  - Related comments and attachments retained
+
+Outcomes:
+  - Task no longer appears in project task list
+  - Task data retained in database (soft delete)
+  - Deletion audit trail created
+
+Invariants:
+  - Deleted tasks cannot be undeleted (permanent soft delete)
+  - Deletion timestamp recorded
+  - Deletion actor recorded
+
+NonFunctional:
+  Performance:
+    - Deletion completes in <1 second
+  Security:
+    - Requires project owner permission
+  Reliability:
+    - Soft delete ensures data recovery possible
+
+Errors:
+  - error: "If ProjectManager not project owner"
+    message: "Only project owners can delete tasks"
+  - error: "If task already deleted"
+    message: "Task has already been deleted"
+
+ScopeBoundary:
+  InScope:
+    - Soft delete task, retain audit trail
+  OutOfScope:
+    - Hard delete, bulk delete, restore deleted tasks
+
+OpenQuestions:
+  - question: "Should deleted tasks be restorable within 30 days?"
+    status: DEFERRED
+    resolution: ""
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-TASK-MANAGEMENT
+  dependencies:
+    - REQ-002
+  tags:
+    - core-crud
+    - tier-1
+    - task

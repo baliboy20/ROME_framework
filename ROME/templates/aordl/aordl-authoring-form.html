@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AORDL Requirement Authoring Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #3498db;
+        }
+
+        .form-section h2 {
+            color: #2c3e50;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .form-section .help-text {
+            color: #7f8c8d;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #34495e;
+        }
+
+        .required {
+            color: #e74c3c;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .array-input {
+            margin-bottom: 10px;
+        }
+
+        .add-item-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .add-item-btn:hover {
+            background: #2980b9;
+        }
+
+        .remove-item-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .remove-item-btn:hover {
+            background: #c0392b;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-row input,
+        .item-row textarea {
+            flex: 1;
+        }
+
+        .error-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .validation-error {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .validation-error.show {
+            display: block;
+        }
+
+        .actions {
+            margin-top: 30px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button[type="submit"] {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        button[type="submit"]:hover {
+            background: #229954;
+        }
+
+        .export-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .export-btn:hover {
+            background: #2980b9;
+        }
+
+        .preview {
+            margin-top: 30px;
+            padding: 20px;
+            background: #ecf0f1;
+            border-radius: 6px;
+            display: none;
+        }
+
+        .preview.show {
+            display: block;
+        }
+
+        .preview h3 {
+            margin-bottom: 15px;
+        }
+
+        .preview pre {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .antipattern-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 5px;
+            font-size: 13px;
+            display: none;
+        }
+
+        .antipattern-warning.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AORDL Requirement Authoring Form</h1>
+        <p class="subtitle">AI-Optimized Requirement Design Language - Interactive Template</p>
+
+        <form id="aordlForm">
+            <!-- ID and Actor -->
+            <div class="form-section">
+                <h2>1. Identification</h2>
+                <div class="help-text">Unique identifier and actor role</div>
+
+                <div class="form-group">
+                    <label>ID <span class="required">*</span></label>
+                    <input type="text" id="id" placeholder="REQ-001" required pattern="REQ-\d{3}">
+                    <div class="validation-error" id="id-error">Format must be REQ-### (e.g., REQ-001)</div>
+                </div>
+
+                <div class="form-group">
+                    <label>Actor <span class="required">*</span></label>
+                    <input type="text" id="actor" placeholder="Customer" required>
+                    <div class="validation-error" id="actor-error">Must be a specific role (not "user" or "person")</div>
+                    <div class="antipattern-warning" id="actor-warning"></div>
+                </div>
+            </div>
+
+            <!-- Intent -->
+            <div class="form-section">
+                <h2>2. Intent</h2>
+                <div class="help-text">What does the actor want to do? Format: verb + business-object</div>
+
+                <div class="form-group">
+                    <label>Intent <span class="required">*</span></label>
+                    <input type="text" id="intent" placeholder="create invoice" required>
+                    <div class="validation-error" id="intent-error">Must use approved verb + business object</div>
+                    <div class="antipattern-warning" id="intent-warning"></div>
+                    <small style="color: #7f8c8d; display: block; margin-top: 5px;">
+                        Approved verbs: create, read, update, delete, submit, approve, reject, cancel, archive, restore, export, import, view, search
+                    </small>
+                </div>
+            </div>
+
+            <!-- Preconditions -->
+            <div class="form-section">
+                <h2>3. Preconditions</h2>
+                <div class="help-text">What must be true BEFORE this intent can execute?</div>
+
+                <div id="preconditions-container">
+                    <div class="item-row">
+                        <input type="text" placeholder="Customer authenticated" class="precondition-item">
+                        <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addPrecondition()">+ Add Precondition</button>
+            </div>
+
+            <!-- Conditions -->
+            <div class="form-section">
+                <h2>4. Conditions</h2>
+                <div class="help-text">Contextual conditions that influence execution (optional)</div>
+
+                <div id="conditions-container">
+                    <div class="item-row">
+                        <input type="text" placeholder="Order total exceeds $1000" class="condition-item">
+                        <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addCondition()">+ Add Condition</button>
+            </div>
+
+            <!-- Postconditions -->
+            <div class="form-section">
+                <h2>5. Postconditions</h2>
+                <div class="help-text">What system state changes AFTER successful execution?</div>
+
+                <div id="postconditions-container">
+                    <div class="item-row">
+                        <input type="text" placeholder="Invoice status set to 'draft'" class="postcondition-item">
+                        <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addPostcondition()">+ Add Postcondition</button>
+            </div>
+
+            <!-- Outcomes -->
+            <div class="form-section">
+                <h2>6. Outcomes</h2>
+                <div class="help-text">What observable results can the actor verify?</div>
+
+                <div id="outcomes-container">
+                    <div class="item-row">
+                        <input type="text" placeholder="Invoice saved to database with unique ID" class="outcome-item">
+                        <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addOutcome()">+ Add Outcome</button>
+            </div>
+
+            <!-- Invariants -->
+            <div class="form-section">
+                <h2>7. Invariants</h2>
+                <div class="help-text">Business rules that must ALWAYS be true</div>
+
+                <div id="invariants-container">
+                    <div class="item-row">
+                        <input type="text" placeholder="Invoice total = sum(line items) + tax + shipping" class="invariant-item">
+                        <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addInvariant()">+ Add Invariant</button>
+            </div>
+
+            <!-- Non-Functional Requirements -->
+            <div class="form-section">
+                <h2>8. Non-Functional Requirements</h2>
+                <div class="help-text">Performance, security, scalability, etc.</div>
+
+                <div class="form-group">
+                    <label>Performance</label>
+                    <textarea id="nfr-performance" placeholder="Invoice creation completes in <2 seconds"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Security</label>
+                    <textarea id="nfr-security" placeholder="Requires JWT authentication"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Scalability</label>
+                    <textarea id="nfr-scalability" placeholder="Supports 10,000 concurrent users"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Other</label>
+                    <textarea id="nfr-other" placeholder="Additional non-functional requirements"></textarea>
+                </div>
+            </div>
+
+            <!-- Errors -->
+            <div class="form-section">
+                <h2>9. Errors</h2>
+                <div class="help-text">Error conditions and user-facing messages</div>
+
+                <div id="errors-container">
+                    <div class="error-group">
+                        <input type="text" placeholder="If line items empty" class="error-condition">
+                        <input type="text" placeholder="Invoice must have at least one line item" class="error-message">
+                        <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addError()">+ Add Error</button>
+            </div>
+
+            <!-- Scope Boundary -->
+            <div class="form-section">
+                <h2>10. Scope Boundary</h2>
+                <div class="help-text">What's included and excluded?</div>
+
+                <div class="form-group">
+                    <label>In Scope</label>
+                    <div id="inscope-container">
+                        <div class="item-row">
+                            <input type="text" placeholder="Create invoice with line items, tax, shipping" class="inscope-item">
+                            <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-item-btn" onclick="addInScope()">+ Add In Scope Item</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Out of Scope</label>
+                    <div id="outscope-container">
+                        <div class="item-row">
+                            <input type="text" placeholder="Invoice payment processing" class="outscope-item">
+                            <button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="add-item-btn" onclick="addOutScope()">+ Add Out of Scope Item</button>
+                </div>
+            </div>
+
+            <!-- Open Questions -->
+            <div class="form-section">
+                <h2>11. Open Questions</h2>
+                <div class="help-text">Questions needing clarification or decision</div>
+
+                <div id="questions-container">
+                    <div class="form-group">
+                        <label>Question 1</label>
+                        <input type="text" placeholder="Should invoice editing be allowed after submission?" class="question-text">
+                        <select class="question-status">
+                            <option value="OPEN">OPEN</option>
+                            <option value="RESOLVED">RESOLVED</option>
+                            <option value="DEFERRED">DEFERRED</option>
+                        </select>
+                        <input type="text" placeholder="Resolution (if resolved)" class="question-resolution">
+                    </div>
+                </div>
+                <button type="button" class="add-item-btn" onclick="addQuestion()">+ Add Question</button>
+            </div>
+
+            <!-- Copilot Mode -->
+            <div class="form-section">
+                <h2>12. Copilot Mode</h2>
+                <div class="help-text">Validation strictness level</div>
+
+                <div class="form-group">
+                    <label>Copilot Mode <span class="required">*</span></label>
+                    <select id="copilot-mode" required>
+                        <option value="STRICT">STRICT - Reject any deviation from AORDL rules</option>
+                        <option value="GUIDED" selected>GUIDED - Warn on deviations, suggest corrections</option>
+                        <option value="PERMISSIVE">PERMISSIVE - Accept with best-effort interpretation</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions">
+                <button type="submit">Validate AORDL</button>
+                <button type="button" class="export-btn" onclick="exportYAML()">Export as YAML</button>
+                <button type="button" class="export-btn" onclick="exportMarkdown()">Export as Markdown</button>
+            </div>
+        </form>
+
+        <!-- Preview -->
+        <div class="preview" id="preview">
+            <h3>AORDL Preview (YAML)</h3>
+            <pre id="preview-content"></pre>
+        </div>
+    </div>
+
+    <script>
+        // Anti-pattern detection
+        const UI_KEYWORDS = ['click', 'button', 'screen', 'form', 'menu', 'window', 'dialog', 'page'];
+        const TECH_KEYWORDS = ['POST', 'GET', 'PUT', 'DELETE', 'SQL', 'API', 'endpoint', 'REST', 'JSON'];
+        const GENERIC_ACTORS = ['user', 'person', 'someone', 'anyone'];
+        const APPROVED_VERBS = ['create', 'read', 'update', 'delete', 'submit', 'approve', 'reject', 'cancel', 'archive', 'restore', 'export', 'import', 'view', 'search'];
+
+        // Real-time validation
+        document.getElementById('actor').addEventListener('input', function(e) {
+            const value = e.target.value.toLowerCase();
+            const warning = document.getElementById('actor-warning');
+
+            if (GENERIC_ACTORS.some(actor => value.includes(actor))) {
+                warning.textContent = '⚠️ Avoid generic terms like "user" - use a specific role (e.g., Customer, Administrator)';
+                warning.classList.add('show');
+            } else {
+                warning.classList.remove('show');
+            }
+        });
+
+        document.getElementById('intent').addEventListener('input', function(e) {
+            const value = e.target.value.toLowerCase();
+            const warning = document.getElementById('intent-warning');
+            const words = value.split(' ');
+
+            let warnings = [];
+
+            if (UI_KEYWORDS.some(kw => value.includes(kw))) {
+                warnings.push('Contains UI language');
+            }
+            if (TECH_KEYWORDS.some(kw => value.includes(kw))) {
+                warnings.push('Contains technical jargon');
+            }
+            if (words.length > 0 && !APPROVED_VERBS.includes(words[0])) {
+                warnings.push('First word should be an approved verb');
+            }
+
+            if (warnings.length > 0) {
+                warning.textContent = '⚠️ ' + warnings.join('; ');
+                warning.classList.add('show');
+            } else {
+                warning.classList.remove('show');
+            }
+        });
+
+        // Array field management
+        function removeItem(btn) {
+            btn.parentElement.remove();
+        }
+
+        function addPrecondition() {
+            const container = document.getElementById('preconditions-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="New precondition" class="precondition-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addCondition() {
+            const container = document.getElementById('conditions-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="New condition" class="condition-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addPostcondition() {
+            const container = document.getElementById('postconditions-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="New postcondition" class="postcondition-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addOutcome() {
+            const container = document.getElementById('outcomes-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="New outcome" class="outcome-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addInvariant() {
+            const container = document.getElementById('invariants-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="New invariant" class="invariant-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addError() {
+            const container = document.getElementById('errors-container');
+            const div = document.createElement('div');
+            div.className = 'error-group';
+            div.innerHTML = '<input type="text" placeholder="Error condition" class="error-condition"><input type="text" placeholder="Error message" class="error-message"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addInScope() {
+            const container = document.getElementById('inscope-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="In scope item" class="inscope-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addOutScope() {
+            const container = document.getElementById('outscope-container');
+            const div = document.createElement('div');
+            div.className = 'item-row';
+            div.innerHTML = '<input type="text" placeholder="Out of scope item" class="outscope-item"><button type="button" class="remove-item-btn" onclick="removeItem(this)">Remove</button>';
+            container.appendChild(div);
+        }
+
+        function addQuestion() {
+            const container = document.getElementById('questions-container');
+            const count = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'form-group';
+            div.innerHTML = `
+                <label>Question ${count}</label>
+                <input type="text" placeholder="Question text" class="question-text">
+                <select class="question-status">
+                    <option value="OPEN">OPEN</option>
+                    <option value="RESOLVED">RESOLVED</option>
+                    <option value="DEFERRED">DEFERRED</option>
+                </select>
+                <input type="text" placeholder="Resolution (if resolved)" class="question-resolution">
+            `;
+            container.appendChild(div);
+        }
+
+        // Collect array values
+        function collectValues(selector) {
+            return Array.from(document.querySelectorAll(selector))
+                .map(el => el.value.trim())
+                .filter(v => v !== '');
+        }
+
+        // Form submission
+        document.getElementById('aordlForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const aordl = buildAORDL();
+            const preview = document.getElementById('preview');
+            const previewContent = document.getElementById('preview-content');
+
+            previewContent.textContent = aordl;
+            preview.classList.add('show');
+            preview.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Build AORDL YAML
+        function buildAORDL() {
+            const preconditions = collectValues('.precondition-item');
+            const conditions = collectValues('.condition-item');
+            const postconditions = collectValues('.postcondition-item');
+            const outcomes = collectValues('.outcome-item');
+            const invariants = collectValues('.invariant-item');
+            const inScope = collectValues('.inscope-item');
+            const outScope = collectValues('.outscope-item');
+
+            const errors = Array.from(document.querySelectorAll('.error-group')).map(group => {
+                const condition = group.querySelector('.error-condition').value.trim();
+                const message = group.querySelector('.error-message').value.trim();
+                return condition && message ? { error: condition, message: message } : null;
+            }).filter(e => e !== null);
+
+            let yaml = `ID: ${document.getElementById('id').value}
+Actor: ${document.getElementById('actor').value}
+Intent: ${document.getElementById('intent').value}
+
+Preconditions:
+${preconditions.map(p => `  - ${p}`).join('\n') || '  # None'}
+
+Conditions:
+${conditions.map(c => `  - ${c}`).join('\n') || '  # None'}
+
+Postconditions:
+${postconditions.map(p => `  - ${p}`).join('\n') || '  # None'}
+
+Outcomes:
+${outcomes.map(o => `  - ${o}`).join('\n') || '  # None'}
+
+Invariants:
+${invariants.map(i => `  - ${i}`).join('\n') || '  # None'}
+
+NonFunctional:
+  Performance:
+    ${document.getElementById('nfr-performance').value || '# None'}
+  Security:
+    ${document.getElementById('nfr-security').value || '# None'}
+  Scalability:
+    ${document.getElementById('nfr-scalability').value || '# None'}
+  Other:
+    ${document.getElementById('nfr-other').value || '# None'}
+
+Errors:
+${errors.map(e => `  - error: "${e.error}"\n    message: "${e.message}"`).join('\n') || '  # None'}
+
+ScopeBoundary:
+  InScope:
+${inScope.map(i => `    - ${i}`).join('\n') || '    # None'}
+  OutOfScope:
+${outScope.map(o => `    - ${o}`).join('\n') || '    # None'}
+
+OpenQuestions:
+  # Add questions as needed
+
+CopilotMode: ${document.getElementById('copilot-mode').value}`;
+
+            return yaml;
+        }
+
+        // Export functions
+        function exportYAML() {
+            const aordl = buildAORDL();
+            const blob = new Blob([aordl], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${document.getElementById('id').value}.yaml`;
+            a.click();
+        }
+
+        function exportMarkdown() {
+            alert('Markdown export coming soon!');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+ID: REQ-017
+
+Actor: SystemIntegrator
+
+Intent: import project
+
+Preconditions:
+  - SystemIntegrator authenticated
+  - SystemIntegrator has API access token
+  - Import file valid JSON format
+
+Conditions:
+  - Import file size ≤ 50MB
+  - JSON schema validation passes
+
+Postconditions:
+  - Project created from import data
+  - Tasks created from import data
+  - Import job status recorded
+  - SystemIntegrator notified of import result
+
+Outcomes:
+  - New project appears in organization project list
+  - Import summary report generated
+  - Import errors logged if any
+
+Invariants:
+  - Import must pass schema validation
+  - Duplicate project names resolved with suffix
+  - Import timestamp recorded
+
+NonFunctional:
+  Performance:
+    - Import completes in <60 seconds for 500 tasks
+  Security:
+    - Requires API access token with import permission
+  Reliability:
+    - Partial imports rolled back on error
+
+Errors:
+  - error: "If JSON schema validation fails"
+    message: "Import file does not match required schema"
+  - error: "If file size exceeds 50MB"
+    message: "Import file cannot exceed 50MB"
+  - error: "If project data contains invalid references"
+    message: "Import contains invalid data. See error report for details"
+
+ScopeBoundary:
+  InScope:
+    - Import project and tasks from JSON
+  OutOfScope:
+    - Import attachments, import from CSV, incremental import
+
+OpenQuestions:
+  - question: "Should import support conflict resolution strategies?"
+    status: OPEN
+    resolution: ""
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-DATA-MANAGEMENT
+  dependencies:
+    - REQ-021
+  tags:
+    - advanced
+    - tier-3
+    - import
+    - integration

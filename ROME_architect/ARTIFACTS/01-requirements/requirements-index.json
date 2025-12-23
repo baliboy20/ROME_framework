@@ -1,0 +1,297 @@
+{
+  "pilot_project": "Task Management System",
+  "total_requirements": 25,
+  "created_date": "2025-12-23",
+  "technology_stack": {
+    "backend": "Parse-server (Node.js)",
+    "frontend": "Flutter (cross-platform)",
+    "database": "MongoDB"
+  },
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "tier": 1,
+      "category": "Core CRUD",
+      "actor": "ProjectManager",
+      "intent": "create project",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-001.yaml"
+    },
+    {
+      "id": "REQ-002",
+      "tier": 1,
+      "category": "Core CRUD",
+      "actor": "ProjectManager",
+      "intent": "create task",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-002.yaml"
+    },
+    {
+      "id": "REQ-003",
+      "tier": 1,
+      "category": "Core CRUD",
+      "actor": "TeamMember",
+      "intent": "update task",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-003.yaml"
+    },
+    {
+      "id": "REQ-004",
+      "tier": 1,
+      "category": "Core CRUD",
+      "actor": "TeamMember",
+      "intent": "view task",
+      "priority": "MEDIUM",
+      "copilot_mode": "GUIDED",
+      "file": "REQ-004.yaml"
+    },
+    {
+      "id": "REQ-005",
+      "tier": 1,
+      "category": "Core CRUD",
+      "actor": "ProjectManager",
+      "intent": "delete task",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-005.yaml"
+    },
+    {
+      "id": "REQ-006",
+      "tier": 1,
+      "category": "Core CRUD",
+      "actor": "TeamMember",
+      "intent": "search tasks",
+      "priority": "MEDIUM",
+      "copilot_mode": "GUIDED",
+      "file": "REQ-006.yaml"
+    },
+    {
+      "id": "REQ-007",
+      "tier": 2,
+      "category": "Collaboration",
+      "actor": "TeamMember",
+      "intent": "create comment",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-007.yaml"
+    },
+    {
+      "id": "REQ-008",
+      "tier": 2,
+      "category": "Collaboration",
+      "actor": "TeamMember",
+      "intent": "create attachment",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-008.yaml"
+    },
+    {
+      "id": "REQ-009",
+      "tier": 2,
+      "category": "Collaboration",
+      "actor": "ProjectManager",
+      "intent": "create team",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-009.yaml"
+    },
+    {
+      "id": "REQ-010",
+      "tier": 2,
+      "category": "Collaboration",
+      "actor": "ProjectManager",
+      "intent": "update team",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-010.yaml"
+    },
+    {
+      "id": "REQ-011",
+      "tier": 2,
+      "category": "Collaboration",
+      "actor": "ProjectManager",
+      "intent": "create team-member",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-011.yaml"
+    },
+    {
+      "id": "REQ-012",
+      "tier": 2,
+      "category": "Collaboration",
+      "actor": "ProjectManager",
+      "intent": "delete team-member",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-012.yaml"
+    },
+    {
+      "id": "REQ-013",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "TeamMember",
+      "intent": "submit task",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-013.yaml"
+    },
+    {
+      "id": "REQ-014",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "ProjectManager",
+      "intent": "approve task",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-014.yaml"
+    },
+    {
+      "id": "REQ-015",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "ProjectManager",
+      "intent": "reject task",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-015.yaml"
+    },
+    {
+      "id": "REQ-016",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "Administrator",
+      "intent": "export project",
+      "priority": "MEDIUM",
+      "copilot_mode": "GUIDED",
+      "file": "REQ-016.yaml"
+    },
+    {
+      "id": "REQ-017",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "SystemIntegrator",
+      "intent": "import project",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-017.yaml"
+    },
+    {
+      "id": "REQ-018",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "TeamMember",
+      "intent": "archive task",
+      "priority": "LOW",
+      "copilot_mode": "GUIDED",
+      "file": "REQ-018.yaml"
+    },
+    {
+      "id": "REQ-019",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "ProjectManager",
+      "intent": "restore task",
+      "priority": "LOW",
+      "copilot_mode": "GUIDED",
+      "file": "REQ-019.yaml"
+    },
+    {
+      "id": "REQ-020",
+      "tier": 3,
+      "category": "Advanced",
+      "actor": "Administrator",
+      "intent": "view analytics",
+      "priority": "LOW",
+      "copilot_mode": "PERMISSIVE",
+      "file": "REQ-020.yaml"
+    },
+    {
+      "id": "REQ-021",
+      "tier": 4,
+      "category": "System Integration",
+      "actor": "SystemIntegrator",
+      "intent": "create api-token",
+      "priority": "HIGH",
+      "copilot_mode": "STRICT",
+      "file": "REQ-021.yaml"
+    },
+    {
+      "id": "REQ-022",
+      "tier": 4,
+      "category": "System Integration",
+      "actor": "SystemIntegrator",
+      "intent": "delete api-token",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-022.yaml"
+    },
+    {
+      "id": "REQ-023",
+      "tier": 4,
+      "category": "System Integration",
+      "actor": "Administrator",
+      "intent": "create webhook",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-023.yaml"
+    },
+    {
+      "id": "REQ-024",
+      "tier": 4,
+      "category": "System Integration",
+      "actor": "Administrator",
+      "intent": "update webhook",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-024.yaml"
+    },
+    {
+      "id": "REQ-025",
+      "tier": 4,
+      "category": "System Integration",
+      "actor": "Administrator",
+      "intent": "delete webhook",
+      "priority": "MEDIUM",
+      "copilot_mode": "STRICT",
+      "file": "REQ-025.yaml"
+    }
+  ],
+  "statistics": {
+    "by_tier": {
+      "tier_1": 6,
+      "tier_2": 6,
+      "tier_3": 8,
+      "tier_4": 5
+    },
+    "by_actor": {
+      "ProjectManager": 7,
+      "TeamMember": 6,
+      "Administrator": 5,
+      "SystemIntegrator": 3
+    },
+    "by_priority": {
+      "HIGH": 8,
+      "MEDIUM": 14,
+      "LOW": 3
+    },
+    "by_copilot_mode": {
+      "STRICT": 20,
+      "GUIDED": 4,
+      "PERMISSIVE": 1
+    }
+  },
+  "entities_identified": [
+    "Project",
+    "Task",
+    "Comment",
+    "Attachment",
+    "Team",
+    "User",
+    "APIToken",
+    "Webhook"
+  ],
+  "validation_status": "Not yet validated - awaiting /validate-aordl skill implementation"
+}

@@ -1,0 +1,73 @@
+ID: REQ-008
+
+Actor: TeamMember
+
+Intent: create attachment
+
+Preconditions:
+  - TeamMember authenticated
+  - Task exists
+  - TeamMember has task view permission
+
+Conditions:
+  - File size ≤ 10MB
+  - File type allowed (images, PDFs, documents)
+
+Postconditions:
+  - File uploaded to cloud storage
+  - Attachment record created in database
+  - Task updated_at timestamp refreshed
+  - Notification sent to task assignee
+
+Outcomes:
+  - Attachment appears in task attachment list
+  - File accessible via secure URL
+  - Attachment metadata recorded (filename, size, type, uploader)
+
+Invariants:
+  - File size ≤ 10MB
+  - Filename unique per task
+  - Upload timestamp recorded
+
+NonFunctional:
+  Performance:
+    - Upload completes in <10 seconds for 10MB file
+  Security:
+    - Files scanned for malware before storage
+  Scalability:
+    - Supports 50 attachments per task
+
+Errors:
+  - error: "If file size exceeds 10MB"
+    message: "File size cannot exceed 10MB"
+  - error: "If file type not allowed"
+    message: "File type not supported. Allowed: images, PDFs, documents"
+  - error: "If filename already exists on task"
+    message: "A file with this name already exists on this task"
+
+ScopeBoundary:
+  InScope:
+    - Upload file, store in cloud, record metadata
+  OutOfScope:
+    - File versioning, bulk upload, file preview
+
+OpenQuestions:
+  - question: "Should attachments support version history?"
+    status: DEFERRED
+    resolution: ""
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-COLLABORATION
+  dependencies:
+    - REQ-002
+  tags:
+    - collaboration
+    - tier-2
+    - attachment

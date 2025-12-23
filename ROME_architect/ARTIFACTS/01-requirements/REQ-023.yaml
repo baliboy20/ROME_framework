@@ -1,0 +1,70 @@
+ID: REQ-023
+
+Actor: Administrator
+
+Intent: create webhook
+
+Preconditions:
+  - Administrator authenticated
+  - Administrator has admin role
+
+Conditions:
+  - Webhook URL valid HTTPS URL
+  - Event type must be valid (task.created, task.updated, task.completed)
+
+Postconditions:
+  - Webhook saved to database
+  - Webhook activation status set to 'active'
+  - Test webhook event sent
+  - Audit log entry created
+
+Outcomes:
+  - Webhook appears in active webhooks list
+  - Webhook receives events for configured event types
+  - Test event sent to verify connectivity
+
+Invariants:
+  - Webhook URL must use HTTPS protocol
+  - Event type must be valid enum
+  - Webhook can subscribe to multiple event types
+
+NonFunctional:
+  Performance:
+    - Webhook creation completes in <2 seconds
+  Security:
+    - Webhook payloads signed with HMAC-SHA256
+  Reliability:
+    - Webhook delivery retries up to 3 times on failure
+
+Errors:
+  - error: "If webhook URL not HTTPS"
+    message: "Webhook URL must use HTTPS protocol"
+  - error: "If test webhook delivery fails"
+    message: "Webhook endpoint unreachable. Please verify URL"
+  - error: "If event type invalid"
+    message: "Invalid event type. Valid types: task.created, task.updated, task.completed"
+
+ScopeBoundary:
+  InScope:
+    - Create webhook with URL, event types, secret
+  OutOfScope:
+    - Webhook templates, conditional webhooks, webhook transformations
+
+OpenQuestions:
+  - question: "Should webhooks support custom headers?"
+    status: OPEN
+    resolution: ""
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-WEBHOOKS
+  tags:
+    - integration
+    - tier-4
+    - webhook

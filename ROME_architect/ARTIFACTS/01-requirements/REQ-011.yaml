@@ -1,0 +1,74 @@
+ID: REQ-011
+
+Actor: ProjectManager
+
+Intent: create team-member
+
+Preconditions:
+  - ProjectManager authenticated
+  - Team exists
+  - ProjectManager is team owner
+  - User exists in organization
+
+Conditions:
+  - User not already team member
+
+Postconditions:
+  - User added to team members list
+  - User granted team access permissions
+  - Notification sent to user
+  - Audit log entry created
+
+Outcomes:
+  - User appears in team member list
+  - User receives team invitation notification
+  - User can access team projects
+
+Invariants:
+  - User can be member of multiple teams
+  - Team member role must be one of MEMBER, ADMIN
+  - User cannot be duplicate in same team
+
+NonFunctional:
+  Performance:
+    - Member addition completes in <1 second
+  Security:
+    - Requires team owner permission
+  Scalability:
+    - Supports 100 members per team
+
+Errors:
+  - error: "If user already team member"
+    message: "User is already a member of this team"
+  - error: "If user not found"
+    message: "User does not exist in organization"
+  - error: "If team at capacity (100 members)"
+    message: "Team has reached maximum capacity of 100 members"
+
+ScopeBoundary:
+  InScope:
+    - Add user to team with role (MEMBER or ADMIN)
+  OutOfScope:
+    - Bulk member addition, member invitations via email
+
+OpenQuestions:
+  - question: "Should team members be able to self-remove?"
+    status: OPEN
+    resolution: ""
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-TEAM-MANAGEMENT
+  dependencies:
+    - REQ-009
+  tags:
+    - collaboration
+    - tier-2
+    - team
+    - membership

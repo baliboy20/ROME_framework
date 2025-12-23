@@ -1,0 +1,66 @@
+ID: REQ-019
+
+Actor: ProjectManager
+
+Intent: restore task
+
+Preconditions:
+  - ProjectManager authenticated
+  - Task exists and is archived
+  - ProjectManager is project owner
+
+Conditions:
+  - Task archived less than 90 days ago
+
+Postconditions:
+  - Task archive flag removed
+  - Task status remains 'completed'
+  - Task appears in active task lists
+  - Audit log entry created
+
+Outcomes:
+  - Task appears in default task views
+  - Task accessible for viewing and commenting
+  - Restore timestamp recorded
+
+Invariants:
+  - Restored tasks retain completed status
+  - Restore timestamp recorded
+  - Tasks archived >90 days cannot be restored
+
+NonFunctional:
+  Performance:
+    - Restore completes in <1 second
+  Security:
+    - Requires project owner permission
+
+Errors:
+  - error: "If task not archived"
+    message: "Task is not archived"
+  - error: "If task archived more than 90 days ago"
+    message: "Task archived more than 90 days ago cannot be restored"
+
+ScopeBoundary:
+  InScope:
+    - Restore archived task to active view
+  OutOfScope:
+    - Bulk restore, restore to in-progress status
+
+OpenQuestions: []
+
+CopilotMode: GUIDED
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: LOW
+  epic: EPIC-PILOT
+  feature: FEATURE-TASK-MANAGEMENT
+  dependencies:
+    - REQ-018
+  tags:
+    - advanced
+    - tier-3
+    - task
+    - archive
