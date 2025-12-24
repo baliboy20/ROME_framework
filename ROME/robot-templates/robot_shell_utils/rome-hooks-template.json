@@ -1,13 +1,14 @@
 {
-  "version": "1.0",
-  "description": "ROME Framework Claude Code Hooks Template - Copy to .claude/hooks.json in robot workspace",
+  "version": "2.0",
+  "description": "ROME Framework Hooks - Activity Log Memory Replacement",
   "documentation": "See ROME-PROP-014 for full documentation",
+  "scope": "Only 2 hooks for activity log reminders after task completion",
 
   "hooks": {
     "tool-use": [
       {
         "name": "rome-artifact-creation-reminder",
-        "description": "Remind robot to log artifact creation in activity log",
+        "description": "Remind robot to update activity log after creating artifact",
         "tool": "Write",
         "phase": "after",
         "enabled": true,
@@ -17,7 +18,7 @@
         },
         "action": {
           "type": "echo",
-          "message": "\n📋 ═══════════════════════════════════════════════════════════\n   ROME ACTIVITY LOG REMINDER\n═══════════════════════════════════════════════════════════\n\n   You created an artifact. Update activity log:\n   \n   mcp__activity-log__append({\n     type: 'STORY',\n     id: '<story-id>',\n     attributes: {\n       status: 'COMPLETED',\n       artifact: '${file_path}',\n       completed: '${timestamp}'\n     }\n   })\n\n═══════════════════════════════════════════════════════════\n"
+          "message": "\n📋 You created an artifact. Update activity log:\n   mcp__activity-log__append({type: 'STORY', id: '<story-id>', attributes: {status: 'COMPLETED', artifact: '${file_path}'}})\n"
         }
       },
 
@@ -33,116 +34,32 @@
         },
         "action": {
           "type": "echo",
-          "message": "\n✅ ═══════════════════════════════════════════════════════════\n   TODO COMPLETED - VERIFY ACTIVITY LOG\n═══════════════════════════════════════════════════════════\n\n   A TODO was marked complete. Ensure activity log reflects this.\n   \n   If this completes a STORY or FEATURE:\n   mcp__activity-log__append({\n     type: 'STORY',\n     id: '<story-id>',\n     attributes: { status: 'COMPLETED' }\n   })\n\n═══════════════════════════════════════════════════════════\n"
-        }
-      },
-
-      {
-        "name": "rome-aordl-validation-reminder",
-        "description": "Remind to validate AORDL requirements after creation",
-        "tool": "Write",
-        "phase": "after",
-        "enabled": true,
-        "condition": {
-          "type": "path-match",
-          "pattern": "REQ-[0-9]+\\.yaml$"
-        },
-        "action": {
-          "type": "echo",
-          "message": "\n📝 ═══════════════════════════════════════════════════════════\n   AORDL REQUIREMENT CREATED\n═══════════════════════════════════════════════════════════\n\n   File: ${file_path}\n   \n   NEXT STEPS:\n   1. Validate with /validate-aordl skill\n   2. Fix any validation errors\n   3. Update requirements-catalog.md\n   4. Log in activity log\n\n═══════════════════════════════════════════════════════════\n"
-        }
-      },
-
-      {
-        "name": "rome-design-traceability-reminder",
-        "description": "Remind to maintain traceability when creating use cases",
-        "tool": "Write",
-        "phase": "before",
-        "enabled": true,
-        "condition": {
-          "type": "all",
-          "conditions": [
-            {"type": "path-match", "pattern": "use-cases\\.md"},
-            {"type": "content-match", "pattern": "UC-[0-9]+"}
-          ]
-        },
-        "action": {
-          "type": "echo",
-          "message": "\n🔗 ═══════════════════════════════════════════════════════════\n   TRACEABILITY CHECK\n═══════════════════════════════════════════════════════════\n\n   Creating use cases. Ensure traceability:\n   \n   UC-### → FUNC-### → REQ-###\n   \n   Verify mapping in actionlist.md and requirements-matrix.md\n\n═══════════════════════════════════════════════════════════\n"
-        }
-      }
-    ],
-
-    "user-prompt-submit": [
-      {
-        "name": "rome-gate-request-enforcement",
-        "description": "Enforce GATE request protocol when robot mentions GATE validation",
-        "enabled": true,
-        "condition": {
-          "type": "response-match",
-          "pattern": "GATE-P[0-9].*request|request.*GATE-P[0-9]"
-        },
-        "action": {
-          "type": "echo",
-          "message": "\n🚦 ═══════════════════════════════════════════════════════════\n   ROME GATE REQUEST PROTOCOL\n═══════════════════════════════════════════════════════════\n\n   Before requesting GATE validation:\n   \n   ✓ All phase artifacts complete\n   ✓ Activity log shows PHASE status: COMPLETED\n   ✓ All TODOs marked complete\n   ✓ Traceability maintained\n   \n   Proper GATE request:\n   mcp__activity-log__append({\n     type: 'GATE',\n     id: 'GATE-PX',\n     attributes: {\n       status: 'REQUESTED',\n       requestedBy: '<robot-name>',\n       timestamp: '${timestamp}'\n     }\n   })\n   \n   Then notify Roma for Sarah assignment.\n\n═══════════════════════════════════════════════════════════\n"
-        }
-      },
-
-      {
-        "name": "rome-blocker-alert",
-        "description": "Alert when robot encounters blocker or error",
-        "enabled": true,
-        "condition": {
-          "type": "response-match",
-          "pattern": "blocked|blocker|cannot proceed|error|failed"
-        },
-        "action": {
-          "type": "echo",
-          "message": "\n🚫 ═══════════════════════════════════════════════════════════\n   BLOCKER DETECTED - IMMEDIATE ACTION REQUIRED\n═══════════════════════════════════════════════════════════\n\n   You mentioned a blocker. Roma must be notified.\n   \n   1. Log the blocker:\n   mcp__activity-log__append({\n     type: 'BLOCKER',\n     id: 'BLOCKER-${timestamp}',\n     attributes: {\n       description: '<describe blocker>',\n       blockedTask: '<task-id>',\n       robot: '<robot-name>',\n       severity: 'HIGH|MEDIUM|LOW',\n       reported: '${timestamp}'\n     }\n   })\n   \n   2. Notify Roma for escalation\n   3. Do NOT proceed until resolved\n\n═══════════════════════════════════════════════════════════\n"
-        }
-      },
-
-      {
-        "name": "rome-completion-gate-reminder",
-        "description": "Remind to request GATE when work is complete",
-        "enabled": true,
-        "condition": {
-          "type": "response-match",
-          "pattern": "complete|done|finished|ready"
-        },
-        "action": {
-          "type": "echo",
-          "message": "\n✅ ═══════════════════════════════════════════════════════════\n   WORK COMPLETION DETECTED\n═══════════════════════════════════════════════════════════\n\n   If phase work is complete, request GATE validation:\n   \n   1. Update activity log:\n      PHASE status: COMPLETED\n   \n   2. Request GATE validation:\n      mcp__activity-log__append({\n        type: 'GATE',\n        id: 'GATE-PX',\n        attributes: { status: 'REQUESTED' }\n      })\n   \n   3. Notify Roma to assign Sarah\n\n═══════════════════════════════════════════════════════════\n"
+          "message": "\n✅ TODO marked complete. Verify activity log reflects this completion.\n"
         }
       }
     ]
   },
 
-  "robot-specific-notes": {
-    "talib": "Enable AORDL validation hooks, P1→P2 transition hooks",
-    "pma": "Enable design traceability hooks, API/DB schema validation hooks",
-    "sarah": "Enable gate validation checklist hooks",
-    "roma": "Enable orchestration notification hooks, blocker escalation hooks",
-    "lucien": "Enable workspace validation hooks, environment config hooks",
-    "ashok": "Enable data layer completion hooks, Reena dependency hooks",
-    "reena": "Enable API completion hooks, Ashok dependency hooks, Charlie coordination hooks",
-    "charlie": "Enable UI completion hooks, Reena dependency hooks",
-    "clara": "Enable design system completion hooks",
-    "bootstrap": "Enable project setup validation hooks"
+  "deployment": {
+    "robots": [
+      "talib",
+      "pma",
+      "sarah",
+      "roma",
+      "lucien",
+      "ashok",
+      "reena",
+      "charlie",
+      "clara"
+    ],
+    "notes": "Same 2 hooks for all 9 robots. Bootstrap excluded (too short-lived)."
   },
 
   "configuration-modes": {
     "development": {
       "enabled": true,
       "verbose": true,
-      "all-hooks-active": true,
-      "description": "Full hook enforcement for learning/training"
-    },
-    "production": {
-      "enabled": true,
-      "verbose": false,
-      "critical-only": true,
-      "description": "Only critical hooks (blockers, gates)"
+      "description": "All hooks active with verbose messages"
     },
     "expert": {
       "enabled": false,
