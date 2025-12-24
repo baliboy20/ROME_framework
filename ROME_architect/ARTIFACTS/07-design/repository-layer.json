@@ -1,0 +1,358 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T10:26:34.339Z"
+  },
+  "repositories": [
+    {
+      "name": "TaskRepository",
+      "entity": "Task",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Task | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Task[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Task"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Task"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "ProjectRepository",
+      "entity": "Project",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Project | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Project[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Project"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Project"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "TeamMemberRepository",
+      "entity": "TeamMember",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "TeamMember | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "TeamMember[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "TeamMember"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "TeamMember"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "TeamRepository",
+      "entity": "Team",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Team | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Team[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Team"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Team"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "WebhookRepository",
+      "entity": "Webhook",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Webhook | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Webhook[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Webhook"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Webhook"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "ApiTokenRepository",
+      "entity": "ApiToken",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "ApiToken | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "ApiToken[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "ApiToken"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "ApiToken"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "CommentRepository",
+      "entity": "Comment",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Comment | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Comment[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Comment"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Comment"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "AttachmentRepository",
+      "entity": "Attachment",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Attachment | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Attachment[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Attachment"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Attachment"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    },
+    {
+      "name": "AnalyticRepository",
+      "entity": "Analytic",
+      "interface": true,
+      "methods": [
+        {
+          "name": "findById",
+          "type": "query",
+          "returns": "Analytic | null"
+        },
+        {
+          "name": "findAll",
+          "type": "query",
+          "returns": "Analytic[]"
+        },
+        {
+          "name": "save",
+          "type": "command",
+          "returns": "Analytic"
+        },
+        {
+          "name": "update",
+          "type": "command",
+          "returns": "Analytic"
+        },
+        {
+          "name": "delete",
+          "type": "command",
+          "returns": "boolean"
+        }
+      ],
+      "queryPatterns": [
+        "byId",
+        "all",
+        "paginated"
+      ],
+      "caching": true,
+      "connectionPool": true
+    }
+  ]
+}

@@ -1,0 +1,1688 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T10:26:34.336Z",
+    "framework": "express",
+    "total_controllers": 10,
+    "total_routes": 24
+  },
+  "controllers": [
+    {
+      "name": "ProjectController",
+      "resource": "project",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/project",
+          "handler": "create",
+          "summary": "import project",
+          "description": "New project appears in organization project list. Import summary report generated. Import errors logged if any",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Import file cannot exceed 50MB",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Import file does not match required schema",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/project",
+          "handler": "getAll",
+          "summary": "export project",
+          "description": "Export file generated with project data. Administrator receives download link. Export expires after 7 days",
+          "parameters": [],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Project too large to export. Contact support",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Export format must be JSON, CSV, or PDF",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "ProjectService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "TaskController",
+      "resource": "task",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/task",
+          "handler": "create",
+          "summary": "create task",
+          "description": "Task saved to database with unique ID. Task appears in project task list. Assignee receives notification if assigned",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Assignee must be a project team member",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Project does not exist",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "GET",
+          "path": "/task",
+          "handler": "getAll",
+          "summary": "view task",
+          "description": "Task details displayed to TeamMember. Related comments and attachments loaded. Task history visible",
+          "parameters": [],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Bad Request - Invalid input",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "You do not have permission to view this task",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Task does not exist",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/task/{id}",
+          "handler": "update",
+          "summary": "update task",
+          "description": "Task changes reflected in database. Task history shows modification record. Project owner receives notification if status changed",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Task was modified by another user. Please refresh and try again",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Cannot reopen completed tasks",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "DELETE",
+          "path": "/task/{id}",
+          "handler": "delete",
+          "summary": "delete task",
+          "description": "Task no longer appears in project task list. Task data retained in database (soft delete). Deletion audit trail created",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 204,
+              "description": "No Content"
+            },
+            {
+              "statusCode": 400,
+              "description": "Only project owners can delete tasks",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        },
+        {
+          "method": "POST",
+          "path": "/task/{id}/submit",
+          "handler": "create",
+          "summary": "submit task",
+          "description": "Task appears in ProjectManager review queue. ProjectManager receives review notification. Task assignee receives submission confirmation",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Task cannot be submitted with incomplete required fields",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PATCH",
+          "path": "/task/{id}/approve",
+          "handler": "update",
+          "summary": "approve task",
+          "description": "Task appears in completed tasks list. Task assignee receives approval notification. Project completion percentage updated",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Only tasks pending review can be approved",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PATCH",
+          "path": "/task/{id}/reject",
+          "handler": "update",
+          "summary": "reject task",
+          "description": "Task returned to assignee for rework. Task assignee receives rejection notification with reason. Task editable by assignee again",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Rejection reason is required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PATCH",
+          "path": "/task/{id}/archive",
+          "handler": "update",
+          "summary": "archive task",
+          "description": "Task no longer appears in default task views. Task accessible via \"Archived Tasks\" view. Task metadata preserved",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Only completed tasks can be archived",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PATCH",
+          "path": "/task/{id}/restore",
+          "handler": "update",
+          "summary": "restore task",
+          "description": "Task appears in default task views. Task accessible for viewing and commenting. Restore timestamp recorded",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Task ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Task is not archived",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "TaskService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "TasksController",
+      "resource": "tasks",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/tasks/search",
+          "handler": "search",
+          "summary": "search tasks",
+          "description": "Matching tasks returned to TeamMember. Results ordered by relevance. Search execution time logged",
+          "parameters": [
+            {
+              "name": "q",
+              "in": "query",
+              "required": false,
+              "type": "string",
+              "description": "Search query"
+            },
+            {
+              "name": "limit",
+              "in": "query",
+              "required": false,
+              "type": "integer",
+              "description": "Results per page"
+            },
+            {
+              "name": "offset",
+              "in": "query",
+              "required": false,
+              "type": "integer",
+              "description": "Pagination offset"
+            }
+          ],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Search query must be at least 2 characters",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "TasksService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "CommentController",
+      "resource": "comment",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/comment",
+          "handler": "create",
+          "summary": "create comment",
+          "description": "Comment appears in task comment thread. Task assignee receives notification. Comment author recorded",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Comment cannot exceed 2000 characters",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Task does not exist",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "CommentService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "AttachmentController",
+      "resource": "attachment",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/attachment",
+          "handler": "create",
+          "summary": "create attachment",
+          "description": "Attachment appears in task attachment list. File accessible via secure URL. Attachment metadata recorded (filename, size, type, uploader)",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "File size cannot exceed 10MB",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "A file with this name already exists on this task",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "AttachmentService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "TeamController",
+      "resource": "team",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/team",
+          "handler": "create",
+          "summary": "create team",
+          "description": "Team saved to database with unique ID. Team appears in ProjectManager's team list. Team ready to accept members",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Active subscription required to create teams",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Team name already exists in your organization",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/team/{id}",
+          "handler": "update",
+          "summary": "update team",
+          "description": "Team changes reflected in database. Team members notified if team name changed",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Team ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Only team owners can update team settings",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Team name already exists in your organization",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "TeamService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "Team-memberController",
+      "resource": "team-member",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/team-member",
+          "handler": "create",
+          "summary": "create team-member",
+          "description": "User appears in team member list. User receives team invitation notification. User can access team projects",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "User is already a member of this team",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "User does not exist in organization",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "DELETE",
+          "path": "/team-member/{id}",
+          "handler": "delete",
+          "summary": "delete team-member",
+          "description": "User no longer appears in team member list. User loses access to team projects. User receives removal notification",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "TeamMember ID"
+            }
+          ],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 204,
+              "description": "No Content"
+            },
+            {
+              "statusCode": 400,
+              "description": "Cannot remove team owner. Transfer ownership first",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "Team-memberService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "AnalyticsController",
+      "resource": "analytics",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "GET",
+          "path": "/analytics",
+          "handler": "getAll",
+          "summary": "view analytics",
+          "description": "Analytics dashboard displayed. Metrics include task completion rate, average task duration, team performance. Charts and graphs rendered",
+          "parameters": [],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Date range cannot exceed 365 days",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "AnalyticsService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "Api-tokenController",
+      "resource": "api-token",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/api-token",
+          "handler": "create",
+          "summary": "create api-token",
+          "description": "API token displayed once to SystemIntegrator. Token usable for API authentication. Token appears in active tokens list",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Only administrators can create API tokens",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Token name already exists in your organization",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "DELETE",
+          "path": "/api-token/{id}",
+          "handler": "delete",
+          "summary": "delete api-token",
+          "description": "Token no longer appears in active tokens list. Token cannot be used for API authentication. Token revocation timestamp recorded",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "ApiToken ID"
+            }
+          ],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 204,
+              "description": "No Content"
+            },
+            {
+              "statusCode": 400,
+              "description": "API token has already been revoked",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "API token does not exist",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "Api-tokenService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    },
+    {
+      "name": "WebhookController",
+      "resource": "webhook",
+      "framework": "express",
+      "middleware": [
+        "authentication",
+        "authorization",
+        "validation",
+        "errorHandler"
+      ],
+      "routes": [
+        {
+          "method": "POST",
+          "path": "/webhook",
+          "handler": "create",
+          "summary": "create webhook",
+          "description": "Webhook appears in active webhooks list. Webhook receives events for configured event types. Test event sent to verify connectivity",
+          "parameters": [],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 201,
+              "description": "Created",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Webhook URL must use HTTPS protocol",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Invalid event type. Valid types: task.created, task.updated, task.completed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "PUT",
+          "path": "/webhook/{id}",
+          "handler": "update",
+          "summary": "update webhook",
+          "description": "Webhook changes reflected in database. Webhook receives events for updated event types. Test event sent if URL changed",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Webhook ID"
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "contentType": "application/json"
+          },
+          "responses": [
+            {
+              "statusCode": 200,
+              "description": "OK",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 400,
+              "description": "Webhook URL must use HTTPS protocol",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Not Found - Resource not found",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "validateBody",
+            "authorize"
+          ]
+        },
+        {
+          "method": "DELETE",
+          "path": "/webhook/{id}",
+          "handler": "delete",
+          "summary": "delete webhook",
+          "description": "Webhook no longer appears in active webhooks list. Webhook stops receiving events. Webhook deletion timestamp recorded",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "type": "string",
+              "description": "Webhook ID"
+            }
+          ],
+          "requestBody": null,
+          "responses": [
+            {
+              "statusCode": 204,
+              "description": "No Content"
+            },
+            {
+              "statusCode": 400,
+              "description": "Webhook has already been deleted",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 401,
+              "description": "Unauthorized - Authentication required",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 403,
+              "description": "Forbidden - Insufficient permissions",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 404,
+              "description": "Webhook does not exist",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 409,
+              "description": "Conflict - Resource already exists or state conflict",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 422,
+              "description": "Unprocessable Entity - Validation failed",
+              "schema": "application/json"
+            },
+            {
+              "statusCode": 500,
+              "description": "Internal Server Error",
+              "schema": "application/json"
+            }
+          ],
+          "middleware": [
+            "authenticate",
+            "authorize"
+          ]
+        }
+      ],
+      "dependencies": [
+        "WebhookService",
+        "ValidationMiddleware",
+        "AuthMiddleware"
+      ]
+    }
+  ]
+}

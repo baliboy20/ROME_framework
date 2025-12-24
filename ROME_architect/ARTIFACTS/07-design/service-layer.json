@@ -1,0 +1,322 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T10:26:34.338Z"
+  },
+  "services": [
+    {
+      "name": "TaskService",
+      "entity": "Task",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "TaskRepository",
+        "TaskValidator"
+      ]
+    },
+    {
+      "name": "ProjectService",
+      "entity": "Project",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "ProjectRepository",
+        "ProjectValidator"
+      ]
+    },
+    {
+      "name": "TeamMemberService",
+      "entity": "TeamMember",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "TeamMemberRepository",
+        "TeamMemberValidator"
+      ]
+    },
+    {
+      "name": "TeamService",
+      "entity": "Team",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "TeamRepository",
+        "TeamValidator"
+      ]
+    },
+    {
+      "name": "WebhookService",
+      "entity": "Webhook",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "WebhookRepository",
+        "WebhookValidator"
+      ]
+    },
+    {
+      "name": "ApiTokenService",
+      "entity": "ApiToken",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "ApiTokenRepository",
+        "ApiTokenValidator"
+      ]
+    },
+    {
+      "name": "CommentService",
+      "entity": "Comment",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "CommentRepository",
+        "CommentValidator"
+      ]
+    },
+    {
+      "name": "AttachmentService",
+      "entity": "Attachment",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "AttachmentRepository",
+        "AttachmentValidator"
+      ]
+    },
+    {
+      "name": "AnalyticService",
+      "entity": "Analytic",
+      "methods": [
+        {
+          "name": "create",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "update",
+          "transactional": true,
+          "validation": true
+        },
+        {
+          "name": "delete",
+          "transactional": true,
+          "validation": false
+        },
+        {
+          "name": "findById",
+          "transactional": false,
+          "validation": false
+        },
+        {
+          "name": "findAll",
+          "transactional": false,
+          "validation": false
+        }
+      ],
+      "dependencies": [
+        "AnalyticRepository",
+        "AnalyticValidator"
+      ]
+    }
+  ]
+}

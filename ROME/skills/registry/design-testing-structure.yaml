@@ -1,0 +1,25 @@
+skill:
+  name: design-testing-structure
+  version: 1.0.0
+  category: design
+  tier: 1
+  description: Design test architecture and testing strategy
+
+parameters:
+  required:
+    - name: data_dictionary_file
+      type: string
+      validation: file_exists
+
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  test_suites:
+    type: integer
+  testing_spec:
+    type: object

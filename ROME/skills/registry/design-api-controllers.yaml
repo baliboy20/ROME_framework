@@ -1,0 +1,41 @@
+skill:
+  name: design-api-controllers
+  version: 1.0.0
+  category: design
+  tier: 1
+  description: Design API controller layer with routing, middleware, and request handling
+
+parameters:
+  required:
+    - name: api_spec_file
+      type: string
+      validation: file_exists
+      description: Path to unified API specification file
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write controller design specification
+
+    - name: framework
+      type: string
+      default: express
+      description: API framework (express, fastify, nestjs, spring, flask)
+
+execution:
+  timeout: 60000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: linear
+
+output:
+  controllers_designed:
+    type: integer
+    description: Number of controllers designed
+  total_routes:
+    type: integer
+    description: Total API routes designed
+  controller_specs:
+    type: array
+    description: List of controller specifications
