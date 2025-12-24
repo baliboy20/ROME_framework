@@ -1,0 +1,77 @@
+skill:
+  name: analyze-dependencies
+  version: 1.0.0
+  category: analysis
+  tier: 3
+  description: Analyze cross-requirement dependencies and identify implementation order
+
+parameters:
+  required:
+    - name: requirements_directory
+      type: string
+      validation: directory_exists
+      description: Directory containing AORDL requirement files
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write dependency analysis report
+
+    - name: detect_circular
+      type: boolean
+      default: true
+      description: Detect circular dependencies
+
+    - name: suggest_order
+      type: boolean
+      default: true
+      description: Suggest implementation order
+
+execution:
+  timeout: 90000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: linear
+
+output:
+  dependency_status:
+    type: string
+    description: CLEAN, HAS_ISSUES, or CIRCULAR_DETECTED
+  total_requirements:
+    type: integer
+    description: Total requirements analyzed
+  total_dependencies:
+    type: integer
+    description: Total dependencies found
+  circular_dependencies:
+    type: array
+    description: List of circular dependency chains
+  implementation_order:
+    type: array
+    description: Suggested implementation order (topological sort)
+  dependency_graph:
+    type: object
+    description: Complete dependency graph
+
+# Analysis checks
+analysis_checks:
+  - check: explicit_dependencies
+    description: Extract dependencies from Preconditions and Conditions
+    severity: INFO
+
+  - check: implicit_dependencies
+    description: Infer dependencies from shared entities
+    severity: INFO
+
+  - check: circular_dependencies
+    description: Detect circular dependency chains
+    severity: ERROR
+
+  - check: orphan_requirements
+    description: Find requirements with no dependencies
+    severity: INFO
+
+  - check: critical_path
+    description: Identify requirements on critical implementation path
+    severity: INFO
