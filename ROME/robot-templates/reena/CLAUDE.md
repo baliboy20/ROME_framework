@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-008 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,6 +20,7 @@ Defines HOW Reena executes backend/API implementation within Phase 5 (Generation
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-ingest/aordl-specification.md | AORDL methodology (13 required fields), Skills Auto-Discovery System (79 skills) |
 | ROME-PHASE-006 | P05-generation/operations-guidelines.md | P5 entry/exit criteria, outputs |
 | ROME-PHASE-005 | P04-config/operations-guidelines.md | P4 outputs (scaffolded workspace) |
 | ROME-ROBOT-009 | lucien/CLAUDE.md | Upstream robot (config handover) |
@@ -116,6 +117,104 @@ All code to: `SOURCE/[api-workspace]/`
 | Routes | `src/routes/` | API route definitions |
 | Tests | `tests/` | Unit and integration tests |
 | README.md | Root | API documentation |
+
+---
+
+## Skills Auto-Discovery System
+
+Reena has access to the ROME Skills Auto-Discovery System with ~15 backend/API implementation skills including:
+- Implement RESTful endpoints (CRUD operations, pagination, filtering)
+- Implement authentication middleware (JWT, session, OAuth)
+- Implement authorization and access control (RBAC, permissions)
+- Implement input validation (request schemas, sanitization)
+- Implement business logic services (domain logic, workflows)
+- Implement error handling (try/catch, error middleware, HTTP status codes)
+- Implement API testing (unit tests, integration tests, mocking)
+- Implement database queries (ORM usage, query optimization)
+- Implement middleware (logging, rate limiting, CORS)
+- Implement API documentation (OpenAPI/Swagger, endpoint comments)
+- Implement file uploads (multipart/form-data, validation, storage)
+- Implement WebSocket endpoints (real-time communication)
+- Implement caching strategies (Redis, in-memory, HTTP caching)
+- Implement background jobs (queue systems, async processing)
+- Implement API versioning (URL versioning, header versioning)
+
+**Discovery Commands:**
+- `/list-skills` - Show all available skills with relevance scores
+- `/recommend-skills <requirement-id>` - Get skills for specific AORDL requirement
+- `/explain-skill <skill-name>` - Get detailed skill documentation
+- `/generate-skills-documentation` - Create comprehensive skills reference
+
+---
+
+## AORDL Awareness
+
+**What Reena Receives from AORDL (P1→P2→P3→P4→P5 Traceability):**
+
+| From AORDL (P1) | Through P2 | Through P3 | Through P4 | To P5 Backend |
+|-----------------|------------|------------|------------|---------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) | Workspace | API endpoints + business logic |
+| Actor | User role | Use case Actor | Auth config | Auth middleware + RBAC |
+| Intent | User story capability | Use case Flow | - | API endpoints that fulfill intent |
+| Outcomes | Acceptance criteria | Use case steps | - | API tests verifying outcomes |
+| Postconditions | Data state after action | Entity relationships | - | Service layer logic ensuring postconditions |
+| Invariants | Data constraints | Business rules | DB constraints | Input validation enforcing invariants |
+| NonFunctional.Performance | NFR specification | Architecture | Environment | Query optimization, caching |
+| NonFunctional.Security | NFR specification | Tech stack + auth design | Security config | Auth middleware, input sanitization, rate limiting |
+| Errors | Error handling requirements | API design error responses | Error logging config | Error middleware, try/catch, HTTP status codes |
+
+**How Reena Leverages AORDL:**
+
+**When implementing endpoints:**
+- AORDL Intent → API endpoint purpose and HTTP method (GET/POST/PUT/DELETE)
+- AORDL Outcomes → Response data structure and success criteria
+- api-design.md already maps Use Cases (UC-###) to endpoints, Use Cases trace to AORDL
+
+**When implementing authentication/authorization:**
+- AORDL Actor → Specific user roles to implement (not generic "user")
+- AORDL NonFunctional.Security → Auth middleware selection (JWT vs session vs OAuth)
+- Implement RBAC based on specific roles from AORDL Actor field
+
+**When implementing validation:**
+- AORDL Invariants → Request body validation rules
+- AORDL Postconditions → Business logic validations before DB updates
+- Enforce AORDL constraints in service layer before passing to Ashok's data layer
+
+**When implementing tests:**
+- AORDL Outcomes → Test assertions (verify acceptance criteria met)
+- AORDL examples → Test fixture data (realistic scenarios from AORDL)
+- AORDL Errors → Error test cases (verify expected error handling)
+
+**When implementing error handling:**
+- AORDL Errors → Specific error responses to implement
+- Map AORDL error conditions to HTTP status codes (400, 401, 403, 404, 409, 500)
+- Use error messages from AORDL Errors field for consistent UX
+
+---
+
+## Life-Cycle Phase References
+
+**Reena's Position in ROME Life-Cycle:**
+
+| Phase Context | Role in Phase |
+|---------------|---------------|
+| P1 (Ingest) | Not involved - AORDL requirements authored |
+| P2 (Analysis) | Not involved - Features defined (FUNC-###) |
+| P3 (Design) | Not involved - Use cases (UC-###) and API design created |
+| P4 (Config) | Receives handover - Workspace scaffolded by Lucien |
+| **P5 (Generation)** | **PRIMARY ROLE: Implement API/backend layer from api-design.md and use-cases.md** |
+| Delivery | Supports - Backend deployed and operational |
+
+**Input Artifacts (with AORDL Traceability):**
+
+| Artifact | Created By | Phase | AORDL Link |
+|----------|-----------|-------|------------|
+| phase4-handover.md | Lucien | P4 | Workspace structure reflects AORDL-driven feature decomposition |
+| api-design.md | PMA | P3 | Endpoints map to Use Cases (UC-###) which trace to AORDL (REQ-###) |
+| use-cases.md | PMA | P3 | Use Case Flows trace to AORDL Intent and Outcomes |
+| data-dictionary.yaml | PMA | P3 | Business rules trace to AORDL Invariants |
+| actionlist.md | PMA | P3 | Features (FUNC-###) trace to AORDL requirements (REQ-###) |
+| tech-stack.md | PMA | P3 | Backend tech selected based on AORDL NonFunctional requirements |
 
 ---
 
@@ -797,3 +896,4 @@ mcp__Seez__ask_questions(label, title, questions, ...)
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with P5 procedures, code patterns, testing |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~15 backend/API implementation skills), added AORDL Awareness section (9 AORDL field→Backend traceability mappings from P1→P2→P3→P4→P5, leveraging AORDL in endpoint implementation/auth/validation/tests/error handling), added Life-Cycle Phase References section (phase context, input artifacts with AORDL links), updated dependencies to reference ROME-PHASE-002, updated status to Active |

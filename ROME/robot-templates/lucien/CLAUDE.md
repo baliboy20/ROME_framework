@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-009 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,6 +20,7 @@ Defines HOW Lucien executes Phase 4 (Config). Lucien transforms PMA's design art
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-aordl/operations-guidelines.md | P1 AORDL requirements (for full traceability) |
 | ROME-PHASE-005 | P04-config/operations-guidelines.md | P4 entry/exit criteria, outputs |
 | ROME-PHASE-004 | P03-design/operations-guidelines.md | P3 outputs (inputs to P4) |
 | ROME-ROBOT-003 | pma/CLAUDE.md | Upstream robot (design handover) |
@@ -54,6 +55,159 @@ Defines HOW Lucien executes Phase 4 (Config). Lucien transforms PMA's design art
 - Architecture decisions (P3)
 - Business logic (P5)
 - UI implementation (P5)
+
+---
+
+## Skills Auto-Discovery System
+
+Lucien has access to **79 skills** across all phases through the skills auto-discovery system.
+
+### Discovering P4 Config Skills
+
+**List all P4 config skills:**
+```bash
+/list-skills --filter-phase P4
+/list-skills --search-query "scaffold"
+/list-skills --search-query "environment"
+```
+
+### Key P4 Config Skills
+
+**Configuration & DevOps - ~10 skills:**
+- `/scaffold-workspace` - Create workspace directory structure from actionlist.md
+- `/configure-environment` - Generate environment config files (.env templates)
+- `/setup-cicd-pipeline` - Create CI/CD pipeline configuration
+- `/configure-build-system` - Set up build tools (npm, gradle, etc.)
+- `/setup-test-framework` - Configure testing frameworks
+- `/validate-workspace-structure` - Verify scaffolding completeness
+- `/generate-technical-specs` - Document technical implementation details
+- `/create-scaffolding-manifest` - Document all created artifacts
+
+### Skills Discovery Commands
+
+**Discover available skills:**
+```bash
+/list-skills                    # All 79 skills
+/recommend-skills --task-description "scaffold workspaces from actionlist" --current-phase P4
+/explain-skill --skill-name scaffold-workspace
+```
+
+### Skills Auto-Discovery Best Practices
+
+**When starting P4:**
+1. Use `/list-skills --filter-phase P4` to see all config skills
+2. Use `/recommend-skills` with specific scaffolding tasks
+3. Execute skills in sequence (workspace → environment → CI/CD)
+
+**Example workflow:**
+```bash
+# Scaffold all workspaces
+/scaffold-workspace --actionlist ARTIFACTS/dev/design/actionlist.md
+
+# Configure environments
+/configure-environment --workspace data-workspace --env dev,test,staging,prod
+
+# Setup CI/CD
+/setup-cicd-pipeline --platform github-actions
+```
+
+---
+
+## AORDL Awareness
+
+Lucien scaffolds AORDL-driven configuration from P3 design artifacts.
+
+### AORDL-to-Config Traceability
+
+| From AORDL (P1) | Through P2 | Through P3 | To P4 Config |
+|-----------------|------------|------------|--------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) | Feature branch/workspace structure |
+| Actor | User role | Use case Actor | Authentication config (JWT, session, OAuth) |
+| Invariants | Data constraints | Data dictionary business rules | Database constraints in schema templates |
+| NonFunctional.Performance | NFR specification | System architecture | Environment sizing (dev/staging/prod specs) |
+| NonFunctional.Security | NFR specification | Tech stack + API auth design | Security config, secrets management |
+| Errors | Error handling requirements | API design error responses | Error logging configuration |
+
+### Leveraging AORDL in P4 Config
+
+**When scaffolding workspaces:**
+- Use P3 actionlist.md which maps Features (FUNC-###) to workspaces
+- Features are already traced to AORDL requirements (REQ-###)
+- Workspace structure reflects AORDL-driven feature decomposition
+
+**When configuring authentication:**
+- Reference AORDL Actor field → Authentication mechanism selection
+- AORDL NonFunctional.Security → Security config requirements
+- Configure auth based on specific roles from AORDL, not generic "user"
+
+**When sizing environments:**
+- Reference AORDL NonFunctional.Performance → Environment resource allocation
+- Configure dev/staging/prod based on AORDL performance targets
+- Set up monitoring for AORDL performance requirements
+
+**When configuring error logging:**
+- Reference AORDL Errors field → Error logging config
+- Configure error tracking for all AORDL error scenarios
+- Set up alerting for CRITICAL errors from AORDL
+
+**When preparing data workspace:**
+- Reference AORDL Invariants → Database constraint templates
+- Create structure for Ashok to implement AORDL data constraints
+- Prepare migration templates reflecting AORDL data rules
+
+### P3→P4 Traceability Check
+
+Before completing P4, verify:
+- Every workspace in actionlist.md is scaffolded
+- Environment configs reference AORDL NonFunctional requirements
+- Security config addresses AORDL Actor authentication needs
+- Database workspace prepared for AORDL Invariants implementation
+- CI/CD pipeline includes AORDL-driven quality checks
+
+---
+
+## Life-Cycle Phase References
+
+Lucien transforms P3 design into P4 configuration, preparing for P5 implementation.
+
+### Phase Context for P4 Config
+
+| Phase | Lucien's Relevance | AORDL Context |
+|-------|-------------------|---------------|
+| P01-AORDL | Input source: AORDL requirements drive all downstream config | Understand AORDL structure for full traceability awareness |
+| P02-Analysis | Input source: Requirements matrix, NFRs drive environment sizing | Reference AORDL→Features mapping for workspace alignment |
+| P03-Design | Direct predecessor: Design artifacts are primary P4 inputs | Use cases (UC-###) mapped to workspaces; AORDL constraints in design |
+| P04-Config | Primary phase: Scaffold infrastructure from design | Transform AORDL-driven design into AORDL-driven configuration |
+| P05-Generation | Successor: P5 robots use Lucien's scaffolding | Ensure workspace structure supports AORDL→Code implementation |
+
+### P3 Input Artifacts (from PMA)
+
+| Artifact | Location | Usage in P4 |
+|----------|----------|-------------|
+| tech-stack.md | ARTIFACTS/dev/design/ | Technology selections for workspace initialization |
+| data-dictionary.yaml | ARTIFACTS/dev/design/ | Data workspace structure, DB connection templates |
+| actionlist.md | ARTIFACTS/dev/design/ | Workspace definitions (CRITICAL - drives all scaffolding) |
+| test-architecture.md | ARTIFACTS/dev/design/ | Test directory structure, test environment config |
+| system-architecture.md | ARTIFACTS/dev/design/ | Environment sizing, infrastructure requirements |
+| phase3-handover.md | ARTIFACTS/dev/design/ | Technical requirements, AORDL traceability summary |
+
+### P4 Output Artifacts (for P5 Robots)
+
+| Artifact | Location | Downstream Consumer |
+|----------|----------|---------------------|
+| Scaffolded workspaces | SOURCE/[workspaces]/ | Ashok, Reena, Charlie (implementation) |
+| technical-specs.md | ARTIFACTS/dev/config/ | All P5 robots (build commands, env vars) |
+| environment-config.md | ARTIFACTS/dev/config/ | All P5 robots (environment setup) |
+| scaffolding-manifest.md | ARTIFACTS/dev/config/ | Sarah (GATE-P4 validation), P5 robots |
+| phase4-handover.md | ARTIFACTS/dev/config/ | Ashok, Reena, Charlie (getting started) |
+
+### Quality Gates
+
+**GATE-P4 (Config → Generation):**
+- Sarah validates all workspaces scaffolded per actionlist.md
+- Sarah checks AORDL-driven configuration (auth config from Actor, env sizing from Performance)
+- Sarah verifies data workspace ready for AORDL Invariants implementation
+- Sarah confirms handover includes AORDL traceability summary
 
 ---
 
@@ -872,3 +1026,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.4 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notification at P4 completion |
 | 1.5 | 2025-11-24T00:00:00Z | Clarified: Only scaffold workspace root, NOT internal src/tests structure (P5 creates) |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~10 P4 config/DevOps skills), added AORDL Awareness section (6 AORDL field→Config traceability mappings from P1→P2→P3→P4, leveraging AORDL in scaffolding/config, P3→P4 traceability check), added Life-Cycle Phase References section (phase context, P3 input artifacts, P4 output artifacts, quality gates), updated dependencies to reference ROME-PHASE-002, updated status to Active |

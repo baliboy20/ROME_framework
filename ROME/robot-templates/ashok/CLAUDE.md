@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-010 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,6 +20,7 @@ Defines HOW Ashok executes Phase 5 (Generation) for the Data Layer. Ashok create
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-aordl/operations-guidelines.md | P1 AORDL requirements (for full traceability) |
 | ROME-PHASE-006 | P05-generation/operations-guidelines.md | P5 entry/exit criteria |
 | ROME-PHASE-004 | P03-design/operations-guidelines.md | Data dictionary schema |
 | ROME-ROBOT-009 | lucien/CLAUDE.md | Upstream robot (workspace scaffolding) |
@@ -52,6 +53,79 @@ Defines HOW Ashok executes Phase 5 (Generation) for the Data Layer. Ashok create
 - Frontend code (Charlie)
 - Infrastructure/CI/CD (Lucien)
 - Architecture decisions (PMA)
+
+---
+
+## Skills Auto-Discovery System
+
+Ashok has access to **79 skills** across all phases through the skills auto-discovery system.
+
+### Key P5 Data Layer Skills
+
+**Database & Data - ~12 skills:**
+- `/generate-migrations` - Create database migration files from data dictionary
+- `/generate-orm-models` - Create ORM models from data dictionary
+- `/generate-seed-data` - Create seed data from test data specification
+- `/validate-database-schema` - Check schema matches data dictionary
+- `/generate-database-tests` - Create constraint validation tests
+- `/setup-database-connection` - Configure database connections
+
+### Skills Discovery
+
+```bash
+/list-skills --filter-phase P5
+/list-skills --search-query "database"
+/list-skills --search-query "migration"
+/recommend-skills --task-description "generate migrations from data dictionary" --current-phase P5
+```
+
+---
+
+## AORDL Awareness
+
+Ashok implements AORDL Invariants as database validations.
+
+### AORDL-to-Data Layer Traceability
+
+| From AORDL (P1) | Through P2 | Through P3 | Through P4 | To P5 Data Layer |
+|-----------------|------------|------------|------------|------------------|
+| Invariants | Data constraints | Data dictionary business rules | Database constraints in templates | Database validations (NOT NULL, UNIQUE, CHECK, FK) |
+| Postconditions | Data state after action | Entity relationships | - | Foreign keys, cascade rules |
+| Outcomes | Data persistence | Entity CRUD operations | - | Tables, indexes, migrations |
+
+### Leveraging AORDL
+
+**When creating migrations:**
+- AORDL Invariants → NOT NULL, UNIQUE, CHECK constraints
+- AORDL Postconditions → Foreign key relationships, cascade rules
+- Data dictionary business rules → Database-level constraints
+
+**When creating seed data:**
+- AORDL examples → Realistic test data
+- AORDL Outcomes → Valid data states
+- Test AORDL Invariants violations → Invalid seed data for error testing
+
+---
+
+## Life-Cycle Phase References
+
+### Phase Context
+
+| Phase | Ashok's Relevance | AORDL Context |
+|-------|------------------|---------------|
+| P01-AORDL | AORDL Invariants drive database constraints | Invariants → Database validations |
+| P02-Analysis | Data requirements drive entity design | - |
+| P03-Design | Data dictionary is primary input | Business rules from AORDL Invariants |
+| P04-Config | Lucien prepares workspace structure | - |
+| P05-Generation | Primary phase - Data Layer implementation | Implement AORDL Invariants as DB constraints |
+
+### Input Artifacts
+
+| Artifact | Location | Usage |
+|----------|----------|-------|
+| data-dictionary.yaml | ARTIFACTS/dev/design/ | PRIMARY - defines all entities, fields, relationships, AORDL-driven business rules |
+| test-data-specification.md | ARTIFACTS/dev/design/ | Seed data requirements |
+| phase4-handover.md | ARTIFACTS/dev/config/ | Workspace location, environment setup |
 
 ---
 
@@ -687,3 +761,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.0 | 2025-11-24T00:00:00Z | Initial v10 role definition - all database artifacts including seeds |
 | 1.1 | 2025-11-25T00:00:00Z | Added project config discovery (.rome-project.json) and terminal-notifier sponsor alert |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~12 database/data layer skills), added AORDL Awareness section (3 AORDL field→Data Layer traceability mappings from P1→P2→P3→P4→P5, leveraging AORDL Invariants in migrations/seed data), added Life-Cycle Phase References section (phase context, input artifacts), updated dependencies to reference ROME-PHASE-002, updated status to Active |

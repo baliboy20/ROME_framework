@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-007 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,6 +20,7 @@ Defines HOW Charlie executes frontend/application implementation within Phase 5 
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-ingest/aordl-specification.md | AORDL methodology (13 required fields), Skills Auto-Discovery System (79 skills) |
 | ROME-PHASE-006 | P05-generation/operations-guidelines.md | P5 entry/exit criteria, outputs |
 | ROME-PHASE-005 | P04-config/operations-guidelines.md | P4 outputs (scaffolded workspace) |
 | ROME-ROBOT-009 | lucien/CLAUDE.md | Upstream robot (workspace scaffolding) |
@@ -147,6 +148,119 @@ All code to: `SOURCE/[app-workspace]/`
 | Models | `lib/models/` or `src/types/` | Data models/types |
 | Tests | `test/` or `tests/` | Widget/component tests |
 | README.md | Root | Application documentation |
+
+---
+
+## Skills Auto-Discovery System
+
+Charlie has access to the ROME Skills Auto-Discovery System with ~20 frontend/application implementation skills including:
+- Implement screens and pages (layout, navigation, routing)
+- Implement reusable UI components (buttons, cards, forms, lists)
+- Implement state management (local state, global state, providers)
+- Implement API integration (HTTP client, error handling, loading states)
+- Implement form validation (field validators, error messages, accessibility)
+- Implement authentication UI (login, signup, password reset, protected routes)
+- Implement responsive design (mobile, tablet, desktop layouts)
+- Implement accessibility (ARIA labels, keyboard navigation, screen readers)
+- Implement navigation flows (routing, deep linking, breadcrumbs)
+- Implement data display (tables, lists, grids, pagination, filtering, sorting)
+- Implement user feedback (toasts, modals, alerts, snackbars)
+- Implement theming (colors, typography, dark mode)
+- Implement animations and transitions (page transitions, micro-interactions)
+- Implement file uploads (image picker, file validation, progress indicators)
+- Implement offline support (caching, sync, network detection)
+- Implement internationalization (i18n, locale switching)
+- Implement widget/component testing (unit tests, widget tests)
+- Implement integration testing (user flows, e2e tests)
+- Implement error boundaries (error handling, fallback UI)
+- Implement performance optimization (lazy loading, memoization, virtualization)
+
+**Discovery Commands:**
+- `/list-skills` - Show all available skills with relevance scores
+- `/recommend-skills <requirement-id>` - Get skills for specific AORDL requirement
+- `/explain-skill <skill-name>` - Get detailed skill documentation
+- `/generate-skills-documentation` - Create comprehensive skills reference
+
+---
+
+## AORDL Awareness
+
+**What Charlie Receives from AORDL (P1→P2→P3→P4→P5 Traceability):**
+
+| From AORDL (P1) | Through P2 | Through P3 | Through P4 | To P5 Frontend |
+|-----------------|------------|------------|------------|----------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) | Workspace | Screens + components implementing use case flows |
+| Actor | User role | Use case Actor | Auth config | Login/signup screens + role-based UI |
+| Intent | User story capability | Use case Flow | - | User flows + navigation implementing intent |
+| Outcomes | Acceptance criteria | Use case steps | - | UI that displays outcomes + feedback to user |
+| Preconditions | Entry conditions | Use case Preconditions | - | UI guards (redirect to login, show empty state) |
+| Postconditions | Data state after action | Entity relationships | - | UI updates reflecting postconditions (success messages, data refresh) |
+| Invariants | Data constraints | Business rules | DB constraints | Form validation enforcing invariants client-side |
+| NonFunctional.Usability | NFR specification | UI design | - | Accessibility, responsive design, user feedback |
+| NonFunctional.Performance | NFR specification | Architecture | Environment | Loading states, optimistic updates, lazy loading |
+| NonFunctional.Security | NFR specification | Tech stack + auth design | Security config | Auth guards, input sanitization, secure storage |
+| Errors | Error handling requirements | API design error responses | Error logging config | User-friendly error messages, error boundaries |
+
+**How Charlie Leverages AORDL:**
+
+**When implementing screens:**
+- AORDL Intent → Screen purpose and main user actions
+- AORDL Outcomes → What data to display and success feedback
+- use-cases.md already maps Use Case Flows (UC-###) to screens, Use Cases trace to AORDL
+- AORDL Actor → Which roles can access the screen (route guards)
+
+**When implementing forms:**
+- AORDL Invariants → Client-side validation rules (must match Reena's server-side validation)
+- data-dictionary.yaml contains business rules traced from AORDL Invariants
+- AORDL examples → Placeholder text and example values
+- AORDL Errors → Field-level error messages
+
+**When implementing navigation:**
+- AORDL Preconditions → When to redirect (e.g., not logged in → redirect to login)
+- AORDL use case Flows → Screen transition sequences
+- AORDL Actor → Role-based navigation (show/hide menu items based on role)
+
+**When implementing API integration:**
+- AORDL Outcomes → What data to fetch and when to refresh
+- AORDL Postconditions → UI updates after successful API call
+- AORDL Errors → User-friendly error messages from API error responses
+
+**When implementing authentication UI:**
+- AORDL Actor → Login form fields (email, username, etc.) based on specific roles
+- AORDL NonFunctional.Security → Auth flow (JWT token storage, session timeout)
+- AORDL Preconditions → Protected routes (check auth before rendering)
+
+**When implementing accessibility:**
+- AORDL NonFunctional.Usability → WCAG compliance requirements
+- AORDL Actor → Accessibility needs per user role (screen reader support, keyboard nav)
+- Implement ARIA labels based on AORDL Intent (describe purpose of each screen/component)
+
+---
+
+## Life-Cycle Phase References
+
+**Charlie's Position in ROME Life-Cycle:**
+
+| Phase Context | Role in Phase |
+|---------------|---------------|
+| P1 (Ingest) | Not involved - AORDL requirements authored |
+| P2 (Analysis) | Not involved - Features defined (FUNC-###) |
+| P3 (Design) | Consumes - Use cases (UC-###), design system (if Clara activated) |
+| P4 (Config) | Receives handover - Workspace scaffolded by Lucien |
+| **P5 (Generation)** | **PRIMARY ROLE: Implement frontend/application layer from use-cases.md and design artifacts** |
+| Delivery | Supports - Frontend deployed and operational |
+
+**Input Artifacts (with AORDL Traceability):**
+
+| Artifact | Created By | Phase | AORDL Link |
+|----------|-----------|-------|------------|
+| phase4-handover.md | Lucien | P4 | Workspace structure reflects AORDL-driven feature decomposition |
+| use-cases.md | PMA | P3 | Use Case Flows trace to AORDL Intent and Outcomes, screen flows map to AORDL user journeys |
+| data-dictionary.yaml | PMA | P3 | Form field validations trace to AORDL Invariants |
+| actionlist.md | PMA | P3 | Features (FUNC-###) trace to AORDL requirements (REQ-###) |
+| tech-stack.md | PMA | P3 | Frontend tech selected based on AORDL NonFunctional.Usability and Performance requirements |
+| design-system.md (optional) | Clara | P2A | Design system based on AORDL NonFunctional.Usability requirements |
+| API documentation | Reena | P5 | API endpoints map to Use Cases (UC-###) which trace to AORDL |
 
 ---
 
@@ -990,3 +1104,4 @@ mcp__Seez__ask_questions(label, title, questions, ...)
 | 0.1 | 2025-11-20T00:00:00Z | Initial robot definition placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with P5 procedures, code patterns, testing |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~20 frontend/application implementation skills), added AORDL Awareness section (11 AORDL field→Frontend traceability mappings from P1→P2→P3→P4→P5, leveraging AORDL in screens/forms/navigation/API integration/auth UI/accessibility), added Life-Cycle Phase References section (phase context, input artifacts with AORDL links), updated dependencies to reference ROME-PHASE-002, updated status to Active |
