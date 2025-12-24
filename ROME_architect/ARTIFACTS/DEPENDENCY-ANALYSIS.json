@@ -1,0 +1,317 @@
+{
+  "dependency_status": "CLEAN",
+  "total_requirements": 25,
+  "total_dependencies": 0,
+  "circular_dependencies": [],
+  "implementation_order": [
+    "REQ-001",
+    "REQ-002",
+    "REQ-003",
+    "REQ-004",
+    "REQ-005",
+    "REQ-006",
+    "REQ-007",
+    "REQ-008",
+    "REQ-009",
+    "REQ-010",
+    "REQ-011",
+    "REQ-012",
+    "REQ-013",
+    "REQ-014",
+    "REQ-015",
+    "REQ-016",
+    "REQ-017",
+    "REQ-018",
+    "REQ-019",
+    "REQ-020",
+    "REQ-021",
+    "REQ-022",
+    "REQ-023",
+    "REQ-024",
+    "REQ-025"
+  ],
+  "orphan_requirements": [
+    "REQ-001",
+    "REQ-002",
+    "REQ-003",
+    "REQ-004",
+    "REQ-005",
+    "REQ-006",
+    "REQ-007",
+    "REQ-008",
+    "REQ-009",
+    "REQ-010",
+    "REQ-011",
+    "REQ-012",
+    "REQ-013",
+    "REQ-014",
+    "REQ-015",
+    "REQ-016",
+    "REQ-017",
+    "REQ-018",
+    "REQ-019",
+    "REQ-020",
+    "REQ-021",
+    "REQ-022",
+    "REQ-023",
+    "REQ-024",
+    "REQ-025"
+  ],
+  "critical_path": [
+    "REQ-001",
+    "REQ-002",
+    "REQ-003",
+    "REQ-004",
+    "REQ-005",
+    "REQ-006",
+    "REQ-007",
+    "REQ-008",
+    "REQ-009",
+    "REQ-010",
+    "REQ-011",
+    "REQ-012",
+    "REQ-013",
+    "REQ-014",
+    "REQ-015",
+    "REQ-016",
+    "REQ-017",
+    "REQ-018",
+    "REQ-019",
+    "REQ-020",
+    "REQ-021",
+    "REQ-022",
+    "REQ-023",
+    "REQ-024",
+    "REQ-025"
+  ],
+  "dependency_graph": {
+    "REQ-001": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "create project",
+        "entities": []
+      }
+    },
+    "REQ-002": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "create task",
+        "entities": []
+      }
+    },
+    "REQ-003": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "update task",
+        "entities": []
+      }
+    },
+    "REQ-004": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "view task",
+        "entities": []
+      }
+    },
+    "REQ-005": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "delete task",
+        "entities": []
+      }
+    },
+    "REQ-006": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "search tasks",
+        "entities": []
+      }
+    },
+    "REQ-007": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "create comment",
+        "entities": []
+      }
+    },
+    "REQ-008": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "create attachment",
+        "entities": []
+      }
+    },
+    "REQ-009": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "create team",
+        "entities": []
+      }
+    },
+    "REQ-010": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "update team",
+        "entities": []
+      }
+    },
+    "REQ-011": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "create team-member",
+        "entities": []
+      }
+    },
+    "REQ-012": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "delete team-member",
+        "entities": []
+      }
+    },
+    "REQ-013": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "submit task",
+        "entities": []
+      }
+    },
+    "REQ-014": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "approve task",
+        "entities": []
+      }
+    },
+    "REQ-015": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "reject task",
+        "entities": []
+      }
+    },
+    "REQ-016": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "Administrator",
+        "intent": "export project",
+        "entities": []
+      }
+    },
+    "REQ-017": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "SystemIntegrator",
+        "intent": "import project",
+        "entities": []
+      }
+    },
+    "REQ-018": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "TeamMember",
+        "intent": "archive task",
+        "entities": []
+      }
+    },
+    "REQ-019": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "ProjectManager",
+        "intent": "restore task",
+        "entities": []
+      }
+    },
+    "REQ-020": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "Administrator",
+        "intent": "view analytics",
+        "entities": []
+      }
+    },
+    "REQ-021": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "SystemIntegrator",
+        "intent": "create api-token",
+        "entities": []
+      }
+    },
+    "REQ-022": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "SystemIntegrator",
+        "intent": "delete api-token",
+        "entities": []
+      }
+    },
+    "REQ-023": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "Administrator",
+        "intent": "create webhook",
+        "entities": []
+      }
+    },
+    "REQ-024": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "Administrator",
+        "intent": "update webhook",
+        "entities": []
+      }
+    },
+    "REQ-025": {
+      "dependencies": [],
+      "dependents": [],
+      "metadata": {
+        "actor": "Administrator",
+        "intent": "delete webhook",
+        "entities": []
+      }
+    }
+  },
+  "explicit_dependencies": 0,
+  "implicit_dependencies": 0,
+  "timestamp": "2025-12-24T10:13:50.367Z"
+}

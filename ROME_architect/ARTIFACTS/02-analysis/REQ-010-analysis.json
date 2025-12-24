@@ -1,0 +1,193 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.022Z",
+    "execution_id": "skill-1766577933019-qobu93yqd",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-010.yaml"
+  },
+  "requirement_id": "REQ-010",
+  "requirement_intent": "update team",
+  "requirement_actor": "ProjectManager",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 5,
+    "primary_entities": [
+      {
+        "name": "Team",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Preconditions",
+          "Conditions",
+          "Postconditions",
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [
+          "owner",
+          "name"
+        ],
+        "contexts": [
+          "update team",
+          "ProjectManager authenticated Team exists ProjectManager is team owner",
+          "Team name unique within organization if changed",
+          "Team updated with new values Team updated_at timestamp refreshed Audit log entry created",
+          "Team changes reflected in database Team members notified if team name changed",
+          "Team name 3-100 characters Team must have exactly one owner"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Manager",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "ProjectManager authenticated Team exists ProjectManager is team owner"
+        ]
+      },
+      {
+        "name": "Organization",
+        "type": "secondary",
+        "source_fields": [
+          "Conditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Team name unique within organization if changed"
+        ]
+      },
+      {
+        "name": "Audit",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Team updated with new values Team updated_at timestamp refreshed Audit log entry created"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 2,
+    "by_type": {
+      "unclassified": 1,
+      "validation": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Team name 3-100 characters",
+        "classifications": [],
+        "entities": [
+          "Team"
+        ],
+        "attributes": [
+          "name"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Team name",
+          "predicate": null,
+          "constraint": "Team name 3-100 characters",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Team must have exactly one owner",
+        "classifications": [
+          {
+            "type": "validation",
+            "confidence": 0.6,
+            "matched_keyword": "must have"
+          },
+          {
+            "type": "relationship",
+            "confidence": 0.6,
+            "matched_keyword": "must have"
+          }
+        ],
+        "entities": [
+          "Team",
+          "Owner"
+        ],
+        "attributes": [
+          "owner"
+        ],
+        "semantic": {
+          "modality": "must",
+          "subject": "Team must",
+          "predicate": "have",
+          "constraint": "Team must have exactly one owner",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "PUT",
+    "path": "/team/{id}",
+    "resource": "team",
+    "full_endpoint": "PUT /team/{id}",
+    "request_body": {
+      "type": "object",
+      "required_fields": [
+        "data"
+      ],
+      "example": {}
+    },
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "team": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "ProjectManager",
+      "permission": "update_team"
+    }
+  },
+  "complexity": {
+    "total_score": 20,
+    "level": "MEDIUM",
+    "breakdown": {
+      "entities": 10,
+      "invariants": 6,
+      "conditions": 2,
+      "errors": 2,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 5,
+      "invariant_count": 2,
+      "condition_count": 1,
+      "error_count": 2,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "invariants",
+      "message": "1 invariant(s) could not be classified",
+      "action": "Review unclassified invariants for clarity"
+    }
+  ]
+}

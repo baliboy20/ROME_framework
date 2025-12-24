@@ -1,0 +1,157 @@
+{
+  "validation_status": "PASS_WITH_WARNINGS",
+  "security_score": 80,
+  "consistency_score": 0,
+  "total_issues": 24,
+  "issues_by_severity": {
+    "error": 0,
+    "warning": 23,
+    "info": 1
+  },
+  "issues_found": [
+    {
+      "severity": "INFO",
+      "category": "security",
+      "file": ".env.example",
+      "message": "Contains placeholder values - ensure these are replaced in actual deployments"
+    },
+    {
+      "severity": "WARNING",
+      "category": "security",
+      "file": ".env.example",
+      "message": "Missing required environment variable: DB_PASSWORD"
+    },
+    {
+      "severity": "WARNING",
+      "category": "security",
+      "file": ".env.example",
+      "message": "Missing required environment variable: JWT_SECRET"
+    },
+    {
+      "severity": "WARNING",
+      "category": "security",
+      "file": ".env.example",
+      "message": "Missing required environment variable: JWT_REFRESH_SECRET"
+    },
+    {
+      "severity": "WARNING",
+      "category": "performance",
+      "file": "docker-compose.yml",
+      "message": "No resource limits defined - recommended for production"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable EMAIL_SERVICE_API_KEY not consistent across all env files (found in: .env.example)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable STORAGE_SERVICE_KEY not consistent across all env files (found in: .env.example)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_HOST not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_PORT not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_NAME not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_USER not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_PASSWORD not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_SSL not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_POOL_MIN not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable DB_POOL_MAX not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable REDIS_HOST not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable REDIS_PORT not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable REDIS_PASSWORD not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable CACHE_TTL not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable JWT_SECRET not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable JWT_EXPIRY not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable JWT_REFRESH_SECRET not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable JWT_REFRESH_EXPIRY not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    },
+    {
+      "severity": "WARNING",
+      "category": "consistency",
+      "file": "environment files",
+      "message": "Variable BCRYPT_ROUNDS not consistent across all env files (found in: .env.development, .env.staging, .env.production)"
+    }
+  ]
+}

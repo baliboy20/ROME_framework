@@ -1,0 +1,215 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.129Z",
+    "execution_id": "skill-1766577933125-v23x6w9v7",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-025.yaml"
+  },
+  "requirement_id": "REQ-025",
+  "requirement_intent": "delete webhook",
+  "requirement_actor": "Administrator",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 6,
+    "primary_entities": [
+      {
+        "name": "Webhook",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Preconditions",
+          "Postconditions",
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "delete webhook",
+          "Administrator authenticated Webhook exists Administrator has admin role",
+          "Webhook marked as deleted Webhook event delivery stopped Audit log entry created",
+          "Webhook no longer appears in active webhooks list Webhook stops receiving events Webhook deletion timestamp recorded",
+          "Deleted webhooks cannot be restored Pending webhook deliveries cancelled Deletion timestamp recorded"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Administrator",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Administrator authenticated Webhook exists Administrator has admin role"
+        ]
+      },
+      {
+        "name": "Role",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Administrator authenticated Webhook exists Administrator has admin role"
+        ]
+      },
+      {
+        "name": "Audit",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Webhook marked as deleted Webhook event delivery stopped Audit log entry created"
+        ]
+      },
+      {
+        "name": "Pending",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Deleted webhooks cannot be restored Pending webhook deliveries cancelled Deletion timestamp recorded"
+        ]
+      },
+      {
+        "name": "Deletion",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "Deleted webhooks cannot be restored Pending webhook deliveries cancelled Deletion timestamp recorded"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "unclassified": 2,
+      "temporal": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Deleted webhooks cannot be restored",
+        "classifications": [],
+        "entities": [
+          "Deleted"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": "must",
+          "subject": "Deleted webhooks",
+          "predicate": "be",
+          "constraint": "Deleted webhooks cannot be restored",
+          "negation": true
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Pending webhook deliveries cancelled",
+        "classifications": [],
+        "entities": [
+          "Pending",
+          "Webhook"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": "may",
+          "subject": "Pending webhook",
+          "predicate": null,
+          "constraint": "Pending webhook deliveries cancelled",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Deletion timestamp recorded",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.6,
+            "matched_keyword": "timestamp"
+          }
+        ],
+        "entities": [
+          "Deletion"
+        ],
+        "attributes": [
+          "timestamp"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Deletion timestamp",
+          "predicate": null,
+          "constraint": "Deletion timestamp recorded",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "DELETE",
+    "path": "/webhook/{id}",
+    "resource": "webhook",
+    "full_endpoint": "DELETE /webhook/{id}",
+    "request_body": null,
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "webhook": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "Administrator",
+      "permission": "delete_webhook"
+    }
+  },
+  "complexity": {
+    "total_score": 23,
+    "level": "MEDIUM",
+    "breakdown": {
+      "entities": 12,
+      "invariants": 9,
+      "conditions": 0,
+      "errors": 2,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 6,
+      "invariant_count": 3,
+      "condition_count": 0,
+      "error_count": 2,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "invariants",
+      "message": "2 invariant(s) could not be classified",
+      "action": "Review unclassified invariants for clarity"
+    }
+  ]
+}

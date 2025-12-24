@@ -1,0 +1,313 @@
+{
+  "optimization_status": "OPTIMIZED",
+  "checks_run": 6,
+  "issues_found": [
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "TeamMember",
+      "message": "Entity \"TeamMember\" has only 0 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "Team",
+      "message": "Entity \"Team\" has only 2 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "Webhook",
+      "message": "Entity \"Webhook\" has only 0 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "ApiToken",
+      "message": "Entity \"ApiToken\" has only 0 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "Comment",
+      "message": "Entity \"Comment\" has only 1 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "Attachment",
+      "message": "Entity \"Attachment\" has only 0 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "entity_granularity",
+      "entity": "Analytic",
+      "message": "Entity \"Analytic\" has only 0 business attributes - consider if it should be merged with related entity"
+    },
+    {
+      "severity": "INFO",
+      "check": "attribute_distribution",
+      "message": "High variance in attribute distribution (avg: 1.1, min: 0, max: 4) - consider rebalancing"
+    }
+  ],
+  "recommendations": [
+    {
+      "check": "redundant_attributes",
+      "message": "Attribute \"date\" appears in 3 entities: Created, Due, Current - consider inheritance or composition"
+    },
+    {
+      "check": "redundant_attributes",
+      "message": "Attribute \"time\" appears in 12 entities: Created, Deletion, Submission, Search, Comment, Upload, Completion, Export, Import, Archive, Restore, Revocation - consider inheritance or composition"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Project\" and \"Team\" have 67% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Due\" and \"Current\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Submission\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Search\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Comment\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Upload\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Completion\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Export\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Deletion\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Search\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Comment\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Upload\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Completion\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Export\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Submission\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Event\" and \"File\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Comment\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Upload\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Completion\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Export\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Search\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Upload\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Completion\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Export\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Comment\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Upload\" and \"Completion\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Upload\" and \"Export\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Upload\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Upload\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Upload\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Upload\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Completion\" and \"Export\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Completion\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Completion\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Completion\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Completion\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Export\" and \"Import\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Export\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Export\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Export\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Import\" and \"Archive\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Import\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Import\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Archive\" and \"Restore\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Archive\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    },
+    {
+      "check": "entity_granularity",
+      "message": "Entities \"Restore\" and \"Revocation\" have 100% similar attributes - consider merging or using inheritance"
+    }
+  ],
+  "metrics": {
+    "total_entities": 60,
+    "primary_entities": 9,
+    "secondary_entities": 49,
+    "total_relationships": 2,
+    "total_attributes": 28,
+    "avg_attributes_per_entity": 0.47,
+    "relationship_to_entity_ratio": 0.03,
+    "optimization_score": 24
+  },
+  "summary": {
+    "total_issues": 8,
+    "critical": 0,
+    "warnings": 0,
+    "info": 8,
+    "total_recommendations": 60
+  },
+  "timestamp": "2025-12-24T10:11:20.744Z"
+}

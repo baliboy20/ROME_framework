@@ -1,0 +1,62 @@
+{
+  "validation_status": "FAIL",
+  "checks_run": 6,
+  "issues_found": [
+    {
+      "severity": "WARNING",
+      "check": "api_entity_consistency",
+      "message": "API path \"/tasks/search\" references unknown entity \"tasks/search\""
+    },
+    {
+      "severity": "WARNING",
+      "check": "api_entity_consistency",
+      "message": "API path \"/task/{id}/submit\" references unknown entity \"task/{id}/submit\""
+    },
+    {
+      "severity": "WARNING",
+      "check": "api_entity_consistency",
+      "message": "API path \"/task/{id}/approve\" references unknown entity \"task/{id}/approve\""
+    },
+    {
+      "severity": "WARNING",
+      "check": "api_entity_consistency",
+      "message": "API path \"/task/{id}/reject\" references unknown entity \"task/{id}/reject\""
+    },
+    {
+      "severity": "WARNING",
+      "check": "api_entity_consistency",
+      "message": "API path \"/task/{id}/archive\" references unknown entity \"task/{id}/archive\""
+    },
+    {
+      "severity": "WARNING",
+      "check": "api_entity_consistency",
+      "message": "API path \"/task/{id}/restore\" references unknown entity \"task/{id}/restore\""
+    },
+    {
+      "severity": "ERROR",
+      "check": "test_coverage_completeness",
+      "message": "Only 0 of 25 requirements analyzed"
+    },
+    {
+      "severity": "ERROR",
+      "check": "requirement_traceability",
+      "message": "25 requirements not traced to artifacts"
+    }
+  ],
+  "recommendations": [
+    {
+      "check": "test_coverage_completeness",
+      "message": "Test coverage is 0% - aim for 100%"
+    },
+    {
+      "check": "schema_normalization",
+      "message": "2 relationships found but no foreign keys in schema - consider adding"
+    }
+  ],
+  "summary": {
+    "total_issues": 8,
+    "errors": 2,
+    "warnings": 6
+  },
+  "timestamp": "2025-12-24T10:07:14.816Z"
+}

@@ -1,0 +1,235 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.089Z",
+    "execution_id": "skill-1766577933085-4gusptcq0",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-019.yaml"
+  },
+  "requirement_id": "REQ-019",
+  "requirement_intent": "restore task",
+  "requirement_actor": "ProjectManager",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 7,
+    "primary_entities": [
+      {
+        "name": "Task",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Preconditions",
+          "Conditions",
+          "Postconditions",
+          "Outcomes"
+        ],
+        "attributes": [
+          "status"
+        ],
+        "contexts": [
+          "restore task",
+          "ProjectManager authenticated Task exists and is archived ProjectManager is project owner",
+          "Task archived less than 90 days ago",
+          "Task archive flag removed Task status remains 'completed' Task appears in active task lists Audit log entry created",
+          "Task appears in default task views Task accessible for viewing and commenting Restore timestamp recorded"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Manager",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "ProjectManager authenticated Task exists and is archived ProjectManager is project owner"
+        ]
+      },
+      {
+        "name": "Project",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [
+          "owner"
+        ],
+        "contexts": [
+          "ProjectManager authenticated Task exists and is archived ProjectManager is project owner"
+        ]
+      },
+      {
+        "name": "Audit",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Task archive flag removed Task status remains 'completed' Task appears in active task lists Audit log entry created"
+        ]
+      },
+      {
+        "name": "Restore",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "Task appears in default task views Task accessible for viewing and commenting Restore timestamp recorded",
+          "Restored tasks retain completed status Restore timestamp recorded Tasks archived >90 days cannot be restored"
+        ]
+      },
+      {
+        "name": "Tasks",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Restored tasks retain completed status Restore timestamp recorded Tasks archived >90 days cannot be restored"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "unclassified": 2,
+      "temporal": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Restored tasks retain completed status",
+        "classifications": [],
+        "entities": [
+          "Restored",
+          "Status"
+        ],
+        "attributes": [
+          "status"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Restored tasks",
+          "predicate": null,
+          "constraint": "Restored tasks retain completed status",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Restore timestamp recorded",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.6,
+            "matched_keyword": "timestamp"
+          }
+        ],
+        "entities": [
+          "Restore"
+        ],
+        "attributes": [
+          "timestamp"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Restore timestamp",
+          "predicate": null,
+          "constraint": "Restore timestamp recorded",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Tasks archived >90 days cannot be restored",
+        "classifications": [],
+        "entities": [
+          "Tasks"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": "must",
+          "subject": "Tasks archived",
+          "predicate": "be",
+          "constraint": "Tasks archived >90 days cannot be restored",
+          "negation": true
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "PATCH",
+    "path": "/task/{id}/restore",
+    "resource": "task",
+    "full_endpoint": "PATCH /task/{id}/restore",
+    "request_body": {
+      "type": "object",
+      "required_fields": [
+        "data"
+      ],
+      "example": {}
+    },
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "task": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "ProjectManager",
+      "permission": "restore_task"
+    }
+  },
+  "complexity": {
+    "total_score": 27,
+    "level": "HIGH",
+    "breakdown": {
+      "entities": 14,
+      "invariants": 9,
+      "conditions": 2,
+      "errors": 2,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 7,
+      "invariant_count": 3,
+      "condition_count": 1,
+      "error_count": 2,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "complexity",
+      "message": "High complexity - ensure adequate testing and documentation",
+      "action": "Add comprehensive test scenarios"
+    },
+    {
+      "type": "INFO",
+      "category": "invariants",
+      "message": "2 invariant(s) could not be classified",
+      "action": "Review unclassified invariants for clarity"
+    }
+  ]
+}

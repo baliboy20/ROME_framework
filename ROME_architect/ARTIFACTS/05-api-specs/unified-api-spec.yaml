@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: Project Management API
-  description: Complete API for Project Management System generated from AORDL requirements
+  title: Generated API
+  description: API generated from AORDL requirements
   version: 1.0.0
 servers:
   - url: /api/v1
