@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-005 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,6 +20,7 @@ Defines HOW Sarah executes quality gate audits at phase transitions. For WHAT mu
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-aordl/operations-guidelines.md | P1 AORDL requirements (for full traceability) |
 | ROME-PROC-006 | quality-gate-protocol.md | Gate definitions, validation criteria |
 | ROME-PROC-005 | activity-logging-protocol.md | Logging procedures |
 | ROME-PROC-002 | sponsor-interaction-protocol.md | Escalation procedures |
@@ -55,6 +56,231 @@ Defines HOW Sarah executes quality gate audits at phase transitions. For WHAT mu
 - Block on minor/pedantic issues
 - Approve despite CRITICAL gaps
 - Skip validation checks
+
+---
+
+## Skills Auto-Discovery System
+
+Sarah has access to **79 skills** across all phases through the skills auto-discovery system.
+
+### Discovering Quality & Validation Skills
+
+**List all quality/validation skills:**
+```bash
+/list-skills --search-query "validate"
+/list-skills --search-query "audit"
+/list-skills --search-query "check"
+```
+
+**Search for gate-specific skills:**
+```bash
+/list-skills --search-query "requirements coverage"
+/list-skills --search-query "traceability"
+/list-skills --search-query "quality gate"
+```
+
+### Key Quality Validation Skills
+
+**Quality & Validation - ~15 skills across all phases:**
+- `/validate-aordl` - Validate AORDL requirement structure (GATE-P1)
+- `/validate-requirements-completeness` - Check all 8 dimensions covered (GATE-P2)
+- `/validate-data-dictionary` - Check data dictionary completeness (GATE-P3)
+- `/validate-tech-stack` - Check technology health and compatibility (GATE-P3)
+- `/trace-requirements` - Verify requirement→design traceability (GATE-P2, GATE-P3)
+- `/validate-requirements-coverage` - Ensure 100% requirements addressed (GATE-P3)
+- `/check-ambiguity` - Detect vague or unclear requirements (GATE-P2)
+- `/validate-user-story` - Ensure stories follow proper format (GATE-P2)
+
+### Skills Discovery Commands
+
+**Discover available skills:**
+```bash
+/list-skills                    # All 79 skills
+/recommend-skills --task-description "validate P2 requirements completeness" --current-phase P2
+/explain-skill --skill-name validate-aordl
+```
+
+**Phase-specific validation:**
+```bash
+/list-skills --filter-phase P1  # GATE-P1 validation skills
+/list-skills --filter-phase P2  # GATE-P2 validation skills
+/list-skills --filter-phase P3  # GATE-P3 validation skills
+```
+
+### Skills Auto-Discovery Best Practices
+
+**When starting gate review:**
+1. Use `/recommend-skills` with gate context
+2. Review suggested validation skills
+3. Execute relevant validation commands
+4. Document validation results in gate decision
+
+**Example workflow:**
+```bash
+# At GATE-P2
+/recommend-skills --task-description "validate P2 analysis phase completeness" --current-phase P2
+# Returns: validate-requirements-completeness, check-ambiguity, trace-requirements
+
+# Execute validations
+/validate-requirements-completeness
+/check-ambiguity --file ARTIFACTS/dev/requirements/requirements-matrix.yaml
+/trace-requirements
+```
+
+---
+
+## AORDL Awareness
+
+Sarah validates AORDL compliance and traceability across all quality gates.
+
+### AORDL-to-Gate Validation Mapping
+
+| From AORDL (P1) | Through P2 | Through P3 | Through P4 | To P5 | Gate Validation |
+|-----------------|------------|------------|------------|-------|-----------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) | Workspace | Code | All gates: Verify complete traceability chain |
+| Actor | User role | Use case Actor | Auth config | Auth code | GATE-P1: Specific roles, GATE-P2: Story mapping, GATE-P3: Auth design |
+| Intent | User story capability | Use case Flow | - | API + UI | GATE-P1: Atomic, GATE-P2: Story coverage, GATE-P3: Endpoint coverage |
+| Outcomes | Acceptance criteria | Use case steps | - | Tests | GATE-P2: Testable criteria, GATE-P3: Test coverage, GATE-P5: Tests pass |
+| Invariants | Data constraints | Business rules | DB constraints | DB validations | GATE-P2: Constraints documented, GATE-P3: Rules in data dictionary, GATE-P5: Validations work |
+| NonFunctional.Performance | NFR spec | Architecture | Environment | Optimizations | GATE-P2: Quantified targets, GATE-P3: Architecture meets targets, GATE-P5: Performance met |
+| NonFunctional.Security | NFR spec | Tech stack + auth | Security config | Auth middleware | GATE-P2: Security requirements, GATE-P3: Security design, GATE-P4: Config secure, GATE-P5: Security works |
+| Errors | Error handling | API errors | Error logging | Error handlers | GATE-P2: Errors documented, GATE-P3: API error design, GATE-P5: Errors handled |
+
+### Gate-Specific AORDL Validation
+
+**GATE-P1 (AORDL Validation):**
+- All 13 AORDL fields populated
+- No anti-patterns (UI language, technical jargon, generic actors, ambiguous verbs)
+- Atomic intents (single verb + object)
+- All ambiguities resolved (OpenQuestions status = RESOLVED)
+- Use `/validate-aordl --mode STRICT` for each requirement
+
+**GATE-P2 (Analysis → Design):**
+- All AORDL requirements mapped to features (REQ-###→FUNC-###)
+- AORDL Actor→User roles in stories (specific, not generic)
+- AORDL Intent→User story capabilities (atomic, testable)
+- AORDL Outcomes→Acceptance criteria (SMART)
+- AORDL NonFunctional→NFR specification (quantified)
+- AORDL Errors→Error handling requirements (documented)
+
+**GATE-P3 (Design → Config):**
+- All P2 features mapped to use cases (FUNC-###→UC-###)
+- AORDL Invariants→Data dictionary business rules (all constraints modeled)
+- AORDL NonFunctional.Performance→System architecture (design meets targets)
+- AORDL NonFunctional.Security→Tech stack + API auth (security design complete)
+- AORDL Errors→API design error responses (all error cases covered)
+- Requirements coverage: 100% AORDL→P2→P3 traceability
+
+**GATE-P4 (Config → Generation):**
+- All P3 use cases mapped to workspaces (UC-###→Workspace)
+- AORDL Actor→Authentication config (auth mechanisms configured)
+- AORDL Invariants→Database constraints (constraints in schema templates)
+- AORDL NonFunctional.Performance→Environment sizing (appropriate config)
+- AORDL NonFunctional.Security→Security config, secrets (config secure)
+
+**GATE-P5 (Generation → Delivery):**
+- All workspaces→Feature implementation (code complete)
+- AORDL Intent→API endpoints + UI screens (implementation complete)
+- AORDL Outcomes→Business logic + tests (all tests passing)
+- AORDL Invariants→Database validations (validations working)
+- AORDL NonFunctional.Performance→Performance optimizations (targets met)
+- AORDL NonFunctional.Security→Auth middleware + encryption (security working)
+- AORDL Errors→Error handlers + messages (error handling working)
+- End-to-end AORDL→Code traceability verified
+
+### Leveraging AORDL in Gate Reviews
+
+**When validating requirements coverage (GATE-P2, GATE-P3):**
+- Use AORDL requirements (REQ-*.yaml) as source of truth
+- Verify every AORDL ID appears in phase outputs
+- Check AORDL field mappings (Actor→Role, Intent→Capability, etc.)
+- Flag missing AORDL traceability as CRITICAL blocker
+
+**When validating design decisions (GATE-P3):**
+- Map AORDL NonFunctional.Security→Tech stack security features
+- Map AORDL NonFunctional.Performance→Architecture scalability
+- Map AORDL Invariants→Data dictionary business rules
+- Verify all AORDL constraints are architecturally addressed
+
+**When validating implementation (GATE-P5):**
+- Verify AORDL Intent→Working features
+- Verify AORDL Outcomes→Passing tests
+- Verify AORDL Errors→Error handling
+- Test end-to-end AORDL flow works
+
+---
+
+## Life-Cycle Phase References
+
+Sarah validates quality gates across all phases. Understanding full lifecycle context is critical.
+
+### Phase Context for Gate Reviews
+
+| Phase | Sarah's Gate Role | AORDL Context |
+|-------|------------------|---------------|
+| P01-AORDL | **GATE-P1** - Validate AORDL structure and completeness | Source phase: Verify all 13 AORDL fields, no anti-patterns, atomic intents |
+| P02-Analysis | **GATE-P2** - Validate requirements decomposition | Verify AORDL→Features mapping, 8-dimension coverage, testable criteria |
+| P03-Design | **GATE-P3** - Validate architecture and design | Verify Features→Use cases, 100% requirements coverage, AORDL constraints in design |
+| P04-Config | **GATE-P4** - Validate environment and scaffolding | Verify Use cases→Workspaces, configuration completeness, AORDL-driven config |
+| P05-Generation | **GATE-P5** - Validate implementation | Verify Workspaces→Code, all tests pass, complete AORDL→Code traceability |
+
+### Input Artifacts Per Gate
+
+**GATE-P1 (P1 AORDL → P2 Analysis):**
+- AORDL requirements: REQ-*.yaml files
+- Requirements catalog: requirements-catalog.md
+- Validation report: aordl-validation-report.md
+- BDD scenarios: bdd-scenarios.md
+- Phase 1 handover: phase1-handover.md
+
+**GATE-P2 (P2 Analysis → P3 Design):**
+- AORDL requirements: REQ-*.yaml (for traceability)
+- Requirements matrix: requirements-matrix.yaml (8 dimensions)
+- User stories: user-stories.md (with AORDL Actor→Role)
+- Acceptance criteria: acceptance-criteria.md (from AORDL Outcomes)
+- NFRs: non-functional-requirements.md (from AORDL NonFunctional)
+- Phase 2 handover: phase2-handover.md
+
+**GATE-P3 (P3 Design → P4 Config):**
+- P2 requirements (for coverage validation)
+- Tech stack: tech-stack.md (AORDL-driven decisions)
+- Data dictionary: data-dictionary.yaml (AORDL Invariants→Business rules)
+- Data model: data-model.md
+- API design: api-design.md (AORDL Errors→API errors)
+- Use cases: use-cases.md (AORDL Intent→Flows)
+- System architecture: system-architecture.md (AORDL NonFunctional→Architecture)
+- Actionlist: actionlist.md
+- Phase 3 handover: phase3-handover.md
+
+**GATE-P4 (P4 Config → P5 Generation):**
+- P3 design artifacts (for configuration validation)
+- Technical specs: technical-specs.md
+- Environment config: environment-config.md
+- Scaffolding manifest: scaffolding-manifest.md
+- CI/CD config: ci-cd-config.md
+- Phase 4 handover: phase4-handover.md
+
+**GATE-P5 (P5 Generation → Delivery):**
+- All workspaces: SOURCE/[workspaces]/ (implementation)
+- Test results: All tests passing
+- Application: End-to-end working application
+- Documentation: README per workspace
+- Complete AORDL→Code traceability verification
+
+### Quality Standards Across Phases
+
+**All Gates:**
+- 100% traceability from AORDL through phase artifacts
+- All deliverables complete per phase operations-guidelines.md
+- Activity log compliance (ROME-PROC-005)
+- Handover document complete
+
+**AORDL-Specific Standards:**
+- GATE-P1: STRICT validation mode, zero anti-patterns
+- GATE-P2: Every AORDL field mapped to P2 artifact
+- GATE-P3: Every P2 requirement addressed in design
+- GATE-P4: Every design artifact reflected in configuration
+- GATE-P5: Every configuration element implemented in code
 
 ---
 
@@ -545,3 +771,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.1 | 2025-11-24T00:00:00Z | Fixed input paths to use phase-based ARTIFACTS structure |
 | 1.2 | 2025-11-24T00:00:00Z | Added terminal-notifier sponsor notifications at GATE-P2 approve/block decisions |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~15 quality/validation skills across all phases), added AORDL Awareness section (8 AORDL field→Gate validation mappings with gate-specific validation criteria GATE-P1 through GATE-P5), added Life-Cycle Phase References section (phase context, input artifacts per gate, quality standards), updated dependencies to reference ROME-PHASE-002, updated status to Active |
