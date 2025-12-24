@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-003 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-24T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 2.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -22,7 +22,7 @@ Defines WHAT Phase 2 (Analysis) must accomplish, including entry/exit criteria, 
 - ROME-PROC-005 (Activity Logging Protocol) - Logging requirements
 - ROME-PROC-002 (Sponsor Interaction Protocol) - Clarification procedures
 - ROME-ROBOT-002 (Talib) - Primary robot for this phase
-- ROME-PHASE-002 (P1 Ingest) - Predecessor phase
+- ROME-PHASE-002 (P1 AORDL) - Predecessor phase
 
 ---
 
@@ -33,10 +33,10 @@ Defines WHAT Phase 2 (Analysis) must accomplish, including entry/exit criteria, 
 | Phase Number | P2 |
 | Phase Name | Analysis |
 | Primary Robot | Talib |
-| Predecessor | P1 (Ingest) |
+| Predecessor | P1 (AORDL) |
 | Successor | P3 (Design) |
 
-**Objective:** Transform ingested raw materials into structured, atomic requirements across 8 dimensions, enabling PMA to design architecture without clarifying questions.
+**Objective:** Transform AORDL requirements into structured, decomposed requirements across 8 dimensions, enabling PMA to design architecture without clarifying questions.
 
 **Scope:** This phase INCLUDES:
 - Functional decomposition (Epic → Feature → Story → Criteria → Atomic)
@@ -53,6 +53,32 @@ Defines WHAT Phase 2 (Analysis) must accomplish, including entry/exit criteria, 
 
 ---
 
+## Skills Integration
+
+Talib has access to 19 P2-specific analysis skills through the skills auto-discovery system. Key skills include:
+
+**Requirement Analysis:**
+- `/analyze-requirement` - Deep analysis of individual requirements
+- `/decompose-requirement` - Break requirements into atomic units
+- `/validate-user-story` - Ensure stories follow proper format
+
+**Artifact Generation:**
+- `/generate-requirements-matrix` - Create 8-dimension requirements matrix
+- `/generate-user-stories` - Auto-generate user stories from requirements
+- `/generate-acceptance-criteria` - Create testable acceptance criteria
+
+**Quality Validation:**
+- `/validate-requirements-completeness` - Check all 8 dimensions covered
+- `/check-ambiguity` - Detect vague or unclear requirements
+- `/trace-requirements` - Verify AORDL→Feature→Story traceability
+
+**Skills Discovery:**
+- Use `/list-skills --filter-phase P2` to see all available P2 skills
+- Use `/recommend-skills --task-description "..." --current-phase P2` for context-aware recommendations
+- Use `/explain-skill --skill-name [skill]` for detailed usage guidance
+
+---
+
 ## Entry Criteria
 
 Phase 2 MAY NOT begin until ALL criteria are met:
@@ -60,8 +86,9 @@ Phase 2 MAY NOT begin until ALL criteria are met:
 | Criterion | Verification |
 |-----------|--------------|
 | P1 complete | PHASE-1 status = COMPLETED |
-| Document catalog exists | `document-catalog.md` in requirements/ |
-| Ingest summary exists | `ingest-summary.md` in requirements/ |
+| AORDL requirements exist | REQ-*.yaml files in requirements/ |
+| AORDL validation passed | GATE-P1 approved (100% STRICT mode pass) |
+| Requirements catalog exists | `requirements-catalog.md` in requirements/ |
 | Roma approval | Orchestrator approved P1 → P2 transition |
 | PHASE-2 entry created | Activity log contains PHASE-2 |
 
@@ -241,13 +268,26 @@ technical_requests:
 
 ## Traceability Requirements
 
+### AORDL Tracing
+
+Every AORDL requirement MUST be traceable to P2 outputs:
+
+| From | To |
+|------|----|
+| AORDL REQ-### | Feature (FUNC-###) |
+| AORDL Actor | User role in stories |
+| AORDL Intent | User story capability |
+| AORDL Outcomes | Acceptance criteria |
+| AORDL NonFunctional | NFR specification |
+| AORDL Errors | Error handling requirements |
+
 ### Decomposition Tracing
 
 Every requirement MUST be traceable:
 
 | From | To |
 |------|----|
-| Raw material | Feature (source reference) |
+| AORDL requirement | Feature (source reference) |
 | Feature | User stories |
 | Story | Acceptance criteria |
 | Criteria | Atomic requirements (where applicable) |
@@ -296,3 +336,4 @@ All robots operating in this phase MUST follow the Activity Logging Protocol:
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial phase specification placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete phase specification with functional decomposition outcomes, quality gates, 8 dimensions coverage |
+| 2.0 | 2025-12-24T00:00:00Z | AORDL integration: Updated predecessor from P1-Ingest to P1-AORDL, updated entry criteria for AORDL requirements (REQ-*.yaml files), added AORDL traceability requirements, updated objective for AORDL transformation |

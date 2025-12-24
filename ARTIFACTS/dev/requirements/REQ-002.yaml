@@ -1,0 +1,75 @@
+# Sample AORDL Requirement for P01→P02 Workflow Testing
+# Document UID: REQ-002
+# Status: Test Artifact
+# Created: 2025-12-24
+
+ID: REQ-002
+Actor: TeamMember
+Intent: view project
+
+Preconditions:
+  - TeamMember authenticated
+  - TeamMember is member of organization that owns project
+  - Project exists and is not deleted
+
+Conditions:
+  - TeamMember has 'project:read' permission for the project
+  - Project status is 'active' or 'archived'
+
+Postconditions:
+  - Project details displayed to TeamMember
+  - View event logged in activity log
+  - Last accessed timestamp updated
+
+Outcomes:
+  - TeamMember sees project name, description, owner, created date
+  - TeamMember sees project status and member list
+  - Page load analytics recorded
+
+Invariants:
+  - Only authenticated users can view projects
+  - Deleted projects never visible
+  - Archived projects visible but read-only
+
+NonFunctional:
+  Performance:
+    - Project view loads in <1 second at p95
+    - Database query <200ms
+    - Frontend rendering <300ms
+  Security:
+    - Enforces RBAC permissions
+    - No PII exposed without explicit permission
+  Accessibility:
+    - WCAG 2.1 AA compliance
+    - Screen reader compatible
+    - Keyboard navigation supported
+
+Errors:
+  - error: "ProjectNotFound"
+    message: "Project does not exist or has been deleted"
+    httpCode: 404
+    userAction: "Return to project list"
+
+  - error: "AccessDenied"
+    message: "You do not have permission to view this project"
+    httpCode: 403
+    userAction: "Request access from project owner"
+
+ScopeBoundary:
+  InScope:
+    - Display project metadata and basic details
+    - Show project member list
+    - Display project status
+  OutOfScope:
+    - Edit project details (separate requirement)
+    - View project tasks/activities
+    - Export project data
+
+OpenQuestions:
+  - question: "Should viewing archived projects require special permission?"
+    status: RESOLVED
+    decision: "No - same permissions as active projects"
+    decisionDate: "2025-12-21"
+    decisionBy: "Product Owner"
+
+CopilotMode: STRICT
