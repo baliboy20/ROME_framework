@@ -1,0 +1,29 @@
+skill:
+  name: generate-complete-docker-setup
+  version: 1.0.0
+  category: composition
+  tier: 2
+  description: Generate complete Docker setup (Dockerfile, compose, nginx)
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+    - name: output_directory
+      type: string
+
+  optional:
+    - name: node_version
+      type: string
+      default: "18-alpine"
+
+execution:
+  timeout: 60000
+
+output:
+  files_generated:
+    type: array
+  setup_complete:
+    type: boolean
