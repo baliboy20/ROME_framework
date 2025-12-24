@@ -1,0 +1,27 @@
+skill:
+  name: generate-logging-config
+  version: 1.0.0
+  category: configuration
+  tier: 1
+  description: Generate logging configuration (Winston/Pino)
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+    - name: output_directory
+      type: string
+
+  optional:
+    - name: logger_library
+      type: string
+      default: winston
+
+execution:
+  timeout: 30000
+
+output:
+  files_generated:
+    type: array

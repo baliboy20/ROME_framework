@@ -1,77 +1,49 @@
 /**
- * /generate-database-schema skill
- *
- * Generates database schema (SQL DDL) from data dictionary.
- *
- * Generates:
- * - CREATE TABLE statements
- * - Column definitions with types and constraints
- * - Primary keys and foreign keys
- * - Indexes
- * - Timestamps (created_at, updated_at)
- *
+ * /generate-database-schema skill (Tier 1)
+ * Generates database schema SQL from data dictionary
  * Version: 1.0.0
  */
 
 const fs = require('fs');
 const path = require('path');
-const yaml = require('js-yaml');
-
-// Load SQL type mappings from manifest
-const manifestPath = path.join(__dirname, '../registry/generate-database-schema.yaml');
-const manifest = yaml.load(fs.readFileSync(manifestPath, 'utf8'));
-
-const SQL_TYPE_MAPPING = manifest.sql_type_mapping;
 
 class GenerateDatabaseSchema {
   static async execute(params, executionId) {
-    const {
-      data_dictionary_file,
-      output_file = null,
-      database_type = 'postgresql',
-      include_indexes = true,
-      include_constraints = true
-    } = params;
+    const { data_dictionary_file, output_file, database_type = 'postgresql' } = params;
 
     try {
-      // Load data dictionary
-      const dictContent = fs.readFileSync(data_dictionary_file, 'utf8');
-      const dataDict = JSON.parse(dictContent);
+      const dataDictionary = JSON.parse(fs.readFileSync(data_dictionary_file, 'utf8'));
 
-      // Filter to primary entities (only these become tables)
-      const primaryEntities = dataDict.entities.filter(e => e.type === 'primary');
-
-      // Generate DDL statements
-      const ddlStatements = [];
+      let schema = this.generateHeader(database_type);
+      let tablesGenerated = 0;
+      let indexesGenerated = 0;
+      let constraintsGenerated = 0;
 
       // Generate CREATE TABLE statements
-      primaryEntities.forEach(entity => {
-        const tableDDL = this.generateTableDDL(entity, database_type, include_constraints);
-        ddlStatements.push(tableDDL);
+      dataDictionary.entities.forEach(entity => {
+        const tableSQL = this.generateTable(entity, database_type);
+        schema += tableSQL.sql;
+        tablesGenerated++;
+        indexesGenerated += tableSQL.indexes;
+        constraintsGenerated += tableSQL.constraints;
       });
 
-      // Generate indexes if requested
-      if (include_indexes) {
-        primaryEntities.forEach(entity => {
-          const indexDDL = this.generateIndexes(entity, database_type);
-          if (indexDDL) {
-            ddlStatements.push(indexDDL);
-          }
-        });
-      }
+      // Generate foreign key constraints
+      const fkSQL = this.generateForeignKeys(dataDictionary.entities, database_type);
+      schema += fkSQL.sql;
+      constraintsGenerated += fkSQL.count;
 
-      // Join all DDL statements
-      const sqlDDL = ddlStatements.join('\n\n');
+      // Generate indexes for common queries
+      const idxSQL = this.generateIndexes(dataDictionary.entities, database_type);
+      schema += idxSQL.sql;
+      indexesGenerated += idxSQL.count;
 
-      // Write output file if requested
-      if (output_file) {
-        fs.writeFileSync(output_file, sqlDDL);
-      }
+      fs.writeFileSync(output_file, schema);
 
       return {
-        sql_ddl: sqlDDL,
-        table_count: primaryEntities.length,
-        output_file
+        tables_generated: tablesGenerated,
+        indexes_generated: indexesGenerated,
+        constraints_generated: constraintsGenerated
       };
 
     } catch (error) {
@@ -79,95 +51,184 @@ class GenerateDatabaseSchema {
     }
   }
 
-  /**
-   * Generate CREATE TABLE DDL for entity
-   */
-  static generateTableDDL(entity, databaseType, includeConstraints) {
-    const tableName = this.toSnakeCase(entity.name);
-    const typeMapping = SQL_TYPE_MAPPING[databaseType];
+  static generateHeader(dbType) {
+    let header = `-- Database Schema\n`;
+    header += `-- Generated: ${new Date().toISOString()}\n`;
+    header += `-- Database: ${dbType.toUpperCase()}\n\n`;
 
-    let ddl = `CREATE TABLE ${tableName} (\n`;
-
-    const columns = [];
-
-    // Primary key (id)
-    const idType = typeMapping.reference;
-    columns.push(`  id ${idType} PRIMARY KEY`);
-
-    // Entity attributes
-    if (entity.inferred_attributes && entity.inferred_attributes.length > 0) {
-      entity.inferred_attributes.forEach(attr => {
-        const columnDef = this.generateColumnDef(attr, typeMapping, includeConstraints);
-        columns.push(columnDef);
-      });
+    if (dbType === 'postgresql') {
+      header += `-- Enable UUID extension\n`;
+      header += `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";\n\n`;
     }
 
-    // Standard timestamps
-    const timestampType = typeMapping.datetime;
-    columns.push(`  created_at ${timestampType} NOT NULL DEFAULT CURRENT_TIMESTAMP`);
-    columns.push(`  updated_at ${timestampType} NOT NULL DEFAULT CURRENT_TIMESTAMP`);
-
-    ddl += columns.join(',\n');
-    ddl += '\n);';
-
-    return ddl;
+    return header;
   }
 
-  /**
-   * Generate column definition
-   */
-  static generateColumnDef(attribute, typeMapping, includeConstraints) {
-    const columnName = this.toSnakeCase(attribute.name);
-    const sqlType = typeMapping[attribute.inferred_type] || typeMapping.string;
+  static generateTable(entity, dbType) {
+    let sql = `-- Table: ${entity.name}\n`;
+    sql += `CREATE TABLE ${this.toSnakeCase(entity.name)} (\n`;
 
-    let def = `  ${columnName} ${sqlType}`;
+    const columns = [];
+    let constraints = 0;
+    let indexes = 0;
 
-    // Add constraints
-    if (includeConstraints && attribute.constraints) {
-      if (attribute.constraints.includes('required')) {
-        def += ' NOT NULL';
-      }
+    // Add ID column
+    if (dbType === 'postgresql') {
+      columns.push(`    id UUID PRIMARY KEY DEFAULT uuid_generate_v4()`);
+    } else {
+      columns.push(`    id SERIAL PRIMARY KEY`);
+    }
 
-      if (attribute.constraints.includes('unique')) {
-        def += ' UNIQUE';
+    // Add entity attributes
+    entity.attributes.forEach(attr => {
+      const columnDef = this.generateColumn(attr, dbType);
+      columns.push(`    ${columnDef}`);
+
+      if (attr.unique) constraints++;
+      if (attr.indexed) indexes++;
+    });
+
+    // Add audit columns
+    columns.push(`    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+    columns.push(`    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+    columns.push(`    deleted_at TIMESTAMP NULL`);
+
+    sql += columns.join(',\n');
+    sql += `\n);\n\n`;
+
+    // Add update trigger for updated_at
+    if (dbType === 'postgresql') {
+      sql += this.generateUpdateTrigger(entity.name);
+    }
+
+    return { sql, indexes, constraints };
+  }
+
+  static generateColumn(attr, dbType) {
+    const colName = this.toSnakeCase(attr.name);
+    const colType = this.mapDataType(attr.type, attr.length, dbType);
+
+    let def = `${colName} ${colType}`;
+
+    if (attr.required) def += ' NOT NULL';
+    if (attr.unique) def += ' UNIQUE';
+    if (attr.default !== undefined) {
+      if (typeof attr.default === 'string') {
+        def += ` DEFAULT '${attr.default}'`;
+      } else {
+        def += ` DEFAULT ${attr.default}`;
       }
     }
 
     return def;
   }
 
-  /**
-   * Generate index definitions
-   */
-  static generateIndexes(entity, databaseType) {
-    const tableName = this.toSnakeCase(entity.name);
-    const indexes = [];
+  static mapDataType(type, length, dbType) {
+    if (!type) return 'TEXT';
 
-    if (entity.inferred_attributes && entity.inferred_attributes.length > 0) {
-      entity.inferred_attributes.forEach(attr => {
-        // Create indexes for indexed constraints
-        if (attr.constraints && attr.constraints.includes('indexed')) {
-          const columnName = this.toSnakeCase(attr.name);
-          const indexName = `idx_${tableName}_${columnName}`;
-          indexes.push(`CREATE INDEX ${indexName} ON ${tableName} (${columnName});`);
-        }
-      });
-    }
+    const typeMap = {
+      string: length ? `VARCHAR(${length})` : 'TEXT',
+      text: 'TEXT',
+      integer: 'INTEGER',
+      bigint: 'BIGINT',
+      decimal: 'DECIMAL(10,2)',
+      boolean: 'BOOLEAN',
+      date: 'DATE',
+      datetime: 'TIMESTAMP',
+      timestamp: 'TIMESTAMP',
+      json: dbType === 'postgresql' ? 'JSONB' : 'JSON',
+      uuid: dbType === 'postgresql' ? 'UUID' : 'VARCHAR(36)',
+      email: 'VARCHAR(255)',
+      url: 'VARCHAR(2048)',
+      phone: 'VARCHAR(20)'
+    };
 
-    // Always index created_at for common queries
-    indexes.push(`CREATE INDEX idx_${tableName}_created_at ON ${tableName} (created_at);`);
-
-    return indexes.length > 0 ? indexes.join('\n') : null;
+    return typeMap[type.toLowerCase()] || 'TEXT';
   }
 
-  /**
-   * Convert PascalCase to snake_case
-   */
+  static generateForeignKeys(entities, dbType) {
+    let sql = `-- Foreign Key Constraints\n`;
+    let count = 0;
+
+    entities.forEach(entity => {
+      const tableName = this.toSnakeCase(entity.name);
+
+      (entity.relationships || []).forEach(rel => {
+        if (rel.type === 'many-to-one' || rel.type === 'one-to-one') {
+          const fkColumn = this.toSnakeCase(rel.target) + '_id';
+          const refTable = this.toSnakeCase(rel.target);
+
+          sql += `ALTER TABLE ${tableName}\n`;
+          sql += `    ADD CONSTRAINT fk_${tableName}_${fkColumn}\n`;
+          sql += `    FOREIGN KEY (${fkColumn})\n`;
+          sql += `    REFERENCES ${refTable}(id)\n`;
+          sql += `    ON DELETE ${rel.onDelete || 'CASCADE'};\n\n`;
+          count++;
+        }
+      });
+    });
+
+    return { sql, count };
+  }
+
+  static generateIndexes(entities, dbType) {
+    let sql = `-- Indexes\n`;
+    let count = 0;
+
+    entities.forEach(entity => {
+      const tableName = this.toSnakeCase(entity.name);
+
+      // Index unique attributes
+      entity.attributes.forEach(attr => {
+        if (attr.indexed && !attr.unique) {
+          const colName = this.toSnakeCase(attr.name);
+          sql += `CREATE INDEX idx_${tableName}_${colName} ON ${tableName}(${colName});\n`;
+          count++;
+        }
+      });
+
+      // Index foreign keys
+      (entity.relationships || []).forEach(rel => {
+        if (rel.type === 'many-to-one' || rel.type === 'one-to-one') {
+          const fkColumn = this.toSnakeCase(rel.target) + '_id';
+          sql += `CREATE INDEX idx_${tableName}_${fkColumn} ON ${tableName}(${fkColumn});\n`;
+          count++;
+        }
+      });
+
+      // Soft delete index
+      sql += `CREATE INDEX idx_${tableName}_deleted_at ON ${tableName}(deleted_at);\n`;
+      count++;
+    });
+
+    sql += '\n';
+    return { sql, count };
+  }
+
+  static generateUpdateTrigger(entityName) {
+    const tableName = this.toSnakeCase(entityName);
+    const funcName = `update_${tableName}_updated_at`;
+
+    let sql = `-- Trigger for updated_at\n`;
+    sql += `CREATE OR REPLACE FUNCTION ${funcName}()\n`;
+    sql += `RETURNS TRIGGER AS $$\n`;
+    sql += `BEGIN\n`;
+    sql += `    NEW.updated_at = CURRENT_TIMESTAMP;\n`;
+    sql += `    RETURN NEW;\n`;
+    sql += `END;\n`;
+    sql += `$$ LANGUAGE plpgsql;\n\n`;
+
+    sql += `CREATE TRIGGER trigger_${tableName}_updated_at\n`;
+    sql += `    BEFORE UPDATE ON ${tableName}\n`;
+    sql += `    FOR EACH ROW\n`;
+    sql += `    EXECUTE FUNCTION ${funcName}();\n\n`;
+
+    return sql;
+  }
+
   static toSnakeCase(str) {
-    return str
-      .replace(/([A-Z])/g, '_$1')
-      .toLowerCase()
-      .replace(/^_/, '');
+    if (!str) return '';
+    return str.replace(/([A-Z])/g, '_$1').toLowerCase().replace(/^_/, '');
   }
 }
 

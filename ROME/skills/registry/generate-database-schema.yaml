@@ -1,81 +1,31 @@
 skill:
   name: generate-database-schema
   version: 1.0.0
-  category: generation
+  category: configuration
   tier: 1
-  description: Generate database schema (SQL DDL) from data dictionary
+  description: Generate database schema SQL from data dictionary
 
 parameters:
   required:
     - name: data_dictionary_file
       type: string
       validation: file_exists
-      description: Path to data dictionary JSON file
 
-  optional:
     - name: output_file
       type: string
-      description: File path to write SQL DDL
 
+  optional:
     - name: database_type
       type: string
       default: postgresql
-      allowed_values: [postgresql, mysql, sqlite]
-      description: Target database type
-
-    - name: include_indexes
-      type: boolean
-      default: true
-      description: Generate index definitions
-
-    - name: include_constraints
-      type: boolean
-      default: true
-      description: Generate constraint definitions
 
 execution:
-  timeout: 20000
-  retry:
-    enabled: true
-    max_attempts: 2
-    backoff: linear
+  timeout: 30000
 
 output:
-  sql_ddl:
-    type: string
-    description: Generated SQL DDL statements
-  table_count:
+  tables_generated:
     type: integer
-    description: Number of tables generated
-
-# SQL type mapping
-sql_type_mapping:
-  postgresql:
-    string: VARCHAR(255)
-    integer: INTEGER
-    decimal: NUMERIC(10, 2)
-    boolean: BOOLEAN
-    datetime: TIMESTAMP
-    enum: VARCHAR(50)
-    array: JSONB
-    reference: UUID
-
-  mysql:
-    string: VARCHAR(255)
-    integer: INT
-    decimal: DECIMAL(10, 2)
-    boolean: TINYINT(1)
-    datetime: DATETIME
-    enum: VARCHAR(50)
-    array: JSON
-    reference: CHAR(36)
-
-  sqlite:
-    string: TEXT
-    integer: INTEGER
-    decimal: REAL
-    boolean: INTEGER
-    datetime: TEXT
-    enum: TEXT
-    array: TEXT
-    reference: TEXT
+  indexes_generated:
+    type: integer
+  constraints_generated:
+    type: integer
