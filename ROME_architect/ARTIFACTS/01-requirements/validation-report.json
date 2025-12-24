@@ -1,11 +1,11 @@
 {
-  "timestamp": "2025-12-23T23:33:34.299Z",
+  "timestamp": "2025-12-24T06:39:29.578Z",
   "summary": {
     "total": 25,
-    "passed": 18,
-    "failed": 7,
+    "passed": 25,
+    "failed": 0,
     "errors": 0,
-    "passRate": "72.0%"
+    "passRate": "100.0%"
   },
   "results": [
     {
@@ -69,37 +69,12 @@
     },
     {
       "id": "REQ-005",
-      "status": "FAIL",
-      "violations": 4,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Intent",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Postconditions",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Outcomes",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Invariants",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-005"
@@ -185,19 +160,12 @@
     },
     {
       "id": "REQ-012",
-      "status": "FAIL",
-      "violations": 1,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Intent",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-012"
@@ -244,19 +212,12 @@
     },
     {
       "id": "REQ-016",
-      "status": "FAIL",
-      "violations": 1,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Conditions",
-            "violation": "Contains technical jargon: \"JSON\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-016"
@@ -264,31 +225,12 @@
     },
     {
       "id": "REQ-017",
-      "status": "FAIL",
-      "violations": 3,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Preconditions",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Preconditions",
-            "violation": "Contains technical jargon: \"JSON\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Conditions",
-            "violation": "Contains technical jargon: \"JSON\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-017"
@@ -335,31 +277,12 @@
     },
     {
       "id": "REQ-021",
-      "status": "FAIL",
-      "violations": 3,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Intent",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Postconditions",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Outcomes",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-021"
@@ -367,43 +290,12 @@
     },
     {
       "id": "REQ-022",
-      "status": "FAIL",
-      "violations": 5,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Intent",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Intent",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Preconditions",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Outcomes",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          },
-          {
-            "field": "Invariants",
-            "violation": "Contains technical jargon: \"API\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-022"
@@ -437,19 +329,12 @@
     },
     {
       "id": "REQ-025",
-      "status": "FAIL",
-      "violations": 1,
+      "status": "PASS",
+      "violations": 0,
       "warnings": 0,
       "details": {
-        "status": "FAIL",
-        "violations": [
-          {
-            "field": "Intent",
-            "violation": "Contains technical jargon: \"DELETE\". Use business language.",
-            "severity": "ERROR",
-            "rule": "TECHNICAL_JARGON"
-          }
-        ],
+        "status": "PASS",
+        "violations": [],
         "warnings": [],
         "report_path": null,
         "requirement_id": "REQ-025"

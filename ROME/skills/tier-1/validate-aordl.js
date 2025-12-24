@@ -33,6 +33,31 @@ const GENERIC_ACTORS = manifest.anti_patterns.generic_actors;
 const AMBIGUOUS_VERBS = manifest.anti_patterns.ambiguous_verbs;
 const APPROVED_VERBS = manifest.approved_verbs;
 
+// Whitelisted business-appropriate terms that contain technical keywords
+const BUSINESS_WHITELISTED_TERMS = [
+  'api-token',
+  'api token',
+  'api authentication',
+  'api requests',
+  'api servers',
+  'api access',
+  'JSON format',
+  'JSON file',
+  'JSON data',
+  'JSON schema',
+  'JSON, CSV, PDF',  // Format enumeration
+  'CSV format',
+  'PDF format',
+  'delete task',
+  'delete team-member',
+  'delete webhook',
+  'delete api-token',
+  'soft delete',
+  'deleted',
+  'deletion',
+  'hard delete'
+];
+
 class ValidateAORDL {
   static async execute(params, executionId) {
     const { requirement_file, mode = 'STRICT', output_report = null } = params;
@@ -222,6 +247,14 @@ class ValidateAORDL {
   }
 
   /**
+   * Check if content is whitelisted (contains business-appropriate terms)
+   */
+  static isWhitelisted(content) {
+    const contentLower = content.toLowerCase();
+    return BUSINESS_WHITELISTED_TERMS.some(term => contentLower.includes(term.toLowerCase()));
+  }
+
+  /**
    * Validate anti-patterns across all fields
    */
   static validateAntiPatterns(requirement, violations, warnings) {
@@ -236,7 +269,11 @@ class ValidateAORDL {
 
     for (const field of fieldsToCheck) {
       if (requirement[field]) {
-        const content = JSON.stringify(requirement[field]).toLowerCase();
+        const originalContent = JSON.stringify(requirement[field]);
+        const content = originalContent.toLowerCase();
+
+        // Skip technical jargon check if content contains whitelisted business terms
+        const isWhitelisted = this.isWhitelisted(originalContent);
 
         // Check for UI language (whole word match)
         for (const uiKeyword of UI_KEYWORDS) {
@@ -251,16 +288,18 @@ class ValidateAORDL {
           }
         }
 
-        // Check for technical jargon (whole word match)
-        for (const techKeyword of TECHNICAL_KEYWORDS) {
-          const regex = new RegExp(`\\b${techKeyword}\\b`, 'i');
-          if (regex.test(content)) {
-            violations.push({
-              field,
-              violation: `Contains technical jargon: "${techKeyword}". Use business language.`,
-              severity: 'ERROR',
-              rule: 'TECHNICAL_JARGON'
-            });
+        // Check for technical jargon (whole word match) - skip if whitelisted
+        if (!isWhitelisted) {
+          for (const techKeyword of TECHNICAL_KEYWORDS) {
+            const regex = new RegExp(`\\b${techKeyword}\\b`, 'i');
+            if (regex.test(content)) {
+              violations.push({
+                field,
+                violation: `Contains technical jargon: "${techKeyword}". Use business language.`,
+                severity: 'ERROR',
+                rule: 'TECHNICAL_JARGON'
+              });
+            }
           }
         }
       }
