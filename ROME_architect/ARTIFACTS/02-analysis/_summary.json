@@ -1,0 +1,129 @@
+{
+  "total_requirements": 25,
+  "validation": {
+    "pass": 25,
+    "fail": 0,
+    "pass_rate": 100
+  },
+  "complexity": {
+    "LOW": 0,
+    "MEDIUM": 4,
+    "HIGH": 21,
+    "VERY_HIGH": 0,
+    "average_score": 29
+  },
+  "entities": {
+    "total": 196,
+    "average_per_requirement": "7.8"
+  },
+  "invariants": {
+    "total": 73,
+    "average_per_requirement": "2.9"
+  },
+  "recommendations": {
+    "total": 43,
+    "average_per_requirement": "1.7"
+  },
+  "api_endpoints": [
+    {
+      "requirement_id": "REQ-001",
+      "endpoint": "POST /project"
+    },
+    {
+      "requirement_id": "REQ-002",
+      "endpoint": "POST /task"
+    },
+    {
+      "requirement_id": "REQ-003",
+      "endpoint": "PUT /task/{id}"
+    },
+    {
+      "requirement_id": "REQ-004",
+      "endpoint": "GET /task"
+    },
+    {
+      "requirement_id": "REQ-005",
+      "endpoint": "DELETE /task/{id}"
+    },
+    {
+      "requirement_id": "REQ-006",
+      "endpoint": "GET /tasks/search"
+    },
+    {
+      "requirement_id": "REQ-007",
+      "endpoint": "POST /comment"
+    },
+    {
+      "requirement_id": "REQ-008",
+      "endpoint": "POST /attachment"
+    },
+    {
+      "requirement_id": "REQ-009",
+      "endpoint": "POST /team"
+    },
+    {
+      "requirement_id": "REQ-010",
+      "endpoint": "PUT /team/{id}"
+    },
+    {
+      "requirement_id": "REQ-011",
+      "endpoint": "POST /team-member"
+    },
+    {
+      "requirement_id": "REQ-012",
+      "endpoint": "DELETE /team-member/{id}"
+    },
+    {
+      "requirement_id": "REQ-013",
+      "endpoint": "POST /task/{id}/submit"
+    },
+    {
+      "requirement_id": "REQ-014",
+      "endpoint": "PATCH /task/{id}/approve"
+    },
+    {
+      "requirement_id": "REQ-015",
+      "endpoint": "PATCH /task/{id}/reject"
+    },
+    {
+      "requirement_id": "REQ-016",
+      "endpoint": "GET /project"
+    },
+    {
+      "requirement_id": "REQ-017",
+      "endpoint": "POST /project"
+    },
+    {
+      "requirement_id": "REQ-018",
+      "endpoint": "PATCH /task/{id}/archive"
+    },
+    {
+      "requirement_id": "REQ-019",
+      "endpoint": "PATCH /task/{id}/restore"
+    },
+    {
+      "requirement_id": "REQ-020",
+      "endpoint": "GET /analytics"
+    },
+    {
+      "requirement_id": "REQ-021",
+      "endpoint": "POST /api-token"
+    },
+    {
+      "requirement_id": "REQ-022",
+      "endpoint": "DELETE /api-token/{id}"
+    },
+    {
+      "requirement_id": "REQ-023",
+      "endpoint": "POST /webhook"
+    },
+    {
+      "requirement_id": "REQ-024",
+      "endpoint": "PUT /webhook/{id}"
+    },
+    {
+      "requirement_id": "REQ-025",
+      "endpoint": "DELETE /webhook/{id}"
+    }
+  ]
+}

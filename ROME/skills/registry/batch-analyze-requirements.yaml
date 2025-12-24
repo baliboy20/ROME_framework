@@ -1,0 +1,45 @@
+skill:
+  name: batch-analyze-requirements
+  version: 1.0.0
+  category: analysis
+  tier: 1
+  description: Batch analyze all AORDL requirements in a directory
+
+parameters:
+  required:
+    - name: requirements_directory
+      type: string
+      validation: directory_exists
+      description: Directory containing AORDL requirement files
+
+  optional:
+    - name: output_directory
+      type: string
+      description: Directory to write analysis reports
+
+    - name: output_format
+      type: string
+      default: json
+      allowed_values: [json, yaml, markdown]
+      description: Output format for analysis reports
+
+    - name: generate_summary
+      type: boolean
+      default: true
+      description: Generate summary report
+
+execution:
+  timeout: 300000
+  retry:
+    enabled: false
+
+output:
+  analyses:
+    type: array
+    description: List of all analyses
+  summary:
+    type: object
+    description: Aggregate summary statistics
+  failed_count:
+    type: integer
+    description: Number of failed analyses
