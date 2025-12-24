@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-003 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,8 +20,9 @@ Defines HOW PMA executes Phase 3 (Design). For WHAT outcomes are required, see R
 
 | UID | Document | Content |
 |-----|----------|---------|
-| ROME-PHASE-004 | P03-design/operations-guidelines.md | P3 entry/exit criteria, outputs, schemas |
-| ROME-PHASE-003 | P02-analysis/operations-guidelines.md | P2 outputs (inputs to P3) |
+| ROME-PHASE-004 | P03-design/operations-guidelines.md | P3 entry/exit criteria, outputs, schemas, AORDL traceability |
+| ROME-PHASE-003 | P02-analysis/operations-guidelines.md | P2 outputs (inputs to P3), AORDL traceability |
+| ROME-PHASE-002 | P01-aordl/operations-guidelines.md | P1 AORDL requirements (for full traceability) |
 | ROME-PROC-005 | activity-logging-protocol.md | Logging procedures |
 | ROME-PROC-002 | sponsor-interaction-protocol.md | Sponsor communication |
 | ROME-PROC-006 | quality-gate-protocol.md | GATE-P3 requirements |
@@ -64,6 +65,172 @@ Defines HOW PMA executes Phase 3 (Design). For WHAT outcomes are required, see R
 - Configure environments (P4)
 - Proceed without Roma coordination
 - Skip handover
+
+---
+
+## Skills Auto-Discovery System
+
+PMA has access to **79 skills** across all phases through the skills auto-discovery system. Skills are dynamically indexed and searchable.
+
+### Discovering P3 Design Skills
+
+**List all P3 skills:**
+```bash
+/list-skills --filter-phase P3
+```
+
+**Search for specific capability:**
+```bash
+/list-skills --search-query "data dictionary"
+/list-skills --search-query "API design"
+```
+
+**Get detailed skill information:**
+```bash
+/explain-skill --skill-name generate-data-dictionary
+```
+
+### Context-Aware Recommendations
+
+When you need help but don't know which skill:
+
+```bash
+/recommend-skills --task-description "I need to validate technology stack choices" --current-phase P3
+/recommend-skills --task-description "I need to create API design documentation" --current-phase P3
+```
+
+### Key P3 Design Skills
+
+**Architecture & Design - ~25 skills:**
+- `/generate-data-dictionary` - Auto-generate from P2 requirements
+- `/validate-data-dictionary` - Check completeness and consistency
+- `/design-api-endpoints` - Generate REST/GraphQL API design
+- `/validate-tech-stack` - Check technology health and compatibility
+- `/generate-use-cases` - Transform user stories to use cases
+- `/design-system-architecture` - Create architecture diagrams
+- `/generate-work-breakdown` - Create actionlist from design artifacts
+- `/validate-requirements-coverage` - Ensure 100% P2 requirements addressed
+
+**Discovery Skills:**
+- `/list-skills` - Browse and filter
+- `/recommend-skills` - Context-aware recommendations
+- `/explain-skill` - Detailed usage guide
+
+### When to Use Skills During P3
+
+**Stage 1 (Foundation):**
+- After sponsor kickoff → `/validate-tech-stack --tech-stack-file tech-stack.md`
+
+**Stage 2 (Core Design):**
+- Start data dictionary → `/generate-data-dictionary --source requirements-matrix.yaml`
+- After data dictionary draft → `/validate-data-dictionary --file data-dictionary.yaml`
+- Design API → `/design-api-endpoints --data-dictionary-file data-dictionary.yaml`
+- Generate use cases → `/generate-use-cases --source user-stories.md`
+
+**Stage 3 (Finalization):**
+- Create work breakdown → `/generate-work-breakdown --design-artifacts design/`
+- Before handover → `/validate-requirements-coverage --requirements requirements-matrix.yaml --design design/`
+
+### Skills Best Practices for PMA
+
+1. **Use /list-skills first** - Discover available P3 skills before starting design
+2. **Use /recommend-skills** - Get suggestions based on current design task
+3. **Chain skills** - Output of one skill feeds another (requirements → data dictionary → API → use cases)
+4. **Validate frequently** - Use validation skills throughout design process
+5. **Check tier** - Tier 3 orchestration skills can automate multi-step workflows
+
+---
+
+## AORDL Awareness
+
+PMA receives P2 outputs that are already traced to AORDL requirements from P1. Understanding AORDL context helps ensure complete traceability through P3.
+
+### AORDL-to-P3 Traceability
+
+Per ROME-PHASE-004, every AORDL requirement flows through P2 into P3:
+
+| From AORDL (P1) | Through P2 | To P3 Design Artifact |
+|-----------------|------------|----------------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) |
+| Actor | User role | Use case Actor |
+| Intent | User story capability | Use case Flow |
+| Outcomes | Acceptance criteria | Use case Flow steps |
+| Invariants | Data constraints | Data dictionary business rules |
+| NonFunctional.Performance | NFR specification | System architecture decisions |
+| NonFunctional.Security | NFR specification | Tech stack + API authentication |
+| Errors | Error handling requirements | API design error responses |
+
+### Leveraging AORDL in Design
+
+**When designing data dictionary:**
+- Check P2 requirements for AORDL Invariants → Business rules
+- Map AORDL Postconditions → Field constraints
+
+**When designing APIs:**
+- Map AORDL Intent → API endpoint operations (create, view, update, delete)
+- Map AORDL Errors → HTTP error codes and messages
+- Map AORDL NonFunctional.Security → Authentication/authorization requirements
+
+**When creating use cases:**
+- Map AORDL Actor → Use case Actor (maintain role specificity)
+- Map AORDL Intent → Use case main flow
+- Map AORDL Outcomes → Use case postconditions
+- Map AORDL Preconditions → Use case preconditions
+
+**Traceability Check:**
+- Ensure every REQ-### from P1 maps to at least one UC-### in P3
+- Document mapping in phase3-handover.md
+
+---
+
+## Life-Cycle Phase References
+
+PMA operates within the ROME framework's structured life-cycle:
+
+| Phase | Document | Relevance to PMA |
+|-------|----------|------------------|
+| **P01-AORDL** | `/ROME/life-cycle/P01-aordl/operations-guidelines.md` | Source AORDL requirements (REQ-*.yaml files) for full traceability |
+| **P02-Analysis** | `/ROME/life-cycle/P02-analysis/operations-guidelines.md` | Direct predecessor - requirements matrix, user stories, NFRs are inputs |
+| **P03-Design** | `/ROME/life-cycle/P03-design/operations-guidelines.md` | Primary phase - defines WHAT PMA must deliver |
+| **P04-Config** | `/ROME/life-cycle/P04-config/operations-guidelines.md` | Successor - Lucien uses P3 artifacts to scaffold workspaces |
+| **P05-Generation** | `/ROME/life-cycle/P05-generation/operations-guidelines.md` | Final successor - robots implement P3 design |
+
+### P2 Input Artifacts (from Talib)
+
+| Artifact | Location | Usage in P3 |
+|----------|----------|-------------|
+| requirements-matrix.yaml | ARTIFACTS/dev/requirements/ | Source for features, entities, dimensions |
+| user-stories.md | ARTIFACTS/dev/requirements/ | Source for use cases, user roles |
+| acceptance-criteria.md | ARTIFACTS/dev/requirements/ | Validation for use case completeness |
+| non-functional-requirements.md | ARTIFACTS/dev/requirements/ | Input for tech stack, architecture decisions |
+| phase2-handover.md | ARTIFACTS/dev/requirements/ | Technical requests, decisions log, notes for PMA |
+
+### P3 Output Artifacts (for Lucien & P5 Robots)
+
+| Artifact | Location | Used By |
+|----------|----------|---------|
+| tech-stack.md | ARTIFACTS/dev/design/ | Lucien (workspace initialization) |
+| data-dictionary.yaml | ARTIFACTS/dev/design/ | Ashok (migrations), Reena (API models), Charlie (UI types) |
+| api-design.md | ARTIFACTS/dev/design/ | Reena (API implementation) |
+| use-cases.md | ARTIFACTS/dev/design/ | Charlie (UI flows), Reena (business logic) |
+| system-architecture.md | ARTIFACTS/dev/design/ | Lucien (infrastructure), all P5 robots (context) |
+| actionlist.md | ARTIFACTS/dev/design/ | Roma (assignments), all P5 robots (work items) |
+| test-architecture.md | ARTIFACTS/dev/design/ | Charlie (test structure), all P5 robots (test requirements) |
+| phase3-handover.md | ARTIFACTS/dev/design/ | Lucien (P4 entry), all P5 robots (context) |
+
+### Quality Gates
+
+| Gate | Document | PMA Responsibility |
+|------|----------|-------------------|
+| **GATE-P3** | `/ROME/life-cycle/cross-phase-procedures/quality-gate-protocol.md` | Ensure all P3 exit criteria met before requesting Sarah audit |
+
+### Cross-Phase Procedures
+
+| Procedure | Document | Content |
+|-----------|----------|---------|
+| Activity Logging | `/ROME/robot-templates/robot-operations-protocols/activity-logging-protocol.md` | PHASE, BLOCKER, DELIVERABLE logging |
+| Sponsor Interaction | `/ROME/robot-templates/robot-operations-protocols/sponsor-interaction-protocol.md` | Clarifications, design reviews, sign-offs |
+| Quality Gates | `/ROME/life-cycle/cross-phase-procedures/quality-gate-protocol.md` | GATE-P3 validation criteria |
 
 ---
 
@@ -1239,3 +1406,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.6 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Added Epic identification (Step 12.1), updated Story ID pattern, added Epic field to features |
 | 1.7 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-006: Added Step 10.5 test architecture design, updated actionlist with test stories, added test architecture to sponsor review |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 2):** Added Skills Auto-Discovery System section (~25 P3 design skills, discovery commands, stage-specific skill usage), added AORDL Awareness section (AORDL-to-P3 traceability table with 8 mappings, leveraging AORDL in design), added Life-Cycle Phase References section (P01-P05 phase documents, P2 input artifacts, P3 output artifacts, quality gates, cross-phase procedures), updated dependencies to include ROME-PHASE-002 (P01-aordl), updated status to Active |
