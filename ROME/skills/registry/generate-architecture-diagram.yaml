@@ -1,0 +1,33 @@
+skill:
+  name: generate-architecture-diagram
+  version: 1.0.0
+  category: architecture
+  tier: 2
+  description: Generate system architecture diagrams in Mermaid format
+
+parameters:
+  required:
+    - name: component_structure_file
+      type: string
+      validation: file_exists
+      description: Path to component structure JSON
+
+  optional:
+    - name: output_file
+      type: string
+      description: Output file for Mermaid diagram
+    - name: diagram_type
+      type: string
+      default: layered
+      description: Diagram type (layered, deployment, dataflow)
+
+execution:
+  timeout: 60000
+
+output:
+  diagram_generated:
+    type: boolean
+  diagram_content:
+    type: string
+  layers_visualized:
+    type: integer
