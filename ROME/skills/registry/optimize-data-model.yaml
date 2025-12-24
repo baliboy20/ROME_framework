@@ -1,0 +1,80 @@
+skill:
+  name: optimize-data-model
+  version: 1.0.0
+  category: optimization
+  tier: 3
+  description: Analyze data dictionary for optimization opportunities and normalization
+
+parameters:
+  required:
+    - name: data_dictionary_file
+      type: string
+      validation: file_exists
+      description: Path to data dictionary JSON file
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write optimization report
+
+    - name: check_normalization
+      type: boolean
+      default: true
+      description: Check for normalization violations
+
+    - name: check_naming
+      type: boolean
+      default: true
+      description: Check for naming consistency issues
+
+    - name: suggest_consolidation
+      type: boolean
+      default: true
+      description: Suggest entity consolidation opportunities
+
+execution:
+  timeout: 60000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: linear
+
+output:
+  optimization_status:
+    type: string
+    description: OPTIMIZED, NEEDS_WORK, or CRITICAL
+  issues_found:
+    type: array
+    description: List of optimization issues
+  recommendations:
+    type: array
+    description: Specific optimization recommendations
+  metrics:
+    type: object
+    description: Data model quality metrics
+
+# Optimization checks
+optimization_checks:
+  - check: normalization_violations
+    description: Identify denormalization and repeating groups
+    severity: WARNING
+
+  - check: naming_inconsistencies
+    description: Check for inconsistent naming patterns
+    severity: WARNING
+
+  - check: redundant_attributes
+    description: Find duplicate or redundant attributes
+    severity: WARNING
+
+  - check: missing_relationships
+    description: Identify implied but missing relationships
+    severity: WARNING
+
+  - check: entity_granularity
+    description: Check if entities should be split or merged
+    severity: INFO
+
+  - check: attribute_distribution
+    description: Analyze attribute distribution across entities
+    severity: INFO
