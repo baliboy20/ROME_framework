@@ -1,0 +1,73 @@
+ID: REQ-016
+
+Actor: Administrator
+
+Intent: export project
+
+Preconditions:
+  - Administrator authenticated
+  - Project exists
+  - Administrator has admin role
+
+Conditions:
+  - Export format must be one of JSON, CSV, PDF
+
+Postconditions:
+  - Export job queued
+  - Administrator notified when export ready
+  - Export file stored in cloud storage
+  - Audit log entry created
+
+Outcomes:
+  - Export file generated with project data
+  - Administrator receives download link
+  - Export expires after 7 days
+
+Invariants:
+  - Export includes project, tasks, comments, attachments metadata
+  - Export timestamp recorded
+  - Export file size ≤ 100MB
+
+NonFunctional:
+  Performance:
+    - Export job completes in <30 seconds for 1000 tasks
+  Security:
+    - Export URL signed and expires after 7 days
+  Scalability:
+    - Supports 10 concurrent exports
+
+Errors:
+  - error: "If export format invalid"
+    message: "Export format must be JSON, CSV, or PDF"
+  - error: "If project data exceeds 100MB"
+    message: "Project too large to export. Contact support"
+  - error: "If export quota exceeded (>10 concurrent)"
+    message: "Export quota exceeded. Please wait for current exports to complete"
+
+ScopeBoundary:
+  InScope:
+    - Export project data to JSON, CSV, PDF
+  OutOfScope:
+    - Incremental export, scheduled exports, custom export templates
+
+OpenQuestions:
+  - question: "Should export include attachment files or just metadata?"
+    status: RESOLVED
+    resolution: "Metadata only for pilot"
+
+CopilotMode: GUIDED
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-DATA-MANAGEMENT
+  dependencies:
+    - REQ-001
+  tags:
+    - advanced
+    - tier-3
+    - export
+    - integration

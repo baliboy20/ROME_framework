@@ -1,0 +1,79 @@
+skill:
+  name: generate-test-scenarios
+  version: 1.0.0
+  category: generation
+  tier: 1
+  description: Generate comprehensive test scenarios from AORDL requirement
+
+parameters:
+  required:
+    - name: requirement_file
+      type: string
+      validation: file_exists
+      description: Path to AORDL requirement YAML file
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write test scenarios
+
+    - name: output_format
+      type: string
+      default: json
+      allowed_values: [json, yaml, markdown]
+      description: Output format for test scenarios
+
+    - name: include_negative_tests
+      type: boolean
+      default: true
+      description: Generate negative/error test cases
+
+    - name: include_edge_cases
+      type: boolean
+      default: true
+      description: Generate edge case test scenarios
+
+execution:
+  timeout: 15000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: linear
+
+output:
+  test_scenarios:
+    type: array
+    description: List of generated test scenarios
+  coverage:
+    type: object
+    description: Test coverage statistics
+
+# Test scenario types
+scenario_types:
+  happy_path:
+    priority: HIGH
+    description: Normal successful flow
+
+  error_handling:
+    priority: HIGH
+    description: Error conditions from Errors field
+
+  boundary:
+    priority: MEDIUM
+    description: Boundary value testing
+
+  validation:
+    priority: MEDIUM
+    description: Input validation testing
+
+  invariant:
+    priority: HIGH
+    description: Business rule enforcement testing
+
+  authorization:
+    priority: HIGH
+    description: Access control testing
+
+  edge_case:
+    priority: LOW
+    description: Uncommon but valid scenarios

@@ -1,0 +1,138 @@
+skill:
+  name: generate-data-dictionary
+  version: 1.0.0
+  category: generation
+  tier: 1
+  description: Generate comprehensive data dictionary from AORDL requirements by aggregating entities and attributes
+
+parameters:
+  required:
+    - name: requirements_directory
+      type: string
+      validation: directory_exists
+      description: Directory containing AORDL requirement YAML files
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write data dictionary
+
+    - name: output_format
+      type: string
+      default: json
+      allowed_values: [json, yaml, markdown]
+      description: Output format for data dictionary
+
+    - name: include_inferred_types
+      type: boolean
+      default: true
+      description: Infer data types from context and attribute names
+
+    - name: include_relationships
+      type: boolean
+      default: true
+      description: Include entity relationships
+
+execution:
+  timeout: 30000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: exponential
+
+output:
+  entities:
+    type: array
+    description: Complete list of entities with attributes and types
+  relationships:
+    type: array
+    description: All entity relationships
+  statistics:
+    type: object
+    description: Summary statistics about the data model
+
+# Data type inference patterns
+type_inference:
+  string:
+    attribute_patterns:
+      - name
+      - title
+      - description
+      - email
+      - phone
+      - address
+      - url
+      - slug
+      - text
+      - content
+      - message
+      - comment
+
+  integer:
+    attribute_patterns:
+      - id
+      - count
+      - quantity
+      - number
+      - index
+      - position
+      - rank
+
+  decimal:
+    attribute_patterns:
+      - price
+      - cost
+      - amount
+      - rate
+      - percentage
+      - score
+
+  boolean:
+    attribute_patterns:
+      - is_
+      - has_
+      - can_
+      - should_
+      - enabled
+      - active
+      - visible
+      - deleted
+
+  datetime:
+    attribute_patterns:
+      - date
+      - time
+      - timestamp
+      - created
+      - updated
+      - modified
+      - deleted
+      - scheduled
+      - expires
+
+  enum:
+    attribute_patterns:
+      - status
+      - state
+      - type
+      - priority
+      - category
+      - role
+      - permission
+
+  array:
+    attribute_patterns:
+      - tags
+      - labels
+      - items
+      - list
+      - collection
+
+  reference:
+    attribute_patterns:
+      - _id
+      - owner
+      - creator
+      - assignee
+      - parent
+      - author

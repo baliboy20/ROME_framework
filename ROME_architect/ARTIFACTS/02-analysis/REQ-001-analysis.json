@@ -1,0 +1,269 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:32.936Z",
+    "execution_id": "skill-1766577932913-2so4cyy10",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-001.yaml"
+  },
+  "requirement_id": "REQ-001",
+  "requirement_intent": "create project",
+  "requirement_actor": "ProjectManager",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 8,
+    "primary_entities": [
+      {
+        "name": "Project",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Conditions",
+          "Postconditions",
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [
+          "name",
+          "status",
+          "owner"
+        ],
+        "contexts": [
+          "create project",
+          "Project name unique within organization",
+          "Project status set to 'active' ProjectManager assigned as project owner Audit log entry created",
+          "Project saved to database with unique ID ProjectManager receives confirmation notification Project appears in ProjectManager's project list",
+          "Project must have exactly one owner Project name 3-100 characters Created date ≤ Current date"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Manager",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "ProjectManager authenticated ProjectManager has active subscription"
+        ]
+      },
+      {
+        "name": "Organization",
+        "type": "secondary",
+        "source_fields": [
+          "Conditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Project name unique within organization"
+        ]
+      },
+      {
+        "name": "Audit",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Project status set to 'active' ProjectManager assigned as project owner Audit log entry created"
+        ]
+      },
+      {
+        "name": "Notification",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Project saved to database with unique ID ProjectManager receives confirmation notification Project appears in ProjectManager's project list"
+        ]
+      },
+      {
+        "name": "Created",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "date"
+        ],
+        "contexts": [
+          "Project must have exactly one owner Project name 3-100 characters Created date ≤ Current date"
+        ]
+      },
+      {
+        "name": "Current",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "date"
+        ],
+        "contexts": [
+          "Project must have exactly one owner Project name 3-100 characters Created date ≤ Current date"
+        ]
+      }
+    ],
+    "relationships": [
+      {
+        "from_entity": "Projectmanager",
+        "relationship_type": "has_many",
+        "to_entity": "Project",
+        "source_field": "Outcomes",
+        "context": "ProjectManager's project"
+      }
+    ]
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "validation": 1,
+      "unclassified": 1,
+      "temporal": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Project must have exactly one owner",
+        "classifications": [
+          {
+            "type": "validation",
+            "confidence": 0.6,
+            "matched_keyword": "must have"
+          },
+          {
+            "type": "relationship",
+            "confidence": 0.6,
+            "matched_keyword": "must have"
+          }
+        ],
+        "entities": [
+          "Project",
+          "Owner"
+        ],
+        "attributes": [
+          "owner"
+        ],
+        "semantic": {
+          "modality": "must",
+          "subject": "Project must",
+          "predicate": "have",
+          "constraint": "Project must have exactly one owner",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Project name 3-100 characters",
+        "classifications": [],
+        "entities": [
+          "Project"
+        ],
+        "attributes": [
+          "name"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Project name",
+          "predicate": null,
+          "constraint": "Project name 3-100 characters",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Created date ≤ Current date",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.9,
+            "matched_keyword": "created date"
+          }
+        ],
+        "entities": [
+          "Created",
+          "Current"
+        ],
+        "attributes": [
+          "date"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Created date",
+          "predicate": null,
+          "constraint": "Created date ≤ Current date",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "POST",
+    "path": "/project",
+    "resource": "project",
+    "full_endpoint": "POST /project",
+    "request_body": {
+      "type": "object",
+      "required_fields": [
+        "data"
+      ],
+      "example": {}
+    },
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "project": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "ProjectManager",
+      "permission": "create_project"
+    }
+  },
+  "complexity": {
+    "total_score": 31,
+    "level": "HIGH",
+    "breakdown": {
+      "entities": 16,
+      "invariants": 9,
+      "conditions": 2,
+      "errors": 2,
+      "relationships": 2
+    },
+    "factors": {
+      "entity_count": 8,
+      "invariant_count": 3,
+      "condition_count": 1,
+      "error_count": 2,
+      "relationship_count": 1
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "complexity",
+      "message": "High complexity - ensure adequate testing and documentation",
+      "action": "Add comprehensive test scenarios"
+    },
+    {
+      "type": "INFO",
+      "category": "invariants",
+      "message": "1 invariant(s) could not be classified",
+      "action": "Review unclassified invariants for clarity"
+    }
+  ]
+}

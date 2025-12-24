@@ -1,0 +1,29 @@
+skill:
+  name: generate-repository-interfaces
+  version: 1.0.0
+  category: generation
+  tier: 1
+  description: Generate abstract repository interfaces for domain layer
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+    - name: output_directory
+      type: string
+
+  optional:
+    - name: entities
+      type: array
+      default: []
+
+execution:
+  timeout: 30000
+
+output:
+  files_generated:
+    type: array
+  repositories_created:
+    type: integer

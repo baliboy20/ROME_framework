@@ -1,0 +1,24 @@
+skill:
+  name: generate-complete-observability-stack
+  version: 1.0.0
+  category: composition
+  tier: 2
+  description: Generate complete observability stack (logging + monitoring + security)
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+    - name: output_directory
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  files_generated:
+    type: array
+  components_configured:
+    type: integer

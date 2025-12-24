@@ -1,0 +1,72 @@
+ID: REQ-002
+
+Actor: ProjectManager
+
+Intent: create task
+
+Preconditions:
+  - ProjectManager authenticated
+  - Project exists and ProjectManager has write access
+
+Conditions:
+  - Task priority must be valid enum (LOW, MEDIUM, HIGH, CRITICAL)
+
+Postconditions:
+  - Task status set to 'open'
+  - Task assigned to project
+  - Task creator recorded
+  - Notification sent to assignee if specified
+
+Outcomes:
+  - Task saved to database with unique ID
+  - Task appears in project task list
+  - Assignee receives notification if assigned
+
+Invariants:
+  - Task title 3-200 characters
+  - Due date ≥ Created date
+  - Priority must be one of LOW, MEDIUM, HIGH, CRITICAL
+  - Task must belong to exactly one project
+
+NonFunctional:
+  Performance:
+    - Task creation completes in <1 second
+  Security:
+    - Requires project write permission
+  Usability:
+    - Due date validation prevents past dates
+
+Errors:
+  - error: "If project not found"
+    message: "Project does not exist"
+  - error: "If assignee not project member"
+    message: "Assignee must be a project team member"
+  - error: "If due date in past"
+    message: "Due date cannot be in the past"
+
+ScopeBoundary:
+  InScope:
+    - Create task with title, description, assignee, due date, priority
+  OutOfScope:
+    - Recurring tasks, task templates, subtasks
+
+OpenQuestions:
+  - question: "Should tasks support multiple assignees?"
+    status: RESOLVED
+    resolution: "Single assignee only for pilot"
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: HIGH
+  epic: EPIC-PILOT
+  feature: FEATURE-TASK-MANAGEMENT
+  dependencies:
+    - REQ-001
+  tags:
+    - core-crud
+    - tier-1
+    - task

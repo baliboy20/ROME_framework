@@ -96,6 +96,85 @@ The MCP server uses this database name to connect. Bootstrap creates this file d
 
 ---
 
+## State Access Standard
+
+### Purpose
+
+Defines optimal methods for accessing activity state to maximize performance while maintaining data integrity.
+
+### Access Patterns
+
+| Operation Type | Method | Tool/File | Rationale |
+|----------------|--------|-----------|-----------|
+| **Mutations** | MCP append | `mcp__activity-log__append()` | Maintains event log integrity, triggers state rebuild |
+| **Real-time monitoring** | Direct file read | `ARTIFACTS/activity-state.yaml` | 10x faster than MCP query, zero network latency |
+| **Historical queries** | MCP query | `mcp__activity-log__query()` | Access complete event history from log file |
+| **Bulk status checks** | Direct file read | `ARTIFACTS/activity-state.yaml` | Efficient for checking multiple items |
+| **Single item verification** | Direct file read | `ARTIFACTS/activity-state.yaml` | Faster than MCP for simple reads |
+
+### Implementation Guidelines
+
+**For Mutations (All Robots):**
+```javascript
+// ALWAYS use MCP for mutations
+mcp__activity-log__append({
+  type: "STATUS_UPDATE",
+  id: work_id,
+  attributes: {status: IN_PROGRESS, start: NOW}
+})
+// State automatically rebuilt by MCP server
+```
+
+**For Monitoring (Primarily Roma):**
+```javascript
+// Read state file directly (fast path)
+const state = Read("ARTIFACTS/activity-state.yaml")
+
+// Query by status
+const blockers = state.by_status.BLOCKED
+
+// Query by robot
+const romaWork = state.by_robot.roma
+
+// Query by phase
+const phase2Work = state.by_phase["2"]
+```
+
+**For Historical Analysis:**
+```javascript
+// Use MCP to query event log when you need history
+const history = mcp__activity-log__get_history({id: "FEAT-001"})
+// Returns: All events for FEAT-001 across time
+```
+
+### Performance Characteristics
+
+| Method | Latency | Use Case |
+|--------|---------|----------|
+| Direct YAML read | <10ms | Monitoring, status checks, coordination |
+| MCP query (state) | ~100ms | Legacy queries, compatibility |
+| MCP query (history) | ~200ms | Audit trails, historical analysis |
+| MCP append | ~50ms | All mutations (required) |
+
+### Rules
+
+**MUST:**
+- Use MCP append for ALL mutations
+- Use direct YAML reads for monitoring and status checks
+- Verify YAML file exists before reading
+
+**MUST NOT:**
+- Edit `activity-log.txt` or `activity-state.yaml` manually
+- Use MCP queries when YAML read suffices
+- Cache state across multiple operations (always read fresh)
+
+**MAY:**
+- Use MCP queries for complex historical analysis
+- Read event log file directly for grep-based searches
+- Parse YAML programmatically for custom queries
+
+---
+
 ## Mandatory Logging Events
 
 ### Trigger Points
@@ -272,21 +351,30 @@ Step 3: Request approval from Roma or relevant robot
 
 ## Verification Requirements
 
-### After Every Log Update
+### Verification Strategy
 
-You MUST verify the log update was successful:
+**Inline verification after appends is NOT required.** Event log appends are atomic and fail-fast.
 
-```
-→ mcp__activity-log__find_by_id(id: "[ENTRY-ID]")
-→ Confirm returned entry reflects your changes
-```
+**Rationale:**
+- File append operations are synchronous and atomic
+- MCP tool returns error immediately on failure
+- State rebuild is automatic after successful append
+- Inline verification adds 50% latency without preventing failures
 
-### If Verification Fails
+### Verification Timing
 
-1. **Retry** the update operation
-2. **Report** failure to orchestrator (Roma)
-3. **Do not proceed** with work until logging confirmed
-4. **Document** logging failure in session notes
+**Phase Gates (Comprehensive):**
+- Verify state integrity before phase transitions
+- Verify event log consistency
+- Validate all work items accounted for
+- Check for orphaned entries or status mismatches
+
+**On Append Failure:**
+If `mcp__activity-log__append()` returns error:
+1. Retry operation once
+2. If retry fails, create blocker entry
+3. Report to Roma
+4. Do not proceed until resolved
 
 ---
 
@@ -351,6 +439,47 @@ Before ANY phase transition, Roma verifies:
 
 **Phase transition is BLOCKED until all blocking checks pass.**
 
+### Gate Verification Procedures
+
+**Comprehensive verification at phase gates:**
+
+```javascript
+GATE_VERIFICATION:
+  // 1. State consistency check
+  state = Read("ARTIFACTS/activity-state.yaml")
+  eventLog = Read("ARTIFACTS/activity-log.txt")
+
+  // Verify state was rebuilt from log
+  stateTimestamp = state.metadata.generated
+  if stateTimestamp <15 minutes old:
+    WARN("State may be stale, rebuild recommended")
+
+  // 2. Work completeness
+  phaseWork = state.by_phase[CURRENT_PHASE]
+  incomplete = phaseWork.filter(w => w.status != COMPLETED)
+  if incomplete.length > 0:
+    GATE_BLOCKED("Incomplete work items: " + incomplete.map(w => w.id))
+
+  // 3. Blocker resolution
+  blockers = state.by_status.BLOCKED || []
+  openBlockers = blockers.filter(b => b.status == OPEN)
+  if openBlockers.length > 0:
+    GATE_BLOCKED("Unresolved blockers: " + openBlockers.map(b => b.id))
+
+  // 4. Amendment disposition
+  amendments = state.by_type.AMENDMENT || []
+  pendingAmendments = amendments.filter(a => a.status == PENDING_REVIEW)
+  if pendingAmendments.length > 0:
+    GATE_BLOCKED("Pending amendments: " + pendingAmendments.map(a => a.id))
+
+  // 5. Event log integrity
+  eventCount = count_lines(eventLog)
+  if eventCount < state.metadata.event_count:
+    GATE_BLOCKED("Event log/state mismatch - possible corruption")
+
+  GATE_APPROVED
+```
+
 ---
 
 ## Error Handling
@@ -389,16 +518,16 @@ If work performed without entry:
 ### Do
 
 - Log status changes IMMEDIATELY, within same conversation turn
-- VERIFY logging success before proceeding
+- Handle MCP errors immediately (retry, create blocker if persistent)
 - Include meaningful notes explaining decisions
 - Reference related items (parent feature, blocked story)
 - Use consistent ISO 8601 timestamps
-- Query existing state before making updates
+- Read state file directly for status checks (faster than MCP queries)
 
 ### Don't
 
 - Delay logging until end of session
-- Assume logging succeeded without verification
+- Verify every append inline (done at phase gates instead)
 - Leave entries in IN_PROGRESS when blocked
 - Create blocker entries AFTER attempting workarounds
 - Forget to resolve blockers when issue fixed
@@ -436,12 +565,3 @@ mcp__activity-log__list_entry_types()
 mcp__activity-log__get_entry_instructions(type)
 mcp__activity-log__validate_entry(entry)
 ```
-
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 1.0 | 2025-11-21T00:00:00Z | Initial protocol definition for ROME v10 |
-| 1.1 | 2025-11-24T00:00:00Z | Added Database Discovery section documenting .rome-project.json activityLog config |

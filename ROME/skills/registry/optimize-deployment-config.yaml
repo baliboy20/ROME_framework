@@ -1,0 +1,26 @@
+skill:
+  name: optimize-deployment-config
+  version: 1.0.0
+  category: optimization
+  tier: 3
+  description: Optimize configurations for performance, cost, and scalability
+
+parameters:
+  required:
+    - name: config_directory
+      type: string
+      validation: directory_exists
+
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  optimization_score:
+    type: integer
+  optimizations_applied:
+    type: integer
+  recommendations:
+    type: array

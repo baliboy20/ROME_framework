@@ -1,0 +1,63 @@
+ID: REQ-004
+
+Actor: TeamMember
+
+Intent: view task
+
+Preconditions:
+  - TeamMember authenticated
+  - Task exists
+  - TeamMember has project read access
+
+Conditions: []
+
+Postconditions:
+  - Task view count incremented
+  - Last viewed timestamp updated
+
+Outcomes:
+  - Task details displayed to TeamMember
+  - Related comments and attachments loaded
+  - Task history visible
+
+Invariants:
+  - Task data immutable during read operation
+  - View count ≥ 0
+
+NonFunctional:
+  Performance:
+    - Task load completes in <500ms
+  Security:
+    - Requires project read permission
+  Scalability:
+    - Supports 1,000 concurrent task views
+
+Errors:
+  - error: "If task not found"
+    message: "Task does not exist"
+  - error: "If TeamMember lacks read permission"
+    message: "You do not have permission to view this task"
+
+ScopeBoundary:
+  InScope:
+    - View task details, comments, attachments, history
+  OutOfScope:
+    - Export task to PDF, print view
+
+OpenQuestions: []
+
+CopilotMode: GUIDED
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-TASK-MANAGEMENT
+  dependencies:
+    - REQ-002
+  tags:
+    - core-crud
+    - tier-1
+    - task

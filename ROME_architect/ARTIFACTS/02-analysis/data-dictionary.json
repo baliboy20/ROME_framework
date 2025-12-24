@@ -1,0 +1,1104 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T12:05:33.166Z",
+    "execution_id": "skill-1766577933131-rhocadwbm",
+    "source_directory": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements",
+    "total_requirements_analyzed": 25
+  },
+  "entities": [
+    {
+      "name": "Audit",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-005",
+        "REQ-009",
+        "REQ-010",
+        "REQ-011",
+        "REQ-012",
+        "REQ-014",
+        "REQ-015",
+        "REQ-016",
+        "REQ-018",
+        "REQ-019",
+        "REQ-021",
+        "REQ-022",
+        "REQ-023",
+        "REQ-024",
+        "REQ-025"
+      ],
+      "mention_count": 16,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Task",
+      "type": "primary",
+      "attributes": [
+        "status",
+        "creator",
+        "title",
+        "assignee"
+      ],
+      "source_requirements": [
+        "REQ-002",
+        "REQ-003",
+        "REQ-004",
+        "REQ-005",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008",
+        "REQ-013",
+        "REQ-014",
+        "REQ-015",
+        "REQ-018",
+        "REQ-019",
+        "REQ-020",
+        "REQ-023"
+      ],
+      "mention_count": 14,
+      "inferred_attributes": [
+        {
+          "name": "status",
+          "inferred_type": "enum",
+          "constraints": [
+            "required",
+            "indexed"
+          ]
+        },
+        {
+          "name": "creator",
+          "inferred_type": "reference",
+          "constraints": []
+        },
+        {
+          "name": "title",
+          "inferred_type": "string",
+          "constraints": [
+            "required"
+          ]
+        },
+        {
+          "name": "assignee",
+          "inferred_type": "reference",
+          "constraints": []
+        }
+      ]
+    },
+    {
+      "name": "Project",
+      "type": "primary",
+      "attributes": [
+        "name",
+        "status",
+        "owner"
+      ],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-004",
+        "REQ-005",
+        "REQ-006",
+        "REQ-014",
+        "REQ-015",
+        "REQ-016",
+        "REQ-017",
+        "REQ-018",
+        "REQ-019"
+      ],
+      "mention_count": 12,
+      "inferred_attributes": [
+        {
+          "name": "name",
+          "inferred_type": "string",
+          "constraints": [
+            "required"
+          ]
+        },
+        {
+          "name": "status",
+          "inferred_type": "enum",
+          "constraints": [
+            "required",
+            "indexed"
+          ]
+        },
+        {
+          "name": "owner",
+          "inferred_type": "reference",
+          "constraints": [
+            "indexed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ProjectManager",
+      "type": "actor",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-005",
+        "REQ-007",
+        "REQ-009",
+        "REQ-010",
+        "REQ-011",
+        "REQ-012",
+        "REQ-013",
+        "REQ-014",
+        "REQ-015",
+        "REQ-019"
+      ],
+      "mention_count": 12,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Manager",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-005",
+        "REQ-009",
+        "REQ-010",
+        "REQ-011",
+        "REQ-012",
+        "REQ-014",
+        "REQ-015",
+        "REQ-019"
+      ],
+      "mention_count": 10,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Notification",
+      "type": "secondary",
+      "attributes": [
+        "user"
+      ],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-007",
+        "REQ-008",
+        "REQ-011",
+        "REQ-012",
+        "REQ-013",
+        "REQ-014",
+        "REQ-015"
+      ],
+      "mention_count": 10,
+      "inferred_attributes": [
+        {
+          "name": "user",
+          "inferred_type": "string",
+          "constraints": []
+        }
+      ]
+    },
+    {
+      "name": "TeamMember",
+      "type": "primary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-003",
+        "REQ-004",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008",
+        "REQ-011",
+        "REQ-012",
+        "REQ-013",
+        "REQ-018"
+      ],
+      "mention_count": 9,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Member",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-003",
+        "REQ-004",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008",
+        "REQ-011",
+        "REQ-012",
+        "REQ-013",
+        "REQ-018"
+      ],
+      "mention_count": 9,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Role",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-005",
+        "REQ-011",
+        "REQ-016",
+        "REQ-021",
+        "REQ-022",
+        "REQ-023",
+        "REQ-024",
+        "REQ-025"
+      ],
+      "mention_count": 8,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Permission",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-003",
+        "REQ-006",
+        "REQ-007",
+        "REQ-008",
+        "REQ-018",
+        "REQ-020",
+        "REQ-021"
+      ],
+      "mention_count": 7,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Organization",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-009",
+        "REQ-010",
+        "REQ-011",
+        "REQ-017",
+        "REQ-021"
+      ],
+      "mention_count": 6,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Created",
+      "type": "secondary",
+      "attributes": [
+        "date",
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-002",
+        "REQ-003",
+        "REQ-007",
+        "REQ-014",
+        "REQ-021"
+      ],
+      "mention_count": 6,
+      "inferred_attributes": [
+        {
+          "name": "date",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        },
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Team",
+      "type": "primary",
+      "attributes": [
+        "name",
+        "owner"
+      ],
+      "source_requirements": [
+        "REQ-009",
+        "REQ-010",
+        "REQ-011",
+        "REQ-012",
+        "REQ-020"
+      ],
+      "mention_count": 5,
+      "inferred_attributes": [
+        {
+          "name": "name",
+          "inferred_type": "string",
+          "constraints": [
+            "required"
+          ]
+        },
+        {
+          "name": "owner",
+          "inferred_type": "reference",
+          "constraints": [
+            "indexed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Administrator",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-016",
+        "REQ-020",
+        "REQ-023",
+        "REQ-024",
+        "REQ-025"
+      ],
+      "mention_count": 5,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Due",
+      "type": "secondary",
+      "attributes": [
+        "date"
+      ],
+      "source_requirements": [
+        "REQ-002",
+        "REQ-003",
+        "REQ-013"
+      ],
+      "mention_count": 3,
+      "inferred_attributes": [
+        {
+          "name": "date",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "SystemIntegrator",
+      "type": "actor",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-017",
+        "REQ-021",
+        "REQ-022"
+      ],
+      "mention_count": 3,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Integrator",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-017",
+        "REQ-021",
+        "REQ-022"
+      ],
+      "mention_count": 3,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Token",
+      "type": "secondary",
+      "attributes": [
+        "name"
+      ],
+      "source_requirements": [
+        "REQ-017",
+        "REQ-021",
+        "REQ-022"
+      ],
+      "mention_count": 3,
+      "inferred_attributes": [
+        {
+          "name": "name",
+          "inferred_type": "string",
+          "constraints": [
+            "required"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Tasks",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-017",
+        "REQ-018",
+        "REQ-019"
+      ],
+      "mention_count": 3,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Webhook",
+      "type": "primary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-023",
+        "REQ-024",
+        "REQ-025"
+      ],
+      "mention_count": 3,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Current",
+      "type": "secondary",
+      "attributes": [
+        "date"
+      ],
+      "source_requirements": [
+        "REQ-001",
+        "REQ-007"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": [
+        {
+          "name": "date",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Related",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-004",
+        "REQ-005"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Deletion",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-005",
+        "REQ-025"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Results",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-006",
+        "REQ-020"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": []
+    },
+    {
+      "name": "User",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-011",
+        "REQ-012"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Submission",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-013",
+        "REQ-014"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ApiToken",
+      "type": "primary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-021",
+        "REQ-022"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Event",
+      "type": "secondary",
+      "attributes": [
+        "type"
+      ],
+      "source_requirements": [
+        "REQ-023",
+        "REQ-024"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": [
+        {
+          "name": "type",
+          "inferred_type": "enum",
+          "constraints": [
+            "required",
+            "indexed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Test",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-023",
+        "REQ-024"
+      ],
+      "mention_count": 2,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Assignee",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-002"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Priority",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-002"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Completed",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-003"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Last",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-004"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "View",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-004"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Search",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-006"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Deleted",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-006"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Comment",
+      "type": "primary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-007"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Attachment",
+      "type": "primary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-008"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "File",
+      "type": "secondary",
+      "attributes": [
+        "type"
+      ],
+      "source_requirements": [
+        "REQ-008"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "type",
+          "inferred_type": "enum",
+          "constraints": [
+            "required",
+            "indexed"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Fs",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-008"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Filename",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-008"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Upload",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-008"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Completion",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-014"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Rejection",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-015"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Rejected",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-015"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Export",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-016"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Import",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-017"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Duplicate",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-017"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Archived",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-018"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Archive",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-018"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Restore",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-019"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Analytic",
+      "type": "primary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-020"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Metrics",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-020"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Charts",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-020"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "NonDeleted",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-020"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Analytics",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-020"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "UnRevoked",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-022"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Revocation",
+      "type": "secondary",
+      "attributes": [
+        "time"
+      ],
+      "source_requirements": [
+        "REQ-022"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": [
+        {
+          "name": "time",
+          "inferred_type": "datetime",
+          "constraints": [
+            "immutable"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Active",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-022"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    },
+    {
+      "name": "Pending",
+      "type": "secondary",
+      "attributes": [],
+      "source_requirements": [
+        "REQ-025"
+      ],
+      "mention_count": 1,
+      "inferred_attributes": []
+    }
+  ],
+  "relationships": [
+    {
+      "from_entity": "Projectmanager",
+      "relationship_type": "has_many",
+      "to_entity": "Project",
+      "source_requirements": [
+        "REQ-001"
+      ]
+    },
+    {
+      "from_entity": "Projectmanager",
+      "relationship_type": "has_many",
+      "to_entity": "Team",
+      "source_requirements": [
+        "REQ-009"
+      ]
+    }
+  ],
+  "statistics": {
+    "total_entities": 60,
+    "total_relationships": 2,
+    "total_attributes": 28,
+    "avg_attributes_per_entity": "0.47",
+    "entity_type_distribution": {
+      "secondary": 49,
+      "primary": 9,
+      "actor": 2
+    },
+    "most_mentioned_entities": [
+      {
+        "name": "Audit",
+        "mention_count": 16
+      },
+      {
+        "name": "Task",
+        "mention_count": 14
+      },
+      {
+        "name": "Project",
+        "mention_count": 12
+      },
+      {
+        "name": "ProjectManager",
+        "mention_count": 12
+      },
+      {
+        "name": "Manager",
+        "mention_count": 10
+      }
+    ],
+    "most_common_attributes": [
+      {
+        "name": "time",
+        "count": 12
+      },
+      {
+        "name": "name",
+        "count": 3
+      },
+      {
+        "name": "date",
+        "count": 3
+      },
+      {
+        "name": "status",
+        "count": 2
+      },
+      {
+        "name": "owner",
+        "count": 2
+      },
+      {
+        "name": "type",
+        "count": 2
+      },
+      {
+        "name": "creator",
+        "count": 1
+      },
+      {
+        "name": "title",
+        "count": 1
+      },
+      {
+        "name": "assignee",
+        "count": 1
+      },
+      {
+        "name": "user",
+        "count": 1
+      }
+    ],
+    "requirements_analyzed": 25
+  }
+}

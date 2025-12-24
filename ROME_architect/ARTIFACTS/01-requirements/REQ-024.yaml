@@ -1,0 +1,66 @@
+ID: REQ-024
+
+Actor: Administrator
+
+Intent: update webhook
+
+Preconditions:
+  - Administrator authenticated
+  - Webhook exists
+  - Administrator has admin role
+
+Conditions:
+  - Webhook URL valid HTTPS URL if changed
+
+Postconditions:
+  - Webhook updated with new values
+  - Test webhook event sent if URL changed
+  - Audit log entry created
+
+Outcomes:
+  - Webhook changes reflected in database
+  - Webhook receives events for updated event types
+  - Test event sent if URL changed
+
+Invariants:
+  - Webhook URL must use HTTPS protocol
+  - Event type must be valid enum
+  - Webhook must have at least one event type
+
+NonFunctional:
+  Performance:
+    - Update completes in <2 seconds
+  Security:
+    - Requires admin permission
+
+Errors:
+  - error: "If webhook URL not HTTPS"
+    message: "Webhook URL must use HTTPS protocol"
+  - error: "If test webhook delivery fails"
+    message: "Webhook endpoint unreachable. Please verify URL"
+  - error: "If removing all event types"
+    message: "Webhook must have at least one event type"
+
+ScopeBoundary:
+  InScope:
+    - Update webhook URL, event types, activation status
+  OutOfScope:
+    - Webhook versioning, webhook migration
+
+OpenQuestions: []
+
+CopilotMode: STRICT
+
+metadata:
+  created: 2025-12-23
+  author: ROME Architect
+  version: 1.0
+  priority: MEDIUM
+  epic: EPIC-PILOT
+  feature: FEATURE-WEBHOOKS
+  dependencies:
+    - REQ-023
+  tags:
+    - integration
+    - tier-4
+    - webhook

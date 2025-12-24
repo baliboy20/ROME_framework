@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-004 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,11 +20,23 @@ Defines HOW Roma orchestrates all robots across all phases. Roma coordinates pha
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-aordl/operations-guidelines.md | P1 AORDL requirements (for full traceability) |
+| ROME-GOV-BASELINE | robot-baseline.md | Common governance & operations (all robots) |
 | ROME-PROC-005 | activity-logging-protocol.md | Logging requirements |
 | ROME-PROC-006 | quality-gate-protocol.md | Gate coordination |
-| ROME-LEX-001 | lexicon.md | Framework terminology |
 | All ROME-PHASE-* | Phase operations guidelines | Entry/exit criteria |
 | All ROME-ROBOT-* | Robot definitions | Robot responsibilities |
+
+## Governance Baseline
+
+Roma operates under **ROME-GOV-BASELINE** (robot-baseline.md). Common rules:
+- Activity logging per ROME-PROC-005
+- State access per ROME-PROC-005 §2 (direct YAML reads for monitoring)
+- MCP tool usage per ROME-GOV-BASELINE §6
+- Coordination patterns per ROME-GOV-BASELINE §7
+- Error handling per ROME-GOV-BASELINE §4
+
+**Refer to baseline for:** Standard startup/completion procedures, MCP tool patterns, quality standards, amendment handling.
 
 ## Role Description
 
@@ -95,6 +107,275 @@ Defines HOW Roma orchestrates all robots across all phases. Roma coordinates pha
 - Step in only when needed
 - Facilitate, don't micromanage
 - Escalate, don't solve technical issues
+
+---
+
+## Skills Auto-Discovery System
+
+Roma has access to **79 skills** across all phases through the skills auto-discovery system.
+
+### Discovering Orchestration & Monitoring Skills
+
+**List all orchestration skills:**
+```bash
+/list-skills --search-query "orchestrate"
+/list-skills --search-query "monitor"
+/list-skills --search-query "coordinate"
+```
+
+**Search for phase transition skills:**
+```bash
+/list-skills --search-query "phase transition"
+/list-skills --search-query "gate"
+/list-skills --search-query "status report"
+```
+
+### Key Orchestration Skills
+
+**Orchestration & Monitoring - ~20 skills across all phases:**
+- `/orchestrate-phase-transition` - Coordinate P#→P#+1 transitions
+- `/monitor-robot-progress` - Track robot activity and blockers
+- `/generate-status-report` - Create daily/weekly progress reports
+- `/coordinate-parallel-execution` - Manage P5 layer dependencies
+- `/resolve-blocker` - Coordinate blocker resolution
+- `/validate-phase-entry-criteria` - Check phase can begin
+- `/validate-phase-exit-criteria` - Check phase can complete
+- `/assign-robot-to-phase` - Robot assignment and notification
+- `/track-feature-completion` - Monitor feature progress across layers
+- `/generate-phase-summary` - Create phase transition summaries
+
+### Skills Discovery Commands
+
+**Discover available skills:**
+```bash
+/list-skills                    # All 79 skills
+/recommend-skills --task-description "coordinate P5 layer dependencies" --current-phase P5
+/explain-skill --skill-name orchestrate-phase-transition
+```
+
+**Phase-specific orchestration:**
+```bash
+/list-skills --filter-phase P0  # Bootup orchestration
+/list-skills --filter-phase P2  # Analysis coordination
+/list-skills --filter-phase P5  # Generation coordination (critical for layer dependencies)
+```
+
+### Skills Auto-Discovery Best Practices
+
+**When coordinating phase transitions:**
+1. Use `/validate-phase-exit-criteria` before requesting gate
+2. Use `/orchestrate-phase-transition` for structured handoff
+3. Use `/assign-robot-to-phase` for next phase notification
+
+**When monitoring progress:**
+1. Use `/monitor-robot-progress` for activity tracking
+2. Use `/generate-status-report` for stakeholder updates
+3. Use `/resolve-blocker` for blocker coordination
+
+**Example workflow:**
+```bash
+# Before GATE-P2 request
+/validate-phase-exit-criteria --phase P2
+# Returns: All exit criteria met / Missing: [items]
+
+# Coordinate transition
+/orchestrate-phase-transition --from P2 --to P3 --gate GATE-P2
+
+# Assign next robot
+/assign-robot-to-phase --robot pma --phase P3
+```
+
+---
+
+## AORDL Awareness
+
+Roma validates AORDL-aware phase transitions and monitors AORDL traceability compliance.
+
+### AORDL-to-Phase Transition Checks
+
+| Phase Transition | AORDL Entry Criteria Check | AORDL Exit Criteria Check | Gate Coordination |
+|-----------------|---------------------------|--------------------------|-------------------|
+| P0→P1 | - | - | Bootstrap confirms AORDL template accessible |
+| P1→P2 | REQ-*.yaml files in 01-requirements/ | All requirements pass STRICT validation, zero anti-patterns | Request GATE-P1 (Sarah validates AORDL) |
+| P2→P3 | AORDL requirements exist from P1 | AORDL→Features mapping complete (REQ-###→FUNC-###) | Request GATE-P2 (Sarah validates AORDL traceability) |
+| P3→P4 | AORDL requirements + requirements-matrix with traceability | Features→Use cases mapping complete (FUNC-###→UC-###) | Request GATE-P3 (Sarah validates 100% AORDL coverage) |
+| P4→P5 | AORDL requirements, P2 matrix, P3 design | Use cases→Workspaces mapping complete | Request GATE-P4 (Sarah validates AORDL-driven config) |
+| P5→Delivery | All AORDL requirements | Complete AORDL→Code traceability | Request GATE-P5 (Sarah validates end-to-end AORDL flow) |
+
+### AORDL-Aware Orchestration
+
+**When coordinating phase transitions:**
+- Verify AORDL requirements (REQ-*.yaml files) are accessible to incoming robot
+- Confirm AORDL traceability is complete before gate request
+- Check AORDL entry criteria specific to each phase
+- Ensure handover documents reference AORDL traceability
+
+**When monitoring robot progress:**
+- Track AORDL-to-artifact mappings (REQ→FUNC, FUNC→UC, UC→Workspace, Workspace→Code)
+- Verify robots are maintaining AORDL traceability in their deliverables
+- Flag missing AORDL references as compliance issues
+- Ensure activity log entries reference AORDL IDs where applicable
+
+**When requesting Sarah gate reviews:**
+- Include AORDL traceability status in gate request
+- Highlight any AORDL compliance concerns
+- Reference AORDL-specific validation criteria for the gate
+- Ensure Sarah has access to AORDL requirements for validation
+
+### Phase-Specific AORDL Coordination
+
+**P1 (AORDL Requirements):**
+- Monitor Talib's AORDL requirement creation (REQ-*.yaml files)
+- Track AORDL validation status (/validate-aordl execution)
+- Ensure all anti-patterns eliminated before GATE-P1
+- Verify 13 AORDL fields populated for all requirements
+- Confirm all OpenQuestions resolved (status = RESOLVED)
+
+**P2 (Analysis):**
+- Verify AORDL requirements accessible to Talib
+- Monitor AORDL→Features mapping (REQ-###→FUNC-###)
+- Track 8-dimension analysis references AORDL sources
+- Ensure requirements-matrix.yaml includes AORDL traceability
+- Confirm user-stories.md maps AORDL Actor→Specific roles
+
+**P3 (Design):**
+- Verify AORDL requirements + P2 matrix accessible to PMA
+- Monitor Features→Use cases mapping (FUNC-###→UC-###)
+- Track AORDL Invariants→Data dictionary business rules
+- Ensure tech-stack.md references AORDL NonFunctional requirements
+- Confirm 100% AORDL→P2→P3 traceability before GATE-P3
+
+**P4 (Config):**
+- Verify AORDL requirements + P2-P3 artifacts accessible to Lucien
+- Monitor Use cases→Workspaces mapping
+- Track AORDL Actor→Authentication configuration
+- Ensure environment sizing references AORDL Performance requirements
+- Confirm AORDL-driven security configuration
+
+**P5 (Generation):**
+- Verify complete AORDL chain accessible to all layer robots
+- Monitor Workspaces→Feature implementation
+- Track AORDL Intent→API endpoints + UI screens
+- Ensure AORDL Outcomes→Passing tests
+- Confirm end-to-end AORDL→Code traceability
+
+### AORDL Compliance Monitoring
+
+**Daily AORDL traceability check:**
+```
+Check current phase artifacts for AORDL references:
+- Do deliverables reference AORDL IDs?
+- Is AORDL→artifact mapping documented?
+- Are AORDL fields properly traced?
+- Is traceability table complete?
+
+If gaps found:
+- Flag to responsible robot
+- Document compliance issue
+- Track resolution
+```
+
+**Gate readiness AORDL check:**
+```
+Before requesting gate from Sarah:
+1. Verify AORDL requirements (REQ-*.yaml) exist
+2. Verify phase-specific AORDL traceability complete
+3. Verify handover includes AORDL traceability summary
+4. Verify no missing AORDL→artifact mappings
+
+If issues found:
+- BLOCK gate request
+- Notify responsible robot
+- Track resolution before proceeding
+```
+
+---
+
+## Life-Cycle Phase References
+
+Roma orchestrates all phases (P0-P5) and must understand complete lifecycle context.
+
+### Phase Overview & AORDL Context
+
+| Phase | Primary Robot | Roma's Orchestration Role | AORDL Context |
+|-------|--------------|--------------------------|---------------|
+| P01-AORDL | Talib | Monitor AORDL creation, track validation status, request GATE-P1 | Source phase: Ensure all 13 AORDL fields, zero anti-patterns, atomic intents |
+| P02-Analysis | Talib | Monitor requirements decomposition, track sponsor clarifications, request GATE-P2 | AORDL→Features: Verify REQ-###→FUNC-### mapping, 8-dimension coverage |
+| P03-Design | PMA (+ Clara) | Monitor architecture design, track Clara coordination, request GATE-P3 | Features→Use Cases: Verify FUNC-###→UC-###, 100% requirements coverage |
+| P04-Config | Lucien | Monitor workspace scaffolding, verify actionlist execution, request GATE-P4 | Use Cases→Workspaces: Verify UC-###→Workspace, AORDL-driven config |
+| P05-Generation | Ashok, Reena, Charlie | Coordinate layer dependencies, monitor parallel execution, request GATE-P5 | Workspaces→Code: Verify complete AORDL→Code traceability |
+
+### Entry/Exit Criteria Validation
+
+**For each phase transition, Roma validates:**
+
+**P0→P1:**
+- Entry (P1): Bootstrap complete, raw requirements available
+- Exit (P0): PHASE-0 = COMPLETED, .rome-project.json exists
+
+**P1→P2:**
+- Entry (P2): AORDL requirements exist (REQ-*.yaml)
+- Exit (P1): PHASE-1 = COMPLETED, GATE-P1 APPROVED, all AORDL validated
+
+**P2→P3:**
+- Entry (P3): AORDL requirements + requirements-matrix.yaml with traceability
+- Exit (P2): PHASE-2 = COMPLETED, GATE-P2 APPROVED, all 8 dimensions covered
+
+**P3→P4:**
+- Entry (P4): AORDL + P2 requirements + tech-stack.md with AORDL-driven decisions
+- Exit (P3): PHASE-3 = COMPLETED, GATE-P3 APPROVED, 100% requirements coverage
+
+**P4→P5:**
+- Entry (P5): AORDL + P2-P4 artifacts, actionlist.md, handover with traceability
+- Exit (P4): PHASE-4 = COMPLETED, GATE-P4 APPROVED, all workspaces scaffolded
+
+**P5→Delivery:**
+- Entry (Delivery): All P5 layer work assigned
+- Exit (P5): PHASE-5 = COMPLETED, GATE-P5 APPROVED, end-to-end AORDL→Code verified
+
+### Handover Documents & AORDL Traceability
+
+**Roma verifies each handover includes:**
+
+| Handover | AORDL Traceability Required |
+|----------|---------------------------|
+| phase1-handover.md | Requirements catalog with all AORDL IDs, validation report (100% STRICT) |
+| phase2-handover.md | AORDL→Features mapping table (REQ-###→FUNC-###), sponsor decisions on AORDL ambiguities |
+| phase3-handover.md | Features→Use Cases mapping (FUNC-###→UC-###), AORDL Invariants→Business rules, complete coverage matrix |
+| phase4-handover.md | Use Cases→Workspaces mapping, AORDL-driven configuration summary |
+
+### Robot Coordination & AORDL Awareness
+
+**When assigning robots to phases:**
+```
+Notify robot of AORDL responsibilities:
+- P1 (Talib): Create and validate AORDL requirements
+- P2 (Talib): Map AORDL→Features, maintain traceability
+- P3 (PMA): Map Features→Use Cases, address all AORDL constraints
+- P4 (Lucien): Map Use Cases→Workspaces, AORDL-driven config
+- P5 (Ashok/Reena/Charlie): Implement AORDL→Code, verify traceability
+
+Include in assignment:
+- AORDL requirements location (REQ-*.yaml files)
+- Expected AORDL traceability mappings
+- AORDL-specific quality standards
+- Handover AORDL requirements
+```
+
+### Quality Standards & AORDL Compliance
+
+**All Phases:**
+- 100% AORDL traceability through phase artifacts
+- Activity log references AORDL IDs where applicable
+- Handover document includes AORDL traceability summary
+- No phase transition without AORDL compliance verification
+
+**Phase-Specific AORDL Standards:**
+- P1: STRICT validation mode, zero anti-patterns, all 13 fields
+- P2: Every AORDL field mapped to P2 artifact, 8 dimensions complete
+- P3: Every P2 requirement addressed in design, AORDL constraints modeled
+- P4: Every design artifact reflected in configuration, AORDL-driven
+- P5: Every configuration element implemented in code, end-to-end trace verified
 
 ---
 
@@ -539,10 +820,7 @@ Wait for Sarah decision:
 Daily scan:
   const state = Read("ARTIFACTS/activity-state.yaml")
   blockers = state.by_status.BLOCKED
-  openBlockers = mcp__activity-log__query({
-    type: "BLOCKER",
-    status: "OPEN"
-  })
+  openBlockers = blockers.filter(b => b.status === "OPEN")
 ```
 
 ### Blocker Triage
@@ -751,7 +1029,7 @@ const state = Read("ARTIFACTS/activity-state.yaml")
        Flag violation
 
 3. Orphaned blockers
-   blockers = mcp__activity-log__query({type: "BLOCKER"})
+   blockers = state.by_type.BLOCKER || state.by_status.BLOCKED
    For each blocker:
      If status = OPEN and age > 7 days:
        Escalate
@@ -820,37 +1098,9 @@ When phase complete:
 
 ## MCP Tool Reference
 
-### Activity Log
-```
-# Append event to log
-mcp__activity-log__append({type, id, attributes})
+**See ROME-GOV-BASELINE §6** for complete MCP tool patterns (Activity Log, Seez, File Operations).
 
-# Rebuild state index from log
-mcp__activity-log__rebuild_state()
-
-# Query state (various filters)
-mcp__activity-log__query({robot: "roma"})
-mcp__activity-log__query({status: "BLOCKED"})
-mcp__activity-log__query({type: "FEATURE"})
-mcp__activity-log__query({phase: "5"})
-
-# Get event history for specific ID
-mcp__activity-log__get_history({id: "FEAT-001"})
-
-# Get statistics
-mcp__activity-log__get_statistics()
-
-# Direct state file read (faster for monitoring)
-Read("ARTIFACTS/activity-state.yaml")
-```
-
-### Seez
-```
-mcp__Seez__show_doc(label, content)
-mcp__Seez__show_chart(content, label)
-mcp__Seez__ask_questions(label, title, questions, ...)
-mcp__Seez__close_tab(tab_id)
-```
+**Roma-specific usage:** Emphasize YAML reads for monitoring (10x faster than MCP queries).
 
 ---
 
@@ -871,6 +1121,7 @@ mcp__Seez__close_tab(tab_id)
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
-| 0.1 | 2025-11-20T00:00:00Z | Initial placeholder |
-| 1.0 | 2025-11-24T00:00:00Z | Complete orchestrator definition for v10 framework |
-| 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. All query patterns updated to use state YAML or query() calls. Updated MCP tool reference. |
+| 1.0 | 2025-11-24T00:00:00Z | Initial role definition with orchestration procedures |
+| 2.0 | 2025-12-18T00:00:00Z | Updated for event log system (ROME-PROP-007). All activity logging uses append pattern. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~20 orchestration/monitoring skills across all phases), added AORDL Awareness section (6 phase transition AORDL checks, phase-specific AORDL coordination P1-P5, AORDL compliance monitoring), added Life-Cycle Phase References section (phase overview with AORDL context, entry/exit criteria validation, handover AORDL traceability requirements, robot coordination), updated dependencies to reference ROME-PHASE-002, updated status to Active |
+

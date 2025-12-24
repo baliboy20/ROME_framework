@@ -1,0 +1,30 @@
+{
+  "name": "@rome/skills",
+  "version": "1.0.0",
+  "description": "ROME Skill Framework - Stateless, idempotent operations for AORDL processing",
+  "main": "lib/SkillInvoker.js",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint ."
+  },
+  "keywords": [
+    "rome",
+    "aordl",
+    "skills",
+    "framework"
+  ],
+  "author": "ROME Architect",
+  "license": "MIT",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "eslint": "^8.56.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -85,17 +85,30 @@ UID allocation tracked in `uid-registry.md` (ROME-GOV-002).
 2. **Metadata Table** - Required fields
 3. **Purpose** - What this document defines/achieves
 4. **Content Sections** - Domain-specific content
-5. **Revision History** - At document bottom
 
-### Revision History Format
+### Revision Tracking Policy
 
-```markdown
-## Revision History
+**Active framework documents DO NOT include revision history sections.**
 
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 1.0 | 2025-11-21T00:00:00Z | Initial document creation |
+**Rationale:**
+- Git provides superior traceability (full diffs, blame, commit messages)
+- Eliminates token waste (15% average reduction per document)
+- Reduces maintenance overhead (no manual table updates)
+- Complete audit trail available via `git log <file>`
+
+**Revision information accessed via:**
+```bash
+# View full revision history
+git log <file_path>
+
+# View specific revision
+git show <commit_hash>:<file_path>
+
+# Compare versions
+git diff <commit1> <commit2> <file_path>
 ```
+
+**Exception:** External-facing documentation (published outside repository) MAY include revision tables for audiences without git access.
 
 ### Section Hierarchy
 
@@ -137,6 +150,65 @@ Or inline:
 ```markdown
 As defined in ROME-LEX-001 (`lexicon.md`)...
 ```
+
+### Procedure Format
+
+**Procedures SHOULD use executable pseudocode format rather than narrative prose.**
+
+**Benefits:**
+- 30% token reduction in procedure sections
+- Clearer semantics for LLM interpretation
+- Reduced ambiguity
+- Easier validation
+
+**Standard Format:**
+```javascript
+PROCEDURE_NAME:
+  // Setup
+  variable = operation()
+
+  // Conditional logic
+  if condition:
+    action()
+  else:
+    alternative_action()
+
+  // Iteration
+  for each item in collection:
+    process(item)
+
+  // MCP operations
+  mcp__tool__operation({param: value})
+
+  NEXT_STEP
+```
+
+**Comparison:**
+
+❌ **Narrative (verbose):**
+```markdown
+Before beginning work, query for the existing entry using find_by_id.
+If the entry exists and its status is PENDING, you should update the
+status field to IN_PROGRESS and set the startDate to the current timestamp.
+Then you can begin implementation work.
+```
+
+✓ **Pseudocode (terse):**
+```javascript
+BEFORE_WORK:
+  entry = mcp__activity-log__query({id: work_id})
+  if entry.status == PENDING:
+    mcp__activity-log__append({
+      type: "STATUS_UPDATE",
+      id: work_id,
+      attributes: {status: IN_PROGRESS, start: NOW}
+    })
+  START_IMPLEMENTATION
+```
+
+**When to use narrative:** Conceptual explanations, design rationale, architectural decisions.
+
+**When to use pseudocode:** Step-by-step procedures, workflows, algorithms, robot instructions.
 
 ---
 

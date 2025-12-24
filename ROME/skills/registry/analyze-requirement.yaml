@@ -1,0 +1,116 @@
+skill:
+  name: analyze-requirement
+  version: 1.0.0
+  category: analysis
+  tier: 1
+  description: Comprehensive analysis of single AORDL requirement including validation, entities, invariants, and API design
+
+parameters:
+  required:
+    - name: requirement_file
+      type: string
+      validation: file_exists
+      description: Path to AORDL requirement YAML file
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write analysis report
+
+    - name: output_format
+      type: string
+      default: json
+      allowed_values: [json, yaml, markdown]
+      description: Output format for analysis report
+
+    - name: include_recommendations
+      type: boolean
+      default: true
+      description: Include improvement recommendations
+
+execution:
+  timeout: 20000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: linear
+
+output:
+  requirement_id:
+    type: string
+    description: ID of analyzed requirement
+  validation_status:
+    type: string
+    description: PASS or FAIL from validation
+  entities:
+    type: array
+    description: Extracted entities
+  invariants:
+    type: array
+    description: Extracted business rules
+  api_endpoint:
+    type: object
+    description: Derived API endpoint design
+  complexity:
+    type: object
+    description: Complexity metrics
+  recommendations:
+    type: array
+    description: Improvement suggestions
+
+# HTTP method mapping from Intent verbs
+verb_to_http_method:
+  create: POST
+  read: GET
+  retrieve: GET
+  view: GET
+  list: GET
+  search: GET
+  update: PUT
+  modify: PUT
+  delete: DELETE
+  remove: DELETE
+  submit: POST
+  approve: PATCH
+  reject: PATCH
+  archive: PATCH
+  restore: PATCH
+  export: GET
+  import: POST
+  generate: POST
+
+# API path patterns
+api_path_patterns:
+  create: "POST /{resource}"
+  read: "GET /{resource}/{id}"
+  list: "GET /{resource}"
+  search: "GET /{resource}/search"
+  update: "PUT /{resource}/{id}"
+  delete: "DELETE /{resource}/{id}"
+  submit: "POST /{resource}/{id}/submit"
+  approve: "PATCH /{resource}/{id}/approve"
+  reject: "PATCH /{resource}/{id}/reject"
+  archive: "PATCH /{resource}/{id}/archive"
+  restore: "PATCH /{resource}/{id}/restore"
+
+# Complexity scoring criteria
+complexity_criteria:
+  entities:
+    weight: 2
+    description: More entities = higher complexity
+
+  invariants:
+    weight: 3
+    description: More business rules = higher complexity
+
+  conditions:
+    weight: 2
+    description: More conditions = higher complexity
+
+  errors:
+    weight: 1
+    description: More error cases = higher complexity
+
+  relationships:
+    weight: 2
+    description: More entity relationships = higher complexity

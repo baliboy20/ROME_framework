@@ -1,0 +1,295 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T12:05:33.260Z"
+  },
+  "validators": [
+    {
+      "name": "TaskValidator",
+      "entity": "Task",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "ProjectValidator",
+      "entity": "Project",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "TeamMemberValidator",
+      "entity": "TeamMember",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "TeamValidator",
+      "entity": "Team",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "WebhookValidator",
+      "entity": "Webhook",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "ApiTokenValidator",
+      "entity": "ApiToken",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "CommentValidator",
+      "entity": "Comment",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "AttachmentValidator",
+      "entity": "Attachment",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    },
+    {
+      "name": "AnalyticValidator",
+      "entity": "Analytic",
+      "rules": [
+        {
+          "field": "id",
+          "rules": [
+            "required",
+            "uuid"
+          ]
+        },
+        {
+          "field": "createdAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        },
+        {
+          "field": "updatedAt",
+          "rules": [
+            "required",
+            "date"
+          ]
+        }
+      ],
+      "customValidators": [
+        "uniqueness",
+        "businessRules"
+      ],
+      "sanitization": true
+    }
+  ]
+}

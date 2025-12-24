@@ -1,0 +1,27 @@
+skill:
+  name: validate-architecture
+  version: 1.0.0
+  category: validation
+  tier: 3
+  description: Validate architecture against best practices and design patterns
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 90000
+
+output:
+  validation_status:
+    type: string
+  issues_found:
+    type: array
+  best_practices_score:
+    type: integer

@@ -1,0 +1,59 @@
+skill:
+  name: list-skills
+  version: 1.0.0
+  category: discovery
+  tier: 1
+  description: List available skills with filtering and search capabilities
+
+parameters:
+  optional:
+    - name: filter_category
+      type: string
+      description: Filter by category (e.g., analysis, design, generation)
+
+    - name: filter_tier
+      type: string
+      description: Filter by tier (1, 2, or 3)
+
+    - name: filter_phase
+      type: string
+      description: Filter by phase (P1, P2, P3, P4, P5)
+
+    - name: search_query
+      type: string
+      description: Search skills by keywords
+
+    - name: output_format
+      type: string
+      default: summary
+      description: Output format (summary, detailed, json, markdown)
+
+execution:
+  timeout: 5000
+
+output:
+  skills_found:
+    type: array
+    description: List of matching skills
+  total_count:
+    type: integer
+    description: Total number of skills found
+  filters_applied:
+    type: object
+    description: Filters that were applied
+
+examples:
+  - description: List all skills
+    usage: "/list-skills"
+
+  - description: List P2 analysis skills
+    usage: "/list-skills --filter-phase P2"
+
+  - description: List Tier 3 orchestration skills
+    usage: "/list-skills --filter-tier 3"
+
+  - description: Search for design skills
+    usage: "/list-skills --search-query design"
+
+  - description: Get detailed output for generation skills
+    usage: "/list-skills --filter-category generation --output-format detailed"

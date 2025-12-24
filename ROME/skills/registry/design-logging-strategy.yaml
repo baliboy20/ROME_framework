@@ -1,0 +1,20 @@
+skill:
+  name: design-logging-strategy
+  version: 1.0.0
+  category: design
+  tier: 1
+  description: Design logging and monitoring strategy
+
+parameters:
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  logging_components:
+    type: integer
+  logging_spec:
+    type: object

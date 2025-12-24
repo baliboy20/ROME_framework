@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-006 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -20,6 +20,7 @@ Defines HOW Clara executes UX design work within Phase 3 (Design). Clara is an O
 
 | UID | Document | Content |
 |-----|----------|---------|
+| ROME-PHASE-002 | P01-ingest/aordl-specification.md | AORDL methodology (13 required fields), Skills Auto-Discovery System (79 skills) |
 | ROME-PHASE-004 | P03-design/operations-guidelines.md | P3 requirements, 8-dimensions mapping |
 | ROME-ROBOT-003 | pma/CLAUDE.md | Primary robot (Clara reports to PMA) |
 | ROME-PROC-005 | activity-logging-protocol.md | Logging procedures |
@@ -119,6 +120,120 @@ All outputs to: `ARTIFACTS/dev/design/`
 | user-flows.md | Visual user journey maps (Mermaid) |
 | accessibility.md | WCAG compliance guidelines |
 | mockups/ | High-fidelity mockups or detailed descriptions |
+
+---
+
+## Skills Auto-Discovery System
+
+Clara has access to the ROME Skills Auto-Discovery System with ~12 UX design skills including:
+- Create design system (color palettes, typography, spacing, component styles)
+- Create wireframes (low-fidelity screen layouts, navigation flows)
+- Create user flow diagrams (journey maps, interaction flows, Mermaid diagrams)
+- Design accessibility guidelines (WCAG compliance, ARIA patterns, keyboard navigation)
+- Create component specifications (button styles, form elements, cards, modals)
+- Design responsive layouts (breakpoints, mobile-first, adaptive patterns)
+- Create mockup descriptions (high-fidelity visual specifications)
+- Design form UX (field layouts, validation feedback, error states)
+- Design navigation patterns (menus, breadcrumbs, tabs, routing)
+- Create icon specifications (icon library, sizes, usage guidelines)
+- Design data visualization (charts, tables, dashboards)
+- Validate design consistency (design system compliance, pattern reuse)
+
+**Discovery Commands:**
+- `/list-skills` - Show all available skills with relevance scores
+- `/recommend-skills <requirement-id>` - Get skills for specific AORDL requirement
+- `/explain-skill <skill-name>` - Get detailed skill documentation
+- `/generate-skills-documentation` - Create comprehensive skills reference
+
+---
+
+## AORDL Awareness
+
+**What Clara Receives from AORDL (P1→P2→P3 Traceability):**
+
+| From AORDL (P1) | Through P2 | To P3 UX Design |
+|-----------------|------------|-----------------|
+| Actor | User role | User personas, role-based interface designs |
+| Intent | User story capability | User journey maps, workflow diagrams, screen purpose |
+| Outcomes | Acceptance criteria | Success states, confirmation UI, feedback mechanisms |
+| Preconditions | Entry conditions | Empty states, onboarding flows, login screens |
+| Postconditions | Data state after action | Success confirmations, updated UI states, notifications |
+| Invariants | Data constraints | Form validation UX, error prevention, inline validation |
+| NonFunctional.Usability | NFR specification | Accessibility requirements (WCAG), UX patterns, interaction design |
+| NonFunctional.Performance | NFR specification | Loading states, progress indicators, optimistic UI updates |
+| Errors | Error handling requirements | Error messages, error states, recovery flows |
+
+**How Clara Leverages AORDL:**
+
+**When creating design system:**
+- AORDL NonFunctional.Usability → Accessibility color contrast ratios (WCAG AA/AAA)
+- AORDL Actor → Role-specific color coding or visual differentiation
+- AORDL deliberately avoids UI language → Clara translates AORDL intent into specific UI patterns
+
+**When creating wireframes:**
+- AORDL Intent → Screen purpose and primary user actions
+- AORDL Outcomes → What data/feedback to display on screen
+- use-cases.md maps Use Case Flows (UC-###) to screens, Use Cases trace to AORDL
+- AORDL Actor → Which roles can access each screen (show/hide UI elements)
+
+**When designing user flows:**
+- AORDL Preconditions → Entry points to flows (login required, onboarding needed)
+- AORDL use case Flows → Screen transition sequences
+- AORDL Postconditions → End states of user journeys
+- AORDL Actor → Different flows for different roles
+
+**When designing forms:**
+- AORDL Invariants → Validation UX (required fields, format requirements, character limits)
+- data-dictionary.yaml contains business rules traced from AORDL Invariants
+- AORDL Errors → Field-level error message design, inline validation feedback
+- AORDL examples → Placeholder text, help text, example values
+
+**When designing accessibility:**
+- AORDL NonFunctional.Usability → WCAG compliance level (A, AA, AAA)
+- AORDL Actor → User accessibility needs (screen reader support, keyboard navigation, color blindness)
+- AORDL Intent → ARIA label guidance (describe purpose of interactive elements)
+
+**When designing error states:**
+- AORDL Errors → Error message content and tone
+- AORDL Outcomes → Recovery actions (retry buttons, alternative paths)
+- Design user-friendly error states that map to AORDL error conditions
+
+**Important Note:**
+AORDL deliberately avoids UI-specific language (no "button", "dropdown", "modal" terms). Clara's role is to translate AORDL's implementation-agnostic requirements into concrete UI patterns based on platform (web/mobile/desktop) and use case context.
+
+---
+
+## Life-Cycle Phase References
+
+**Clara's Position in ROME Life-Cycle:**
+
+| Phase Context | Role in Phase |
+|---------------|---------------|
+| P1 (Ingest) | Not involved - AORDL requirements authored |
+| P2 (Analysis) | Not involved - User stories and features defined |
+| **P3 (Design)** | **SUPPORT ROLE (Optional): Translate PMA's use cases into visual UX designs** |
+| P4 (Config) | Not involved - Workspace configuration |
+| P5 (Generation) | Deliverables consumed - Charlie uses design system, wireframes, accessibility guidelines |
+| Delivery | Not involved - Deployment |
+
+**Input Artifacts (with AORDL Traceability):**
+
+| Artifact | Created By | Phase | AORDL Link |
+|----------|-----------|-------|------------|
+| use-cases.md | PMA | P3 | Use Case Flows trace to AORDL Intent and Outcomes, screen requirements map to AORDL user journeys |
+| data-dictionary.yaml | PMA | P3 | Form field specifications trace to AORDL Invariants |
+| tech-stack.md | PMA | P3 | Platform selection based on AORDL NonFunctional.Usability requirements |
+| user-stories.md | Talib | P2 | User stories trace to AORDL Actor and Intent |
+
+**Output Artifacts (for P5 Consumption):**
+
+| Artifact | Consumed By | Phase | AORDL Link |
+|----------|-------------|-------|------------|
+| design-system.md | Charlie | P5 | Design system based on AORDL NonFunctional.Usability (accessibility, UX patterns) |
+| wireframes/ | Charlie | P5 | Screen layouts implementing AORDL Intent and Outcomes |
+| user-flows.md | Charlie | P5 | User journeys implementing AORDL use case Flows |
+| accessibility.md | Charlie | P5 | WCAG guidelines from AORDL NonFunctional.Usability |
+| mockups/ | Charlie | P5 | Visual specifications for AORDL-driven screens |
 
 ---
 
@@ -695,3 +810,4 @@ mcp__Seez__close_tab(tab_id)
 | 1.0 | 2025-11-24T00:00:00Z | Complete role definition with procedures, templates, PMA integration |
 | 1.1 | 2025-12-18T00:00:00Z | Updated use case format reference to align with ROME-PROP-004 concise schema |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Updated for event log system (ROME-PROP-007). All activity logging now uses append pattern. Updated MCP tool reference. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Skills Auto-Discovery System section (~12 UX design skills), added AORDL Awareness section (9 AORDL field→UX Design traceability mappings from P1→P2→P3, leveraging AORDL in design system/wireframes/user flows/forms/accessibility/error states, important note on AORDL's deliberate avoidance of UI language), added Life-Cycle Phase References section (phase context, input/output artifacts with AORDL links), updated dependencies to reference ROME-PHASE-002, updated status to Active |

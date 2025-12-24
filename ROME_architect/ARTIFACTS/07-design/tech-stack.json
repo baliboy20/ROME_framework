@@ -1,0 +1,58 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T10:48:29.204Z",
+    "deployment_target": "cloud"
+  },
+  "tech_stack": {
+    "backend": {
+      "runtime": "Node.js 18 LTS",
+      "framework": "Express.js 4.x",
+      "language": "TypeScript 5.x",
+      "orm": "TypeORM / Prisma"
+    },
+    "database": {
+      "primary": "PostgreSQL 14+",
+      "cache": "Redis 7+",
+      "migrations": "TypeORM Migrations"
+    },
+    "authentication": {
+      "strategy": "JWT",
+      "library": "jsonwebtoken",
+      "encryption": "bcrypt"
+    },
+    "api": {
+      "protocol": "REST",
+      "documentation": "OpenAPI 3.0",
+      "validation": "class-validator"
+    },
+    "testing": {
+      "framework": "Jest",
+      "coverage": "Istanbul",
+      "e2e": "Supertest"
+    },
+    "devops": {
+      "platform": "AWS / Azure / GCP",
+      "containers": "Docker",
+      "orchestration": "Kubernetes",
+      "ci_cd": "GitHub Actions"
+    },
+    "monitoring": {
+      "logging": "Winston",
+      "metrics": "Prometheus",
+      "apm": "New Relic / Datadog"
+    },
+    "dependencies": {
+      "dotenv": "Environment configuration",
+      "helmet": "Security headers",
+      "cors": "CORS middleware",
+      "morgan": "HTTP logging"
+    }
+  },
+  "rationale": {
+    "nodejs": "High performance async I/O, large ecosystem",
+    "typescript": "Type safety, better tooling, reduced bugs",
+    "postgresql": "ACID compliance, robust feature set",
+    "redis": "High-performance caching and session storage",
+    "jwt": "Stateless authentication, scalable"
+  }
+}

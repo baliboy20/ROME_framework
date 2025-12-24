@@ -1,0 +1,25 @@
+skill:
+  name: design-dto-models
+  version: 1.0.0
+  category: design
+  tier: 1
+  description: Design DTO models for request/response data transfer
+
+parameters:
+  required:
+    - name: data_dictionary_file
+      type: string
+      validation: file_exists
+
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  dtos_designed:
+    type: integer
+  dto_specs:
+    type: array

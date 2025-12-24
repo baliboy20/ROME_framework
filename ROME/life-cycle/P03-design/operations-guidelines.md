@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-004 |
-| **Version** | 2.2 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -197,7 +197,9 @@ Phase 3 MAY NOT begin until ALL criteria are met:
 |-----------|--------------|
 | P2 complete | PHASE-2 status = COMPLETED |
 | GATE-P2 approved | Sarah audit passed |
-| Requirements matrix exists | `requirements-matrix.yaml` complete |
+| AORDL requirements available | REQ-*.yaml files from P1 |
+| Requirements matrix exists | `requirements-matrix.yaml` complete with AORDL traceability |
+| User stories exist | `user-stories.md` with AORDL Actor→Role mappings |
 | Handover received | `phase2-handover.md` complete |
 | Technical requests available | Captured in handover Section 3 |
 | Roma assignment | PMA assigned to P3 |
@@ -631,29 +633,44 @@ test_data_requirements:
 
 ## 8 Dimensions Mapping
 
-Architecture MUST address all 8 dimensions from requirements:
+Architecture MUST address all 8 dimensions from AORDL and P2 requirements:
 
-| Dimension | Architecture Artifact |
-|-----------|----------------------|
-| Functional | use-cases.md, actionlist.md |
-| Data Model | data-dictionary.yaml, data-model.md |
-| User Interface | use-cases.md (UI requirements), Clara deliverables |
-| Integration | api-design.md, system-architecture.md |
-| Security | tech-stack.md, api-design.md (auth), data-dictionary.yaml (PII) |
-| Performance | tech-stack.md, system-architecture.md |
-| Quality | test-data-specification.md, actionlist.md (testing) |
-| Deployment | tech-stack.md (hosting), system-architecture.md |
+| Dimension | AORDL Source (P1) | P2 Analysis | P3 Architecture |
+|-----------|------------------|-------------|-----------------|
+| Functional | Intent, Outcomes | Features, Stories | use-cases.md, actionlist.md |
+| Data Model | Invariants, Postconditions | Entity relationships | data-dictionary.yaml, data-model.md |
+| User Interface | (Inferred from Actor/Intent) | User stories, UI dimension | use-cases.md (UI requirements), Clara deliverables |
+| Integration | Outcomes (external systems) | Integration dimension | api-design.md, system-architecture.md |
+| Security | NonFunctional.Security | NFR specification | tech-stack.md, api-design.md (auth), data-dictionary.yaml (PII) |
+| Performance | NonFunctional.Performance | NFR specification | tech-stack.md, system-architecture.md |
+| Quality | Errors, Conditions | Testing dimension | test-architecture.md, test-data-specification.md, actionlist.md |
+| Deployment | NonFunctional (implied) | Deployment dimension | tech-stack.md (hosting), system-architecture.md |
 
 ---
 
 ## Traceability Requirements
 
+### AORDL-to-Architecture Tracing
+
+Every AORDL requirement MUST be traceable through P2 to P3:
+
+| From AORDL (P1) | Through P2 | To P3 Architecture |
+|-----------------|------------|-------------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) |
+| Actor | User role in stories | Use case Actor |
+| Intent | User story capability | Use case Flow |
+| Outcomes | Acceptance criteria | Use case Flow steps |
+| Invariants | Data constraints | Data dictionary business rules |
+| NonFunctional.Performance | NFR specification | System architecture decisions |
+| NonFunctional.Security | NFR specification | Tech stack + API auth |
+| Errors | Error handling requirements | API design error responses |
+
 ### Requirements-to-Architecture Tracing
 
-Every requirement MUST be traceable:
+Every P2 requirement MUST be traceable:
 
-| From | To |
-|------|----|
+| From P2 | To P3 |
+|---------|-------|
 | Functional requirement | Use case |
 | Data requirement | Data dictionary entity |
 | UI requirement | Use case UI section |
@@ -720,3 +737,4 @@ For each feature in actionlist.md:
 | 2.0 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-004: Declarative artifact schemas, removed justification requirements, added concise use case and API design formats |
 | 2.1 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-005: Updated Story ID pattern to STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] |
 | 2.2 | 2025-12-18T00:00:00Z | Implemented ROME-PROP-006: Added test architecture schema, test-related exit criteria, actionlist test stories guidance |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 1):** Updated entry criteria to reference AORDL requirements (REQ-*.yaml) and AORDL→P2 traceability, added AORDL-to-Architecture tracing table (8 mappings from P1→P2→P3), updated 8 Dimensions Mapping to show AORDL sources, updated status to Active |

@@ -1,0 +1,25 @@
+skill:
+  name: design-validation-layer
+  version: 1.0.0
+  category: design
+  tier: 1
+  description: Design input validation layer with validation rules
+
+parameters:
+  required:
+    - name: data_dictionary_file
+      type: string
+      validation: file_exists
+
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  validators_designed:
+    type: integer
+  validation_specs:
+    type: array

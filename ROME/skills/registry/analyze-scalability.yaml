@@ -1,0 +1,27 @@
+skill:
+  name: analyze-scalability
+  version: 1.0.0
+  category: analysis
+  tier: 3
+  description: Analyze system scalability and performance characteristics
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 90000
+
+output:
+  scalability_score:
+    type: integer
+  bottlenecks:
+    type: array
+  recommendations:
+    type: array

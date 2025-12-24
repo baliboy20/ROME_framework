@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ROBOT-001 |
-| **Version** | 2.0 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 3.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Robot Definition |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -29,6 +29,16 @@ After bootstrap completes, all other robots access ROME via the read-only symlin
 ## Purpose
 
 Initialize new ROME projects by creating the required folder structure, robot workspaces, ROME symlink, and validating MCP server connectivity. Bootstrap is a single-execution robot that runs at project inception.
+
+## Dependencies
+
+| UID | Document | Content |
+|-----|----------|---------|
+| ROME-PHASE-002 | P01-ingest/aordl-specification.md | AORDL methodology (13 required fields), Skills Auto-Discovery System (79 skills) - Bootstrap prepares project structure for P1 AORDL phase |
+| ROME-PROC-005 | activity-logging-protocol.md | Logging procedures |
+| ROME-LEX-001 | lexicon.md | Framework terminology |
+
+**Note:** Bootstrap runs BEFORE ROME symlink exists, so dependencies are informational only. Bootstrap does not read these documents during execution.
 
 ## Role Description
 
@@ -71,6 +81,99 @@ Bootstrap robot prepares the project environment for ROME-based application deve
 - Ingesting sponsor materials (P01)
 - Any analysis or design work
 - Orchestration (Roma's role)
+
+---
+
+## Skills Auto-Discovery System
+
+Bootstrap has access to the ROME Skills Auto-Discovery System with ~8 P0 bootup/setup skills including:
+- Create project folder structure (directories, symlinks, config files)
+- Initialize ROME symlink (validate ROME path, create read-only link)
+- Initialize robot workspaces (create robot directories, copy CLAUDE.md files)
+- Initialize activity log (create log file, validate MCP connectivity)
+- Validate MCP servers (activity-log-file, Seez, rome-terminal)
+- Create project configuration (.rome-project.json, phase status tracking)
+- Notify sponsor (terminal-notifier alerts, completion messages)
+- Hand off to Roma (trigger orchestrator, pass control to P1)
+
+**Discovery Commands:**
+- `/list-skills` - Show all available skills with relevance scores
+- `/recommend-skills <requirement-id>` - Get skills for specific AORDL requirement
+- `/explain-skill <skill-name>` - Get detailed skill documentation
+- `/generate-skills-documentation` - Create comprehensive skills reference
+
+**Note:** Bootstrap operates independently before ROME symlink exists, so discovery commands are available but Bootstrap follows embedded procedures rather than dynamic skill discovery.
+
+---
+
+## AORDL Awareness
+
+**Bootstrap's Role in AORDL Life-Cycle:**
+
+Bootstrap does not consume AORDL requirements (those are created in P1), but Bootstrap **prepares the project environment for P1's AORDL phase**:
+
+**Project Structure Preparation for AORDL:**
+- Create `ARTIFACTS/dev/requirements/` directory for REQ-*.yaml files (AORDL requirements storage)
+- Create `ARTIFACTS/dev/analysis/` directory for P2 outputs (Features derived from AORDL)
+- Create `ARTIFACTS/dev/design/` directory for P3 outputs (Use cases traced to AORDL)
+- Create `ARTIFACTS/dev/config/` directory for P4 outputs (Config traced to AORDL)
+- Create `SOURCE/` directory for P5 code (Code traced to AORDL)
+
+**Activity Log Preparation for AORDL:**
+- Initialize event log that will track AORDL requirements (REQ-### events)
+- Initialize event log that will track AORDL→Feature mappings (FUNC-### events)
+- Initialize event log that will track AORDL→Use Case mappings (UC-### events)
+- Support AORDL traceability by providing event history and state queries
+
+**ROME Symlink for AORDL Access:**
+- Create ROME symlink so P1 robot (Talib) can access AORDL templates
+- AORDL templates location: `ROME/P01-aordl/templates/requirement-template.yaml`
+- AORDL specification location: `ROME/P01-aordl/aordl-specification.md`
+- Ensure read-only access to prevent accidental framework modifications
+
+**Handover to P1 (AORDL Phase):**
+- Set initial phase status: P00-bootup=COMPLETED, P01-ingest=READY
+- Notify Roma to assign Talib (Requirements Engineer) for AORDL requirements authoring
+- Pass control to Roma for P1 orchestration
+
+**What Bootstrap Does NOT Do:**
+- ❌ Create AORDL requirements (that's P1/Talib's role)
+- ❌ Validate AORDL requirements (that's GATE-P1/Sarah's role)
+- ❌ Analyze AORDL requirements (that's P2/Talib's role)
+- ✅ Only prepares the environment for AORDL-based development
+
+---
+
+## Life-Cycle Phase References
+
+**Bootstrap's Position in ROME Life-Cycle:**
+
+| Phase Context | Role in Phase |
+|---------------|---------------|
+| **P0 (Bootup)** | **PRIMARY ROLE: Initialize project structure and prepare for P1 AORDL phase** |
+| P1 (Ingest) | Preparation - Created directory structure for AORDL requirements storage |
+| P2 (Analysis) | Preparation - Created directory structure for P2 analysis outputs |
+| P3 (Design) | Preparation - Created directory structure for P3 design outputs |
+| P4 (Config) | Preparation - Created directory structure for P4 config outputs |
+| P5 (Generation) | Preparation - Created SOURCE/ directory for P5 code generation |
+| Delivery | Not involved - Deployment |
+
+**Output Artifacts (for P1+ Consumption):**
+
+| Artifact | Location | Purpose | AORDL Link |
+|----------|----------|---------|------------|
+| ROME symlink | `[project]/ROME/` | Read-only access to framework including AORDL templates | Enables P1 access to AORDL specification and templates |
+| .rome-project.json | `[project]/` | Project configuration and phase status tracking | Tracks progression through AORDL-based phases (P1→P2→P3→P4→P5) |
+| ARTIFACTS/ structure | `[project]/ARTIFACTS/` | Directory structure for all phase outputs | Organizes AORDL requirements (P1) and downstream artifacts (P2-P5) |
+| robots/ workspaces | `[project]/robots/[robot]/` | Individual robot working directories | Each robot workspace for AORDL-aware robots (Talib, PMA, Sarah, Roma, etc.) |
+| Activity log | `[project]/.activity-log/` | Event-sourced project state tracking | Enables AORDL requirement tracking (REQ-###) and traceability queries |
+
+**Handover to Next Phase:**
+
+Bootstrap hands off to Roma (Orchestrator) who then assigns Talib (Requirements Engineer) for P1 (AORDL phase). Bootstrap's completion triggers:
+- P00-bootup status: COMPLETED
+- P01-ingest status: READY
+- Roma assignment: Talib for AORDL requirements authoring
 
 ---
 
@@ -454,3 +557,4 @@ Read("ARTIFACTS/activity-state.yaml")
 | 1.1 | 2025-11-24T00:00:00Z | Added _user_input/raw-requirements/ directory creation |
 | 1.2 | 2025-11-24T00:00:00Z | Added lucien and ashok to robot workspace creation list |
 | 2.0 | 2025-12-18T00:00:00Z | **BREAKING**: Replaced MongoDB initialization with event log system (ROME-PROP-007). Initialize activity-log.txt and activity-state.yaml instead of database. |
+| 3.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 3):** Added Dependencies section (ROME-PHASE-002 reference), added Skills Auto-Discovery System section (~8 P0 bootup/setup skills, note on independent operation), added AORDL Awareness section (Bootstrap prepares environment for P1 AORDL phase - project structure, activity log, ROME symlink, handover to P1, clarification of what Bootstrap does NOT do), added Life-Cycle Phase References section (Bootstrap's P0 position, output artifacts with AORDL links, handover triggers), updated status to Active |

@@ -1,0 +1,2916 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T12:05:33.249Z",
+    "architecture_style": "layered",
+    "language_target": "typescript",
+    "total_entities": 9,
+    "total_components": 63
+  },
+  "layer_distribution": {
+    "entity": 9,
+    "dto": 27,
+    "repository": 9,
+    "service": 9,
+    "controller": 9
+  },
+  "components": [
+    {
+      "name": "Task",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Task",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "status attribute"
+        },
+        {
+          "name": "creator",
+          "type": "string",
+          "description": "creator attribute"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "description": "title attribute"
+        },
+        {
+          "name": "assignee",
+          "type": "string",
+          "description": "assignee attribute"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateTaskDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Task",
+      "properties": [
+        {
+          "name": "status",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "creator",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "assignee",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateTaskDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Task",
+      "properties": [
+        {
+          "name": "status",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "creator",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "assignee",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "TaskResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Task API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "creator",
+          "type": "string"
+        },
+        {
+          "name": "title",
+          "type": "string"
+        },
+        {
+          "name": "assignee",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Task"
+      ]
+    },
+    {
+      "name": "TaskRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Task",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Task | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Task by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Task[]>",
+          "parameters": [],
+          "description": "Find all Task records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Task>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTaskDTO"
+            }
+          ],
+          "description": "Create new Task"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Task>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTaskDTO"
+            }
+          ],
+          "description": "Update Task"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Task"
+        }
+      ],
+      "dependencies": [
+        "Task",
+        "CreateTaskDTO",
+        "UpdateTaskDTO"
+      ]
+    },
+    {
+      "name": "TaskService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Task",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "TaskRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<TaskResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Task by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<TaskResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Task records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<TaskResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTaskDTO"
+            }
+          ],
+          "description": "Create new Task"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<TaskResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTaskDTO"
+            }
+          ],
+          "description": "Update Task"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Task"
+        }
+      ],
+      "dependencies": [
+        "TaskRepository",
+        "CreateTaskDTO",
+        "UpdateTaskDTO",
+        "TaskResponseDTO"
+      ]
+    },
+    {
+      "name": "TaskController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Task",
+      "properties": [
+        {
+          "name": "service",
+          "type": "TaskService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/tasks/{id}",
+          "returnType": "Promise<TaskResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Task by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/tasks",
+          "returnType": "Promise<TaskResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Task records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/tasks",
+          "returnType": "Promise<TaskResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTaskDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Task"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/tasks/{id}",
+          "returnType": "Promise<TaskResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTaskDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Task"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/tasks/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Task"
+        }
+      ],
+      "dependencies": [
+        "TaskService",
+        "CreateTaskDTO",
+        "UpdateTaskDTO",
+        "TaskResponseDTO"
+      ]
+    },
+    {
+      "name": "Project",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Project",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "name attribute"
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "description": "status attribute"
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "description": "owner attribute"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateProjectDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Project",
+      "properties": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateProjectDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Project",
+      "properties": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "status",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "ProjectResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Project API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "status",
+          "type": "string"
+        },
+        {
+          "name": "owner",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Project"
+      ]
+    },
+    {
+      "name": "ProjectRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Project",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Project | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Project by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Project[]>",
+          "parameters": [],
+          "description": "Find all Project records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Project>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateProjectDTO"
+            }
+          ],
+          "description": "Create new Project"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Project>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateProjectDTO"
+            }
+          ],
+          "description": "Update Project"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Project"
+        }
+      ],
+      "dependencies": [
+        "Project",
+        "CreateProjectDTO",
+        "UpdateProjectDTO"
+      ]
+    },
+    {
+      "name": "ProjectService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Project",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "ProjectRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<ProjectResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Project by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<ProjectResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Project records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<ProjectResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateProjectDTO"
+            }
+          ],
+          "description": "Create new Project"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<ProjectResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateProjectDTO"
+            }
+          ],
+          "description": "Update Project"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Project"
+        }
+      ],
+      "dependencies": [
+        "ProjectRepository",
+        "CreateProjectDTO",
+        "UpdateProjectDTO",
+        "ProjectResponseDTO"
+      ]
+    },
+    {
+      "name": "ProjectController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Project",
+      "properties": [
+        {
+          "name": "service",
+          "type": "ProjectService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/projects/{id}",
+          "returnType": "Promise<ProjectResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Project by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/projects",
+          "returnType": "Promise<ProjectResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Project records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/projects",
+          "returnType": "Promise<ProjectResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateProjectDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Project"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/projects/{id}",
+          "returnType": "Promise<ProjectResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateProjectDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Project"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/projects/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Project"
+        }
+      ],
+      "dependencies": [
+        "ProjectService",
+        "CreateProjectDTO",
+        "UpdateProjectDTO",
+        "ProjectResponseDTO"
+      ]
+    },
+    {
+      "name": "TeamMember",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for TeamMember",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateTeamMemberDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating TeamMember",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateTeamMemberDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating TeamMember",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "TeamMemberResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for TeamMember API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "TeamMember"
+      ]
+    },
+    {
+      "name": "TeamMemberRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for TeamMember",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<TeamMember | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find TeamMember by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<TeamMember[]>",
+          "parameters": [],
+          "description": "Find all TeamMember records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<TeamMember>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTeamMemberDTO"
+            }
+          ],
+          "description": "Create new TeamMember"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<TeamMember>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTeamMemberDTO"
+            }
+          ],
+          "description": "Update TeamMember"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete TeamMember"
+        }
+      ],
+      "dependencies": [
+        "TeamMember",
+        "CreateTeamMemberDTO",
+        "UpdateTeamMemberDTO"
+      ]
+    },
+    {
+      "name": "TeamMemberService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for TeamMember",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "TeamMemberRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<TeamMemberResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get TeamMember by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<TeamMemberResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all TeamMember records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<TeamMemberResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTeamMemberDTO"
+            }
+          ],
+          "description": "Create new TeamMember"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<TeamMemberResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTeamMemberDTO"
+            }
+          ],
+          "description": "Update TeamMember"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete TeamMember"
+        }
+      ],
+      "dependencies": [
+        "TeamMemberRepository",
+        "CreateTeamMemberDTO",
+        "UpdateTeamMemberDTO",
+        "TeamMemberResponseDTO"
+      ]
+    },
+    {
+      "name": "TeamMemberController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for TeamMember",
+      "properties": [
+        {
+          "name": "service",
+          "type": "TeamMemberService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/teammembers/{id}",
+          "returnType": "Promise<TeamMemberResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get TeamMember by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/teammembers",
+          "returnType": "Promise<TeamMemberResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all TeamMember records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/teammembers",
+          "returnType": "Promise<TeamMemberResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTeamMemberDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new TeamMember"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/teammembers/{id}",
+          "returnType": "Promise<TeamMemberResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTeamMemberDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update TeamMember"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/teammembers/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete TeamMember"
+        }
+      ],
+      "dependencies": [
+        "TeamMemberService",
+        "CreateTeamMemberDTO",
+        "UpdateTeamMemberDTO",
+        "TeamMemberResponseDTO"
+      ]
+    },
+    {
+      "name": "Team",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Team",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "description": "name attribute"
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "description": "owner attribute"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateTeamDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Team",
+      "properties": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateTeamDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Team",
+      "properties": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": false
+        },
+        {
+          "name": "owner",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "TeamResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Team API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "owner",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Team"
+      ]
+    },
+    {
+      "name": "TeamRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Team",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Team | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Team by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Team[]>",
+          "parameters": [],
+          "description": "Find all Team records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Team>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTeamDTO"
+            }
+          ],
+          "description": "Create new Team"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Team>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTeamDTO"
+            }
+          ],
+          "description": "Update Team"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Team"
+        }
+      ],
+      "dependencies": [
+        "Team",
+        "CreateTeamDTO",
+        "UpdateTeamDTO"
+      ]
+    },
+    {
+      "name": "TeamService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Team",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "TeamRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<TeamResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Team by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<TeamResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Team records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<TeamResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTeamDTO"
+            }
+          ],
+          "description": "Create new Team"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<TeamResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTeamDTO"
+            }
+          ],
+          "description": "Update Team"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Team"
+        }
+      ],
+      "dependencies": [
+        "TeamRepository",
+        "CreateTeamDTO",
+        "UpdateTeamDTO",
+        "TeamResponseDTO"
+      ]
+    },
+    {
+      "name": "TeamController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Team",
+      "properties": [
+        {
+          "name": "service",
+          "type": "TeamService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/teams/{id}",
+          "returnType": "Promise<TeamResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Team by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/teams",
+          "returnType": "Promise<TeamResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Team records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/teams",
+          "returnType": "Promise<TeamResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateTeamDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Team"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/teams/{id}",
+          "returnType": "Promise<TeamResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateTeamDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Team"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/teams/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Team"
+        }
+      ],
+      "dependencies": [
+        "TeamService",
+        "CreateTeamDTO",
+        "UpdateTeamDTO",
+        "TeamResponseDTO"
+      ]
+    },
+    {
+      "name": "Webhook",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Webhook",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateWebhookDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Webhook",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateWebhookDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Webhook",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "WebhookResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Webhook API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Webhook"
+      ]
+    },
+    {
+      "name": "WebhookRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Webhook",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Webhook | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Webhook by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Webhook[]>",
+          "parameters": [],
+          "description": "Find all Webhook records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Webhook>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateWebhookDTO"
+            }
+          ],
+          "description": "Create new Webhook"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Webhook>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateWebhookDTO"
+            }
+          ],
+          "description": "Update Webhook"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Webhook"
+        }
+      ],
+      "dependencies": [
+        "Webhook",
+        "CreateWebhookDTO",
+        "UpdateWebhookDTO"
+      ]
+    },
+    {
+      "name": "WebhookService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Webhook",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "WebhookRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<WebhookResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Webhook by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<WebhookResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Webhook records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<WebhookResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateWebhookDTO"
+            }
+          ],
+          "description": "Create new Webhook"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<WebhookResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateWebhookDTO"
+            }
+          ],
+          "description": "Update Webhook"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Webhook"
+        }
+      ],
+      "dependencies": [
+        "WebhookRepository",
+        "CreateWebhookDTO",
+        "UpdateWebhookDTO",
+        "WebhookResponseDTO"
+      ]
+    },
+    {
+      "name": "WebhookController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Webhook",
+      "properties": [
+        {
+          "name": "service",
+          "type": "WebhookService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/webhooks/{id}",
+          "returnType": "Promise<WebhookResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Webhook by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/webhooks",
+          "returnType": "Promise<WebhookResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Webhook records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/webhooks",
+          "returnType": "Promise<WebhookResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateWebhookDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Webhook"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/webhooks/{id}",
+          "returnType": "Promise<WebhookResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateWebhookDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Webhook"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/webhooks/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Webhook"
+        }
+      ],
+      "dependencies": [
+        "WebhookService",
+        "CreateWebhookDTO",
+        "UpdateWebhookDTO",
+        "WebhookResponseDTO"
+      ]
+    },
+    {
+      "name": "ApiToken",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for ApiToken",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateApiTokenDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating ApiToken",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateApiTokenDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating ApiToken",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "ApiTokenResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for ApiToken API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "ApiToken"
+      ]
+    },
+    {
+      "name": "ApiTokenRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for ApiToken",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<ApiToken | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find ApiToken by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<ApiToken[]>",
+          "parameters": [],
+          "description": "Find all ApiToken records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<ApiToken>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateApiTokenDTO"
+            }
+          ],
+          "description": "Create new ApiToken"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<ApiToken>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateApiTokenDTO"
+            }
+          ],
+          "description": "Update ApiToken"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete ApiToken"
+        }
+      ],
+      "dependencies": [
+        "ApiToken",
+        "CreateApiTokenDTO",
+        "UpdateApiTokenDTO"
+      ]
+    },
+    {
+      "name": "ApiTokenService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for ApiToken",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "ApiTokenRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<ApiTokenResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get ApiToken by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<ApiTokenResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all ApiToken records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<ApiTokenResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateApiTokenDTO"
+            }
+          ],
+          "description": "Create new ApiToken"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<ApiTokenResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateApiTokenDTO"
+            }
+          ],
+          "description": "Update ApiToken"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete ApiToken"
+        }
+      ],
+      "dependencies": [
+        "ApiTokenRepository",
+        "CreateApiTokenDTO",
+        "UpdateApiTokenDTO",
+        "ApiTokenResponseDTO"
+      ]
+    },
+    {
+      "name": "ApiTokenController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for ApiToken",
+      "properties": [
+        {
+          "name": "service",
+          "type": "ApiTokenService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/apitokens/{id}",
+          "returnType": "Promise<ApiTokenResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get ApiToken by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/apitokens",
+          "returnType": "Promise<ApiTokenResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all ApiToken records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/apitokens",
+          "returnType": "Promise<ApiTokenResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateApiTokenDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new ApiToken"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/apitokens/{id}",
+          "returnType": "Promise<ApiTokenResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateApiTokenDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update ApiToken"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/apitokens/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete ApiToken"
+        }
+      ],
+      "dependencies": [
+        "ApiTokenService",
+        "CreateApiTokenDTO",
+        "UpdateApiTokenDTO",
+        "ApiTokenResponseDTO"
+      ]
+    },
+    {
+      "name": "Comment",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Comment",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "time",
+          "type": "string",
+          "description": "time attribute"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateCommentDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Comment",
+      "properties": [
+        {
+          "name": "time",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateCommentDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Comment",
+      "properties": [
+        {
+          "name": "time",
+          "type": "string",
+          "required": false
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CommentResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Comment API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "time",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Comment"
+      ]
+    },
+    {
+      "name": "CommentRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Comment",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Comment | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Comment by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Comment[]>",
+          "parameters": [],
+          "description": "Find all Comment records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Comment>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateCommentDTO"
+            }
+          ],
+          "description": "Create new Comment"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Comment>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateCommentDTO"
+            }
+          ],
+          "description": "Update Comment"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Comment"
+        }
+      ],
+      "dependencies": [
+        "Comment",
+        "CreateCommentDTO",
+        "UpdateCommentDTO"
+      ]
+    },
+    {
+      "name": "CommentService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Comment",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "CommentRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<CommentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Comment by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<CommentResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Comment records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<CommentResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateCommentDTO"
+            }
+          ],
+          "description": "Create new Comment"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<CommentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateCommentDTO"
+            }
+          ],
+          "description": "Update Comment"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Comment"
+        }
+      ],
+      "dependencies": [
+        "CommentRepository",
+        "CreateCommentDTO",
+        "UpdateCommentDTO",
+        "CommentResponseDTO"
+      ]
+    },
+    {
+      "name": "CommentController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Comment",
+      "properties": [
+        {
+          "name": "service",
+          "type": "CommentService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/comments/{id}",
+          "returnType": "Promise<CommentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Comment by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/comments",
+          "returnType": "Promise<CommentResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Comment records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/comments",
+          "returnType": "Promise<CommentResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateCommentDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Comment"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/comments/{id}",
+          "returnType": "Promise<CommentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateCommentDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Comment"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/comments/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Comment"
+        }
+      ],
+      "dependencies": [
+        "CommentService",
+        "CreateCommentDTO",
+        "UpdateCommentDTO",
+        "CommentResponseDTO"
+      ]
+    },
+    {
+      "name": "Attachment",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Attachment",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateAttachmentDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Attachment",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateAttachmentDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Attachment",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "AttachmentResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Attachment API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Attachment"
+      ]
+    },
+    {
+      "name": "AttachmentRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Attachment",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Attachment | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Attachment by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Attachment[]>",
+          "parameters": [],
+          "description": "Find all Attachment records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Attachment>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateAttachmentDTO"
+            }
+          ],
+          "description": "Create new Attachment"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Attachment>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateAttachmentDTO"
+            }
+          ],
+          "description": "Update Attachment"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Attachment"
+        }
+      ],
+      "dependencies": [
+        "Attachment",
+        "CreateAttachmentDTO",
+        "UpdateAttachmentDTO"
+      ]
+    },
+    {
+      "name": "AttachmentService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Attachment",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "AttachmentRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<AttachmentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Attachment by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<AttachmentResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Attachment records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<AttachmentResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateAttachmentDTO"
+            }
+          ],
+          "description": "Create new Attachment"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<AttachmentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateAttachmentDTO"
+            }
+          ],
+          "description": "Update Attachment"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Attachment"
+        }
+      ],
+      "dependencies": [
+        "AttachmentRepository",
+        "CreateAttachmentDTO",
+        "UpdateAttachmentDTO",
+        "AttachmentResponseDTO"
+      ]
+    },
+    {
+      "name": "AttachmentController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Attachment",
+      "properties": [
+        {
+          "name": "service",
+          "type": "AttachmentService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/attachments/{id}",
+          "returnType": "Promise<AttachmentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Attachment by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/attachments",
+          "returnType": "Promise<AttachmentResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Attachment records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/attachments",
+          "returnType": "Promise<AttachmentResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateAttachmentDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Attachment"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/attachments/{id}",
+          "returnType": "Promise<AttachmentResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateAttachmentDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Attachment"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/attachments/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Attachment"
+        }
+      ],
+      "dependencies": [
+        "AttachmentService",
+        "CreateAttachmentDTO",
+        "UpdateAttachmentDTO",
+        "AttachmentResponseDTO"
+      ]
+    },
+    {
+      "name": "Analytic",
+      "layer": "entity",
+      "type": "class",
+      "description": "Domain entity for Analytic",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string",
+          "description": "Unique identifier"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date",
+          "description": "Creation timestamp"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date",
+          "description": "Last update timestamp"
+        }
+      ],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "CreateAnalyticDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for creating Analytic",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "UpdateAnalyticDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for updating Analytic",
+      "properties": [],
+      "methods": [],
+      "dependencies": []
+    },
+    {
+      "name": "AnalyticResponseDTO",
+      "layer": "dto",
+      "type": "class",
+      "description": "DTO for Analytic API responses",
+      "properties": [
+        {
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "name": "createdAt",
+          "type": "Date"
+        },
+        {
+          "name": "updatedAt",
+          "type": "Date"
+        }
+      ],
+      "methods": [],
+      "dependencies": [
+        "Analytic"
+      ]
+    },
+    {
+      "name": "AnalyticRepository",
+      "layer": "repository",
+      "type": "interface",
+      "description": "Data access layer for Analytic",
+      "properties": [],
+      "methods": [
+        {
+          "name": "findById",
+          "returnType": "Promise<Analytic | null>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Find Analytic by ID"
+        },
+        {
+          "name": "findAll",
+          "returnType": "Promise<Analytic[]>",
+          "parameters": [],
+          "description": "Find all Analytic records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<Analytic>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateAnalyticDTO"
+            }
+          ],
+          "description": "Create new Analytic"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<Analytic>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateAnalyticDTO"
+            }
+          ],
+          "description": "Update Analytic"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<boolean>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Analytic"
+        }
+      ],
+      "dependencies": [
+        "Analytic",
+        "CreateAnalyticDTO",
+        "UpdateAnalyticDTO"
+      ]
+    },
+    {
+      "name": "AnalyticService",
+      "layer": "service",
+      "type": "class",
+      "description": "Business logic for Analytic",
+      "properties": [
+        {
+          "name": "repository",
+          "type": "AnalyticRepository",
+          "description": "Repository dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "returnType": "Promise<AnalyticResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Get Analytic by ID"
+        },
+        {
+          "name": "getAll",
+          "returnType": "Promise<AnalyticResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Analytic records"
+        },
+        {
+          "name": "create",
+          "returnType": "Promise<AnalyticResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateAnalyticDTO"
+            }
+          ],
+          "description": "Create new Analytic"
+        },
+        {
+          "name": "update",
+          "returnType": "Promise<AnalyticResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            },
+            {
+              "name": "data",
+              "type": "UpdateAnalyticDTO"
+            }
+          ],
+          "description": "Update Analytic"
+        },
+        {
+          "name": "delete",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string"
+            }
+          ],
+          "description": "Delete Analytic"
+        }
+      ],
+      "dependencies": [
+        "AnalyticRepository",
+        "CreateAnalyticDTO",
+        "UpdateAnalyticDTO",
+        "AnalyticResponseDTO"
+      ]
+    },
+    {
+      "name": "AnalyticController",
+      "layer": "controller",
+      "type": "class",
+      "description": "API controller for Analytic",
+      "properties": [
+        {
+          "name": "service",
+          "type": "AnalyticService",
+          "description": "Service dependency"
+        }
+      ],
+      "methods": [
+        {
+          "name": "getById",
+          "httpMethod": "GET",
+          "route": "/analytics/{id}",
+          "returnType": "Promise<AnalyticResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Get Analytic by ID"
+        },
+        {
+          "name": "getAll",
+          "httpMethod": "GET",
+          "route": "/analytics",
+          "returnType": "Promise<AnalyticResponseDTO[]>",
+          "parameters": [],
+          "description": "Get all Analytic records"
+        },
+        {
+          "name": "create",
+          "httpMethod": "POST",
+          "route": "/analytics",
+          "returnType": "Promise<AnalyticResponseDTO>",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "CreateAnalyticDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Create new Analytic"
+        },
+        {
+          "name": "update",
+          "httpMethod": "PUT",
+          "route": "/analytics/{id}",
+          "returnType": "Promise<AnalyticResponseDTO>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            },
+            {
+              "name": "data",
+              "type": "UpdateAnalyticDTO",
+              "source": "body"
+            }
+          ],
+          "description": "Update Analytic"
+        },
+        {
+          "name": "delete",
+          "httpMethod": "DELETE",
+          "route": "/analytics/{id}",
+          "returnType": "Promise<void>",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "string",
+              "source": "path"
+            }
+          ],
+          "description": "Delete Analytic"
+        }
+      ],
+      "dependencies": [
+        "AnalyticService",
+        "CreateAnalyticDTO",
+        "UpdateAnalyticDTO",
+        "AnalyticResponseDTO"
+      ]
+    }
+  ]
+}

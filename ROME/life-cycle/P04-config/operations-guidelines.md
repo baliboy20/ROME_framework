@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-005 |
-| **Version** | 1.3 |
-| **Date** | 2025-12-18T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 2.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -67,8 +67,9 @@ Phase 4 MAY NOT begin until ALL criteria are met:
 |-----------|--------------|
 | P3 complete | PHASE-3 status = COMPLETED |
 | GATE-P3 approved | Sarah audit passed |
-| Tech stack documented | `tech-stack.md` complete |
-| Data dictionary complete | `data-dictionary.yaml` complete |
+| AORDL requirements available | REQ-*.yaml files from P1 (for full traceability) |
+| Tech stack documented | `tech-stack.md` complete with AORDL-driven decisions |
+| Data dictionary complete | `data-dictionary.yaml` with AORDL Invariants→Business rules |
 | Test architecture documented | `test-architecture.md` complete |
 | Actionlist complete | `actionlist.md` with workspace definitions |
 | Handover received | `phase3-handover.md` complete |
@@ -327,16 +328,30 @@ Each environment MUST document:
 
 ## Traceability Requirements
 
+### AORDL-to-Config Tracing
+
+Complete traceability from AORDL through all phases to configuration:
+
+| From AORDL (P1) | Through P2 | Through P3 | To P4 Config |
+|-----------------|------------|------------|--------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) | Feature branch/workspace |
+| Actor | User role | Use case Actor | Authentication config |
+| Invariants | Data constraints | Data dictionary business rules | Database constraints |
+| NonFunctional.Performance | NFR specification | System architecture | Environment sizing |
+| NonFunctional.Security | NFR specification | Tech stack + API auth | Security config, secrets |
+| Errors | Error handling | API design errors | Error logging config |
+
 ### Design-to-Config Tracing
 
 Every design artifact MUST be traceable to configuration:
 
-| From | To |
-|------|----|
+| From P3 | To P4 |
+|---------|-------|
 | Workspace (actionlist.md) | Scaffolded directory (SOURCE/) |
-| Entity (data-dictionary.yaml) | Migration file |
-| Technology (tech-stack.md) | Initialized project |
-| Environment requirement | Environment config |
+| Entity (data-dictionary.yaml) | Data workspace structure |
+| Technology (tech-stack.md) | Initialized project with dependencies |
+| Environment requirement | Environment config (.env files) |
+| Test architecture | Test directory structure |
 
 ---
 
@@ -366,3 +381,5 @@ All robots operating in this phase MUST follow the Activity Logging Protocol:
 | 1.0 | 2025-11-24T00:00:00Z | Complete phase specification with Lucien as primary robot |
 | 1.1 | 2025-11-24T00:00:00Z | Clarified: Lucien prepares data workspace structure, Ashok (P5) creates schema/migrations/seeds |
 | 1.2 | 2025-11-24T00:00:00Z | Clarified: Lucien creates workspace root only, NOT internal src/tests structure (P5 responsibility) |
+| 1.3 | 2025-12-18T00:00:00Z | Added test directory structure and test environment configuration requirements |
+| 2.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 1):** Updated entry criteria to reference AORDL requirements and AORDL-driven design decisions, added AORDL-to-Config tracing table (6 mappings from P1→P2→P3→P4), updated design-to-config tracing for clarity, updated status to Active |

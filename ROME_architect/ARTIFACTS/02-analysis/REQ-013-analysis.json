@@ -1,0 +1,257 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.038Z",
+    "execution_id": "skill-1766577933033-ly2xkn0y2",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-013.yaml"
+  },
+  "requirement_id": "REQ-013",
+  "requirement_intent": "submit task",
+  "requirement_actor": "TeamMember",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 7,
+    "primary_entities": [
+      {
+        "name": "Task",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Preconditions",
+          "Conditions",
+          "Postconditions",
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [
+          "status",
+          "assignee"
+        ],
+        "contexts": [
+          "submit task",
+          "TeamMember authenticated Task exists TeamMember is task assignee Task status is 'in_progress'",
+          "All required task fields completed Due date not exceeded by more than 7 days",
+          "Task status set to 'pending_review' Task submitted_at timestamp recorded ProjectManager notified for review Task locked for editing (assignee cannot edit)",
+          "Task appears in ProjectManager review queue ProjectManager receives review notification Task assignee receives submission confirmation",
+          "Submitted tasks cannot be edited by assignee Task must have description and all required fields Submission timestamp recorded"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Member",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "TeamMember authenticated Task exists TeamMember is task assignee Task status is 'in_progress'"
+        ]
+      },
+      {
+        "name": "Due",
+        "type": "secondary",
+        "source_fields": [
+          "Conditions"
+        ],
+        "attributes": [
+          "date"
+        ],
+        "contexts": [
+          "All required task fields completed Due date not exceeded by more than 7 days"
+        ]
+      },
+      {
+        "name": "ProjectManager",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions",
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Task status set to 'pending_review' Task submitted_at timestamp recorded ProjectManager notified for review Task locked for editing (assignee cannot edit)",
+          "Task appears in ProjectManager review queue ProjectManager receives review notification Task assignee receives submission confirmation"
+        ]
+      },
+      {
+        "name": "Notification",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Task appears in ProjectManager review queue ProjectManager receives review notification Task assignee receives submission confirmation"
+        ]
+      },
+      {
+        "name": "Submission",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "Submitted tasks cannot be edited by assignee Task must have description and all required fields Submission timestamp recorded"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "unclassified": 1,
+      "validation": 1,
+      "temporal": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Submitted tasks cannot be edited by assignee",
+        "classifications": [],
+        "entities": [
+          "Submitted",
+          "Assignee"
+        ],
+        "attributes": [
+          "assignee"
+        ],
+        "semantic": {
+          "modality": "must",
+          "subject": "Submitted tasks",
+          "predicate": "be",
+          "constraint": "Submitted tasks cannot be edited by assignee",
+          "negation": true
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Task must have description and all required fields",
+        "classifications": [
+          {
+            "type": "validation",
+            "confidence": 0.6,
+            "matched_keyword": "must have"
+          },
+          {
+            "type": "relationship",
+            "confidence": 0.6,
+            "matched_keyword": "must have"
+          },
+          {
+            "type": "business_policy",
+            "confidence": 0.6,
+            "matched_keyword": "all"
+          }
+        ],
+        "entities": [
+          "Task"
+        ],
+        "attributes": [
+          "description"
+        ],
+        "semantic": {
+          "modality": "must",
+          "subject": "Task must",
+          "predicate": "have",
+          "constraint": "Task must have description and all required fields",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Submission timestamp recorded",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.6,
+            "matched_keyword": "timestamp"
+          }
+        ],
+        "entities": [
+          "Submission"
+        ],
+        "attributes": [
+          "timestamp"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Submission timestamp",
+          "predicate": null,
+          "constraint": "Submission timestamp recorded",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "POST",
+    "path": "/task/{id}/submit",
+    "resource": "task",
+    "full_endpoint": "POST /task/{id}/submit",
+    "request_body": {
+      "type": "object",
+      "required_fields": [
+        "data"
+      ],
+      "example": {}
+    },
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "task": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "TeamMember",
+      "permission": "submit_task"
+    }
+  },
+  "complexity": {
+    "total_score": 30,
+    "level": "HIGH",
+    "breakdown": {
+      "entities": 14,
+      "invariants": 9,
+      "conditions": 4,
+      "errors": 3,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 7,
+      "invariant_count": 3,
+      "condition_count": 2,
+      "error_count": 3,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "complexity",
+      "message": "High complexity - ensure adequate testing and documentation",
+      "action": "Add comprehensive test scenarios"
+    },
+    {
+      "type": "INFO",
+      "category": "invariants",
+      "message": "1 invariant(s) could not be classified",
+      "action": "Review unclassified invariants for clarity"
+    }
+  ]
+}

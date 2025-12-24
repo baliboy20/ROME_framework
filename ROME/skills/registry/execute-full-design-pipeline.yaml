@@ -1,0 +1,33 @@
+skill:
+  name: execute-full-design-pipeline
+  version: 1.0.0
+  category: orchestration
+  tier: 3
+  description: Execute complete P1→P2→P3 design pipeline with validation
+
+parameters:
+  required:
+    - name: requirements_directory
+      type: string
+      validation: directory_exists
+
+    - name: artifacts_directory
+      type: string
+
+  optional:
+    - name: strict_validation
+      type: boolean
+      default: true
+
+execution:
+  timeout: 300000
+
+output:
+  pipeline_status:
+    type: string
+  phases_completed:
+    type: array
+  total_artifacts:
+    type: integer
+  validation_results:
+    type: object

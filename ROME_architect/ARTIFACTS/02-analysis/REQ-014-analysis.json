@@ -1,0 +1,267 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.046Z",
+    "execution_id": "skill-1766577933039-1kkszbe2y",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-014.yaml"
+  },
+  "requirement_id": "REQ-014",
+  "requirement_intent": "approve task",
+  "requirement_actor": "ProjectManager",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 9,
+    "primary_entities": [
+      {
+        "name": "Task",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Preconditions",
+          "Postconditions",
+          "Outcomes"
+        ],
+        "attributes": [
+          "status",
+          "assignee"
+        ],
+        "contexts": [
+          "approve task",
+          "ProjectManager authenticated Task exists ProjectManager is project owner Task status is 'pending_review'",
+          "Task status set to 'completed' Task completed_at timestamp recorded Task assignee notified of approval Audit log entry created",
+          "Task appears in completed tasks list Task assignee receives approval notification Project completion percentage updated"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Manager",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "ProjectManager authenticated Task exists ProjectManager is project owner Task status is 'pending_review'"
+        ]
+      },
+      {
+        "name": "Project",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions",
+          "Outcomes"
+        ],
+        "attributes": [
+          "owner"
+        ],
+        "contexts": [
+          "ProjectManager authenticated Task exists ProjectManager is project owner Task status is 'pending_review'",
+          "Task appears in completed tasks list Task assignee receives approval notification Project completion percentage updated"
+        ]
+      },
+      {
+        "name": "Audit",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Task status set to 'completed' Task completed_at timestamp recorded Task assignee notified of approval Audit log entry created"
+        ]
+      },
+      {
+        "name": "Notification",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Task appears in completed tasks list Task assignee receives approval notification Project completion percentage updated"
+        ]
+      },
+      {
+        "name": "Completion",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "Approved tasks cannot be reopened Completion timestamp ≥ Submission timestamp Completion timestamp ≥ Created timestamp"
+        ]
+      },
+      {
+        "name": "Submission",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "Approved tasks cannot be reopened Completion timestamp ≥ Submission timestamp Completion timestamp ≥ Created timestamp"
+        ]
+      },
+      {
+        "name": "Created",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "Approved tasks cannot be reopened Completion timestamp ≥ Submission timestamp Completion timestamp ≥ Created timestamp"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "unclassified": 1,
+      "temporal": 2
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Approved tasks cannot be reopened",
+        "classifications": [],
+        "entities": [
+          "Approved"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": "must",
+          "subject": "Approved tasks",
+          "predicate": "be",
+          "constraint": "Approved tasks cannot be reopened",
+          "negation": true
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Completion timestamp ≥ Submission timestamp",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.7,
+            "matched_keyword": "timestamp"
+          }
+        ],
+        "entities": [
+          "Completion",
+          "Submission"
+        ],
+        "attributes": [
+          "timestamp"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Completion timestamp",
+          "predicate": null,
+          "constraint": "Completion timestamp ≥ Submission timestamp",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Completion timestamp ≥ Created timestamp",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.7,
+            "matched_keyword": "timestamp"
+          }
+        ],
+        "entities": [
+          "Completion",
+          "Created"
+        ],
+        "attributes": [
+          "timestamp"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Completion timestamp",
+          "predicate": null,
+          "constraint": "Completion timestamp ≥ Created timestamp",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "PATCH",
+    "path": "/task/{id}/approve",
+    "resource": "task",
+    "full_endpoint": "PATCH /task/{id}/approve",
+    "request_body": {
+      "type": "object",
+      "required_fields": [
+        "data"
+      ],
+      "example": {}
+    },
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "task": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "ProjectManager",
+      "permission": "approve_task"
+    }
+  },
+  "complexity": {
+    "total_score": 29,
+    "level": "HIGH",
+    "breakdown": {
+      "entities": 18,
+      "invariants": 9,
+      "conditions": 0,
+      "errors": 2,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 9,
+      "invariant_count": 3,
+      "condition_count": 0,
+      "error_count": 2,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "complexity",
+      "message": "High complexity - ensure adequate testing and documentation",
+      "action": "Add comprehensive test scenarios"
+    },
+    {
+      "type": "INFO",
+      "category": "invariants",
+      "message": "1 invariant(s) could not be classified",
+      "action": "Review unclassified invariants for clarity"
+    }
+  ]
+}

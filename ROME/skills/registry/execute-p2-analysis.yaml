@@ -1,0 +1,71 @@
+skill:
+  name: execute-p2-analysis
+  version: 1.0.0
+  category: orchestration
+  tier: 2
+  description: Execute complete P2 Analysis phase pipeline for all requirements
+
+parameters:
+  required:
+    - name: requirements_directory
+      type: string
+      validation: directory_exists
+      description: Directory containing AORDL requirements
+
+  optional:
+    - name: output_directory
+      type: string
+      description: Base directory for all outputs
+
+    - name: skip_validation
+      type: boolean
+      default: false
+      description: Skip requirement validation step
+
+    - name: generate_all_artifacts
+      type: boolean
+      default: true
+      description: Generate all P2 artifacts (specs, schemas, tests, etc.)
+
+execution:
+  timeout: 600000
+  retry:
+    enabled: false
+
+output:
+  phase_results:
+    type: object
+    description: Results from each P2 pipeline step
+  artifacts_generated:
+    type: array
+    description: List of all generated artifact paths
+  execution_summary:
+    type: object
+    description: Pipeline execution summary
+
+# P2 Analysis Phase Pipeline
+pipeline_steps:
+  - step: validation
+    skill: batch-analyze-requirements
+    required: true
+
+  - step: data_dictionary
+    skill: generate-data-dictionary
+    required: true
+
+  - step: api_specification
+    skill: generate-full-api-spec
+    required: true
+
+  - step: database_schema
+    skill: generate-database-schema
+    required: true
+    depends_on: data_dictionary
+
+  - step: test_plan
+    skill: generate-test-plan
+    required: true
+
+  - step: bdd_features
+    skill: transform-aordl-to-bdd
+    required: false

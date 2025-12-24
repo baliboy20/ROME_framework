@@ -1,0 +1,251 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.077Z",
+    "execution_id": "skill-1766577933066-0hha71mji",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-017.yaml"
+  },
+  "requirement_id": "REQ-017",
+  "requirement_intent": "import project",
+  "requirement_actor": "SystemIntegrator",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 8,
+    "primary_entities": [
+      {
+        "name": "Project",
+        "type": "primary",
+        "source_fields": [
+          "Intent",
+          "Postconditions",
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [
+          "name"
+        ],
+        "contexts": [
+          "import project",
+          "Project created from import data Tasks created from import data Import job status recorded SystemIntegrator notified of import result",
+          "New project appears in organization project list Import summary report generated Import errors logged if any",
+          "Import must pass schema validation Duplicate project names resolved with suffix Import timestamp recorded"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Integrator",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "SystemIntegrator authenticated SystemIntegrator has API access token Import file valid JSON format"
+        ]
+      },
+      {
+        "name": "Import",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions",
+          "Postconditions",
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [
+          "time"
+        ],
+        "contexts": [
+          "SystemIntegrator authenticated SystemIntegrator has API access token Import file valid JSON format",
+          "Project created from import data Tasks created from import data Import job status recorded SystemIntegrator notified of import result",
+          "New project appears in organization project list Import summary report generated Import errors logged if any",
+          "Import must pass schema validation Duplicate project names resolved with suffix Import timestamp recorded"
+        ]
+      },
+      {
+        "name": "Token",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "SystemIntegrator authenticated SystemIntegrator has API access token Import file valid JSON format"
+        ]
+      },
+      {
+        "name": "Tasks",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Project created from import data Tasks created from import data Import job status recorded SystemIntegrator notified of import result"
+        ]
+      },
+      {
+        "name": "Organization",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "New project appears in organization project list Import summary report generated Import errors logged if any"
+        ]
+      },
+      {
+        "name": "Duplicate",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Import must pass schema validation Duplicate project names resolved with suffix Import timestamp recorded"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "validation": 1,
+      "uniqueness": 1,
+      "temporal": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Import must pass schema validation",
+        "classifications": [
+          {
+            "type": "validation",
+            "confidence": 0.6,
+            "matched_keyword": "valid"
+          }
+        ],
+        "entities": [
+          "Import"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": "must",
+          "subject": "Import must",
+          "predicate": "pass",
+          "constraint": "Import must pass schema validation",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Duplicate project names resolved with suffix",
+        "classifications": [
+          {
+            "type": "uniqueness",
+            "confidence": 0.9,
+            "matched_keyword": "duplicate"
+          }
+        ],
+        "entities": [
+          "Duplicate",
+          "Project"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": null,
+          "subject": "Duplicate project",
+          "predicate": null,
+          "constraint": "Duplicate project names resolved with suffix",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Import timestamp recorded",
+        "classifications": [
+          {
+            "type": "temporal",
+            "confidence": 0.6,
+            "matched_keyword": "timestamp"
+          }
+        ],
+        "entities": [
+          "Import"
+        ],
+        "attributes": [
+          "timestamp"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Import timestamp",
+          "predicate": null,
+          "constraint": "Import timestamp recorded",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "POST",
+    "path": "/project",
+    "resource": "project",
+    "full_endpoint": "POST /project",
+    "request_body": {
+      "type": "object",
+      "required_fields": [
+        "data"
+      ],
+      "example": {}
+    },
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "project": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "SystemIntegrator",
+      "permission": "import_project"
+    }
+  },
+  "complexity": {
+    "total_score": 32,
+    "level": "HIGH",
+    "breakdown": {
+      "entities": 16,
+      "invariants": 9,
+      "conditions": 4,
+      "errors": 3,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 8,
+      "invariant_count": 3,
+      "condition_count": 2,
+      "error_count": 3,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "complexity",
+      "message": "High complexity - ensure adequate testing and documentation",
+      "action": "Add comprehensive test scenarios"
+    }
+  ]
+}

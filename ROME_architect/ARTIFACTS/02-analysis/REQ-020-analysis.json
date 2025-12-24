@@ -1,0 +1,264 @@
+{
+  "metadata": {
+    "analyzed_at": "2025-12-24T12:05:33.101Z",
+    "execution_id": "skill-1766577933089-0e1lzvzen",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-020.yaml"
+  },
+  "requirement_id": "REQ-020",
+  "requirement_intent": "view analytics",
+  "requirement_actor": "Administrator",
+  "validation": {
+    "status": "PASS",
+    "violations_count": 0,
+    "warnings_count": 0,
+    "violations": [],
+    "warnings": []
+  },
+  "entities": {
+    "total_count": 10,
+    "primary_entities": [
+      {
+        "name": "Analytic",
+        "type": "primary",
+        "source_fields": [
+          "Intent"
+        ],
+        "attributes": [],
+        "contexts": [
+          "view analytics"
+        ]
+      }
+    ],
+    "secondary_entities": [
+      {
+        "name": "Administrator",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Administrator authenticated Administrator has analytics permission"
+        ]
+      },
+      {
+        "name": "Permission",
+        "type": "secondary",
+        "source_fields": [
+          "Preconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Administrator authenticated Administrator has analytics permission"
+        ]
+      },
+      {
+        "name": "Results",
+        "type": "secondary",
+        "source_fields": [
+          "Postconditions"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Analytics query logged Results cached for 1 hour"
+        ]
+      },
+      {
+        "name": "Metrics",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes",
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Analytics dashboard displayed Metrics include task completion rate, average task duration, team performance Charts and graphs rendered",
+          "Date range ≤ 365 days Metrics calculated from non-deleted tasks only Analytics data refreshed every 1 hour"
+        ]
+      },
+      {
+        "name": "Charts",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Analytics dashboard displayed Metrics include task completion rate, average task duration, team performance Charts and graphs rendered"
+        ]
+      },
+      {
+        "name": "Task",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Analytics dashboard displayed Metrics include task completion rate, average task duration, team performance Charts and graphs rendered"
+        ]
+      },
+      {
+        "name": "Team",
+        "type": "secondary",
+        "source_fields": [
+          "Outcomes"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Analytics dashboard displayed Metrics include task completion rate, average task duration, team performance Charts and graphs rendered"
+        ]
+      },
+      {
+        "name": "NonDeleted",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Date range ≤ 365 days Metrics calculated from non-deleted tasks only Analytics data refreshed every 1 hour"
+        ]
+      },
+      {
+        "name": "Analytics",
+        "type": "secondary",
+        "source_fields": [
+          "Invariants"
+        ],
+        "attributes": [],
+        "contexts": [
+          "Date range ≤ 365 days Metrics calculated from non-deleted tasks only Analytics data refreshed every 1 hour"
+        ]
+      }
+    ],
+    "relationships": []
+  },
+  "invariants": {
+    "total_count": 3,
+    "by_type": {
+      "constraint": 1,
+      "authorization": 1,
+      "business_policy": 1
+    },
+    "invariants": [
+      {
+        "id": "INV-001",
+        "text": "Date range ≤ 365 days",
+        "classifications": [
+          {
+            "type": "constraint",
+            "confidence": 0.6,
+            "matched_keyword": "range"
+          }
+        ],
+        "entities": [
+          "Date"
+        ],
+        "attributes": [
+          "date"
+        ],
+        "semantic": {
+          "modality": null,
+          "subject": "Date range",
+          "predicate": null,
+          "constraint": "Date range ≤ 365 days",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-002",
+        "text": "Metrics calculated from non-deleted tasks only",
+        "classifications": [
+          {
+            "type": "authorization",
+            "confidence": 0.6,
+            "matched_keyword": "only"
+          }
+        ],
+        "entities": [
+          "Metrics",
+          "NonDeleted"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": null,
+          "subject": "Metrics calculated",
+          "predicate": null,
+          "constraint": "Metrics calculated from non-deleted tasks only",
+          "negation": false
+        }
+      },
+      {
+        "id": "INV-003",
+        "text": "Analytics data refreshed every 1 hour",
+        "classifications": [
+          {
+            "type": "business_policy",
+            "confidence": 0.6,
+            "matched_keyword": "every"
+          }
+        ],
+        "entities": [
+          "Analytics"
+        ],
+        "attributes": [],
+        "semantic": {
+          "modality": null,
+          "subject": "Analytics data",
+          "predicate": null,
+          "constraint": "Analytics data refreshed every 1 hour",
+          "negation": false
+        }
+      }
+    ]
+  },
+  "api_endpoint": {
+    "method": "GET",
+    "path": "/analytics",
+    "resource": "analytics",
+    "full_endpoint": "GET /analytics",
+    "request_body": null,
+    "response_body": {
+      "type": "object",
+      "structure": {
+        "id": "string",
+        "analytics": "object",
+        "created_at": "datetime",
+        "updated_at": "datetime"
+      }
+    },
+    "query_parameters": [],
+    "authentication_required": true,
+    "authorization": {
+      "required_role": "Administrator",
+      "permission": "view_analytics"
+    }
+  },
+  "complexity": {
+    "total_score": 33,
+    "level": "HIGH",
+    "breakdown": {
+      "entities": 20,
+      "invariants": 9,
+      "conditions": 2,
+      "errors": 2,
+      "relationships": 0
+    },
+    "factors": {
+      "entity_count": 10,
+      "invariant_count": 3,
+      "condition_count": 1,
+      "error_count": 2,
+      "relationship_count": 0
+    }
+  },
+  "recommendations": [
+    {
+      "type": "INFO",
+      "category": "complexity",
+      "message": "High complexity - ensure adequate testing and documentation",
+      "action": "Add comprehensive test scenarios"
+    }
+  ]
+}

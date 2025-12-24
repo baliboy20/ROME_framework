@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-006 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-24T00:00:00Z |
-| **Status** | Draft |
+| **Version** | 2.0 |
+| **Date** | 2025-12-24T00:00:00Z |
+| **Status** | Active |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
-| **Changes Approved** | false |
+| **Changes Approved** | true |
 
 ---
 
@@ -85,9 +85,10 @@ Phase 5 MAY NOT begin until ALL criteria are met:
 |-----------|--------------|
 | P4 complete | PHASE-4 status = COMPLETED |
 | GATE-P4 approved | Sarah audit passed |
+| AORDL requirements available | REQ-*.yaml files from P1 (for full traceability) |
 | Workspaces scaffolded | All workspaces exist in SOURCE/ |
-| Handover received | `phase4-handover.md` complete |
-| Feature entries created | Activity log has FEAT-### entries |
+| Handover received | `phase4-handover.md` complete with AORDL traceability |
+| Feature entries created | Activity log has FEAT-### entries traced to AORDL |
 | Roma assignment | All P5 robots assigned |
 | PHASE-5 entry created | Activity log contains PHASE-5 |
 
@@ -284,16 +285,32 @@ All robots operating in this phase MUST follow the Activity Logging Protocol:
 
 ## Traceability Requirements
 
+### AORDL-to-Code Tracing
+
+Complete traceability from AORDL through all phases to implementation:
+
+| From AORDL (P1) | Through P2 | Through P3 | Through P4 | To P5 Code |
+|-----------------|------------|------------|------------|------------|
+| REQ-### | Feature (FUNC-###) | Use case (UC-###) | Workspace | Feature implementation |
+| Actor | User role | Use case Actor | Auth config | User authentication code |
+| Intent | User story capability | Use case Flow | - | API endpoint + UI screen |
+| Outcomes | Acceptance criteria | Use case steps | - | Business logic + tests |
+| Invariants | Data constraints | Business rules | DB constraints | Database validations |
+| NonFunctional.Performance | NFR specification | Architecture | Environment sizing | Performance optimizations |
+| NonFunctional.Security | NFR specification | API auth | Security config | Auth middleware + encryption |
+| Errors | Error handling | API design errors | Error logging | Error handlers + user messages |
+
 ### Design-to-Code Tracing
 
 Every design artifact MUST be traceable to code:
 
-| From | To |
-|------|----|
+| From P3 | To P5 Code |
+|---------|------------|
 | Entity (data-dictionary.yaml) | Migration + Model (Ashok) |
 | Endpoint (api-design.md) | Controller + Route (Reena) |
 | Use Case (use-cases.md) | Screen + Flow (Charlie) |
 | UI Requirement | Component (Charlie) |
+| Business Rule | Validation logic (Ashok/Reena) |
 
 ### Test Coverage
 
@@ -329,3 +346,4 @@ Each implemented item MUST have corresponding tests:
 |---------|------|-------------------|
 | 0.1 | 2025-11-20T00:00:00Z | Initial phase specification placeholder |
 | 1.0 | 2025-11-24T00:00:00Z | Complete phase specification with layer responsibilities, gates, coordination |
+| 2.0 | 2025-12-24T00:00:00Z | **AORDL Integration (ROME-PROP-013 Phase 3 Week 1):** Updated entry criteria to reference AORDL requirements for full traceability, added AORDL-to-Code tracing table (8 mappings from P1→P2→P3→P4→P5), expanded design-to-code tracing, updated status to Active |

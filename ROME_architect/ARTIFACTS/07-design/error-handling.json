@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "generated_at": "2025-12-24T12:05:33.261Z"
+  },
+  "errorHandling": {
+    "baseError": "ApplicationError",
+    "errorTypes": [
+      {
+        "name": "ValidationError",
+        "statusCode": 400,
+        "recoverable": true
+      },
+      {
+        "name": "AuthenticationError",
+        "statusCode": 401,
+        "recoverable": true
+      },
+      {
+        "name": "AuthorizationError",
+        "statusCode": 403,
+        "recoverable": false
+      },
+      {
+        "name": "NotFoundError",
+        "statusCode": 404,
+        "recoverable": true
+      },
+      {
+        "name": "ConflictError",
+        "statusCode": 409,
+        "recoverable": true
+      },
+      {
+        "name": "DatabaseError",
+        "statusCode": 500,
+        "recoverable": false
+      },
+      {
+        "name": "ExternalServiceError",
+        "statusCode": 502,
+        "recoverable": true
+      }
+    ],
+    "middleware": {
+      "name": "ErrorHandlerMiddleware",
+      "responsibilities": [
+        "catch",
+        "log",
+        "format",
+        "respond"
+      ]
+    },
+    "logging": {
+      "errorLevel": "error",
+      "includeStackTrace": true,
+      "sensitiveDataMasking": true
+    }
+  }
+}

@@ -1,0 +1,25 @@
+skill:
+  name: design-repository-layer
+  version: 1.0.0
+  category: design
+  tier: 1
+  description: Design data access repository layer with query patterns
+
+parameters:
+  required:
+    - name: data_dictionary_file
+      type: string
+      validation: file_exists
+
+  optional:
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  repositories_designed:
+    type: integer
+  repository_specs:
+    type: array

@@ -1,0 +1,31 @@
+skill:
+  name: execute-p5-code-generation
+  version: 1.0.0
+  category: orchestration
+  tier: 2
+  description: Execute complete P5 code generation (Domain + Data + Presentation layers)
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+    - name: code_output_directory
+      type: string
+
+  optional:
+    - name: entities
+      type: array
+      default: []
+
+execution:
+  timeout: 120000
+
+output:
+  files_generated:
+    type: array
+  layers_created:
+    type: object
+  p5_status:
+    type: string
