@@ -1,0 +1,50 @@
+skill:
+  name: generate-skills-documentation
+  version: 1.0.0
+  category: discovery
+  tier: 2
+  description: Auto-generates comprehensive documentation from skill manifests
+
+parameters:
+  required:
+    - name: output_directory
+      type: string
+      description: Directory to write documentation files
+
+  optional:
+    - name: format
+      type: string
+      default: markdown
+      description: Documentation format (markdown)
+
+    - name: group_by
+      type: string
+      default: phase
+      description: Grouping strategy (phase, tier, category)
+
+execution:
+  timeout: 15000
+
+output:
+  files_created:
+    type: integer
+    description: Number of documentation files created
+  output_directory:
+    type: string
+    description: Directory where files were written
+  files_list:
+    type: array
+    description: List of created files
+  total_skills_documented:
+    type: integer
+    description: Total number of skills documented
+
+examples:
+  - description: Generate documentation grouped by phase
+    usage: "/generate-skills-documentation --output-directory /ROME/docs/skills"
+
+  - description: Generate documentation grouped by tier
+    usage: "/generate-skills-documentation --output-directory /ROME/docs/skills --group-by tier"
+
+  - description: Generate documentation grouped by category
+    usage: "/generate-skills-documentation --output-directory /ROME/docs/skills --group-by category"

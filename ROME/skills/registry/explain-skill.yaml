@@ -1,0 +1,72 @@
+skill:
+  name: explain-skill
+  version: 1.0.0
+  category: discovery
+  tier: 1
+  description: Provides detailed explanation and usage guidance for a specific skill
+
+parameters:
+  required:
+    - name: skill_name
+      type: string
+      description: Name of the skill to explain (with or without leading /)
+
+execution:
+  timeout: 5000
+
+output:
+  name:
+    type: string
+    description: Skill name
+  full_name:
+    type: string
+    description: Full skill name with leading /
+  version:
+    type: string
+    description: Skill version
+  tier:
+    type: integer
+    description: Skill tier (1, 2, or 3)
+  tier_description:
+    type: string
+    description: Human-readable tier description
+  phase:
+    type: string
+    description: Phase this skill belongs to
+  category:
+    type: string
+    description: Skill category
+  description:
+    type: string
+    description: Skill description
+  parameters:
+    type: object
+    description: Detailed parameter information
+  output:
+    type: array
+    description: Expected output fields
+  examples:
+    type: array
+    description: Usage examples
+  usage_guide:
+    type: string
+    description: Step-by-step usage guide
+  related_skills:
+    type: array
+    description: Related skills you might want to use
+  when_to_use:
+    type: array
+    description: Guidance on when to use this skill
+  tips:
+    type: array
+    description: Tips and best practices
+
+examples:
+  - description: Explain the analyze-requirement skill
+    usage: "/explain-skill --skill-name analyze-requirement"
+
+  - description: Explain the execute-p3-design skill
+    usage: "/explain-skill --skill-name execute-p3-design"
+
+  - description: Explain with leading slash
+    usage: "/explain-skill --skill-name /validate-aordl"
