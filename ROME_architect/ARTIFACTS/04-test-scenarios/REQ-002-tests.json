@@ -1,0 +1,406 @@
+{
+  "requirement_id": "REQ-002",
+  "requirement_intent": "create task",
+  "test_scenarios": [
+    {
+      "id": "TS-001",
+      "name": "Happy Path: create task",
+      "type": "happy_path",
+      "priority": "HIGH",
+      "description": "Normal successful flow with valid inputs",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Setup test data",
+          "details": "Prepare valid test data meeting all preconditions"
+        },
+        {
+          "step_number": 2,
+          "action": "Authenticate as ProjectManager",
+          "details": "Login with appropriate role and permissions"
+        },
+        {
+          "step_number": 3,
+          "action": "Execute: create task",
+          "details": "Perform the main action with valid inputs"
+        },
+        {
+          "step_number": 4,
+          "action": "Verify outcomes",
+          "details": "Check that all expected outcomes are achieved"
+        }
+      ],
+      "expected_results": [
+        "Task saved to database with unique ID",
+        "Task appears in project task list",
+        "Assignee receives notification if assigned"
+      ],
+      "postconditions": [
+        "Task status set to 'open'",
+        "Task assigned to project",
+        "Task creator recorded",
+        "Notification sent to assignee if specified"
+      ]
+    },
+    {
+      "id": "TS-E01",
+      "name": "Error: If project not found",
+      "type": "error_handling",
+      "priority": "HIGH",
+      "description": "Test error handling when If project not found",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access",
+        "If project not found"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Setup error condition: If project not found",
+          "details": "Create scenario where error condition exists"
+        },
+        {
+          "step_number": 2,
+          "action": "Attempt: create task",
+          "details": "Try to perform action despite error condition"
+        },
+        {
+          "step_number": 3,
+          "action": "Verify error response",
+          "details": "Confirm error message: \"Project does not exist\""
+        }
+      ],
+      "expected_results": [
+        "Project does not exist"
+      ],
+      "postconditions": [
+        "System state unchanged",
+        "No side effects"
+      ]
+    },
+    {
+      "id": "TS-E02",
+      "name": "Error: If assignee not project member",
+      "type": "error_handling",
+      "priority": "HIGH",
+      "description": "Test error handling when If assignee not project member",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access",
+        "If assignee not project member"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Setup error condition: If assignee not project member",
+          "details": "Create scenario where error condition exists"
+        },
+        {
+          "step_number": 2,
+          "action": "Attempt: create task",
+          "details": "Try to perform action despite error condition"
+        },
+        {
+          "step_number": 3,
+          "action": "Verify error response",
+          "details": "Confirm error message: \"Assignee must be a project team member\""
+        }
+      ],
+      "expected_results": [
+        "Assignee must be a project team member"
+      ],
+      "postconditions": [
+        "System state unchanged",
+        "No side effects"
+      ]
+    },
+    {
+      "id": "TS-E03",
+      "name": "Error: If due date in past",
+      "type": "error_handling",
+      "priority": "HIGH",
+      "description": "Test error handling when If due date in past",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access",
+        "If due date in past"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Setup error condition: If due date in past",
+          "details": "Create scenario where error condition exists"
+        },
+        {
+          "step_number": 2,
+          "action": "Attempt: create task",
+          "details": "Try to perform action despite error condition"
+        },
+        {
+          "step_number": 3,
+          "action": "Verify error response",
+          "details": "Confirm error message: \"Due date cannot be in the past\""
+        }
+      ],
+      "expected_results": [
+        "Due date cannot be in the past"
+      ],
+      "postconditions": [
+        "System state unchanged",
+        "No side effects"
+      ]
+    },
+    {
+      "id": "TS-V01",
+      "name": "Validation: Task priority must be valid enum (LOW, MEDIUM, HIGH, CRITICAL)",
+      "type": "validation",
+      "priority": "MEDIUM",
+      "description": "Test validation rule: Task priority must be valid enum (LOW, MEDIUM, HIGH, CRITICAL)",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Prepare invalid input",
+          "details": "Violate condition: Task priority must be valid enum (LOW, MEDIUM, HIGH, CRITICAL)"
+        },
+        {
+          "step_number": 2,
+          "action": "Attempt: create task",
+          "details": "Try to perform action with invalid input"
+        },
+        {
+          "step_number": 3,
+          "action": "Verify validation error",
+          "details": "Confirm appropriate validation error is returned"
+        }
+      ],
+      "expected_results": [
+        "Validation error returned",
+        "Request rejected"
+      ],
+      "postconditions": [
+        "System state unchanged"
+      ]
+    },
+    {
+      "id": "TS-I01",
+      "name": "Invariant: Task title 3-200 characters",
+      "type": "invariant",
+      "priority": "HIGH",
+      "description": "Test enforcement of business rule: Task title 3-200 characters",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Attempt to violate invariant",
+          "details": "Try to break rule: Task title 3-200 characters"
+        },
+        {
+          "step_number": 2,
+          "action": "Verify rule enforcement",
+          "details": "Confirm invariant is enforced by system"
+        }
+      ],
+      "expected_results": [
+        "Invariant enforced",
+        "Violation prevented or detected"
+      ],
+      "postconditions": [
+        "Business rule maintained"
+      ]
+    },
+    {
+      "id": "TS-I02",
+      "name": "Invariant: Due date ≥ Created date",
+      "type": "invariant",
+      "priority": "HIGH",
+      "description": "Test enforcement of business rule: Due date ≥ Created date",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Attempt to violate invariant",
+          "details": "Try to break rule: Due date ≥ Created date"
+        },
+        {
+          "step_number": 2,
+          "action": "Verify rule enforcement",
+          "details": "Confirm invariant is enforced by system"
+        }
+      ],
+      "expected_results": [
+        "Invariant enforced",
+        "Violation prevented or detected"
+      ],
+      "postconditions": [
+        "Business rule maintained"
+      ]
+    },
+    {
+      "id": "TS-I03",
+      "name": "Invariant: Priority must be one of LOW, MEDIUM, HIGH, CRITICAL",
+      "type": "invariant",
+      "priority": "HIGH",
+      "description": "Test enforcement of business rule: Priority must be one of LOW, MEDIUM, HIGH, CRITICAL",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Attempt to violate invariant",
+          "details": "Try to break rule: Priority must be one of LOW, MEDIUM, HIGH, CRITICAL"
+        },
+        {
+          "step_number": 2,
+          "action": "Verify rule enforcement",
+          "details": "Confirm invariant is enforced by system"
+        }
+      ],
+      "expected_results": [
+        "Invariant enforced",
+        "Violation prevented or detected"
+      ],
+      "postconditions": [
+        "Business rule maintained"
+      ]
+    },
+    {
+      "id": "TS-A01",
+      "name": "Authorization: Unauthenticated user",
+      "type": "authorization",
+      "priority": "HIGH",
+      "description": "Test that unauthenticated users are rejected",
+      "preconditions": [
+        "User not authenticated"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Attempt action without authentication",
+          "details": "Try: create task without login"
+        },
+        {
+          "step_number": 2,
+          "action": "Verify rejection",
+          "details": "Confirm 401 Unauthorized response"
+        }
+      ],
+      "expected_results": [
+        "401 Unauthorized",
+        "Request rejected"
+      ],
+      "postconditions": [
+        "No action performed"
+      ]
+    },
+    {
+      "id": "TS-A02",
+      "name": "Authorization: User without ProjectManager role",
+      "type": "authorization",
+      "priority": "HIGH",
+      "description": "Test that users without required role are rejected",
+      "preconditions": [
+        "User authenticated but lacks required role"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Authenticate as non-ProjectManager",
+          "details": "Login with insufficient permissions"
+        },
+        {
+          "step_number": 2,
+          "action": "Attempt: create task",
+          "details": "Try to perform action"
+        },
+        {
+          "step_number": 3,
+          "action": "Verify rejection",
+          "details": "Confirm 403 Forbidden response"
+        }
+      ],
+      "expected_results": [
+        "403 Forbidden",
+        "Insufficient permissions error"
+      ],
+      "postconditions": [
+        "No action performed"
+      ]
+    },
+    {
+      "id": "TS-EC01",
+      "name": "Edge Case: Concurrent operations",
+      "type": "edge_case",
+      "priority": "LOW",
+      "description": "Test behavior when multiple users perform action simultaneously",
+      "preconditions": [
+        "ProjectManager authenticated",
+        "Project exists and ProjectManager has write access"
+      ],
+      "test_steps": [
+        {
+          "step_number": 1,
+          "action": "Setup multiple concurrent requests",
+          "details": "Simulate 2+ users performing same action"
+        },
+        {
+          "step_number": 2,
+          "action": "Execute concurrent operations",
+          "details": "Send requests simultaneously"
+        },
+        {
+          "step_number": 3,
+          "action": "Verify correct handling",
+          "details": "Check for race conditions, duplicate prevention"
+        }
+      ],
+      "expected_results": [
+        "All requests handled correctly",
+        "No data corruption"
+      ],
+      "postconditions": [
+        "System in consistent state"
+      ]
+    }
+  ],
+  "coverage": {
+    "total_scenarios": 11,
+    "by_type": {
+      "happy_path": 1,
+      "error_handling": 3,
+      "validation": 1,
+      "invariant": 3,
+      "authorization": 2,
+      "edge_case": 1
+    },
+    "by_priority": {
+      "HIGH": 9,
+      "MEDIUM": 1,
+      "LOW": 1
+    },
+    "preconditions_covered": 2,
+    "errors_covered": 3,
+    "invariants_covered": 3,
+    "coverage_percentage": 89
+  },
+  "metadata": {
+    "generated_at": "2025-12-24T07:03:30.597Z",
+    "execution_id": "skill-1766559810596-acygcr2u6",
+    "requirement_file": "/Users/will/flutterProjects/Exercises/nov/romev10/ROME_architect/ARTIFACTS/01-requirements/REQ-002.yaml"
+  }
+}
