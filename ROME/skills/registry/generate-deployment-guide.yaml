@@ -1,0 +1,83 @@
+skill:
+  name: generate-deployment-guide
+  version: 1.0.0
+  category: documentation
+  tier: 3
+  description: Generate comprehensive deployment and operations guide from P2 artifacts
+
+parameters:
+  required:
+    - name: artifacts_directory
+      type: string
+      validation: directory_exists
+      description: Directory containing all P2 artifacts
+
+  optional:
+    - name: output_file
+      type: string
+      description: File path to write deployment guide
+
+    - name: output_format
+      type: string
+      default: markdown
+      description: Output format (markdown, html)
+
+    - name: include_diagrams
+      type: boolean
+      default: true
+      description: Include Mermaid diagrams
+
+    - name: deployment_target
+      type: string
+      default: cloud
+      description: Deployment target (cloud, on-premise, hybrid)
+
+execution:
+  timeout: 60000
+  retry:
+    enabled: true
+    max_attempts: 2
+    backoff: linear
+
+output:
+  guide_file:
+    type: string
+    description: Path to generated deployment guide
+  sections_generated:
+    type: integer
+    description: Number of sections generated
+  diagram_count:
+    type: integer
+    description: Number of diagrams included
+
+# Guide sections
+guide_sections:
+  - section: system_overview
+    description: High-level system architecture and components
+
+  - section: prerequisites
+    description: Software, hardware, and access requirements
+
+  - section: database_setup
+    description: Database installation and configuration
+
+  - section: api_deployment
+    description: API server deployment instructions
+
+  - section: environment_config
+    description: Environment variables and configuration
+
+  - section: security_setup
+    description: Authentication, authorization, encryption setup
+
+  - section: monitoring
+    description: Logging, metrics, and monitoring setup
+
+  - section: backup_recovery
+    description: Backup and disaster recovery procedures
+
+  - section: maintenance
+    description: Routine maintenance tasks
+
+  - section: troubleshooting
+    description: Common issues and solutions
