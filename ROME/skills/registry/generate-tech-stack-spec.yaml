@@ -1,0 +1,28 @@
+skill:
+  name: generate-tech-stack-spec
+  version: 1.0.0
+  category: documentation
+  tier: 3
+  description: Generate comprehensive technology stack specification
+
+parameters:
+  required:
+    - name: design_directory
+      type: string
+      validation: directory_exists
+
+  optional:
+    - name: output_file
+      type: string
+    - name: deployment_target
+      type: string
+      default: cloud
+
+execution:
+  timeout: 60000
+
+output:
+  tech_stack:
+    type: object
+  components_count:
+    type: integer
