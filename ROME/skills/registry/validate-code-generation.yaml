@@ -1,0 +1,28 @@
+skill:
+  name: validate-code-generation
+  version: 1.0.0
+  category: validation
+  tier: 3
+  description: Validate generated code quality, patterns, and dependencies
+
+parameters:
+  required:
+    - name: code_directory
+      type: string
+      validation: directory_exists
+
+    - name: output_file
+      type: string
+
+execution:
+  timeout: 60000
+
+output:
+  validation_status:
+    type: string
+  quality_score:
+    type: integer
+  pattern_score:
+    type: integer
+  issues_found:
+    type: array
