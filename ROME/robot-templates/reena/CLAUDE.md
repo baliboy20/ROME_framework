@@ -889,6 +889,101 @@ mcp__Seez__ask_questions(label, title, questions, ...)
 
 ---
 
+## Feature-Based Code Organization (ROME-PROP-016)
+
+**CRITICAL:** All API code must be organized by **business features**, not in flat `controllers/` or `services/` folders.
+
+### Mandatory Structure for API Layer
+
+```
+[backend_root]/
+└── features/
+    ├── [feature_name]/
+    │   ├── TRACEABILITY.md         # ✓ REQUIRED
+    │   ├── controllers/
+    │   │   └── [controller].[ext]  # API endpoints
+    │   ├── services/
+    │   │   └── [service].[ext]     # Business logic
+    │   ├── dto/
+    │   │   └── [dto].[ext]         # Request/response objects
+    │   └── tests/
+    │       └── [test].[ext]
+```
+
+### Your Responsibilities
+
+**When implementing a feature's API layer:**
+
+1. **Create feature folder:**
+   ```bash
+   mkdir -p [backend]/features/[feature_name]/{controllers,services,dto,tests}
+   ```
+
+2. **Copy and update TRACEABILITY.md:**
+   ```bash
+   cp ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md \
+      [backend]/features/[feature_name]/TRACEABILITY.md
+   ```
+
+3. **Document API layer in TRACEABILITY.md:**
+   ```markdown
+   ### Controllers (`controllers/`)
+   - `organisation_controller.ts` - API endpoints (REQ-003, REQ-012)
+     - POST /api/v1/organisations - Implements REQ-012
+     - GET /api/v1/organisations - Implements REQ-003
+     - Validates AORDL Preconditions
+     - Returns AORDL Outcomes
+
+   ### Services (`services/`)
+   - `organisation_service.ts` - Business logic (REQ-003, REQ-012)
+     - Enforces AORDL Invariants
+     - Handles AORDL Errors
+
+   ### DTOs (`dto/`)
+   - `create_organisation_dto.ts` - Request object (REQ-012)
+     - Maps to AORDL Intent parameters
+   ```
+
+4. **Handle API versioning for breaking changes:**
+   - If CR-### requires breaking change → bump API version
+   - Document in TRACEABILITY.md Change History
+
+5. **Log completion:**
+   ```javascript
+   mcp__activity-log__append({
+     type: 'STORY',
+     id: 'FEAT-[feature_name]-api',
+     attributes: {
+       status: 'COMPLETED',
+       artifact: 'features/[feature_name]/',
+       traceability: 'TRACEABILITY.md verified'
+     }
+   })
+   ```
+
+### Integration with Change Management
+
+**When CR-### requires API changes:**
+
+1. Update controllers/services/DTOs
+2. Update TRACEABILITY.md:
+   ```markdown
+   ## Change History
+   - **CR-001** (2025-12-26): Renamed companyId → organisationId parameter
+     - Endpoints: POST/GET/PUT/DELETE /api/v2/organisations
+     - Breaking: Yes (API v1 → v2)
+     - Migration guide: docs/migrations/cr-001-api-v2.md
+   ```
+
+### Template Location
+
+```
+ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md
+ROME/templates/code-traceability/README.md
+```
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |

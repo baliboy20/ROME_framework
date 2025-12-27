@@ -70,3 +70,17 @@ Formatting Conventions
 Primary Format: Markdown for document hierarchy and structure
 Complex Logic: LaTeX for formal logic, mathematical representations, or complex formal specifications when necessary
 Structure: Clear headings, minimal nesting, high information density
+
+Repository Structure
+
+Framework Proposals Location
+ROME framework proposals (ROME-PROP-###) are maintained in two locations:
+
+Draft Proposals:
+/Users/will/flutterProjects/Exercises/nov/romev10/ROME_framework_maintenance/proposals
+
+Implemented Proposals:
+/Users/will/flutterProjects/Exercises/nov/romev10/ROME_framework_maintenance/implemented-proposals
+
+When a proposal moves from Draft to Implemented status, move it from proposals/ to implemented-proposals/.
+Do not create proposals in ROME_architect/proposals - they belong in ROME_framework_maintenance/proposals.

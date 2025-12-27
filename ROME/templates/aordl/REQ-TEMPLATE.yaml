@@ -170,6 +170,36 @@ metadata:
     - tag2
 
 # ============================================================================
+# CHANGE HISTORY (ROME-PROP-015)
+# ============================================================================
+# Track all changes to this requirement to preserve traceability
+# Format: List of change records, most recent first
+
+changeHistory:
+  - changeRequest: CR-XXX
+    date: YYYY-MM-DDTHH:MM:SSZ
+    type: TERMINOLOGY_CHANGE | LOGIC_CHANGE | REQUIREMENT_CHANGE
+    changes:
+      - field: Actor
+        oldValue: "Previous value"
+        newValue: "New value"
+      - field: Intent
+        oldValue: "Previous value"
+        newValue: "New value"
+# Example:
+# changeHistory:
+#   - changeRequest: CR-001
+#     date: 2025-12-26T14:00:00Z
+#     type: TERMINOLOGY_CHANGE
+#     changes:
+#       - field: Actor
+#         oldValue: CompanyAdmin
+#         newValue: OrganisationAdmin
+#       - field: Intent
+#         oldValue: create_company_profile
+#         newValue: create_organisation_profile
+
+# ============================================================================
 # VALIDATION RULES
 # ============================================================================
 # 1. All 13 required fields must be present

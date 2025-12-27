@@ -802,6 +802,118 @@ mcp__Seez__close_tab(tab_id)
 
 ---
 
+## Feature-Based Code Organization (ROME-PROP-016)
+
+**NOTE:** Design system components are typically **shared across features**, so organization is slightly different.
+
+### Design System Structure
+
+```
+lib/
+├── design_system/                  # Shared design system
+│   ├── TRACEABILITY.md            # ✓ REQUIRED
+│   ├── tokens/
+│   │   ├── colors.dart
+│   │   ├── typography.dart
+│   │   └── spacing.dart
+│   ├── components/
+│   │   ├── buttons/
+│   │   ├── forms/
+│   │   └── cards/
+│   └── tests/
+│
+└── features/                       # Feature-specific components
+    └── [feature_name]/
+        ├── TRACEABILITY.md
+        └── widgets/
+            └── [custom_widget].dart
+```
+
+### Your Responsibilities
+
+**When creating design system:**
+
+1. **Create design_system folder:**
+   ```bash
+   mkdir -p lib/design_system/{tokens,components,tests}
+   ```
+
+2. **Create TRACEABILITY.md:**
+   ```bash
+   cp ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md \
+      lib/design_system/TRACEABILITY.md
+   ```
+
+3. **Document design system:**
+   ```markdown
+   # Design System
+
+   ## Requirements Traceability
+   - Shared across all features
+   - Implements design consistency (non-functional requirement)
+
+   ## Module Structure
+   ### Tokens (`tokens/`)
+   - `colors.dart` - Color palette
+   - `typography.dart` - Typography scale
+   - `spacing.dart` - Spacing system
+
+   ### Components (`components/`)
+   - `buttons/` - Button variants
+   - `forms/` - Form controls
+   - Document which features use each component
+
+   ## Change History
+   - Initial design system: [YYYY-MM-DD]
+   ```
+
+4. **Cross-reference with features:**
+   - When a feature uses design system components, document in feature's TRACEABILITY.md:
+   ```markdown
+   ## Dependencies
+   - design_system/components/buttons
+   - design_system/components/forms
+   ```
+
+5. **Log completion:**
+   ```javascript
+   mcp__activity-log__append({
+     type: 'STORY',
+     id: 'design-system',
+     attributes: {
+       status: 'COMPLETED',
+       artifact: 'lib/design_system/',
+       traceability: 'TRACEABILITY.md created'
+     }
+   })
+   ```
+
+### Integration with Change Management
+
+**When CR-### requires design system changes:**
+
+1. Update design tokens or components
+2. Update TRACEABILITY.md:
+   ```markdown
+   ## Change History
+   - **CR-001** (2025-12-26): Updated primary color brand → organisation theme
+     - Affected: All components using primary color
+     - Requires: All features to rebuild with new theme
+   ```
+
+3. **Notify affected features:**
+   - Design system changes may affect multiple features
+   - List affected features in Change History
+
+### Template Location
+
+```
+ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md
+ROME/templates/code-traceability/README.md
+```
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |

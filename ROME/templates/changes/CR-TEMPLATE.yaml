@@ -1,0 +1,229 @@
+# Change Request Template
+# ROME Framework - ROME-PROP-015
+# Version: 1.0
+# Date: 2025-12-26
+
+# ============================================================================
+# REQUIRED FIELDS
+# ============================================================================
+
+ID: CR-XXX
+# Format: CR-### (e.g., CR-001, CR-042)
+# Or: CR-YYYYMMDD-HHMMSS for timestamp-based IDs
+# Must be unique across all change requests
+
+Type: TERMINOLOGY_CHANGE | LOGIC_CHANGE | SCHEMA_CHANGE | API_CHANGE | UI_CHANGE | REQUIREMENT_CHANGE
+# TERMINOLOGY_CHANGE: Renaming entities, fields, or concepts
+# LOGIC_CHANGE: Modifying business rules or validation logic
+# SCHEMA_CHANGE: Database structure modifications
+# API_CHANGE: API contract modifications (parameters, responses, endpoints)
+# UI_CHANGE: User interface modifications
+# REQUIREMENT_CHANGE: Fundamental requirement scope or behavior changes
+
+Status: PROPOSED | APPROVED | IN_PROGRESS | COMPLETED | REJECTED | ROLLED_BACK
+# PROPOSED: Initial request, pending impact analysis
+# APPROVED: Impact analyzed, approved for implementation
+# IN_PROGRESS: Implementation started
+# COMPLETED: Implementation finished, verified
+# REJECTED: Not approved for implementation
+# ROLLED_BACK: Implemented but reverted due to issues
+
+Priority: CRITICAL | HIGH | MEDIUM | LOW
+# CRITICAL: Production-blocking, immediate action required
+# HIGH: Important, affects core functionality
+# MEDIUM: Desirable, enhances existing functionality
+# LOW: Nice-to-have, cosmetic or minor improvements
+
+Title: "Descriptive title of the change"
+# Short, clear description (1-2 sentences)
+# Example: "Rename Company to Organisation for ISO compliance"
+
+Description: |
+  Detailed description of what needs to change and why.
+
+  Multiple paragraphs allowed.
+
+  Be specific about:
+  - What is changing
+  - Why the change is needed
+  - Expected behavior after change
+# Clear, comprehensive explanation of the change
+
+Rationale: |
+  Business justification for the change.
+
+  Why is this change necessary?
+  What problem does it solve?
+  What value does it provide?
+
+  Examples:
+  - External standards compliance
+  - User feedback
+  - Business process improvement
+  - Bug fix
+  - Performance optimization
+# Business case for the change
+
+RequestedBy: User | Roma | Talib | PMA | Sarah | Lucien | Ashok | Reena | Charlie | Clara
+# Who initiated the change request
+
+RequestedDate: YYYY-MM-DDTHH:MM:SSZ
+# ISO 8601 timestamp when request was created
+# Example: 2025-12-26T10:00:00Z
+
+# ============================================================================
+# IMPACT ANALYSIS (Required for APPROVED status)
+# ============================================================================
+
+ImpactAnalysis:
+  requirements:
+    - "REQ-XXX: Description of change to this requirement"
+    - "REQ-YYY: Description of change to this requirement"
+  # List all requirements affected, with description of changes
+  # Example: REQ-003: Actor field "CompanyAdmin" → "OrganisationAdmin"
+
+  design:
+    - "FUNC-XXX: Description of design document changes"
+    - "UC-XXX: Description of use case changes"
+    - "db-schema.yaml: Description of schema changes"
+    - "api-design.md: Description of API changes"
+  # List all design artifacts affected
+
+  code:
+    - "src/path/to/file.ext: Description of code changes"
+    - "Database migration required: Yes/No"
+    - "API version bump required: Yes/No"
+  # List all code files/modules affected
+  # Note major technical changes (migrations, versioning)
+
+EstimatedEffort: "X days (# requirements, # design docs, # code files)"
+# Estimate of implementation effort
+# Example: "2 days (5 requirements, 3 design docs, 8 code files)"
+# Use: hours (< 1 day), days (1-5 days), weeks (> 5 days)
+
+# ============================================================================
+# RISK ASSESSMENT (Required for APPROVED status)
+# ============================================================================
+
+RiskAssessment:
+  breaking: true | false
+  # Does this change break existing functionality or API contracts?
+
+  dataLoss: true | false
+  # Risk of data loss during implementation?
+
+  rollbackComplexity: LOW | MEDIUM | HIGH
+  # How difficult is it to rollback this change?
+  # LOW: Simple revert, no data migration
+  # MEDIUM: Requires migration rollback script
+  # HIGH: Irreversible or complex rollback
+
+  testingRequired: true | false
+  # Does this change require new or updated tests?
+
+  deploymentRisk: LOW | MEDIUM | HIGH
+  # Risk level for production deployment
+  # LOW: Safe, low-impact change
+  # MEDIUM: Moderate impact, requires monitoring
+  # HIGH: High-impact, requires rollback plan
+
+# ============================================================================
+# APPROVAL & IMPLEMENTATION (Filled as workflow progresses)
+# ============================================================================
+
+ApprovedBy: Sarah
+# GATE validator who approved the change
+# Should be Sarah (Quality Assurance robot)
+
+ApprovedDate: YYYY-MM-DDTHH:MM:SSZ
+# ISO 8601 timestamp when change was approved
+# Only filled when Status: APPROVED
+
+ImplementedBy:
+  - "Talib: Requirements updates"
+  - "PMA: Design document updates"
+  - "Ashok: Database migration"
+  - "Reena: API versioning"
+  - "Charlie: UI component changes"
+# List of robots and their implementation responsibilities
+# Filled when Status: IN_PROGRESS
+
+CompletedDate: YYYY-MM-DDTHH:MM:SSZ
+# ISO 8601 timestamp when implementation completed
+# Only filled when Status: COMPLETED
+
+# ============================================================================
+# VERIFICATION (Required for COMPLETED status)
+# ============================================================================
+
+Verification:
+  traceabilityIntact: true | false
+  # Did traceability chain remain intact through changes?
+  # Verified by: /verify-traceability skill
+
+  testsPass: true | false
+  # Do all tests pass after implementation?
+  # Verified by: test suite execution
+
+  validatedBy: Sarah
+  # Who verified the implementation
+  # Should be Sarah (Quality Assurance robot)
+
+  validatedDate: YYYY-MM-DDTHH:MM:SSZ
+  # ISO 8601 timestamp when validation completed
+
+# ============================================================================
+# ROLLBACK (Only filled if Status: ROLLED_BACK)
+# ============================================================================
+
+Rollback:
+  reason: "Why the change was rolled back"
+  rolledBackBy: "Robot that performed rollback"
+  rolledBackDate: YYYY-MM-DDTHH:MM:SSZ
+  restorePoint: "Git commit SHA or backup reference"
+# Only populate if change was rolled back after implementation
+
+# ============================================================================
+# OPTIONAL METADATA
+# ============================================================================
+
+metadata:
+  relatedCRs:
+    - CR-YYY
+    - CR-ZZZ
+  # Other change requests related to this one
+
+  tags:
+    - compliance
+    - refactoring
+    - performance
+  # Categorization tags
+
+  notes: |
+    Additional notes, links to external documentation,
+    or other relevant information.
+
+# ============================================================================
+# CHANGE METADATA EMBEDDING
+# ============================================================================
+#
+# After implementing this change, embed changeHistory in all affected artifacts:
+#
+# For Requirements (REQ-XXX.yaml):
+# changeHistory:
+#   - changeRequest: CR-XXX
+#     date: YYYY-MM-DDTHH:MM:SSZ
+#     type: TERMINOLOGY_CHANGE
+#     changes:
+#       - field: Actor
+#         oldValue: CompanyAdmin
+#         newValue: OrganisationAdmin
+#
+# For Design Documents (MARKDOWN):
+# ## Change History
+# - **CR-XXX** (YYYY-MM-DD): [description of change]
+#
+# For Code (Comments):
+# // Changed: CR-XXX (YYYY-MM-DD) - [description]
+#
+# ============================================================================

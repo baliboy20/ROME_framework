@@ -754,6 +754,92 @@ mcp__Seez__close_tab(tab_id)
 
 ---
 
+## Feature-Based Code Organization (ROME-PROP-016)
+
+**CRITICAL:** All data layer code must be organized by **business features**, not in flat `models/` or `repositories/` folders.
+
+### Mandatory Structure for Data Layer
+
+```
+[backend_root]/
+└── features/
+    ├── [feature_name]/
+    │   ├── TRACEABILITY.md         # ✓ REQUIRED
+    │   ├── models/
+    │   │   └── [model].[ext]       # Domain models
+    │   ├── repositories/
+    │   │   └── [repository].[ext]  # Data access
+    │   └── migrations/
+    │       └── [timestamp]_[desc].sql
+```
+
+### Your Responsibilities
+
+**When implementing a feature's data layer:**
+
+1. **Create feature folder:**
+   ```bash
+   mkdir -p [backend]/features/[feature_name]/{models,repositories,migrations}
+   ```
+
+2. **Copy and update TRACEABILITY.md:**
+   ```bash
+   cp ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md \
+      [backend]/features/[feature_name]/TRACEABILITY.md
+   ```
+
+3. **Document data layer in TRACEABILITY.md:**
+   ```markdown
+   ### Models (`models/`)
+   - `organisation.ts` - Organisation domain model (REQ-003, REQ-012)
+     - Enforces REQ-012.Invariants[0] - unique organisation name
+
+   ### Repositories (`repositories/`)
+   - `organisation_repository.ts` - Data access (REQ-003, REQ-012)
+     - CRUD operations for organisations table
+     - Enforces unique name constraint
+   ```
+
+4. **Create migrations within feature folder:**
+   - Place migration files in `migrations/` subfolder
+   - Reference in TRACEABILITY.md Change History if part of CR
+
+5. **Log completion:**
+   ```javascript
+   mcp__activity-log__append({
+     type: 'STORY',
+     id: 'FEAT-[feature_name]-data',
+     attributes: {
+       status: 'COMPLETED',
+       artifact: 'features/[feature_name]/',
+       traceability: 'TRACEABILITY.md verified'
+     }
+   })
+   ```
+
+### Integration with Change Management
+
+**When CR-### requires database changes:**
+
+1. Create migration script
+2. Update TRACEABILITY.md:
+   ```markdown
+   ## Change History
+   - **CR-001** (2025-12-26): Renamed companies → organisations table
+     - Migration: migrations/002_rename_companies_to_organisations.sql
+     - Rollback: migrations/002_rollback.sql
+     - Breaking: Yes
+   ```
+
+### Template Location
+
+```
+ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md
+ROME/templates/code-traceability/README.md
+```
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |

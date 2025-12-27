@@ -1097,6 +1097,157 @@ mcp__Seez__ask_questions(label, title, questions, ...)
 
 ---
 
+## Feature-Based Code Organization (ROME-PROP-016)
+
+**CRITICAL:** All Flutter/Dart code must be organized by **business features**, not technical layers.
+
+### Mandatory Folder Structure
+
+```
+lib/
+└── features/
+    ├── [feature_name]/              # One folder per business feature
+    │   ├── TRACEABILITY.md         # ✓ REQUIRED - Traceability documentation
+    │   ├── models/
+    │   │   └── [model].dart
+    │   ├── services/
+    │   │   └── [service].dart
+    │   ├── repositories/
+    │   │   └── [repository].dart
+    │   ├── widgets/
+    │   │   └── [widget].dart
+    │   └── tests/
+    │       └── [test].dart
+```
+
+### Feature Naming Rules
+
+1. **Folder name = Business feature name** (from FUNC-### in P2/P3)
+2. **Use snake_case** for Flutter/Dart
+3. **Business terms only** (no technical jargon)
+
+**Examples:**
+- ✅ `organisation_management`, `task_management`, `user_authentication`
+- ❌ `models`, `services`, `utils`, `helpers` (technical layers)
+
+### TRACEABILITY.md (Required)
+
+**Every feature folder MUST have TRACEABILITY.md:**
+
+```bash
+# Copy template
+cp ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md \
+   lib/features/[feature_name]/TRACEABILITY.md
+```
+
+**Minimum required content:**
+
+```markdown
+# [Feature Name]
+
+## Requirements Traceability
+- **REQ-###**: [intent]
+- **REQ-###**: [intent]
+- **Feature**: FUNC-### ([name])
+- **Use Cases**: UC-###, UC-###
+
+## Module Structure
+- `models/[file].dart` - [Purpose] ([REQ-###])
+- `services/[file].dart` - [Purpose] ([REQ-###])
+- `widgets/[file].dart` - [Purpose] ([UC-###])
+
+## Implementation Status
+- ✓ **REQ-###**: Fully implemented
+- ⚠ **REQ-###**: Partially implemented
+- ✗ **REQ-###**: Not started
+
+## Test Coverage
+- REQ-###: [Coverage %]
+
+## Change History
+- Initial implementation: [YYYY-MM-DD]
+```
+
+### Implementation Workflow
+
+**When starting a feature:**
+
+1. **Create feature folder structure:**
+   ```bash
+   mkdir -p lib/features/[feature_name]/{models,services,repositories,widgets,tests}
+   ```
+
+2. **Copy and fill TRACEABILITY.md:**
+   - List all REQ-### this feature implements
+   - Map to FUNC-### and UC-###
+   - Document module structure
+
+3. **Generate code within feature folder:**
+   - Models in `models/`
+   - Business logic in `services/`
+   - Data access in `repositories/`
+   - UI components in `widgets/`
+   - Tests in `tests/`
+
+4. **Update TRACEABILITY.md as you code:**
+   - Mark requirements implemented
+   - Update test coverage
+   - Document any deviations
+
+5. **Log completion:**
+   ```javascript
+   mcp__activity-log__append({
+     type: 'STORY',
+     id: 'FEAT-[feature_name]',
+     attributes: {
+       status: 'COMPLETED',
+       artifact: 'lib/features/[feature_name]/',
+       traceability: 'TRACEABILITY.md created and verified'
+     }
+   })
+   ```
+
+### Integration with Change Management (ROME-PROP-015)
+
+**When a Change Request (CR-###) affects your feature:**
+
+1. **Update code files** as required
+2. **Update TRACEABILITY.md Change History:**
+   ```markdown
+   ## Change History
+   - **CR-001** (2025-12-26): Renamed Company to Organisation
+     - Affected: All files in module
+     - Breaking: Yes (API v2 required)
+   ```
+3. **Verify traceability intact** (all REQ links still valid)
+
+### Benefits
+
+- **Forward tracing:** REQ-### → Feature folder → Code files
+- **Backward tracing:** Code file → Feature folder → TRACEABILITY.md → REQ-###
+- **Change impact:** REQ changed → Find in TRACEABILITY.md → Affected files listed
+- **Maintainable:** 50-100 TRACEABILITY.md files vs 1,000+ function annotations
+- **Reliable:** 90% accuracy after 2 years (folder structure rarely changes)
+
+### Template Location
+
+**TRACEABILITY.md template:**
+```
+ROME/templates/code-traceability/TRACEABILITY-TEMPLATE.md
+```
+
+**Full documentation:**
+```
+ROME/templates/code-traceability/README.md
+```
+
+**Proposal:**
+```
+ROME_framework_maintenance/proposals/ROME-PROP-016-code-traceability.md
+```
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
