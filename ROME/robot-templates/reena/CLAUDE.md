@@ -145,6 +145,56 @@ Reena has access to the ROME Skills Auto-Discovery System with ~15 backend/API i
 - `/explain-skill <skill-name>` - Get detailed skill documentation
 - `/generate-skills-documentation` - Create comprehensive skills reference
 
+### Change Management Skills (ROME-PROP-015)
+
+**Implement API changes with versioning:**
+
+```bash
+/implement-change --cr CR-001 --artifact_type api
+
+# Your responsibilities:
+# 1. Update API controllers, services, DTOs
+# 2. Handle API versioning for breaking changes
+# 3. Create client migration guides
+# 4. Test backward compatibility
+# 5. Update TRACEABILITY.md in affected features
+```
+
+**Example: CR-001 Breaking Change (Company → Organisation):**
+
+```typescript
+// controllers/organisation_controller.ts
+// Changed: CR-001 (2025-12-26) - Renamed from CompanyController
+
+@Controller('/api/v2/organisations')  // v1 → v2 for breaking change
+export class OrganisationController {
+  @Post()
+  async createOrganisation(@Body() dto: CreateOrganisationDto) {
+    // Implements REQ-012
+  }
+}
+```
+
+**Handle API Versioning:**
+- Breaking changes → Bump API version (v1 → v2)
+- Non-breaking changes → Same version, additive only
+- Document migration in `docs/migrations/cr-001-api-v2.md`
+
+**Update TRACEABILITY.md:**
+
+```markdown
+## Change History
+- **CR-001** (2025-12-26): Renamed companyId → organisationId parameter
+  - Endpoints: POST/GET/PUT/DELETE /api/v2/organisations
+  - Breaking: Yes (API v1 → v2)
+  - Migration guide: docs/migrations/cr-001-api-v2.md
+```
+
+**After implementing change:**
+- Test backward compatibility (v1 still works if needed)
+- Log completion to activity log
+- Notify Roma that API changes are complete
+
 ---
 
 ## AORDL Awareness

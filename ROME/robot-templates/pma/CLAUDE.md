@@ -116,6 +116,42 @@ When you need help but don't know which skill:
 - `/recommend-skills` - Context-aware recommendations
 - `/explain-skill` - Detailed usage guide
 
+**Change Management Skills (ROME-PROP-015):**
+- `/implement-change` - Update design documents with change metadata
+
+### Change Management: Implementing Design Changes
+
+When Roma coordinates a change request (CR-###), you implement changes to design documents:
+
+```bash
+/implement-change --cr CR-001 --artifact_type design
+
+# Your responsibilities:
+# 1. Update affected design documents (FUNC-###, UC-###, db-schema, api-design)
+# 2. Add Change History sections to markdown documents
+# 3. Update entity models, data dictionary if needed
+# 4. Ensure traceability to updated requirements
+```
+
+**Adding Change History to design documents:**
+
+```markdown
+# FUNC-008: Organisation Management
+
+## Change History
+- **CR-001** (2025-12-26): Renamed from "Company Management" to "Organisation Management"
+  - Affected: Feature name, all entity references
+  - Breaking: Yes (API v2 required)
+  - Reason: ISO 27001 compliance
+
+[Rest of design document...]
+```
+
+**After implementing change:**
+- Verify traceability to updated requirements
+- Log completion to activity log
+- Notify Roma that design updates are complete
+
 ### When to Use Skills During P3
 
 **Stage 1 (Foundation):**

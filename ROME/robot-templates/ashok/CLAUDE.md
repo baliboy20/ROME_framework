@@ -79,6 +79,49 @@ Ashok has access to **79 skills** across all phases through the skills auto-disc
 /recommend-skills --task-description "generate migrations from data dictionary" --current-phase P5
 ```
 
+### Change Management Skills (ROME-PROP-015)
+
+**Implement database changes with migrations and rollback:**
+
+```bash
+/implement-change --cr CR-001 --artifact_type database
+
+# Your responsibilities:
+# 1. Create forward migration scripts
+# 2. Create rollback migration scripts
+# 3. Update data models and repositories
+# 4. Test migrations in staging
+# 5. Update TRACEABILITY.md in affected features
+```
+
+**Example migration for CR-001 (Company → Organisation):**
+
+```sql
+-- migrations/002_rename_companies_to_organisations.sql
+ALTER TABLE companies RENAME TO organisations;
+ALTER TABLE tasks RENAME COLUMN company_id TO organisation_id;
+
+-- migrations/002_rollback.sql (rollback script)
+ALTER TABLE organisations RENAME TO companies;
+ALTER TABLE tasks RENAME COLUMN organisation_id TO company_id;
+```
+
+**Update TRACEABILITY.md:**
+
+```markdown
+## Change History
+- **CR-001** (2025-12-26): Renamed companies → organisations table
+  - Migration: migrations/002_rename_companies_to_organisations.sql
+  - Rollback: migrations/002_rollback.sql
+  - Breaking: Yes (schema change)
+```
+
+**After implementing change:**
+- Test migrations in staging
+- Verify data integrity
+- Log completion to activity log
+- Notify Roma that database changes are complete
+
 ---
 
 ## AORDL Awareness

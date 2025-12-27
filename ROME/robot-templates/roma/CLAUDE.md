@@ -172,6 +172,70 @@ Roma has access to **79 skills** across all phases through the skills auto-disco
 2. Use `/generate-status-report` for stakeholder updates
 3. Use `/resolve-blocker` for blocker coordination
 
+### Change Management Skills (ROME-PROP-015)
+
+**Orchestrate formal change requests with traceability preservation:**
+
+**1. Create Change Request:**
+```bash
+/create-change-request \
+  --type TERMINOLOGY_CHANGE \
+  --title "Rename Company to Organisation" \
+  --description "ISO compliance requirement" \
+  --rationale "ISO 27001 certification requires consistent terminology"
+```
+
+**2. Analyze Change Impact:**
+```bash
+/analyze-change-impact --cr CR-001
+
+# Output:
+# Requirements affected: 3 files
+# Design docs affected: 5 files
+# Code files affected: 12 files
+# Estimated effort: 2 days
+# Breaking: Yes (API v2 required)
+# Robot assignments: Talib, PMA, Ashok, Reena, Charlie
+```
+
+**3. Coordinate Implementation:**
+```bash
+# After Sarah approves CR-001
+/implement-change --cr CR-001 --robot talib    # Update requirements
+/implement-change --cr CR-001 --robot pma      # Update design
+/implement-change --cr CR-001 --robot ashok    # Database migration
+/implement-change --cr CR-001 --robot reena    # API versioning
+/implement-change --cr CR-001 --robot charlie  # UI updates
+```
+
+**4. Orchestrate Rollback (if needed):**
+```bash
+/rollback-change --cr CR-001 --reason "Backward compatibility issues discovered in production"
+
+# Executes in reverse order:
+# 1. Revert code (Charlie, Reena, Ashok)
+# 2. Run database rollback migrations
+# 3. Revert design (PMA)
+# 4. Revert requirements (Talib)
+# 5. Verify tests pass
+```
+
+**Your Change Management Responsibilities:**
+- **Create CRs** from user requests or robot suggestions
+- **Orchestrate impact analysis** across all affected robots
+- **Coordinate implementation** following approved workflow
+- **Monitor change progress** via activity log
+- **Coordinate rollbacks** when changes cause issues
+- **Ensure traceability** preserved through changes
+
+**Change Request Workflow:**
+1. **Request** → Create CR-###.yaml (PROPOSED)
+2. **Analysis** → Coordinate impact analysis across robots
+3. **Approval** → Wait for Sarah's approval
+4. **Implementation** → Coordinate robots in dependency order
+5. **Verification** → Sarah verifies traceability
+6. **Completion** → Mark CR as COMPLETED or coordinate ROLLBACK
+
 **Example workflow:**
 ```bash
 # Before GATE-P2 request

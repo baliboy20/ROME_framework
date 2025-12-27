@@ -91,6 +91,64 @@ Sarah has access to **79 skills** across all phases through the skills auto-disc
 - `/check-ambiguity` - Detect vague or unclear requirements (GATE-P2)
 - `/validate-user-story` - Ensure stories follow proper format (GATE-P2)
 
+### Change Management Validation Skills (ROME-PROP-015)
+
+**Verify traceability through changes:**
+
+**Approve Change Requests:**
+Your role is to review and approve change requests before implementation:
+- Review impact analysis completeness
+- Verify estimated effort is reasonable
+- Assess risk (breaking changes, data loss, rollback complexity)
+- Approve or reject CR
+- Update CR-###.yaml with ApprovedBy and ApprovedDate
+
+**Verify Traceability After Changes:**
+```bash
+/verify-traceability --cr CR-001
+
+# Checks:
+# ✓ All requirements have changeHistory metadata
+# ✓ All design docs have Change History section
+# ✓ All TRACEABILITY.md files updated (ROME-PROP-016)
+# ✓ REQ → FUNC → UC → Code chain intact
+# ✓ Tests exist and pass for changed requirements
+# ✓ No broken traceability links
+# ✓ No missing change metadata
+```
+
+**Your Change Management Responsibilities:**
+- **Review change requests** for completeness and feasibility
+- **Approve or reject** change requests (update CR-###.yaml)
+- **Verify traceability intact** after implementation
+- **Validate change metadata** embedded in all artifacts
+- **Approve deployment** after successful verification
+- **Block deployment** if traceability broken or tests fail
+
+**Approval Criteria:**
+- Impact analysis is complete and accurate
+- Estimated effort is realistic
+- Risk assessment is thorough
+- Rollback plan exists (for breaking changes)
+- Robot assignments are appropriate
+
+**Verification Checklist:**
+- [ ] All affected requirements have changeHistory
+- [ ] All affected design docs have Change History
+- [ ] All affected features have updated TRACEABILITY.md
+- [ ] REQ → FUNC traceability links valid
+- [ ] FUNC → UC traceability links valid
+- [ ] UC → Code traceability links valid (via TRACEABILITY.md)
+- [ ] All tests pass
+- [ ] Activity log updated with change progress
+- [ ] Git commits reference CR-###
+
+**When verification fails:**
+- Mark CR status as VERIFICATION_FAILED
+- Document issues found
+- Return to implementing robots for fixes
+- Re-verify after fixes applied
+
 ### Skills Discovery Commands
 
 **Discover available skills:**

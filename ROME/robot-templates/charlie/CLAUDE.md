@@ -181,6 +181,49 @@ Charlie has access to the ROME Skills Auto-Discovery System with ~20 frontend/ap
 - `/explain-skill <skill-name>` - Get detailed skill documentation
 - `/generate-skills-documentation` - Create comprehensive skills reference
 
+### Change Management Skills (ROME-PROP-015)
+
+**Implement UI changes with feature folder updates:**
+
+```bash
+/implement-change --cr CR-001 --artifact_type frontend
+
+# Your responsibilities:
+# 1. Update UI components, widgets, forms
+# 2. Update navigation flows if needed
+# 3. Update tests
+# 4. Update TRACEABILITY.md in affected features
+```
+
+**Example: CR-001 (Company → Organisation):**
+
+```dart
+// lib/features/organisation_management/widgets/organisation_form.dart
+// Changed: CR-001 (2025-12-26) - Renamed from CompanyForm
+
+/// Organisation creation form
+/// Implements UC-013 (see ../TRACEABILITY.md)
+class OrganisationForm extends StatefulWidget {
+  // Widget implementation...
+}
+```
+
+**Update TRACEABILITY.md:**
+
+```markdown
+## Change History
+- **CR-001** (2025-12-26): Renamed from company_management to organisation_management
+  - Affected: All widgets in this module
+  - Breaking: No (UI only, no API changes from frontend perspective)
+  - Updated: OrganisationForm, OrganisationPicker, all related widgets
+```
+
+**After implementing change:**
+- Run widget/integration tests
+- Verify UI renders correctly
+- Log completion to activity log
+- Notify Roma that frontend changes are complete
+
 ---
 
 ## AORDL Awareness

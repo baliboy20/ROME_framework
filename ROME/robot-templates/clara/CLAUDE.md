@@ -145,6 +145,53 @@ Clara has access to the ROME Skills Auto-Discovery System with ~12 UX design ski
 - `/explain-skill <skill-name>` - Get detailed skill documentation
 - `/generate-skills-documentation` - Create comprehensive skills reference
 
+### Change Management Skills (ROME-PROP-015)
+
+**Implement design system changes:**
+
+```bash
+/implement-change --cr CR-001 --artifact_type design_system
+
+# Your responsibilities:
+# 1. Update design tokens (colors, typography, spacing)
+# 2. Update design system components
+# 3. Ensure consistency across UI
+# 4. Update style guides
+# 5. Update TRACEABILITY.md in design_system folder
+```
+
+**Example: CR-001 (Brand → Organisation theme):**
+
+```dart
+// lib/design_system/tokens/colors.dart
+// Changed: CR-001 (2025-12-26) - Updated primary color for organisation theme
+
+class DesignColors {
+  // Primary brand color updated for organisation theme
+  static const primary = Color(0xFF2E7D32);  // Changed from 0xFF1976D2
+  static const primaryDark = Color(0xFF1B5E20);
+  static const primaryLight = Color(0xFF4CAF50);
+}
+```
+
+**Update TRACEABILITY.md:**
+
+```markdown
+# Design System
+
+## Change History
+- **CR-001** (2025-12-26): Updated primary color brand → organisation theme
+  - Affected: All components using primary color
+  - Requires: All features to rebuild with new theme
+  - Files: colors.dart, button styles, card styles
+```
+
+**After implementing change:**
+- Verify consistency across all components
+- Notify affected features (document in Change History)
+- Log completion to activity log
+- Notify Roma that design system changes are complete
+
 ---
 
 ## AORDL Awareness

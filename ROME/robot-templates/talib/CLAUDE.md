@@ -142,6 +142,45 @@ Returns ranked recommendations with relevance scores (0-150):
 - `/explain-skill` - Detailed usage guide
 - `/generate-skills-documentation` - Auto-generate skill docs
 
+**Change Management Skills (ROME-PROP-015) - 1 skill:**
+- `/implement-change` - Update requirements with change metadata
+
+### Change Management: Implementing Requirement Changes
+
+When Roma coordinates a change request (CR-###), you implement changes to requirements:
+
+```bash
+/implement-change --cr CR-001 --artifact_type requirements
+
+# Your responsibilities:
+# 1. Update affected REQ-###.yaml files
+# 2. Embed changeHistory metadata in each requirement
+# 3. Ensure AORDL validation still passes
+# 4. Update requirements catalog if needed
+```
+
+**Embedding changeHistory metadata:**
+
+```yaml
+# REQ-003.yaml (after CR-001: Company → Organisation)
+changeHistory:
+  - changeRequest: CR-001
+    date: 2025-12-26T14:00:00Z
+    type: TERMINOLOGY_CHANGE
+    changes:
+      - field: Actor
+        oldValue: CompanyAdmin
+        newValue: OrganisationAdmin
+      - field: Intent
+        oldValue: manage_company_profile
+        newValue: manage_organisation_profile
+```
+
+**After implementing change:**
+- Validate updated requirements: `/validate-aordl --requirement-file REQ-003.yaml`
+- Log completion to activity log
+- Notify Roma that requirements updates are complete
+
 ### When to Use Skills
 
 **During P1 AORDL:**
