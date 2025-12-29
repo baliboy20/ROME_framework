@@ -1,0 +1,278 @@
+# ROME Skills Registry
+# Central index of all available Claude Code skills
+# Enables skill discovery, versioning, deprecation, and project-specific overrides
+
+metadata:
+  version: 1.0.0
+  last_updated: 2025-12-29T15:00:00Z
+  registry_schema_version: 1
+
+# Skill Categories
+# Add new categories as needed for different project types
+categories:
+  - id: flutter-development
+    name: Flutter Development
+    description: Skills for Flutter/Dart application development
+
+  - id: backend-configuration
+    name: Backend Configuration
+    description: Skills for backend setup and configuration
+
+  - id: ui-ux-design
+    name: UI/UX Design
+    description: Skills for user interface and experience design
+
+  - id: security
+    name: Security & Compliance
+    description: Skills for security, authentication, authorization
+
+  - id: testing
+    name: Testing & QA
+    description: Skills for test generation and quality assurance
+
+  - id: deployment
+    name: Deployment & DevOps
+    description: Skills for CI/CD, deployment, infrastructure
+
+# Active Skills
+# These skills are currently available and recommended
+active_skills:
+  - id: flutter-best-practices
+    name: Flutter Best Practices
+    version: 1.0.0
+    category: flutter-development
+    path: flutter-best-practices/SKILL.md
+    status: active
+    created: 2025-12-29
+    last_modified: 2025-12-29
+    priority: high
+    applicable_to:
+      - flutter
+      - dart
+      - mobile
+      - cross-platform
+    description: Apply Flutter development best practices and architectural patterns
+    keywords:
+      - flutter
+      - bloc
+      - state management
+      - widgets
+      - ui components
+      - cross-platform
+    expert_docs_referenced:
+      - Experts/expert_flutter/05_REFERENCE/best_practices_consolidated_guide.md
+      - Experts/expert_flutter/02_PATTERNS/state_management_guide.md
+      - Experts/expert_flutter/04_UI_UX/cross_platform_ui_core.md
+
+  - id: parse-server-config
+    name: Parse Server Configuration
+    version: 1.0.0
+    category: backend-configuration
+    path: parse-server-config/SKILL.md
+    status: active
+    created: 2025-12-29
+    last_modified: 2025-12-29
+    priority: high
+    applicable_to:
+      - parse-server
+      - backend
+      - nodejs
+      - database
+    description: Apply Parse Server configuration, security, and deployment best practices
+    keywords:
+      - parse-server
+      - backend
+      - security
+      - authentication
+      - cloud-code
+      - schema
+    expert_docs_referenced:
+      - Experts/expert_parse_server/parse-server-expert.md
+
+  - id: ui-design-patterns
+    name: UI Design Patterns
+    version: 1.0.0
+    category: ui-ux-design
+    path: ui-design-patterns/SKILL.md
+    status: active
+    created: 2025-12-29
+    last_modified: 2025-12-29
+    priority: high
+    applicable_to:
+      - ui-design
+      - ux-design
+      - accessibility
+      - responsive-design
+      - mobile
+      - web
+      - desktop
+    description: Apply UI/UX design patterns for cross-platform applications
+    keywords:
+      - ui-design
+      - ux
+      - accessibility
+      - responsive
+      - material-design
+      - ios-hig
+      - wcag
+    expert_docs_referenced:
+      - Experts/expert_flutter/04_UI_UX/cross_platform_ui_core.md
+      - Experts/expert_flutter/04_UI_UX/platform_theme_architecture_guide.md
+      - Experts/expert_flutter/04_UI_UX/flutter_ui_component_library.md
+
+# Deprecated Skills
+# Skills that are being phased out - include migration path
+deprecated_skills:
+  # Example:
+  # - id: old-flutter-patterns
+  #   name: Old Flutter Patterns
+  #   version: 0.9.0
+  #   deprecated_date: 2025-12-01
+  #   removal_date: 2026-01-01
+  #   reason: Superseded by flutter-best-practices v1.0
+  #   migration_to: flutter-best-practices
+  #   migration_guide: docs/migration/old-flutter-patterns-to-v1.md
+
+# Beta/Experimental Skills
+# Skills being tested - may change or be removed
+beta_skills:
+  # Example:
+  # - id: ai-code-review
+  #   name: AI Code Review
+  #   version: 0.1.0-beta
+  #   category: testing
+  #   path: ai-code-review/SKILL.md
+  #   status: beta
+  #   stability: experimental
+  #   feedback_deadline: 2026-01-15
+  #   description: Experimental AI-powered code review
+
+# Project-Specific Overrides
+# Different projects can enable/disable specific skills
+project_overrides:
+  # Default project (Task Management System)
+  default:
+    enabled_skills:
+      - flutter-best-practices
+      - parse-server-config
+      - ui-design-patterns
+    disabled_skills: []
+
+  # Example: E-commerce project might need different skills
+  # ecommerce-project:
+  #   enabled_skills:
+  #     - flutter-best-practices
+  #     - stripe-payment-integration
+  #     - product-catalog-patterns
+  #   disabled_skills:
+  #     - parse-server-config  # Using Firebase instead
+
+  # Example: Enterprise project with custom requirements
+  # enterprise-project:
+  #   enabled_skills:
+  #     - flutter-best-practices
+  #     - enterprise-security-patterns
+  #     - sso-integration
+  #     - compliance-validator
+
+# Skill Aliases
+# Short names or alternative references to skills
+aliases:
+  flutter: flutter-best-practices
+  parse: parse-server-config
+  ui: ui-design-patterns
+  backend: parse-server-config
+  design: ui-design-patterns
+
+# Skill Dependencies
+# Some skills may require or recommend other skills
+dependencies:
+  flutter-best-practices:
+    requires: []
+    recommends:
+      - ui-design-patterns
+    conflicts: []
+
+  parse-server-config:
+    requires: []
+    recommends: []
+    conflicts: []
+
+  ui-design-patterns:
+    requires: []
+    recommends:
+      - flutter-best-practices
+    conflicts: []
+
+# Auto-Discovery Rules
+# How Claude Code should discover and recommend skills
+discovery_rules:
+  # Trigger skill based on keywords in user request
+  keyword_triggers:
+    - keywords: [flutter, widget, bloc, dart]
+      recommend: flutter-best-practices
+
+    - keywords: [parse, backend, cloud-code, schema]
+      recommend: parse-server-config
+
+    - keywords: [ui, ux, design, layout, accessibility]
+      recommend: ui-design-patterns
+
+  # Trigger based on file types being worked on
+  file_type_triggers:
+    - extensions: [.dart]
+      recommend: flutter-best-practices
+
+    - extensions: [.js, .ts]
+      context: parse-server
+      recommend: parse-server-config
+
+  # Trigger based on project structure
+  project_structure_triggers:
+    - presence_of: [pubspec.yaml, lib/]
+      recommend: flutter-best-practices
+
+    - presence_of: [cloud/main.js]
+      recommend: parse-server-config
+
+# Skill Quality Metrics
+# Track skill effectiveness
+metrics:
+  flutter-best-practices:
+    usage_count: 0
+    success_rate: null
+    avg_validation_pass_rate: null
+    user_feedback_score: null
+
+  parse-server-config:
+    usage_count: 0
+    success_rate: null
+    avg_validation_pass_rate: null
+    user_feedback_score: null
+
+  ui-design-patterns:
+    usage_count: 0
+    success_rate: null
+    avg_validation_pass_rate: null
+    user_feedback_score: null
+
+# Skill Maintenance
+# Track who owns and maintains each skill
+maintenance:
+  flutter-best-practices:
+    owner: Framework Analyst & Architect
+    reviewers: [Charlie, Clara]
+    last_review: 2025-12-29
+    next_review: 2026-01-29
+
+  parse-server-config:
+    owner: Framework Analyst & Architect
+    reviewers: [Talib]
+    last_review: 2025-12-29
+    next_review: 2026-01-29
+
+  ui-design-patterns:
+    owner: Framework Analyst & Architect
+    reviewers: [Clara]
+    last_review: 2025-12-29
+    next_review: 2026-01-29

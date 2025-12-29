@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "iterm2-terminal": {
+      "command": "dart",
+      "args": [
+        "run",
+        "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/iterm2-mcp-server/bin/iterm2_mcp_server.dart"
+      ]
+    }
+  }
+}

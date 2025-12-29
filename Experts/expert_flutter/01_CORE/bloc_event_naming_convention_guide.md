@@ -1,5 +1,5 @@
 # BLoC Event Naming Convention Guide
-## The Art Deco Bakery - Flutter Application
+##  Flutter Application
 
 ---
 **Document Version**: 2.0
