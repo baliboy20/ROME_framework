@@ -110,6 +110,145 @@ Roma operates under **ROME-GOV-BASELINE** (robot-baseline.md). Common rules:
 
 ---
 
+## Skills Auto-Discovery System
+
+Roma has access to **79 skills** across all phases through the skills auto-discovery system.
+
+### Discovering Orchestration & Monitoring Skills
+
+**List all orchestration skills:**
+```bash
+/list-skills --search-query "orchestrate"
+/list-skills --search-query "monitor"
+/list-skills --search-query "coordinate"
+```
+
+**Search for phase transition skills:**
+```bash
+/list-skills --search-query "phase transition"
+/list-skills --search-query "gate"
+/list-skills --search-query "status report"
+```
+
+### Key Orchestration Skills
+
+**Orchestration & Monitoring - ~20 skills across all phases:**
+- `/orchestrate-phase-transition` - Coordinate P#→P#+1 transitions
+- `/monitor-robot-progress` - Track robot activity and blockers
+- `/generate-status-report` - Create daily/weekly progress reports
+- `/coordinate-parallel-execution` - Manage P5 layer dependencies
+- `/resolve-blocker` - Coordinate blocker resolution
+- `/validate-phase-entry-criteria` - Check phase can begin
+- `/validate-phase-exit-criteria` - Check phase can complete
+- `/assign-robot-to-phase` - Robot assignment and notification
+- `/track-feature-completion` - Monitor feature progress across layers
+- `/generate-phase-summary` - Create phase transition summaries
+
+### Skills Discovery Commands
+
+**Discover available skills:**
+```bash
+/list-skills                    # All 79 skills
+/recommend-skills --task-description "coordinate P5 layer dependencies" --current-phase P5
+/explain-skill --skill-name orchestrate-phase-transition
+```
+
+**Phase-specific orchestration:**
+```bash
+/list-skills --filter-phase P0  # Bootup orchestration
+/list-skills --filter-phase P2  # Analysis coordination
+/list-skills --filter-phase P5  # Generation coordination (critical for layer dependencies)
+```
+
+### Skills Auto-Discovery Best Practices
+
+**When coordinating phase transitions:**
+1. Use `/validate-phase-exit-criteria` before requesting gate
+2. Use `/orchestrate-phase-transition` for structured handoff
+3. Use `/assign-robot-to-phase` for next phase notification
+
+**When monitoring progress:**
+1. Use `/monitor-robot-progress` for activity tracking
+2. Use `/generate-status-report` for stakeholder updates
+3. Use `/resolve-blocker` for blocker coordination
+
+### Change Management Skills (ROME-PROP-015)
+
+**Orchestrate formal change requests with traceability preservation:**
+
+**1. Create Change Request:**
+```bash
+/create-change-request \
+  --type TERMINOLOGY_CHANGE \
+  --title "Rename Company to Organisation" \
+  --description "ISO compliance requirement" \
+  --rationale "ISO 27001 certification requires consistent terminology"
+```
+
+**2. Analyze Change Impact:**
+```bash
+/analyze-change-impact --cr CR-001
+
+# Output:
+# Requirements affected: 3 files
+# Design docs affected: 5 files
+# Code files affected: 12 files
+# Estimated effort: 2 days
+# Breaking: Yes (API v2 required)
+# Robot assignments: Talib, PMA, Ashok, Reena, Charlie
+```
+
+**3. Coordinate Implementation:**
+```bash
+# After Sarah approves CR-001
+/implement-change --cr CR-001 --robot talib    # Update requirements
+/implement-change --cr CR-001 --robot pma      # Update design
+/implement-change --cr CR-001 --robot ashok    # Database migration
+/implement-change --cr CR-001 --robot reena    # API versioning
+/implement-change --cr CR-001 --robot charlie  # UI updates
+```
+
+**4. Orchestrate Rollback (if needed):**
+```bash
+/rollback-change --cr CR-001 --reason "Backward compatibility issues discovered in production"
+
+# Executes in reverse order:
+# 1. Revert code (Charlie, Reena, Ashok)
+# 2. Run database rollback migrations
+# 3. Revert design (PMA)
+# 4. Revert requirements (Talib)
+# 5. Verify tests pass
+```
+
+**Your Change Management Responsibilities:**
+- **Create CRs** from user requests or robot suggestions
+- **Orchestrate impact analysis** across all affected robots
+- **Coordinate implementation** following approved workflow
+- **Monitor change progress** via activity log
+- **Coordinate rollbacks** when changes cause issues
+- **Ensure traceability** preserved through changes
+
+**Change Request Workflow:**
+1. **Request** → Create CR-###.yaml (PROPOSED)
+2. **Analysis** → Coordinate impact analysis across robots
+3. **Approval** → Wait for Sarah's approval
+4. **Implementation** → Coordinate robots in dependency order
+5. **Verification** → Sarah verifies traceability
+6. **Completion** → Mark CR as COMPLETED or coordinate ROLLBACK
+
+**Example workflow:**
+```bash
+# Before GATE-P2 request
+/validate-phase-exit-criteria --phase P2
+# Returns: All exit criteria met / Missing: [items]
+
+# Coordinate transition
+/orchestrate-phase-transition --from P2 --to P3 --gate GATE-P2
+
+# Assign next robot
+/assign-robot-to-phase --robot pma --phase P3
+```
+
 ---
 
 ## AORDL Awareness

@@ -58,6 +58,59 @@ Defines HOW Lucien executes Phase 4 (Config). Lucien transforms PMA's design art
 
 ---
 
+## Skills Auto-Discovery System
+
+Lucien has access to **79 skills** across all phases through the skills auto-discovery system.
+
+### Discovering P4 Config Skills
+
+**List all P4 config skills:**
+```bash
+/list-skills --filter-phase P4
+/list-skills --search-query "scaffold"
+/list-skills --search-query "environment"
+```
+
+### Key P4 Config Skills
+
+**Configuration & DevOps - ~10 skills:**
+- `/scaffold-workspace` - Create workspace directory structure from actionlist.md
+- `/configure-environment` - Generate environment config files (.env templates)
+- `/setup-cicd-pipeline` - Create CI/CD pipeline configuration
+- `/configure-build-system` - Set up build tools (npm, gradle, etc.)
+- `/setup-test-framework` - Configure testing frameworks
+- `/validate-workspace-structure` - Verify scaffolding completeness
+- `/generate-technical-specs` - Document technical implementation details
+- `/create-scaffolding-manifest` - Document all created artifacts
+
+### Skills Discovery Commands
+
+**Discover available skills:**
+```bash
+/list-skills                    # All 79 skills
+/recommend-skills --task-description "scaffold workspaces from actionlist" --current-phase P4
+/explain-skill --skill-name scaffold-workspace
+```
+
+### Skills Auto-Discovery Best Practices
+
+**When starting P4:**
+1. Use `/list-skills --filter-phase P4` to see all config skills
+2. Use `/recommend-skills` with specific scaffolding tasks
+3. Execute skills in sequence (workspace → environment → CI/CD)
+
+**Example workflow:**
+```bash
+# Scaffold all workspaces
+/scaffold-workspace --actionlist ARTIFACTS/dev/design/actionlist.md
+
+# Configure environments
+/configure-environment --workspace data-workspace --env dev,test,staging,prod
+
+# Setup CI/CD
+/setup-cicd-pipeline --platform github-actions
+```
+
 ---
 
 ## AORDL Awareness

@@ -68,6 +68,113 @@ Defines HOW PMA executes Phase 3 (Design). For WHAT outcomes are required, see R
 
 ---
 
+## Skills Auto-Discovery System
+
+PMA has access to **79 skills** across all phases through the skills auto-discovery system. Skills are dynamically indexed and searchable.
+
+### Discovering P3 Design Skills
+
+**List all P3 skills:**
+```bash
+/list-skills --filter-phase P3
+```
+
+**Search for specific capability:**
+```bash
+/list-skills --search-query "data dictionary"
+/list-skills --search-query "API design"
+```
+
+**Get detailed skill information:**
+```bash
+/explain-skill --skill-name generate-data-dictionary
+```
+
+### Context-Aware Recommendations
+
+When you need help but don't know which skill:
+
+```bash
+/recommend-skills --task-description "I need to validate technology stack choices" --current-phase P3
+/recommend-skills --task-description "I need to create API design documentation" --current-phase P3
+```
+
+### Key P3 Design Skills
+
+**Architecture & Design - ~25 skills:**
+- `/generate-data-dictionary` - Auto-generate from P2 requirements
+- `/validate-data-dictionary` - Check completeness and consistency
+- `/design-api-endpoints` - Generate REST/GraphQL API design
+- `/validate-tech-stack` - Check technology health and compatibility
+- `/generate-use-cases` - Transform user stories to use cases
+- `/design-system-architecture` - Create architecture diagrams
+- `/generate-work-breakdown` - Create actionlist from design artifacts
+- `/validate-requirements-coverage` - Ensure 100% P2 requirements addressed
+
+**Discovery Skills:**
+- `/list-skills` - Browse and filter
+- `/recommend-skills` - Context-aware recommendations
+- `/explain-skill` - Detailed usage guide
+
+**Change Management Skills (ROME-PROP-015):**
+- `/implement-change` - Update design documents with change metadata
+
+### Change Management: Implementing Design Changes
+
+When Roma coordinates a change request (CR-###), you implement changes to design documents:
+
+```bash
+/implement-change --cr CR-001 --artifact_type design
+
+# Your responsibilities:
+# 1. Update affected design documents (FUNC-###, UC-###, db-schema, api-design)
+# 2. Add Change History sections to markdown documents
+# 3. Update entity models, data dictionary if needed
+# 4. Ensure traceability to updated requirements
+```
+
+**Adding Change History to design documents:**
+
+```markdown
+# FUNC-008: Organisation Management
+
+## Change History
+- **CR-001** (2025-12-26): Renamed from "Company Management" to "Organisation Management"
+  - Affected: Feature name, all entity references
+  - Breaking: Yes (API v2 required)
+  - Reason: ISO 27001 compliance
+
+[Rest of design document...]
+```
+
+**After implementing change:**
+- Verify traceability to updated requirements
+- Log completion to activity log
+- Notify Roma that design updates are complete
+
+### When to Use Skills During P3
+
+**Stage 1 (Foundation):**
+- After sponsor kickoff → `/validate-tech-stack --tech-stack-file tech-stack.md`
+
+**Stage 2 (Core Design):**
+- Start data dictionary → `/generate-data-dictionary --source requirements-matrix.yaml`
+- After data dictionary draft → `/validate-data-dictionary --file data-dictionary.yaml`
+- Design API → `/design-api-endpoints --data-dictionary-file data-dictionary.yaml`
+- Generate use cases → `/generate-use-cases --source user-stories.md`
+
+**Stage 3 (Finalization):**
+- Create work breakdown → `/generate-work-breakdown --design-artifacts design/`
+- Before handover → `/validate-requirements-coverage --requirements requirements-matrix.yaml --design design/`
+
+### Skills Best Practices for PMA
+
+1. **Use /list-skills first** - Discover available P3 skills before starting design
+2. **Use /recommend-skills** - Get suggestions based on current design task
+3. **Chain skills** - Output of one skill feeds another (requirements → data dictionary → API → use cases)
+4. **Validate frequently** - Use validation skills throughout design process
+5. **Check tier** - Tier 3 orchestration skills can automate multi-step workflows
+
 ---
 
 ## AORDL Awareness

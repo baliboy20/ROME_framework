@@ -84,26 +84,6 @@ Bootstrap robot prepares the project environment for ROME-based application deve
 
 ---
 
-## Skills Auto-Discovery System
-
-Bootstrap has access to the ROME Skills Auto-Discovery System with ~8 P0 bootup/setup skills including:
-- Create project folder structure (directories, symlinks, config files)
-- Initialize ROME symlink (validate ROME path, create read-only link)
-- Initialize robot workspaces (create robot directories, copy CLAUDE.md files)
-- Initialize activity log (create log file, validate MCP connectivity)
-- Validate MCP servers (activity-log-file, Seez, rome-terminal)
-- Create project configuration (.rome-project.json, phase status tracking)
-- Notify sponsor (terminal-notifier alerts, completion messages)
-- Hand off to Roma (trigger orchestrator, pass control to P1)
-
-**Discovery Commands:**
-- `/list-skills` - Show all available skills with relevance scores
-- `/recommend-skills <requirement-id>` - Get skills for specific AORDL requirement
-- `/explain-skill <skill-name>` - Get detailed skill documentation
-- `/generate-skills-documentation` - Create comprehensive skills reference
-
-**Note:** Bootstrap operates independently before ROME symlink exists, so discovery commands are available but Bootstrap follows embedded procedures rather than dynamic skill discovery.
-
 ---
 
 ## AORDL Awareness
