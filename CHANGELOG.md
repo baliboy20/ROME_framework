@@ -2,6 +2,73 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2025-12-30] - Project-Level MCP Configuration & Activity Log Server Update (ROME-PROP-014)
+
+### Implemented
+- **Project-Level MCP Configuration**
+  - Created `.mcp.json` template in `robot-templates/` for project-level MCP server configuration
+  - Updated `ignite-rome.sh` to initialize `.mcp.json` during bootstrap
+  - All robot templates maintain `addmcp.sh` symlink for MCP server setup
+
+- **Activity Log Server Migration**
+  - Updated from `activity-log` (MongoDB) to `activity-log-file` (file-based) v2.0.0
+  - **ROME-PHASE-001 v1.2**: P00-bootup operations-guidelines.md
+    - Updated MCP server reference to `activity-log-file`
+    - Changed validation tool from `list_available_databases` to `get_statistics`
+    - Updated exit criteria: database → file initialization
+    - Updated outputs table: MongoDB reference → file path
+    - Added `.mcp.json` initialization to project structure
+  - **ROME-PROC-005 v2.0**: Activity Logging Protocol (breaking change)
+    - Updated dependencies from database-backed to file-backed system
+    - Replaced "Database Discovery" section with "File System Architecture"
+    - Documented event log (`ARTIFACTS/activity-log.txt`) and state index (`ARTIFACTS/activity-state.yaml`)
+    - Clarified MCP server name as `activity-log-file` throughout
+
+- **Bootstrap Script Enhancement**
+  - Added `.mcp.json` template copy step to `ignite-rome.sh`
+  - Added MCP configuration note to completion message
+
+### Rationale
+- **Standardized MCP Configuration**: Project-level `.mcp.json` eliminates per-robot MCP setup confusion
+- **Simplified Bootstrap**: Single initialization point for all MCP servers
+- **Updated References**: Removed stale MongoDB references, aligned with current file-based system
+- **Breaking Change**: activity-log-file v2.0.0 uses different tools than MongoDB version
+
+### Tool Changes
+```javascript
+// Validation (operations-guidelines.md)
+OLD: mcp__activity-log__list_available_databases
+NEW: mcp__activity-log__get_statistics
+
+// Storage Location
+OLD: MongoDB database: rome_[project_name]
+NEW: File: ARTIFACTS/activity-log.txt
+```
+
+### Architecture
+**Before:**
+- No standardized `.mcp.json` initialization
+- MCP servers configured ad-hoc per robot
+- Documentation referenced obsolete MongoDB system
+
+**After:**
+- `.mcp.json` template created during bootstrap
+- Single project-level MCP configuration
+- Documentation aligned with file-based activity-log-file v2.0.0
+
+### Impact
+- **P00-bootup**: Bootstrap now initializes `.mcp.json` automatically
+- **All Phases**: Updated references to activity-log-file MCP server
+- **Documentation**: Removed all stale database references
+- **Developer Experience**: Clear guidance on MCP server configuration
+
+### Related Documents
+- ROME-PROP-014: MCP Configuration and Activity Log Migration Proposal
+- ROME-PHASE-001 v1.2: P00-bootup Operations Guidelines
+- ROME-PROC-005 v2.0: Activity Logging Protocol
+
+---
+
 ## [2025-12-18] - Event Log Activity Tracking System (ROME-PROP-007)
 
 ### Implemented

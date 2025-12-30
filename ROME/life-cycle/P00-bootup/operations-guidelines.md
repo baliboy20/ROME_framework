@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PHASE-001 |
-| **Version** | 1.1 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 1.2 |
+| **Date** | 2025-12-30T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Phase Specification |
 | **Author** | Framework Analyst & Architect |
@@ -130,7 +130,7 @@ Before bootup can proceed:
 - [ ] ROME framework accessible at known location
 - [ ] Project name defined by sponsor
 - [ ] Target project path determined
-- [ ] MCP servers available (activity-log, Seez, rome-terminal)
+- [ ] MCP servers available (activity-log-file, Seez, iterm2-terminal)
 - [ ] Sponsor contact configured in ROME-CFG-001
 
 ## Exit Criteria
@@ -140,7 +140,8 @@ Bootup is complete when:
 - [ ] All 8 robot workspaces initialized
 - [ ] ROME symlink functional (read access verified)
 - [ ] .rome-project.json created with correct metadata
-- [ ] Activity-log database initialized (rome_[project_name])
+- [ ] .mcp.json created for project-level MCP configuration
+- [ ] Activity log file initialized (ARTIFACTS/activity-log.txt)
 - [ ] MCP server connectivity verified
 
 ## Quality Gates
@@ -159,7 +160,7 @@ Bootup is complete when:
 
 | Server | Test Method | Pass Criteria |
 |--------|-------------|---------------|
-| activity-log | `mcp__activity-log__list_available_databases` | Returns without error |
+| activity-log-file | `mcp__activity-log__get_statistics` | Returns without error |
 | Seez | `mcp__Seez__list_tabs` | Returns without error |
 | rome-terminal | `mcp__rome-terminal__list_terminals` | Returns without error |
 
@@ -189,9 +190,9 @@ See **Setup Flow** in Phase Overview above for details.
 
 The Bootstrap robot executes these steps (defined in ROME-ROBOT-001):
 
-1. **Create Project Structure** - folders, symlink, .rome-project.json
-2. **Initialize Activity-Log** - database and PHASE-0 entry
-3. **Verify MCP Connectivity** - activity-log, Seez, rome-terminal
+1. **Create Project Structure** - folders, symlink, .rome-project.json, .mcp.json
+2. **Initialize Activity-Log** - file and PHASE-0 entry
+3. **Verify MCP Connectivity** - activity-log-file, Seez, rome-terminal
 4. **Notify Sponsor** - Terminal Notifier completion message
 5. **Complete Phase** - update status, hand off to Roma
 
@@ -202,10 +203,11 @@ The Bootstrap robot executes these steps (defined in ROME-ROBOT-001):
 | Project folder | `[project_path]/` | Root project directory |
 | ROME symlink | `[project_path]/ROME/` | Read-only framework access |
 | Project metadata | `[project_path]/.rome-project.json` | Phase tracking, config |
+| MCP configuration | `[project_path]/.mcp.json` | Project-level MCP server config |
 | Robot workspaces | `[project_path]/robots/*/` | 8 robot directories |
 | Source placeholder | `[project_path]/SOURCE/` | For generated code |
 | Artifacts structure | `[project_path]/ARTIFACTS/` | Phase output folders |
-| Activity-log DB | MongoDB: `rome_[project_name]` | Activity tracking |
+| Activity log file | `[project_path]/ARTIFACTS/activity-log.txt` | Activity tracking (event log) |
 
 ## Activity Logging Requirements
 
@@ -235,3 +237,4 @@ Minimal sponsor interaction during bootup:
 | 0.1 | 2025-11-20T00:00:00Z | Initial phase specification placeholder |
 | 1.0 | 2025-11-21T00:00:00Z | Complete phase specification with bootstrap independence model |
 | 1.1 | 2025-11-21T00:00:00Z | Refactored procedures to reference ROME-ROBOT-001 (reduced duplication) |
+| 1.2 | 2025-12-30T00:00:00Z | Migrated from MongoDB to file-based activity log; added project-level .mcp.json initialization (ROME-PROP-014) |

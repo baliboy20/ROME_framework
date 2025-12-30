@@ -169,6 +169,15 @@ ROME_PATH=$ROME_PATH
 EOF
 log_success "Created bootstrap config"
 
+# Initialize project-level MCP configuration
+MCP_TEMPLATE="$ROME_PATH/robot-templates/.mcp.json"
+if [ -f "$MCP_TEMPLATE" ]; then
+    cp "$MCP_TEMPLATE" "$PROJECT_PATH/.mcp.json"
+    log_success "Initialized project MCP configuration"
+else
+    log_warning "MCP template not found, skipping .mcp.json initialization"
+fi
+
 echo ""
 echo "=========================================="
 echo "Bootstrap Preparation Complete"
@@ -178,6 +187,9 @@ echo "Launching Claude Code in: $BOOTSTRAP_DIR"
 echo ""
 echo "Once Claude starts, tell it:"
 echo "  \"Bootstrap this project: $PROJECT_NAME\""
+echo ""
+echo "Note: Use ./addmcp.sh from any robot workspace to"
+echo "      configure MCP servers in .mcp.json"
 echo ""
 echo "=========================================="
 echo ""

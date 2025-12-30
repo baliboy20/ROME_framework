@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PROC-005 |
-| **Version** | 1.1 |
-| **Date** | 2025-11-24T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2025-12-30T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Procedure |
 | **Author** | Framework Analyst & Architect |
@@ -25,7 +25,7 @@ Applies to ALL robots during ALL phases. This protocol is NON-OPTIONAL.
 - ROME-PRIN-001 (Core Principles) - Principle 2: Traceability, Principle 5: Central Orchestration
 - ROME-PROC-002 (Sponsor Interaction) - Sponsor interaction logging requirements
 - ROME-LEX-001 (Lexicon) - Activity tracking terminology
-- activity-log MCP server - Database-backed activity tracking system
+- activity-log-file MCP server - File-backed activity tracking system (v2.0.0)
 
 ---
 
@@ -33,22 +33,24 @@ Applies to ALL robots during ALL phases. This protocol is NON-OPTIONAL.
 
 ### Overview
 
-ROME v10 uses the activity-log MCP server for activity tracking with the following amendments to align with the current phase model:
+ROME v10 uses the activity-log-file MCP server (v2.0.0) for file-based activity tracking. This replaces the previous MongoDB-based system with an event-sourced architecture providing git-trackable, human-readable activity logs.
 
-### Database Discovery
+### File System Architecture
 
-**All robots MUST read the activity log database name from `.rome-project.json` in the project root:**
+**Event Log (Source of Truth):**
+- Location: `ARTIFACTS/activity-log.txt`
+- Format: Append-only timestamped events
+- Structure: `TIMESTAMP | TYPE | ID | ATTR1:VALUE1 | ATTR2:VALUE2 | ...`
+- Never manually edit previous lines
+- Git-trackable for complete audit trail
 
-```json
-{
-  "projectName": "my_project",
-  "activityLog": {
-    "database": "rome_my_project"
-  }
-}
-```
+**State Index (Query Optimization):**
+- Location: `ARTIFACTS/activity-state.yaml`
+- Auto-generated from event log via `rebuild_state()`
+- Disposable (regenerate anytime from event log)
+- Provides fast queries by status, robot, phase, etc.
 
-The MCP server uses this database name to connect. Bootstrap creates this file during project initialization (P00-bootup).
+Bootstrap creates both files during project initialization (P00-bootup). The MCP server automatically maintains synchronization between event log and state index.
 
 **Phase Mapping (activity-log → ROME v10):**
 
@@ -565,3 +567,13 @@ mcp__activity-log__list_entry_types()
 mcp__activity-log__get_entry_instructions(type)
 mcp__activity-log__validate_entry(entry)
 ```
+
+---
+
+## Revision History
+
+| Version | Date | Summary of Changes |
+|---------|------|-------------------|
+| 1.0 | 2025-11-24T00:00:00Z | Initial activity logging protocol |
+| 1.1 | 2025-11-24T00:00:00Z | Added state access standard and performance guidelines |
+| 2.0 | 2025-12-30T00:00:00Z | Migrated from MongoDB to file-based system; breaking change in tool names and architecture (ROME-PROP-014) |
