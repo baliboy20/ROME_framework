@@ -1,22 +1,20 @@
 ---
 name: aordl-validation
-description: Validate AORDL requirements against anti-patterns, completeness, and quality standards. Use when creating REQ-###.yaml files, resolving ambiguities, or preparing for GATE-P1. Ensures 100% STRICT validation pass rate.
+description: Automated AORDL validation using validate-aordl.js. Use when creating REQ-###.yaml files or preparing for GATE-P1. Run automated checks, generate BDD scenarios, fix violations.
+allowed-tools: [Bash, Read, Write, Glob]
 ---
 
 # AORDL Validation Skill
 
 ## Purpose
 
-Talib's primary responsibility: transform raw sponsor materials into AORDL requirements (Actor-Oriented Requirements Definition Language) with zero ambiguities and 100% quality.
+Talib's P1 automation tool: validate AORDL requirements using automated utilities. Catch issues early before GATE-P1 submission.
 
 ## When to Use
 
-Invoke this skill when:
-- **Creating REQ-###.yaml**: Validate all 13 required fields
-- **Detecting anti-patterns**: Check for UI language, technical jargon, generic actors
-- **Resolving ambiguities**: Ensure all OpenQuestions are RESOLVED
-- **Preparing for GATE-P1**: Self-validate before submitting to Sarah
-- **Reviewing requirements catalog**: Check coverage and completeness
+- **Creating REQ-###.yaml**: Run validate-aordl.js after creating each requirement
+- **Before GATE-P1**: Run batch validation on all requirements
+- **Generating BDD scenarios**: Use transform-aordl-to-bdd.js for test scenarios
 
 ## Quick Reference
 
@@ -40,471 +38,204 @@ CopilotMode: STRICT|GUIDED|PERMISSIVE
 
 ---
 
-## Validation Checklist 1: Structure Compliance
+## Automated Validation Utilities
 
-### ✅ File Format
+### Utility 1: validate-aordl.js - Automated AORDL Validator
 
-- [ ] **Filename**: `REQ-###.yaml` (3-digit zero-padded, e.g., REQ-001, REQ-023, REQ-142)
-- [ ] **Location**: `ARTIFACTS/dev/requirements/`
-- [ ] **Valid YAML**: Parses without errors
-- [ ] **All 13 fields present**: No missing required fields
+**Purpose**: Validates all 13 required fields, detects anti-patterns, checks approved verbs
 
-### ✅ ID Field
+**Usage**:
+```bash
+# Validate single requirement
+node ROME/skills/tier-1/validate-aordl.js \
+  --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml \
+  --mode STRICT \
+  --output-report ARTIFACTS/dev/requirements/REQ-001-validation.json
+```
 
-- [ ] **Format**: `REQ-###` (exactly matches filename)
-- [ ] **Unique**: No duplicate IDs in catalog
-- [ ] **Sequential**: No gaps in numbering (unless intentional)
+**Output Example**:
+```json
+{
+  "requirement_id": "REQ-001",
+  "requirement_file": "ARTIFACTS/dev/requirements/REQ-001.yaml",
+  "mode": "STRICT",
+  "status": "PASS",
+  "violations": [],
+  "warnings": [
+    {
+      "field": "NonFunctional.Performance",
+      "message": "Performance requirements not quantified",
+      "severity": "MEDIUM"
+    }
+  ],
+  "timestamp": "2025-12-29T20:00:00.000Z"
+}
+```
+
+**What it validates**:
+- ✅ All 13 required fields present
+- ✅ Actor specificity (no "User", "Admin", "System")
+- ✅ Intent atomicity (no compound intents with "and")
+- ✅ Anti-pattern detection (UI language: "click", "button", "screen")
+- ✅ Technical jargon detection (API, POST, database, HTTP)
+- ✅ Approved verbs vs ambiguous verbs
+- ✅ OpenQuestions resolution status
+
+**Batch validation**:
+```bash
+# Validate all requirements in directory
+for file in ARTIFACTS/dev/requirements/REQ-*.yaml; do
+  echo "Validating $(basename $file)..."
+  node ROME/skills/tier-1/validate-aordl.js \
+    --requirement-file "$file" \
+    --mode STRICT
+done
+```
 
 ---
 
-## Validation Checklist 2: Actor Field
+### Utility 2: transform-aordl-to-bdd.js - BDD Scenario Generator
 
-### ✅ Actor Specificity (CRITICAL)
+**Purpose**: Transforms AORDL requirements to BDD Gherkin format (Given-When-Then)
 
-**Pass:**
-- ✅ "ProjectManager" - Specific role
-- ✅ "TeamLead" - Specific role
-- ✅ "FinanceApprover" - Specific role with clear responsibility
-- ✅ "ContentCreator" - Specific user type
-- ✅ "SystemAdministrator" - Specific admin role
+**Usage**:
+```bash
+# Generate BDD scenario for single requirement
+node ROME/skills/tier-1/transform-aordl-to-bdd.js \
+  --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml \
+  --output-file ARTIFACTS/03-bdd-features/REQ-001.feature
+```
 
-**Fail:**
-- ❌ "User" - Too generic
-- ❌ "Admin" - Too generic (admin of what?)
-- ❌ "System" - Technical component, not business actor
-- ❌ "Manager" - Ambiguous (which kind of manager?)
-- ❌ "Employee" - Too broad
+**Output Example** (REQ-001.feature):
+```gherkin
+Feature: Create Project (REQ-001)
+  As a ProjectManager
+  I want to create project
+  So that I can organize work
 
-### ✅ Actor Validation Rules
+  Scenario: Successfully create project
+    Given ProjectManager is authenticated
+    And ProjectManager has "create_project" permission
+    When ProjectManager creates project with name "New Project"
+    Then Project exists with status ACTIVE
+    And ProjectManager is assigned as owner
+    And Audit log entry created
 
-- [ ] **No generic terms**: Not "User", "Admin", "Manager", "System"
-- [ ] **Business role**: Describes a person's job function
-- [ ] **CamelCase format**: "ProjectManager", not "Project Manager" or "project_manager"
-- [ ] **Singular form**: "ProjectManager", not "ProjectManagers"
-- [ ] **Role, not UI**: Not "API", "Database", "Frontend" (technical components)
+  Scenario: Project name already exists
+    Given ProjectManager is authenticated
+    When ProjectManager creates project with existing name
+    Then Error "ProjectNameAlreadyExists" is returned
+    And Message "A project with this name already exists. Please choose a different name." is shown
+```
 
-**GATE-P1 Blocker**: Generic actors cause GATE-P1 failure.
+**What it generates**:
+- ✅ Feature description from Actor + Intent
+- ✅ Happy path scenario from Preconditions → Outcomes
+- ✅ Error scenarios from Errors field
+- ✅ Proper Gherkin syntax (Given-When-Then)
+
+**Batch generation**:
+```bash
+# Generate BDD scenarios for all requirements
+mkdir -p ARTIFACTS/03-bdd-features
+for file in ARTIFACTS/dev/requirements/REQ-*.yaml; do
+  base=$(basename "$file" .yaml)
+  echo "Generating BDD for ${base}..."
+  node ROME/skills/tier-1/transform-aordl-to-bdd.js \
+    --requirement-file "$file" \
+    --output-file "ARTIFACTS/03-bdd-features/${base}.feature"
+done
+```
 
 ---
 
-## Validation Checklist 3: Intent Field
+### GATE-P1 Automated Workflow
 
-### ✅ Intent Atomicity (CRITICAL)
+**Complete automation for GATE-P1 preparation**:
 
-**Format**: `[verb] [object]`
+```bash
+#!/bin/bash
+# Step 1: Validate all requirements
+echo "=== Step 1: Validating all requirements ==="
+FAILED=0
+for file in ARTIFACTS/dev/requirements/REQ-*.yaml; do
+  result=$(node ROME/skills/tier-1/validate-aordl.js \
+    --requirement-file "$file" \
+    --mode STRICT)
 
-**Pass (Atomic):**
-- ✅ "create project" - Single verb + object
-- ✅ "view dashboard" - Single action
-- ✅ "approve request" - Single decision
-- ✅ "delete user" - Single operation
-- ✅ "export report" - Single output
+  status=$(echo "$result" | grep -o '"status": "[^"]*"' | cut -d'"' -f4)
 
-**Fail (Compound):**
-- ❌ "create and update project" - Two actions
-- ❌ "login and view dashboard" - Two steps
-- ❌ "manage projects" - Ambiguous (create? update? delete? all?)
-- ❌ "handle user authentication" - Vague verb
-- ❌ "process data" - What does "process" mean?
+  if [ "$status" != "PASS" ]; then
+    echo "❌ $(basename $file): FAILED"
+    FAILED=$((FAILED + 1))
+  else
+    echo "✅ $(basename $file): PASSED"
+  fi
+done
 
-### ✅ Approved Atomic Verbs
+if [ $FAILED -gt 0 ]; then
+  echo ""
+  echo "❌ GATE-P1 BLOCKED: $FAILED requirements failed validation"
+  exit 1
+fi
 
-Use ONLY these verbs (or synonyms with clear atomic meaning):
+# Step 2: Generate BDD scenarios (GATE-P1 deliverable)
+echo ""
+echo "=== Step 2: Generating BDD scenarios ==="
+mkdir -p ARTIFACTS/03-bdd-features
+for file in ARTIFACTS/dev/requirements/REQ-*.yaml; do
+  base=$(basename "$file" .yaml)
+  node ROME/skills/tier-1/transform-aordl-to-bdd.js \
+    --requirement-file "$file" \
+    --output-file "ARTIFACTS/03-bdd-features/${base}.feature"
+  echo "Generated: ${base}.feature"
+done
 
-**CRUD Operations:**
-- create, add, insert
-- read, view, display, show, list
-- update, edit, modify
-- delete, remove
-
-**Actions:**
-- search, filter, find
-- authenticate, login, logout
-- authorize, grant, revoke
-- assign, unassign
-- submit, send
-- approve, reject
-- export, download
-- import, upload
-- validate, verify
-- calculate, compute
-- notify, alert
-- schedule, plan
-
-### ✅ Ambiguous Verbs to Avoid
-
-**Forbidden verbs** (too vague):
-- ❌ manage (does this mean create, update, delete, view, or all?)
-- ❌ handle (what action specifically?)
-- ❌ process (what transformation?)
-- ❌ deal with (meaningless)
-- ❌ work with (meaningless)
-- ❌ maintain (create? update? delete?)
-- ❌ control (authorize? restrict? modify?)
-- ❌ administer (too broad)
-
-**Fix**: Replace with specific atomic verb.
-
-### ✅ Intent Validation Rules
-
-- [ ] **Single verb**: Only one action verb
-- [ ] **Single object**: Only one thing being acted upon
-- [ ] **Atomic action**: Cannot be decomposed further
-- [ ] **No UI language**: Not "click button to create project"
-- [ ] **No technical jargon**: Not "POST /api/projects"
-- [ ] **Lowercase**: "create project", not "Create Project"
-
-**GATE-P1 Blocker**: Compound or ambiguous intents cause GATE-P1 failure.
+echo ""
+echo "✅ GATE-P1 preparation complete!"
+echo "   - All requirements validated: PASS"
+echo "   - BDD scenarios generated: $(ls ARTIFACTS/03-bdd-features/*.feature | wc -l) files"
+```
 
 ---
 
-## Validation Checklist 4: Anti-Pattern Detection
+## Talib's P1 Workflow
 
-### ❌ Anti-Pattern 1: UI Language
-
-**Forbidden UI terms** (AORDL is UI-agnostic):
-- "button", "click", "tap"
-- "dropdown", "select box", "radio button"
-- "modal", "dialog", "popup"
-- "screen", "page", "form"
-- "scroll", "swipe", "drag"
-- "menu", "tab", "sidebar"
-
-**Example Violation:**
-```yaml
-Intent: click submit button to create project  # ❌ Contains "click button"
-```
-
-**Fix:**
-```yaml
-Intent: create project  # ✅ No UI language
-```
-
-**Rationale**: AORDL describes WHAT users want to accomplish, not HOW (UI). Clara and Charlie decide UI in P3/P5.
-
-### ❌ Anti-Pattern 2: Technical Jargon
-
-**Forbidden technical terms** (AORDL is implementation-agnostic):
-- "API", "endpoint", "HTTP POST"
-- "database", "table", "query"
-- "Redux", "BLoC", "state management"
-- "JWT", "OAuth", "token"
-- "microservice", "lambda", "serverless"
-
-**Example Violation:**
-```yaml
-Actor: API  # ❌ Technical component, not business actor
-Intent: POST to /users endpoint  # ❌ Technical implementation detail
-```
-
-**Fix:**
-```yaml
-Actor: SystemAdministrator  # ✅ Business role
-Intent: create user  # ✅ Business intent
-```
-
-**Rationale**: AORDL captures business requirements. PMA decides technical implementation in P3.
-
-### ❌ Anti-Pattern 3: Generic Actors
-
-See "Validation Checklist 2: Actor Field" above.
-
-### ❌ Anti-Pattern 4: Compound Intents
-
-See "Validation Checklist 3: Intent Field" above.
-
-### ✅ Anti-Pattern Validation
-
-- [ ] **Zero UI language**: No "button", "click", "screen", etc.
-- [ ] **Zero technical jargon**: No "API", "database", "HTTP", etc.
-- [ ] **No generic actors**: No "User", "Admin", "System"
-- [ ] **No compound intents**: No "and", multiple verbs
-
-**GATE-P1 Blocker**: Any anti-pattern causes GATE-P1 failure.
-
----
-
-## Validation Checklist 5: Field Completeness
-
-### ✅ Preconditions
-
-- [ ] **At least 1 precondition**: What must be true before action?
-- [ ] **Testable**: Can verify precondition is met
-- [ ] **Relevant**: Directly affects whether actor can perform intent
-- [ ] **No UI language**: "User is logged in", not "Login screen is displayed"
-
-**Examples:**
-- ✅ "ProjectManager is authenticated"
-- ✅ "Project exists in system"
-- ✅ "User has ProjectManager role"
-- ❌ "User clicked login button" (UI language)
-- ❌ "N/A" or "None" (lazy, always has preconditions)
-
-### ✅ Conditions
-
-- [ ] **Constraints during action**: Rules enforced while action executes
-- [ ] **Testable**: Can verify condition holds
-- [ ] **Business rules**: Not technical implementation
-
-**Examples:**
-- ✅ "Project name must be unique within organization"
-- ✅ "Budget amount must be positive"
-- ✅ "Start date must be before end date"
-
-### ✅ Postconditions
-
-- [ ] **State guaranteed after action**: What changed?
-- [ ] **Testable**: Can verify postcondition achieved
-- [ ] **Observable**: System state is different
-
-**Examples:**
-- ✅ "Project exists with status ACTIVE"
-- ✅ "ProjectManager is assigned as project owner"
-- ✅ "Audit log entry created"
-- ❌ "User sees success message" (UI, not state change)
-
-### ✅ Outcomes
-
-- [ ] **Observable results**: What actor sees/receives
-- [ ] **Success criteria**: How to know action succeeded
-- [ ] **Measurable**: Can verify outcome achieved
-
-**Examples:**
-- ✅ "Project created with ID PRJ-12345"
-- ✅ "Confirmation email sent to ProjectManager"
-- ✅ "Dashboard shows new project in list"
-- ❌ "Success" (too vague)
-
-### ✅ Invariants
-
-- [ ] **Rules that never change**: Constraints always true
-- [ ] **Testable**: Can verify invariant holds
-- [ ] **Business rules**: Domain constraints
-
-**Examples:**
-- ✅ "Project ID is unique and immutable"
-- ✅ "Project must have at least one owner"
-- ✅ "Budget cannot be negative"
-- ❌ "Database must be available" (technical, not business invariant)
-
-### ✅ NonFunctional
-
-- [ ] **Performance quantified**: Not "fast", but "< 2 seconds response time"
-- [ ] **Security specified**: Authentication, authorization, encryption, compliance
-- [ ] **Usability defined**: Accessibility level (WCAG A/AA/AAA), UX requirements
-
-**Examples:**
-```yaml
-NonFunctional:
-  Performance:
-    - Response time < 2 seconds for 95% of requests
-    - Support 1000 concurrent users
-  Security:
-    - Authentication required (JWT tokens)
-    - RBAC authorization (ProjectManager role)
-    - Data encrypted at rest (AES-256)
-    - GDPR compliant
-  Usability:
-    - WCAG AA accessibility compliance
-    - Mobile-responsive design
-    - Multi-language support (EN, FR, ES)
-```
-
-### ✅ Errors
-
-- [ ] **At least 2-3 error scenarios**: What can go wrong?
-- [ ] **User-facing message**: Clear, actionable
-- [ ] **HTTP code** (if web application)
-- [ ] **User action**: What should user do?
-
-**Example:**
-```yaml
-Errors:
-  - error: "ProjectNameAlreadyExists"
-    message: "A project with this name already exists. Please choose a different name."
-    httpCode: 409
-    userAction: "Choose a different project name and retry"
-
-  - error: "InsufficientPermissions"
-    message: "You do not have permission to create projects. Contact your administrator."
-    httpCode: 403
-    userAction: "Request ProjectManager role from administrator"
-```
-
-### ✅ ScopeBoundary
-
-- [ ] **InScope defined**: What this requirement DOES cover
-- [ ] **OutOfScope defined**: What this requirement does NOT cover
-- [ ] **Clear boundaries**: Prevents scope creep
-
-**Example:**
-```yaml
-ScopeBoundary:
-  InScope:
-    - Creating new projects with basic metadata
-    - Assigning single owner to project
-    - Validating project name uniqueness
-  OutOfScope:
-    - Editing existing projects (separate REQ-002)
-    - Deleting projects (separate REQ-003)
-    - Managing project teams (separate REQ-010)
-```
-
-### ✅ OpenQuestions
-
-- [ ] **All questions RESOLVED**: Zero status=OPEN for GATE-P1
-- [ ] **Decisions documented**: Who decided, when, what
-- [ ] **Rationale clear**: Why decision was made
-
-**Pass (GATE-P1):**
-```yaml
-OpenQuestions:
-  - question: "Should project name be case-sensitive?"
-    status: RESOLVED
-    decision: "No, project names are case-insensitive"
-    decisionDate: "2025-12-29T10:30:00Z"
-    decisionBy: "Sponsor"
-```
-
-**Fail (GATE-P1 Blocker):**
-```yaml
-OpenQuestions:
-  - question: "Should project name be case-sensitive?"
-    status: OPEN  # ❌ BLOCKER - must be RESOLVED
-```
-
-**Empty is OK:**
-```yaml
-OpenQuestions: []  # ✅ No ambiguities
-```
-
-### ✅ CopilotMode
-
-- [ ] **Value is STRICT, GUIDED, or PERMISSIVE**
-- [ ] **Default is STRICT** (for most requirements)
-- [ ] **PERMISSIVE only with sponsor approval**
-
-**Modes:**
-- **STRICT**: Exact implementation, no deviation (default)
-- **GUIDED**: Framework provided, some flexibility in implementation
-- **PERMISSIVE**: High-level guidance, implementation open
-
----
-
-## Validation Checklist 6: Quality Standards
-
-### ✅ Traceability
-
-- [ ] **REQ-### in requirements catalog**: Listed with category, priority
-- [ ] **Actor coverage**: All business roles represented
-- [ ] **CRUD coverage**: For each entity, have create/read/update/delete requirements
-- [ ] **No orphaned requirements**: Every REQ-### has clear purpose
-
-### ✅ Consistency
-
-- [ ] **Same Actor uses same terminology**: "ProjectManager", not sometimes "PM"
-- [ ] **Same Intent format**: All lowercase, atomic verbs
-- [ ] **Same error format**: All have httpCode, userAction
-- [ ] **Same NonFunctional structure**: Performance, Security, Usability
-
-### ✅ Completeness
-
-- [ ] **All 13 fields meaningful**: Not "N/A" or "TODO"
-- [ ] **No placeholders**: All content finalized
-- [ ] **No copy-paste errors**: Each requirement unique
-
----
-
-## Self-Validation Workflow
+**Key Principle**: Talib runs validate-aordl.js during AORDL creation. Sarah reviews validation reports at GATE-P1.
 
 ### Step 1: Create REQ-###.yaml
 
-```yaml
-# ARTIFACTS/dev/requirements/REQ-001.yaml
-ID: REQ-001
-Actor: ProjectManager
-Intent: create project
+Transform raw user input into AORDL format with all 13 required fields.
 
-Preconditions:
-  - ProjectManager is authenticated
-  - ProjectManager has "create_project" permission
+### Step 2: Automated Validation
 
-Conditions:
-  - Project name must be unique within organization
-  - Project name must be 3-50 characters
-  - Budget must be non-negative
-
-Postconditions:
-  - Project exists with status ACTIVE
-  - ProjectManager is assigned as project owner
-  - Audit log entry created
-
-Outcomes:
-  - Project created with unique ID (PRJ-#####)
-  - Confirmation displayed with project ID
-  - ProjectManager can access project dashboard
-
-Invariants:
-  - Project ID is unique and immutable
-  - Every project has exactly one owner
-  - Project status can only be: ACTIVE, ARCHIVED, DELETED
-
-NonFunctional:
-  Performance:
-    - Create project completes in < 2 seconds
-  Security:
-    - RBAC authorization required
-    - HTTPS only
-  Usability:
-    - WCAG AA compliance
-    - Form validation provides inline feedback
-
-Errors:
-  - error: "ProjectNameAlreadyExists"
-    message: "A project with this name already exists. Please choose a different name."
-    httpCode: 409
-    userAction: "Choose a different project name and retry"
-
-  - error: "InsufficientPermissions"
-    message: "You do not have permission to create projects."
-    httpCode: 403
-    userAction: "Contact administrator to request ProjectManager role"
-
-ScopeBoundary:
-  InScope:
-    - Creating new projects with basic metadata (name, description, budget)
-    - Validating project name uniqueness
-    - Assigning creator as project owner
-  OutOfScope:
-    - Editing projects (REQ-002)
-    - Deleting projects (REQ-003)
-    - Adding team members (REQ-010)
-
-OpenQuestions:
-  - question: "Should project name be case-sensitive?"
-    status: RESOLVED
-    decision: "No, project names are case-insensitive for uniqueness check"
-    decisionDate: "2025-12-29T10:00:00Z"
-    decisionBy: "Sponsor"
-
-CopilotMode: STRICT
+```bash
+# Validate during creation (catch issues early)
+node ROME/skills/tier-1/validate-aordl.js \
+  --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml \
+  --mode STRICT \
+  --output-report ARTIFACTS/dev/requirements/REQ-001-validation.json
 ```
 
-### Step 2: Run Self-Validation
+### Step 3: Fix Violations (if any)
 
-**Check all checklists above:**
-1. ✅ Structure Compliance
-2. ✅ Actor Specificity
-3. ✅ Intent Atomicity
-4. ✅ Anti-Pattern Detection
-5. ✅ Field Completeness
-6. ✅ Quality Standards
+Review validation report, fix issues, re-run validation until PASS.
 
-### Step 3: Fix Violations
+### Step 4: Submit to GATE-P1
 
-**Common fixes:**
+Sarah reviews:
+- All validation reports (REQ-###-validation.json)
+- Requirements catalog completeness
+- Coverage (actors, CRUD operations)
 
-**Generic Actor:**
+**Authoritative GATE-P1 checklist**: See Sarah's quality-gate-validation skill
+
+---
+
+## Common Validation Fixes
+
+### Fix 1: Generic Actor
+
 ```yaml
 # Before
 Actor: User  # ❌
@@ -513,7 +244,8 @@ Actor: User  # ❌
 Actor: ProjectManager  # ✅
 ```
 
-**Compound Intent:**
+### Fix 2: Compound Intent
+
 ```yaml
 # Before
 Intent: create and update project  # ❌
@@ -526,7 +258,8 @@ Intent: create project  # ✅
 Intent: update project  # ✅
 ```
 
-**UI Language:**
+### Fix 3: UI Language
+
 ```yaml
 # Before
 Intent: click submit button to create project  # ❌
@@ -535,18 +268,8 @@ Intent: click submit button to create project  # ❌
 Intent: create project  # ✅
 ```
 
-**Technical Jargon:**
-```yaml
-# Before
-Actor: API  # ❌
-Intent: POST to /projects endpoint  # ❌
+### Fix 4: Open Questions
 
-# After
-Actor: ProjectManager  # ✅
-Intent: create project  # ✅
-```
-
-**Unresolved Ambiguity:**
 ```yaml
 # Before
 OpenQuestions:
@@ -562,138 +285,10 @@ OpenQuestions:
     decisionBy: "Sponsor"
 ```
 
-### Step 4: Log AORDL Validation
-
-```yaml
-timestamp: 2025-12-29T12:00:00Z
-robot: Talib
-phase: P1
-action: COMPLETED
-artifact: ARTIFACTS/dev/requirements/REQ-001.yaml
-description: |
-  REQ-001 created and validated:
-  - ✓ All 13 fields complete
-  - ✓ Actor specific (ProjectManager)
-  - ✓ Intent atomic (create project)
-  - ✓ Zero anti-patterns
-  - ✓ All OpenQuestions RESOLVED
-  - ✓ STRICT validation passed
-status: SUCCESS
-```
-
 ---
 
-## GATE-P1 Preparation
-
-### Before Requesting GATE-P1
-
-Run validation on entire requirements catalog:
-
-1. **Check all REQ-###.yaml files**:
-   - All 13 fields present
-   - No anti-patterns
-   - All OpenQuestions RESOLVED
-
-2. **Check requirements-catalog.md**:
-   - All REQ-### listed
-   - Coverage complete (actors, CRUD operations)
-   - Dependencies documented
-
-3. **Check validation summary**:
-   - 100% STRICT validation pass rate
-   - Zero open ambiguities
-   - Zero anti-pattern violations
-
-### GATE-P1 Checklist
-
-- [ ] **All REQ-###.yaml files valid YAML**
-- [ ] **100% STRICT validation pass rate**
-- [ ] **Zero generic actors** (all specific roles)
-- [ ] **Zero compound intents** (all atomic)
-- [ ] **Zero UI language** (no "button", "click", "screen")
-- [ ] **Zero technical jargon** (no "API", "database", "HTTP")
-- [ ] **Zero open questions** (all status=RESOLVED)
-- [ ] **Requirements catalog complete**
-- [ ] **Phase 1 handover document ready**
-
-**GATE-P1 Result:**
-- **APPROVED**: All criteria met, proceed to P2
-- **APPROVED WITH CONDITIONS**: Minor warnings, can proceed but fix in P2
-- **BLOCKED**: Critical violations, must fix before P2
-
----
-
-## Common GATE-P1 Blockers
-
-### Blocker 1: Generic Actors
-
-**Violation:**
-```yaml
-Actor: User  # ❌
-```
-
-**Fix:**
-```yaml
-Actor: ProjectManager  # ✅
-```
-
-### Blocker 2: Compound Intents
-
-**Violation:**
-```yaml
-Intent: create and update project  # ❌
-```
-
-**Fix (split into 2 requirements):**
-```yaml
-# REQ-001
-Intent: create project  # ✅
-
-# REQ-002
-Intent: update project  # ✅
-```
-
-### Blocker 3: UI Language
-
-**Violation:**
-```yaml
-Intent: click submit button to save changes  # ❌
-```
-
-**Fix:**
-```yaml
-Intent: update project  # ✅
-```
-
-### Blocker 4: Open Questions
-
-**Violation:**
-```yaml
-OpenQuestions:
-  - question: "Should name be unique?"
-    status: OPEN  # ❌ BLOCKER
-```
-
-**Fix (ask sponsor):**
-```yaml
-OpenQuestions:
-  - question: "Should name be unique?"
-    status: RESOLVED  # ✅
-    decision: "Yes, within organization"
-    decisionDate: "2025-12-29T10:00:00Z"
-    decisionBy: "Sponsor"
-```
-
----
-
-## Related Skills
-
-- `activity-logging` - Log AORDL creation progress
-- `rome-protocols` - ROME framework compliance
-
----
-
-**Skill Version**: 1.0.0
+**Skill Version**: 2.0.0
 **Last Updated**: 2025-12-29
 **Robot**: Talib only
 **Priority**: CRITICAL
+**Manual Validation Checklists**: See Sarah's quality-gate-validation skill (GATE-P1 section)

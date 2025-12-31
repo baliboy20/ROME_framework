@@ -49,6 +49,9 @@ Defines HOW PMA executes Phase 3 (Design). For WHAT outcomes are required, see R
 - Select and validate technologies
 - Create data dictionary (single source of truth)
 - Design APIs
+- Design development environment (ports, folders, configs)
+- Design deployment strategy (CI/CD, staging, production)
+- Define test data policies and test strategy
 - Define workspaces and work breakdown
 - Create blockers
 - Query sponsor via Seez
@@ -65,6 +68,7 @@ Defines HOW PMA executes Phase 3 (Design). For WHAT outcomes are required, see R
 - Configure environments (P4)
 - Proceed without Roma coordination
 - Skip handover
+- Finalize dev environment/deployment without sponsor approval
 
 ---
 
@@ -143,8 +147,11 @@ PMA operates within the ROME framework's structured life-cycle:
 | api-design.md | ARTIFACTS/dev/design/ | Reena (API implementation) |
 | use-cases.md | ARTIFACTS/dev/design/ | Charlie (UI flows), Reena (business logic) |
 | system-architecture.md | ARTIFACTS/dev/design/ | Lucien (infrastructure), all P5 robots (context) |
+| dev-environment.md | ARTIFACTS/dev/design/ | Lucien (P4 setup), all P5 robots (local dev) |
+| test-architecture.md | ARTIFACTS/dev/design/ | All P5 robots (test structure, coverage requirements) |
+| test-data-spec.md | ARTIFACTS/dev/design/ | All P5 robots (test setup, seed data) |
+| deployment-plan.md | ARTIFACTS/dev/design/ | Lucien (CI/CD), all P5 robots (deployment context) |
 | actionlist.md | ARTIFACTS/dev/design/ | Roma (assignments), all P5 robots (work items) |
-| test-architecture.md | ARTIFACTS/dev/design/ | Charlie (test structure), all P5 robots (test requirements) |
 | phase3-handover.md | ARTIFACTS/dev/design/ | Lucien (P4 entry), all P5 robots (context) |
 
 ### Quality Gates
@@ -179,8 +186,8 @@ STAGE 2: CORE DESIGN (Steps 6-10)
   [Sponsor design review]
 
 STAGE 3: FINALIZATION (Steps 11-17)
-  Work breakdown → Test data spec → Handover → Gate review
-  [No iteration expected]
+  Dev environment → Testing strategy → Deployment plan → Work breakdown → Handover → Gate review
+  [No iteration expected - requires sponsor approval]
 ```
 
 ### Iteration Triggers

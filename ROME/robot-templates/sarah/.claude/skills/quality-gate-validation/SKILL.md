@@ -1,6 +1,7 @@
 ---
 name: quality-gate-validation
 description: Validate phase transitions against ROME quality gate criteria. Use when reviewing deliverables at GATE-P1, GATE-P2, GATE-P3, GATE-P4, or GATE-P5. Ensures completeness, traceability, and quality standards before approving phase transitions.
+allowed-tools: [Bash, Read, Write, Glob]
 ---
 
 # Quality Gate Validation Skill

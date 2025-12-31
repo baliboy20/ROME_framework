@@ -1,6 +1,7 @@
 ---
 name: design-validation
 description: Validate UX design artifacts against AORDL requirements, use cases, and accessibility standards. Use when creating design systems, wireframes, user flows, or mockups. Ensures design completeness and P5 readiness.
+allowed-tools: [Bash, Read, Write, Glob]
 ---
 
 # Design Validation Skill

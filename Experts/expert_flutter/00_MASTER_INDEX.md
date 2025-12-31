@@ -1,8 +1,8 @@
 # Flutter Expert Documentation - Master Index
 
-**Version**: 2.0
-**Last Updated**: 2024-12-19
-**Total Guides**: 19
+**Version**: 2.2
+**Last Updated**: 2025-12-30
+**Total Guides**: 25
 **Target Audience**: AI Agents, Flutter Developers
 
 ---
@@ -69,6 +69,13 @@
   - Related: Frontend DDD Architecture (Section 5.4)
 
 ### Data & Entities
+- **[Managing CRUD for Large Datasets](01_CORE/managing-crud-for-large-datasets.md)** (NEW)
+  - Production-grade CRUD over large JSON datasets via HTTP
+  - Caching, consistency, and performance patterns
+  - Optimistic updates, conflict resolution, sync strategies
+  - When to use: Building features with large API responses (100+ items)
+  - Related: Frontend DDD Architecture, Parse Server Integration
+
 - **[Core Artifacts & Entities](02_PATTERNS/core_artifacts_expert.md)** (18KB)
   - Shared enums, domain entities, validation rules
   - Storage strategy decision matrix
@@ -162,6 +169,13 @@
   - Related: Flutter UI Component Library
 
 ### Performance & Monitoring
+- **[Widget Design for Performance](02_PATTERNS/widget-design-for-performance.md)** (NEW)
+  - High-impact Flutter performance practices for production apps
+  - Build optimization, state management, lists, animations, memory
+  - Flutter Web specifics, profiling, performance budgeting
+  - When to use: Building/optimizing production Flutter apps
+  - Related: Frontend DDD Architecture, Managing CRUD for Large Datasets
+
 - **[Timeout Strategy Guide](02_PATTERNS/timeout_strategy_guide.md)** (17KB)
   - Standard timeout values: 5s (fast), 30s (normal), 60s (slow)
   - Retry with exponential backoff
@@ -273,9 +287,10 @@
 ### Implementing Product Catalog
 1. Start: [Frontend DDD Architecture](01_CORE/frontend_ddd_architecture_expert.md) - Product example
 2. Data: [Parse Server Integration](03_INTEGRATIONS/parse_flutter_integration_patterns.md) - Query patterns
-3. State: [BLoC Event Naming](01_CORE/bloc_event_naming_convention_guide.md)
-4. UI: [Flutter UI Component Library](04_UI_UX/flutter_ui_component_library.md)
-5. Theme: [Platform Theme Architecture](04_UI_UX/platform_theme_architecture_guide.md)
+3. Large Datasets: [Managing CRUD for Large Datasets](01_CORE/managing-crud-for-large-datasets.md) - Caching & sync
+4. State: [BLoC Event Naming](01_CORE/bloc_event_naming_convention_guide.md)
+5. UI: [Flutter UI Component Library](04_UI_UX/flutter_ui_component_library.md)
+6. Theme: [Platform Theme Architecture](04_UI_UX/platform_theme_architecture_guide.md)
 
 ---
 
@@ -283,14 +298,14 @@
 
 | Category | Files | Total Size | Coverage |
 |----------|-------|------------|----------|
-| **01_CORE** | 4 | 109KB | Complete |
-| **02_PATTERNS** | 5 | 101KB | Complete |
+| **01_CORE** | 5 | 135KB | Complete |
+| **02_PATTERNS** | 6 | 128KB | Complete |
 | **03_INTEGRATIONS** | 4 | 62KB | Complete |
 | **04_UI_UX** | 3 | 79KB | Complete |
 | **05_REFERENCE** | 3 | 91KB | Complete |
-| **06_PLATFORM_SPECIFIC** | 0 | - | To be added |
+| **06_PLATFORM_SPECIFIC** | 4 | 3KB | Complete |
 | **07_DEPLOYMENT** | 0 | - | To be added |
-| **Total** | 19 | 442KB | - |
+| **Total** | 25 | 498KB | - |
 
 ---
 
@@ -324,6 +339,18 @@
 ---
 
 ## 🔄 Version History
+
+### Version 2.2 (2025-12-30)
+- Added **Widget Design for Performance** guide
+- High-impact performance practices for production Flutter apps
+- Covers build optimization, state management, memory, Flutter Web specifics
+- 25 comprehensive sections with code examples
+
+### Version 2.1 (2025-12-30)
+- Added **Managing CRUD for Large Datasets** guide
+- Production-grade patterns for HTTP data synchronization
+- Covers caching, optimistic updates, conflict resolution
+- Updated documentation statistics
 
 ### Version 2.0 (2024-12-19)
 - Created master index
@@ -362,6 +389,6 @@ When updating documentation:
 
 ---
 
-**Last Updated**: 2024-12-19
+**Last Updated**: 2025-12-30
 **Maintained By**: Architecture Team
 **Review Cycle**: Monthly

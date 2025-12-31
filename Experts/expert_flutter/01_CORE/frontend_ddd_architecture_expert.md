@@ -1,5 +1,5 @@
 # Frontend DDD Architecture Expert Guide
-## The Art Deco Bakery - Flutter Application
+
 
 ---
 **Document Version**: 2.0

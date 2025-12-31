@@ -1,6 +1,7 @@
 ---
 name: code-generation-patterns
 description: Flutter/Dart code generation patterns for ROME P5. Use when implementing screens, widgets, BLoC state management, API integration, and tests. Ensures feature-based organization, AORDL traceability, and quality standards.
+allowed-tools: [Bash, Read, Write, Glob]
 ---
 
 # Code Generation Patterns Skill
@@ -43,6 +44,396 @@ lib/features/[feature_name]/
 ```
 
 ---
+
+## Automated Code Generation Utilities
+
+**Location**: `/ROME/skills/tier-1/`
+
+### Utility 1: generate-bloc-classes.js - BLoC Generator
+
+**Purpose**: Generates complete BLoC implementations with flutter_bloc package
+
+**Usage**:
+```bash
+# Generate BLoC for a feature
+node ROME/skills/tier-1/generate-bloc-classes.js \
+  --design-directory ARTIFACTS/dev/design \
+  --output-directory lib/features/project_management/bloc \
+  --entities '[{"name":"Project","attributes":["name","description","budget"]}]'
+```
+
+**What it generates**:
+```dart
+// lib/features/project_management/bloc/project_bloc.dart
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../domain/repositories/project_repository.dart';
+import 'project_event.dart';
+import 'project_state.dart';
+
+/// BLoC: ProjectBloc
+/// Manages Project business logic and state
+class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
+  final ProjectRepository _repository;
+
+  ProjectBloc(this._repository) : super(const ProjectInitialState()) {
+    on<LoadProjectsEvent>(_onLoadProjects);
+    on<LoadProjectByIdEvent>(_onLoadProjectById);
+    on<CreateProjectEvent>(_onCreateProject);
+    on<UpdateProjectEvent>(_onUpdateProject);
+    on<DeleteProjectEvent>(_onDeleteProject);
+    on<SearchProjectsEvent>(_onSearchProjects);
+  }
+
+  Future<void> _onLoadProjects(
+    LoadProjectsEvent event,
+    Emitter<ProjectState> emit,
+  ) async {
+    emit(const ProjectLoadingState());
+    try {
+      final projects = await _repository.findAll();
+      emit(ProjectLoadedState(projects: projects));
+    } catch (e) {
+      emit(ProjectErrorState(message: e.toString()));
+    }
+  }
+
+  // ... more handlers
+}
+```
+
+---
+
+### Utility 2: generate-bloc-events.js - BLoC Event Generator
+
+**Purpose**: Generates BLoC event classes for CRUD operations
+
+**Usage**:
+```bash
+node ROME/skills/tier-1/generate-bloc-events.js \
+  --output-directory lib/features/project_management/bloc \
+  --entities '[{"name":"Project"}]'
+```
+
+**What it generates**:
+```dart
+// lib/features/project_management/bloc/project_event.dart
+import 'package:equatable/equatable.dart';
+import '../models/project.dart';
+
+/// Base event for ProjectBloc
+abstract class ProjectEvent extends Equatable {
+  const ProjectEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
+/// Load all projects
+class LoadProjectsEvent extends ProjectEvent {
+  const LoadProjectsEvent();
+}
+
+/// Load project by ID
+class LoadProjectByIdEvent extends ProjectEvent {
+  final String id;
+
+  const LoadProjectByIdEvent({required this.id});
+
+  @override
+  List<Object?> get props => [id];
+}
+
+/// Create new project
+class CreateProjectEvent extends ProjectEvent {
+  final Project project;
+
+  const CreateProjectEvent({required this.project});
+
+  @override
+  List<Object?> get props => [project];
+}
+
+// ... more events
+```
+
+---
+
+### Utility 3: generate-bloc-states.js - BLoC State Generator
+
+**Purpose**: Generates BLoC state classes (Initial, Loading, Success, Error)
+
+**Usage**:
+```bash
+node ROME/skills/tier-1/generate-bloc-states.js \
+  --output-directory lib/features/project_management/bloc \
+  --entities '[{"name":"Project"}]'
+```
+
+**What it generates**:
+```dart
+// lib/features/project_management/bloc/project_state.dart
+import 'package:equatable/equatable.dart';
+import '../models/project.dart';
+
+/// Base state for ProjectBloc
+abstract class ProjectState extends Equatable {
+  const ProjectState();
+
+  @override
+  List<Object?> get props => [];
+}
+
+/// Initial state
+class ProjectInitialState extends ProjectState {
+  const ProjectInitialState();
+}
+
+/// Loading state
+class ProjectLoadingState extends ProjectState {
+  const ProjectLoadingState();
+}
+
+/// Loaded state with projects
+class ProjectLoadedState extends ProjectState {
+  final List<Project> projects;
+
+  const ProjectLoadedState({required this.projects});
+
+  @override
+  List<Object?> get props => [projects];
+}
+
+/// Error state
+class ProjectErrorState extends ProjectState {
+  final String message;
+
+  const ProjectErrorState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+```
+
+---
+
+### Utility 4: generate-repository-interfaces.js - Repository Interface Generator
+
+**Purpose**: Generates repository abstract classes with CRUD operations
+
+**Usage**:
+```bash
+node ROME/skills/tier-1/generate-repository-interfaces.js \
+  --output-directory lib/domain/repositories \
+  --entities '[{"name":"Project"}]'
+```
+
+**What it generates**:
+```dart
+// lib/domain/repositories/project_repository.dart
+import '../models/project.dart';
+
+/// Repository interface for Project entity
+abstract class ProjectRepository {
+  /// Find all projects
+  Future<List<Project>> findAll();
+
+  /// Find project by ID
+  Future<Project?> findById(String id);
+
+  /// Create new project
+  Future<Project> create(Project project);
+
+  /// Update existing project
+  Future<Project> update(String id, Project project);
+
+  /// Delete project
+  Future<void> delete(String id);
+
+  /// Search projects
+  Future<List<Project>> search(String query);
+}
+```
+
+---
+
+### Utility 5: generate-ui-screens.js - Screen Generator
+
+**Purpose**: Generates Flutter screen widgets with BlocBuilder integration
+
+**Usage**:
+```bash
+node ROME/skills/tier-1/generate-ui-screens.js \
+  --output-directory lib/features/project_management/widgets \
+  --entities '[{"name":"Project","screens":["list","detail","form"]}]'
+```
+
+**What it generates**:
+```dart
+// lib/features/project_management/widgets/project_list_screen.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/project_bloc.dart';
+import '../bloc/project_event.dart';
+import '../bloc/project_state.dart';
+
+/// Project list screen
+/// Implements UC-### (List Projects)
+/// Source: REQ-### (view projects)
+class ProjectListScreen extends StatelessWidget {
+  const ProjectListScreen({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Projects'),
+      ),
+      body: BlocBuilder<ProjectBloc, ProjectState>(
+        builder: (context, state) {
+          if (state is ProjectInitialState) {
+            return const Center(child: Text('No projects yet'));
+          }
+
+          if (state is ProjectLoadingState) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state is ProjectErrorState) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error, size: 64, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text(state.message, style: TextStyle(color: Colors.red)),
+                  SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      context.read<ProjectBloc>().add(LoadProjectsEvent());
+                    },
+                    child: Text('Retry'),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (state is ProjectLoadedState) {
+            return ListView.builder(
+              itemCount: state.projects.length,
+              itemBuilder: (context, index) {
+                final project = state.projects[index];
+                return ListTile(
+                  title: Text(project.name),
+                  subtitle: Text(project.description),
+                  onTap: () {
+                    // Navigate to detail screen
+                  },
+                );
+              },
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Navigate to create screen
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+---
+
+### Complete Feature Generation Workflow
+
+**Generate entire feature with one command sequence**:
+
+```bash
+#!/bin/bash
+FEATURE="project_management"
+ENTITY="Project"
+
+# Step 1: Create feature folder structure
+echo "Creating feature folder structure..."
+mkdir -p lib/features/${FEATURE}/{models,services,repositories,bloc,widgets,tests}
+
+# Step 2: Generate BLoC events
+echo "Generating BLoC events..."
+node ROME/skills/tier-1/generate-bloc-events.js \
+  --output-directory lib/features/${FEATURE}/bloc \
+  --entities "[{\"name\":\"${ENTITY}\"}]"
+
+# Step 3: Generate BLoC states
+echo "Generating BLoC states..."
+node ROME/skills/tier-1/generate-bloc-states.js \
+  --output-directory lib/features/${FEATURE}/bloc \
+  --entities "[{\"name\":\"${ENTITY}\"}]"
+
+# Step 4: Generate BLoC class
+echo "Generating BLoC class..."
+node ROME/skills/tier-1/generate-bloc-classes.js \
+  --design-directory ARTIFACTS/dev/design \
+  --output-directory lib/features/${FEATURE}/bloc \
+  --entities "[{\"name\":\"${ENTITY}\",\"attributes\":[\"name\",\"description\",\"budget\"]}]"
+
+# Step 5: Generate repository interface
+echo "Generating repository interface..."
+node ROME/skills/tier-1/generate-repository-interfaces.js \
+  --output-directory lib/features/${FEATURE}/repositories \
+  --entities "[{\"name\":\"${ENTITY}\"}]"
+
+# Step 6: Generate UI screens
+echo "Generating UI screens..."
+node ROME/skills/tier-1/generate-ui-screens.js \
+  --output-directory lib/features/${FEATURE}/widgets \
+  --entities "[{\"name\":\"${ENTITY}\",\"screens\":[\"list\",\"detail\",\"form\"]}]"
+
+# Step 7: Create TRACEABILITY.md
+echo "Creating TRACEABILITY.md..."
+cat > lib/features/${FEATURE}/TRACEABILITY.md << 'EOF'
+# ${ENTITY} Management
+
+## Requirements Traceability
+- **REQ-###**: [intent]
+- **Feature**: FUNC-### ([name])
+- **Use Cases**: UC-###
+
+## Module Structure
+- `bloc/` - State management
+- `models/` - Data models
+- `repositories/` - Data access
+- `widgets/` - UI screens
+
+## Implementation Status
+- ✓ BLoC generated
+- ✓ Repository interface generated
+- ✓ Screens generated
+EOF
+
+echo ""
+echo "✅ Feature generation complete!"
+echo "   Generated files:"
+echo "   - bloc/${ENTITY}_bloc.dart"
+echo "   - bloc/${ENTITY}_event.dart"
+echo "   - bloc/${ENTITY}_state.dart"
+echo "   - repositories/${ENTITY}_repository.dart"
+echo "   - widgets/${ENTITY}_list_screen.dart"
+echo "   - widgets/${ENTITY}_detail_screen.dart"
+echo "   - widgets/${ENTITY}_form_screen.dart"
+echo "   - TRACEABILITY.md"
+```
+
+---
+
+## Manual Code Patterns
+
+**Use these patterns for manual coding and customization**:
 
 ## Pattern 1: Feature Setup
 

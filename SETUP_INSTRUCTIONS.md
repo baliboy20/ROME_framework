@@ -20,7 +20,7 @@
 
 ```bash
 cd /path/to/ROME/life-cycle/P00-bootup
-./setup-mcp-servers-v2.sh
+./setup-mcp-servers-v3.sh
 ```
 
 **Adds:**
