@@ -68,7 +68,6 @@ Ensure consistency across all documents and phases.
 Formatting Conventions
 
 Primary Format: Markdown for document hierarchy and structure
-Complex Logic: LaTeX for formal logic, mathematical representations, or complex formal specifications when necessary
 Structure: Clear headings, minimal nesting, high information density
 
 Repository Structure
