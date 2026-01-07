@@ -110,36 +110,37 @@ STATUS: DELETED ✅ (~2.7MB freed)
 
 ### ✅ Active Plugin Architecture
 ```
-rome-core/              896K  Foundation plugin
-rome-p0-bootup/          32K  Phase 0: Project bootstrap
-rome-p1-aordl/           52K  Phase 1: AORDL requirements
-rome-p2-analysis/        52K  Phase 2: Requirements analysis
-rome-p3-design/         100K  Phase 3: System design
-rome-p4-config/          84K  Phase 4: Workspace configuration
-rome-p5-generation/      72K  Phase 5: Code generation
-rome-qa/                 52K  Quality assurance
-rome-full/               16K  Meta-plugin (complete bundle)
+ROME/                        # Operational framework (all plugins)
+  ├── rome-core/        896K  Foundation plugin
+  ├── rome-p0-bootup/    32K  Phase 0: Project bootstrap
+  ├── rome-p1-aordl/     52K  Phase 1: AORDL requirements
+  ├── rome-p2-analysis/  52K  Phase 2: Requirements analysis
+  ├── rome-p3-design/   100K  Phase 3: System design
+  ├── rome-p4-config/    84K  Phase 4: Workspace configuration
+  ├── rome-p5-generation/ 72K  Phase 5: Code generation
+  ├── rome-qa/           52K  Quality assurance
+  └── rome-full/         16K  Meta-plugin (complete bundle)
 
-Total: ~1.4MB across 9 plugins
+Total: ~1.4MB across 9 plugins in ROME/
 ```
 
-### ✅ Framework Maintenance & Governance
+### ✅ Support & Ancillary Folders
 ```
-rome-core/
-  └── docs/                         Core framework documentation
-      ├── foundation/               Core principles, lexicon (MIGRATED)
-      ├── governance/               Standards, policies (MIGRATED)
-      └── specifications/           Framework specs (MIGRATED)
+ROME/                               Operational framework (see above)
+  └── rome-core/docs/               Core framework documentation
+      ├── foundation/               Core principles, lexicon
+      ├── governance/               Standards, policies
+      └── specifications/           Framework specs
 
-ROME_architect/                     Archie's working directory
-ROME_framework_maintenance/
-  ├── archive/                      Historical docs (ARCHIVED)
+ROME_architect/                     Archie's working directory (support)
+ROME_framework_maintenance/         Framework improvement (support)
+  ├── archive/                      Historical docs
   │   ├── life-cycle/               Phase operation guidelines
   │   └── GETTING-STARTED-GUIDE.md  Beginner introduction
   ├── proposals/                    Active proposals
   └── implemented-proposals/        Implemented proposals
 
-test-project-to-validate-framework-v1/  Test & validation project
+test-project-to-validate-framework-v1/  Test & validation project (ancillary)
 ```
 
 ### ⚠️ Requires Review
@@ -161,21 +162,21 @@ ACTION NEEDED: Determine if content should be:
 
 | Old Location | New Location | Status |
 |--------------|--------------|--------|
-| `ROME/robot-templates/ashok/` | `rome-p5-generation/agents/ashok/` | ✅ MIGRATED |
-| `ROME/robot-templates/bootstrap/` | `rome-p0-bootup/agents/bootstrap/` | ✅ MIGRATED |
-| `ROME/robot-templates/charlie/` | `rome-p5-generation/agents/charlie/` | ✅ MIGRATED |
-| `ROME/robot-templates/clara/` | `rome-p3-design/agents/clara/` | ✅ MIGRATED |
-| `ROME/robot-templates/lucien/` | `rome-p4-config/agents/lucien/` | ✅ MIGRATED |
-| `ROME/robot-templates/pma/` | `rome-p3-design/agents/pma/` | ✅ MIGRATED |
-| `ROME/robot-templates/reena/` | `rome-p5-generation/agents/reena/` | ✅ MIGRATED |
-| `ROME/robot-templates/roma/` | `rome-core/agents/roma/` | ✅ MIGRATED |
-| `ROME/robot-templates/sarah/` | `rome-qa/agents/sarah/` | ✅ MIGRATED |
-| `ROME/robot-templates/talib/` | `rome-p1-aordl/agents/talib/` (P1)<br>`rome-p2-analysis/agents/talib/` (P2) | ✅ MIGRATED |
-| `ROME/skills/*` (40 skills) | `rome-*/skills/` | ✅ MIGRATED |
-| `ROME/templates/aordl/` | `rome-core/templates/aordl/` | ✅ MIGRATED |
-| `ROME/foundation/` | `rome-core/docs/foundation/` | ✅ MIGRATED |
-| `ROME/framework-governance/` | `rome-core/docs/governance/` | ✅ MIGRATED |
-| `ROME/framework-specifications/` | `rome-core/docs/specifications/` | ✅ MIGRATED |
+| `ROME/robot-templates/ashok/` | `ROME/rome-p5-generation/agents/ashok/` | ✅ MIGRATED |
+| `ROME/robot-templates/bootstrap/` | `ROME/rome-p0-bootup/agents/bootstrap/` | ✅ MIGRATED |
+| `ROME/robot-templates/charlie/` | `ROME/rome-p5-generation/agents/charlie/` | ✅ MIGRATED |
+| `ROME/robot-templates/clara/` | `ROME/rome-p3-design/agents/clara/` | ✅ MIGRATED |
+| `ROME/robot-templates/lucien/` | `ROME/rome-p4-config/agents/lucien/` | ✅ MIGRATED |
+| `ROME/robot-templates/pma/` | `ROME/rome-p3-design/agents/pma/` | ✅ MIGRATED |
+| `ROME/robot-templates/reena/` | `ROME/rome-p5-generation/agents/reena/` | ✅ MIGRATED |
+| `ROME/robot-templates/roma/` | `ROME/rome-core/agents/roma/` | ✅ MIGRATED |
+| `ROME/robot-templates/sarah/` | `ROME/rome-qa/agents/sarah/` | ✅ MIGRATED |
+| `ROME/robot-templates/talib/` | `ROME/rome-p1-aordl/agents/talib/` (P1)<br>`ROME/rome-p2-analysis/agents/talib/` (P2) | ✅ MIGRATED |
+| `ROME/skills/*` (40 skills) | `ROME/rome-*/skills/` | ✅ MIGRATED |
+| `ROME/templates/aordl/` | `ROME/rome-core/templates/aordl/` | ✅ MIGRATED |
+| `ROME/foundation/` | `ROME/rome-core/docs/foundation/` | ✅ MIGRATED |
+| `ROME/framework-governance/` | `ROME/rome-core/docs/governance/` | ✅ MIGRATED |
+| `ROME/framework-specifications/` | `ROME/rome-core/docs/specifications/` | ✅ MIGRATED |
 | `ROME/life-cycle/` | `ROME_framework_maintenance/archive/life-cycle/` | ✅ ARCHIVED |
 
 ---

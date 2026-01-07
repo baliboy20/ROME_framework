@@ -42,24 +42,27 @@
 
 ### Remaining Structure
 ```
-rome-core/              # Foundation plugin
-  └── docs/             # Core framework documentation
-      ├── foundation/       # Core principles, lexicon (MIGRATED)
-      ├── governance/       # Document standards, policies (MIGRATED)
-      └── specifications/   # Framework specs (MIGRATED)
-rome-p0-bootup/         # Phase 0
-rome-p1-aordl/          # Phase 1
-rome-p2-analysis/       # Phase 2
-rome-p3-design/         # Phase 3
-rome-p4-config/         # Phase 4
-rome-p5-generation/     # Phase 5
-rome-qa/                # QA
-rome-full/              # Meta-plugin
-ROME_architect/         # Archie working directory
-ROME_framework_maintenance/
+ROME/                   # Operational framework (all plugins)
+  ├── rome-core/        # Foundation plugin
+  │   └── docs/         # Core framework documentation
+  │       ├── foundation/       # Core principles, lexicon
+  │       ├── governance/       # Document standards, policies
+  │       └── specifications/   # Framework specs
+  ├── rome-p0-bootup/   # Phase 0: Project bootstrap
+  ├── rome-p1-aordl/    # Phase 1: AORDL requirements
+  ├── rome-p2-analysis/ # Phase 2: Requirements analysis
+  ├── rome-p3-design/   # Phase 3: System design
+  ├── rome-p4-config/   # Phase 4: Workspace configuration
+  ├── rome-p5-generation/ # Phase 5: Code generation
+  ├── rome-qa/          # Quality assurance
+  └── rome-full/        # Meta-plugin (complete bundle)
+
+ROME_architect/         # Archie working directory (support)
+ROME_framework_maintenance/  # Framework improvement (support)
   ├── proposals/        # Active proposals
   ├── implemented-proposals/ # Implemented proposals
-  └── archive/          # Historical docs (ARCHIVED)
+  └── archive/          # Historical docs
+test-project-to-validate-framework-v1/  # Testing (ancillary)
 ```
 
 ---
@@ -76,21 +79,21 @@ The ROME Framework has migrated from a **monolithic directory structure** (`/ROM
 
 ### 🆕 NEW: Plugin Architecture (Currently Active)
 
-These directories represent the **new phase-based plugin architecture** implemented via ROME-PROP-018:
+These directories represent the **new phase-based plugin architecture** implemented via ROME-PROP-018, now consolidated under `ROME/`:
 
 | Directory | Size | Status | Purpose |
 |-----------|------|--------|---------|
-| `rome-core/` | 896K | ✅ ACTIVE | Foundation plugin with shared libraries, Roma orchestrator, MCP server |
-| `rome-p0-bootup/` | 32K | ✅ ACTIVE | Phase 0: Project bootstrap (Bootstrap agent) |
-| `rome-p1-aordl/` | 52K | ✅ ACTIVE | Phase 1: AORDL requirements (Talib P1 agent) |
-| `rome-p2-analysis/` | 52K | ✅ ACTIVE | Phase 2: Requirements analysis (Talib P2 agent) |
-| `rome-p3-design/` | 100K | ✅ ACTIVE | Phase 3: System design (PMA, Clara agents) |
-| `rome-p4-config/` | 84K | ✅ ACTIVE | Phase 4: Workspace configuration (Lucien agent) |
-| `rome-p5-generation/` | 72K | ✅ ACTIVE | Phase 5: Parallel code generation (Ashok, Reena, Charlie) |
-| `rome-qa/` | 52K | ✅ ACTIVE | Quality assurance (Sarah agent) |
-| `rome-full/` | 16K | ✅ ACTIVE | Meta-plugin (complete framework bundle) |
+| `ROME/rome-core/` | 896K | ✅ ACTIVE | Foundation plugin with shared libraries, Roma orchestrator, MCP server |
+| `ROME/rome-p0-bootup/` | 32K | ✅ ACTIVE | Phase 0: Project bootstrap (Bootstrap agent) |
+| `ROME/rome-p1-aordl/` | 52K | ✅ ACTIVE | Phase 1: AORDL requirements (Talib P1 agent) |
+| `ROME/rome-p2-analysis/` | 52K | ✅ ACTIVE | Phase 2: Requirements analysis (Talib P2 agent) |
+| `ROME/rome-p3-design/` | 100K | ✅ ACTIVE | Phase 3: System design (PMA, Clara agents) |
+| `ROME/rome-p4-config/` | 84K | ✅ ACTIVE | Phase 4: Workspace configuration (Lucien agent) |
+| `ROME/rome-p5-generation/` | 72K | ✅ ACTIVE | Phase 5: Parallel code generation (Ashok, Reena, Charlie) |
+| `ROME/rome-qa/` | 52K | ✅ ACTIVE | Quality assurance (Sarah agent) |
+| `ROME/rome-full/` | 16K | ✅ ACTIVE | Meta-plugin (complete framework bundle) |
 
-**Total New Architecture:** ~1.4MB, 9 plugins, 10 agents
+**Total New Architecture:** ~1.4MB, 9 plugins, 10 agents (all in `ROME/`)
 
 ---
 
@@ -150,18 +153,18 @@ These directories contain **active governance and maintenance** documents:
 
 | Old Location | New Location | Migration Status |
 |--------------|--------------|------------------|
-| `ROME/robot-templates/ashok/CLAUDE.md` | `rome-p5-generation/agents/ashok/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/bootstrap/CLAUDE.md` | `rome-p0-bootup/agents/bootstrap/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/charlie/CLAUDE.md` | `rome-p5-generation/agents/charlie/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/clara/CLAUDE.md` | `rome-p3-design/agents/clara/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/lucien/CLAUDE.md` | `rome-p4-config/agents/lucien/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/pma/CLAUDE.md` | `rome-p3-design/agents/pma/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/reena/CLAUDE.md` | `rome-p5-generation/agents/reena/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/roma/CLAUDE.md` | `rome-core/agents/roma/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/sarah/CLAUDE.md` | `rome-qa/agents/sarah/AGENT.md` | ✅ MIGRATED |
-| `ROME/robot-templates/talib/CLAUDE.md` | `rome-p1-aordl/agents/talib/AGENT.md` (P1)<br>`rome-p2-analysis/agents/talib/AGENT.md` (P2) | ✅ MIGRATED |
-| `ROME/skills/*` (40 skills) | `rome-*/skills/` (distributed across plugins) | ✅ MIGRATED |
-| `ROME/templates/aordl/*` | `rome-core/templates/aordl/` | ✅ MIGRATED |
+| `ROME/robot-templates/ashok/CLAUDE.md` | `ROME/rome-p5-generation/agents/ashok/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/bootstrap/CLAUDE.md` | `ROME/rome-p0-bootup/agents/bootstrap/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/charlie/CLAUDE.md` | `ROME/rome-p5-generation/agents/charlie/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/clara/CLAUDE.md` | `ROME/rome-p3-design/agents/clara/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/lucien/CLAUDE.md` | `ROME/rome-p4-config/agents/lucien/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/pma/CLAUDE.md` | `ROME/rome-p3-design/agents/pma/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/reena/CLAUDE.md` | `ROME/rome-p5-generation/agents/reena/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/roma/CLAUDE.md` | `ROME/rome-core/agents/roma/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/sarah/CLAUDE.md` | `ROME/rome-qa/agents/sarah/AGENT.md` | ✅ MIGRATED |
+| `ROME/robot-templates/talib/CLAUDE.md` | `ROME/rome-p1-aordl/agents/talib/AGENT.md` (P1)<br>`ROME/rome-p2-analysis/agents/talib/AGENT.md` (P2) | ✅ MIGRATED |
+| `ROME/skills/*` (40 skills) | `ROME/rome-*/skills/` (distributed across plugins) | ✅ MIGRATED |
+| `ROME/templates/aordl/*` | `ROME/rome-core/templates/aordl/` | ✅ MIGRATED |
 
 **Status:** All robot templates, skills, and templates have been successfully migrated to the plugin architecture.
 
@@ -174,17 +177,17 @@ These directories contain **active governance and maintenance** documents:
 **Old robots migrated to plugin agents:**
 ```
 ROME/robot-templates/
-├── ashok/           → rome-p5-generation/agents/ashok/
-├── bootstrap/       → rome-p0-bootup/agents/bootstrap/
-├── charlie/         → rome-p5-generation/agents/charlie/
-├── clara/           → rome-p3-design/agents/clara/
-├── lucien/          → rome-p4-config/agents/lucien/
-├── pma/             → rome-p3-design/agents/pma/
-├── reena/           → rome-p5-generation/agents/reena/
-├── roma/            → rome-core/agents/roma/
-├── sarah/           → rome-qa/agents/sarah/
-└── talib/           → rome-p1-aordl/agents/talib/ (P1 mode)
-                     → rome-p2-analysis/agents/talib/ (P2 mode)
+├── ashok/           → ROME/rome-p5-generation/agents/ashok/
+├── bootstrap/       → ROME/rome-p0-bootup/agents/bootstrap/
+├── charlie/         → ROME/rome-p5-generation/agents/charlie/
+├── clara/           → ROME/rome-p3-design/agents/clara/
+├── lucien/          → ROME/rome-p4-config/agents/lucien/
+├── pma/             → ROME/rome-p3-design/agents/pma/
+├── reena/           → ROME/rome-p5-generation/agents/reena/
+├── roma/            → ROME/rome-core/agents/roma/
+├── sarah/           → ROME/rome-qa/agents/sarah/
+└── talib/           → ROME/rome-p1-aordl/agents/talib/ (P1 mode)
+                     → ROME/rome-p2-analysis/agents/talib/ (P2 mode)
 ```
 
 **Recommendation:** DELETE entire `ROME/robot-templates/` directory (all content migrated)
@@ -197,19 +200,19 @@ ROME/robot-templates/
 - Old skill registry system replaced by plugin manifests
 
 **New Distribution:**
-- P1 skills → `rome-p1-aordl/skills/`
-- P2 skills → `rome-p2-analysis/skills/`
-- P3 skills → `rome-p3-design/skills/`
-- P4 skills → `rome-p4-config/skills/`
-- P5 skills → `rome-p5-generation/skills/`
-- QA skills → `rome-qa/skills/`
+- P1 skills → `ROME/rome-p1-aordl/skills/`
+- P2 skills → `ROME/rome-p2-analysis/skills/`
+- P3 skills → `ROME/rome-p3-design/skills/`
+- P4 skills → `ROME/rome-p4-config/skills/`
+- P5 skills → `ROME/rome-p5-generation/skills/`
+- QA skills → `ROME/rome-qa/skills/`
 
 **Recommendation:** DELETE entire `ROME/skills/` directory (all content migrated to plugins)
 
 ### ROME/templates/ (SUPERSEDED)
 
 **Old templates migrated:**
-- `ROME/templates/aordl/*` → `rome-core/templates/aordl/`
+- `ROME/templates/aordl/*` → `ROME/rome-core/templates/aordl/`
 
 **Recommendation:** DELETE `ROME/templates/` directory (content migrated)
 
