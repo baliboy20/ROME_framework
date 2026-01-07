@@ -2,9 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 |
-| **Version** | 2.5 |
-| **Date** | 2025-12-18T00:00:00Z |
+| **Document UID** | ROME-GOV-002 || **Version** | 2.6 |
+| **Date** | 2026-01-07T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -133,6 +132,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-005 | Story ID Semantic Correction | `/ROME_framework_maintenance/proposals/ROME-PROP-005-story-id-semantic-correction.md` | Implemented |
 | ROME-PROP-006 | Integration Testing Framework | `/ROME_framework_maintenance/proposals/ROME-PROP-006-integration-testing-framework.md` | Proposal |
 | ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
+| ROME-PROP-008 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-008-phase-based-plugin-architecture.md` | Proposal |
 
 ### Migration Documents
 
@@ -211,3 +211,4 @@ This registry MUST be updated when:
 | 2.3 | 2025-12-18T00:00:00Z | Registered ROME-PROP-007 (Event Log Activity Tracking) |
 | 2.4 | 2025-12-18T00:00:00Z | Registered ROME-GOV-008 (Activity Log Format) |
 | 2.5 | 2025-12-18T00:00:00Z | Added MIG type code, registered ROME-MIG-001 (Migration Guide), updated ROME-PROP-007 status to "In Progress (40%)" |
+| 2.6 | 2026-01-07T00:00:00Z | Registered ROME-PROP-008 (Phase-Based Plugin Architecture) |
