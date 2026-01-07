@@ -15,7 +15,7 @@ flowchart TD
 
     %% Phase 0: Bootstrap
     P0[P0: BOOTSTRAP<br/>Agent: Bootstrap]
-    P0_OUT[Output:<br/>• Project structure<br/>• _requirements/ folder<br/>• _analysis/ folder<br/>• _design/ folder<br/>• _config/ folder]
+    P0_OUT[Output:<br/>• Project structure<br/>• ARTIFACTS/ folder<br/>• SOURCE/ folder<br/>• _user_input/ folder]
 
     USER --> P0
     P0 -->|"Operations:<br/>• Create directories<br/>• Initialize structure"| P0_OUT
@@ -24,7 +24,7 @@ flowchart TD
     P1[P1: AORDL REQUIREMENTS<br/>Agent: Talib P1]
     P1_IN[Input:<br/>• User needs<br/>• PRD/BRD docs<br/>• Business requirements]
     P1_OPS[Operations:<br/>• Create AORDL requirements<br/>• Validate 13 required fields<br/>• Transform to BDD format]
-    P1_OUT[Output:<br/>• _requirements/*.yaml<br/>• AORDL requirement files<br/>• BDD test scenarios]
+    P1_OUT[Output:<br/>• ARTIFACTS/_requirements/*.yaml<br/>• AORDL requirement files<br/>• BDD test scenarios]
 
     P0_OUT --> P1_IN
     P1_IN --> P1
@@ -39,9 +39,9 @@ flowchart TD
 
     %% Phase 2: Analysis
     P2[P2: ANALYSIS<br/>Agent: Talib P2]
-    P2_IN[Input:<br/>• _requirements/*.yaml<br/>• AORDL requirements]
+    P2_IN[Input:<br/>• ARTIFACTS/_requirements/*.yaml<br/>• AORDL requirements]
     P2_OPS[Operations:<br/>• Analyze requirements<br/>• Extract entities<br/>• Identify dependencies<br/>• Decompose features<br/>• Generate user stories]
-    P2_OUT[Output:<br/>• _analysis/entities.md<br/>• _analysis/dependencies.md<br/>• _analysis/user-stories.md<br/>• Entity models<br/>• Data relationships]
+    P2_OUT[Output:<br/>• ARTIFACTS/_analysis/entities.md<br/>• ARTIFACTS/_analysis/dependencies.md<br/>• ARTIFACTS/_analysis/user-stories.md<br/>• Entity models<br/>• Data relationships]
 
     P2_IN --> P2
     P2 --> P2_OPS
@@ -55,10 +55,10 @@ flowchart TD
 
     %% Phase 3: Design
     P3[P3: DESIGN<br/>Agents: PMA, Clara]
-    P3_IN[Input:<br/>• _analysis/entities.md<br/>• _analysis/dependencies.md<br/>• Entity models]
+    P3_IN[Input:<br/>• ARTIFACTS/_analysis/entities.md<br/>• ARTIFACTS/_analysis/dependencies.md<br/>• Entity models]
     P3_OPS_PMA[PMA Operations:<br/>• Design architecture<br/>• Define API endpoints<br/>• Design data models<br/>• Design authentication<br/>• Define tech stack]
     P3_OPS_CLARA[Clara Operations:<br/>• Validate designs<br/>• Check completeness<br/>• Verify data dictionary<br/>• Ensure consistency]
-    P3_OUT[Output:<br/>• _design/architecture.md<br/>• _design/api-spec.yaml<br/>• _design/data-dictionary.md<br/>• _design/tech-stack.yaml<br/>• Architecture diagrams<br/>• Component designs]
+    P3_OUT[Output:<br/>• ARTIFACTS/_design/architecture.md<br/>• ARTIFACTS/_design/api-spec.yaml<br/>• ARTIFACTS/_design/data-dictionary.md<br/>• ARTIFACTS/_design/tech-stack.yaml<br/>• Architecture diagrams<br/>• Component designs]
 
     P3_IN --> P3
     P3 --> P3_OPS_PMA
@@ -73,9 +73,9 @@ flowchart TD
 
     %% Phase 4: Configuration
     P4[P4: CONFIGURATION<br/>Agent: Lucien]
-    P4_IN[Input:<br/>• _design/architecture.md<br/>• _design/tech-stack.yaml<br/>• _design/data-dictionary.md]
+    P4_IN[Input:<br/>• ARTIFACTS/_design/architecture.md<br/>• ARTIFACTS/_design/tech-stack.yaml<br/>• ARTIFACTS/_design/data-dictionary.md]
     P4_OPS[Operations:<br/>• Scaffold workspace<br/>• Configure build system<br/>• Setup test framework<br/>• Create project structure<br/>• Generate tech specs<br/>• Setup CI/CD]
-    P4_OUT[Output:<br/>• _config/workspace.yaml<br/>• _config/build-config.json<br/>• _config/scaffolding-manifest.json<br/>• Project directories<br/>• Build tools configured<br/>• Test framework ready]
+    P4_OUT[Output:<br/>• ARTIFACTS/_config/workspace.yaml<br/>• ARTIFACTS/_config/build-config.json<br/>• ARTIFACTS/_config/scaffolding-manifest.json<br/>• SOURCE/ directories<br/>• Build tools configured<br/>• Test framework ready]
 
     P4_IN --> P4
     P4 --> P4_OPS
@@ -88,19 +88,19 @@ flowchart TD
     QG45 -->|APPROVE| P5_IN
 
     %% Phase 5: Generation (Parallel)
-    P5_IN[Input:<br/>• _config/scaffolding-manifest.json<br/>• _design/api-spec.yaml<br/>• _design/data-dictionary.md<br/>• All previous artifacts]
+    P5_IN[Input:<br/>• ARTIFACTS/_config/scaffolding-manifest.json<br/>• ARTIFACTS/_design/api-spec.yaml<br/>• ARTIFACTS/_design/data-dictionary.md<br/>• All previous artifacts]
 
     P5_ASHOK[P5A: BACKEND<br/>Agent: Ashok]
     P5_ASHOK_OPS[Operations:<br/>• Generate database schema<br/>• Generate ORM models<br/>• Generate API endpoints<br/>• Generate auth middleware<br/>• Generate seed data]
-    P5_ASHOK_OUT[Output:<br/>• src/backend/models/<br/>• src/backend/controllers/<br/>• src/backend/middleware/<br/>• migrations/<br/>• seeds/]
+    P5_ASHOK_OUT[Output:<br/>• SOURCE/src/backend/models/<br/>• SOURCE/src/backend/controllers/<br/>• SOURCE/src/backend/middleware/<br/>• SOURCE/migrations/<br/>• SOURCE/seeds/]
 
     P5_REENA[P5B: FRONTEND<br/>Agent: Reena]
     P5_REENA_OPS[Operations:<br/>• Generate UI screens<br/>• Generate UI components<br/>• Generate state management<br/>• Generate API client<br/>• Generate routing]
-    P5_REENA_OUT[Output:<br/>• src/frontend/screens/<br/>• src/frontend/components/<br/>• src/frontend/state/<br/>• src/frontend/services/]
+    P5_REENA_OUT[Output:<br/>• SOURCE/src/frontend/screens/<br/>• SOURCE/src/frontend/components/<br/>• SOURCE/src/frontend/state/<br/>• SOURCE/src/frontend/services/]
 
     P5_CHARLIE[P5C: INTEGRATION<br/>Agent: Charlie]
     P5_CHARLIE_OPS[Operations:<br/>• Generate API integration<br/>• Generate E2E tests<br/>• Generate integration tests<br/>• Wire components together<br/>• Generate test data]
-    P5_CHARLIE_OUT[Output:<br/>• tests/e2e/<br/>• tests/integration/<br/>• test data fixtures<br/>• Integration wiring]
+    P5_CHARLIE_OUT[Output:<br/>• SOURCE/tests/e2e/<br/>• SOURCE/tests/integration/<br/>• test data fixtures<br/>• Integration wiring]
 
     P5_IN --> P5_ASHOK
     P5_IN --> P5_REENA
@@ -116,7 +116,7 @@ flowchart TD
     P5_CHARLIE_OPS --> P5_CHARLIE_OUT
 
     %% Convergence
-    P5_OUT[Combined Output:<br/>• src/backend/<br/>• src/frontend/<br/>• tests/<br/>• Complete application code]
+    P5_OUT[Combined Output:<br/>• SOURCE/src/backend/<br/>• SOURCE/src/frontend/<br/>• SOURCE/tests/<br/>• Complete application code]
 
     P5_ASHOK_OUT --> P5_OUT
     P5_REENA_OUT --> P5_OUT
@@ -155,24 +155,25 @@ flowchart TD
 
 | From Phase | To Phase | Handover Artifacts | Quality Gate |
 |------------|----------|-------------------|--------------|
-| P0 (Bootstrap) | P1 (AORDL) | Project structure, empty _requirements/ folder | None |
-| P1 (AORDL) | P2 (Analysis) | _requirements/*.yaml (AORDL files) | Sarah validates AORDL structure |
-| P2 (Analysis) | P3 (Design) | _analysis/entities.md, dependencies.md, user-stories.md | Sarah validates analysis completeness |
-| P3 (Design) | P4 (Config) | _design/architecture.md, api-spec.yaml, data-dictionary.md | Sarah validates design + data dictionary |
-| P4 (Config) | P5 (Generation) | _config/scaffolding-manifest.json, workspace ready | Sarah validates workspace configuration |
-| P5 (Generation) | Done | src/ (complete codebase), tests/ | Sarah validates code + tests + traceability |
+| P0 (Bootstrap) | P1 (AORDL) | Project structure, ARTIFACTS/ folder, SOURCE/ folder | None |
+| P1 (AORDL) | P2 (Analysis) | ARTIFACTS/_requirements/*.yaml (AORDL files) | Sarah validates AORDL structure |
+| P2 (Analysis) | P3 (Design) | ARTIFACTS/_analysis/entities.md, dependencies.md, user-stories.md | Sarah validates analysis completeness |
+| P3 (Design) | P4 (Config) | ARTIFACTS/_design/architecture.md, api-spec.yaml, data-dictionary.md | Sarah validates design + data dictionary |
+| P4 (Config) | P5 (Generation) | ARTIFACTS/_config/scaffolding-manifest.json, SOURCE/ scaffolded | Sarah validates workspace configuration |
+| P5 (Generation) | Done | SOURCE/ (complete codebase, tests) | Sarah validates code + tests + traceability |
 
 ### Operations Per Phase
 
 **P0 - Bootstrap:**
-- Create directory structure (_requirements/, _analysis/, _design/, _config/, src/, tests/)
+- Create directory structure (ARTIFACTS/, SOURCE/, _user_input/)
+- Create ARTIFACTS subdirectories (_requirements/, _analysis/, _design/, _config/)
 - Initialize project configuration
 
 **P1 - AORDL (Talib P1):**
 - Capture requirements in AORDL format (13 required fields)
 - Validate AORDL syntax
 - Transform to BDD scenarios
-- Store in _requirements/*.yaml
+- Store in ARTIFACTS/_requirements/*.yaml
 
 **P2 - Analysis (Talib P2):**
 - Parse AORDL requirements
@@ -180,7 +181,7 @@ flowchart TD
 - Identify dependencies between requirements
 - Decompose into functional units
 - Generate user stories
-- Store in _analysis/
+- Store in ARTIFACTS/_analysis/
 
 **P3 - Design (PMA + Clara):**
 - PMA: Design system architecture
@@ -189,7 +190,7 @@ flowchart TD
 - PMA: Create data dictionary
 - Clara: Validate design completeness
 - Clara: Check data dictionary consistency
-- Store in _design/
+- Store in ARTIFACTS/_design/
 
 **P4 - Configuration (Lucien):**
 - Scaffold workspace based on tech stack
@@ -197,13 +198,13 @@ flowchart TD
 - Setup test framework (Jest, Pytest, etc.)
 - Generate scaffolding manifest
 - Setup CI/CD pipelines
-- Store in _config/ and project root
+- Store in ARTIFACTS/_config/ and scaffold SOURCE/
 
 **P5 - Generation (Ashok + Reena + Charlie, Parallel):**
 - Ashok: Generate backend (models, controllers, middleware, migrations)
 - Reena: Generate frontend (screens, components, state management)
 - Charlie: Generate integration layer (API client, tests, wiring)
-- Store in src/backend/, src/frontend/, tests/
+- Store in SOURCE/src/backend/, SOURCE/src/frontend/, SOURCE/tests/
 
 **QA - Sarah (All Gates):**
 - Gate P1→P2: Validate AORDL structure
@@ -234,28 +235,32 @@ flowchart TD
 ### Artifact Locations
 ```
 project/
-├── _requirements/       # P1 output
-│   └── *.yaml
-├── _analysis/          # P2 output
-│   ├── entities.md
-│   ├── dependencies.md
-│   └── user-stories.md
-├── _design/            # P3 output
-│   ├── architecture.md
-│   ├── api-spec.yaml
-│   ├── data-dictionary.md
-│   └── tech-stack.yaml
-├── _config/            # P4 output
-│   ├── workspace.yaml
-│   ├── build-config.json
-│   └── scaffolding-manifest.json
-├── src/                # P5 output
-│   ├── backend/
-│   └── frontend/
-└── tests/              # P5 output
-    ├── unit/
-    ├── integration/
-    └── e2e/
+├── _user_input/              # P0 created (user provides PRDs/BRDs)
+│   └── raw-requirements/
+├── ARTIFACTS/                # P0 created (workflow artifacts)
+│   ├── _requirements/        # P1 output
+│   │   └── *.yaml
+│   ├── _analysis/            # P2 output
+│   │   ├── entities.md
+│   │   ├── dependencies.md
+│   │   └── user-stories.md
+│   ├── _design/              # P3 output
+│   │   ├── architecture.md
+│   │   ├── api-spec.yaml
+│   │   ├── data-dictionary.md
+│   │   └── tech-stack.yaml
+│   └── _config/              # P4 output
+│       ├── workspace.yaml
+│       ├── build-config.json
+│       └── scaffolding-manifest.json
+└── SOURCE/                   # P4 scaffolded, P5 populated
+    ├── src/
+    │   ├── backend/
+    │   └── frontend/
+    └── tests/
+        ├── unit/
+        ├── integration/
+        └── e2e/
 ```
 
 ---
@@ -286,19 +291,22 @@ Time →
 ## Traceability Chain
 
 ```
-User Requirement
+_user_input/raw-requirements/user-requirements.md (User Requirement)
     ↓
-AORDL Requirement (REQ-001.yaml)
+ARTIFACTS/_requirements/REQ-001.yaml (AORDL Requirement)
     ↓
-Analysis Entity (User entity)
+ARTIFACTS/_analysis/entities.md (User entity)
     ↓
-Design Artifact (User API spec)
+ARTIFACTS/_design/api-spec.yaml (User API spec)
     ↓
-Configuration (User model scaffold)
+ARTIFACTS/_config/scaffolding-manifest.json (User model scaffold)
     ↓
-Generated Code (User.model.ts, UserController.ts, UserScreen.tsx)
+SOURCE/src/backend/models/User.model.ts
+SOURCE/src/backend/controllers/UserController.ts
+SOURCE/src/frontend/screens/UserScreen.tsx
     ↓
-Tests (user.test.ts, user-integration.test.ts)
+SOURCE/tests/user.test.ts
+SOURCE/tests/user-integration.test.ts
 ```
 
 Sarah validates this traceability chain at final quality gate.

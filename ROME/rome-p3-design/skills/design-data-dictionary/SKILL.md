@@ -20,7 +20,7 @@ Generates data dictionary from requirements matrix. Extracts entities, defines f
 
 ### Optional
 - `output_file` (string): File path to write data-dictionary.yaml
-  - Default: ARTIFACTS/03-design/data-models/data-dictionary.yaml
+  - Default: ARTIFACTS/_design/data-models/data-dictionary.yaml
 
 ## Execution
 
@@ -41,8 +41,8 @@ Returns:
 
 ```bash
 /design-data-dictionary \
-  --requirements_matrix_file ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml \
-  --output_file ARTIFACTS/03-design/data-models/data-dictionary.yaml
+  --requirements_matrix_file ARTIFACTS/_requirements/requirements-matrix.yaml \
+  --output_file ARTIFACTS/_design/data-models/data-dictionary.yaml
 ```
 
 ## Dependencies

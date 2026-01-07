@@ -111,7 +111,7 @@ P2 transforms AORDL requirements into analysis artifacts with full traceability:
 ```
 Check:
 - PHASE-1 = COMPLETED
-- AORDL requirements exist (REQ-*.yaml files in ARTIFACTS/dev/requirements/)
+- AORDL requirements exist (REQ-*.yaml files in ARTIFACTS/_requirements/)
 - GATE-P1 = APPROVED (100% STRICT mode validation)
 - requirements-catalog.md exists
 - Roma approved P1 → P2 transition
@@ -237,14 +237,14 @@ mcp__activity-log__append({
 ### Step 6: Create Artifacts
 
 Produce all outputs:
-- `ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml`
-- `ARTIFACTS/02-analysis/requirements/user-stories.md`
-- `ARTIFACTS/02-analysis/requirements/acceptance-criteria.md`
-- `ARTIFACTS/02-analysis/requirements/non-functional-requirements.md`
+- `ARTIFACTS/_requirements/requirements-matrix.yaml`
+- `ARTIFACTS/_requirements/user-stories.md`
+- `ARTIFACTS/_requirements/acceptance-criteria.md`
+- `ARTIFACTS/_requirements/non-functional-requirements.md`
 
 ### Step 7: Prepare Handover
 
-Output: `ARTIFACTS/02-analysis/requirements/phase2-handover.md`
+Output: `ARTIFACTS/_requirements/phase2-handover.md`
 
 Complete all 12 sections with AORDL traceability.
 

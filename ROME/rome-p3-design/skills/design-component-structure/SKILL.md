@@ -21,7 +21,7 @@ Designs component architecture for frontend applications. Defines component hier
 ### Optional
 - `design_system_file` (string): Path to design-system.md from Clara (if available)
 - `output_file` (string): File path to write component structure
-  - Default: ARTIFACTS/03-design/architecture/components.json
+  - Default: ARTIFACTS/_design/architecture/components.json
 
 ## Output
 

@@ -22,7 +22,7 @@ Designs the business logic service layer. Services orchestrate use cases, implem
 
 ### Optional
 - `output_file` (string): File path to write service layer design
-  - Default: ARTIFACTS/03-design/architecture/service-layer.md
+  - Default: ARTIFACTS/_design/architecture/service-layer.md
 
 ## Execution
 
@@ -42,8 +42,8 @@ Returns:
 
 ```bash
 /design-service-layer \
-  --use_cases_file ARTIFACTS/03-design/design-decisions/use-cases.md \
-  --data_dictionary_file ARTIFACTS/03-design/data-models/data-dictionary.yaml
+  --use_cases_file ARTIFACTS/_design/design-decisions/use-cases.md \
+  --data_dictionary_file ARTIFACTS/_design/data-models/data-dictionary.yaml
 ```
 
 ## Dependencies

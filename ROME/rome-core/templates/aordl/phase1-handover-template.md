@@ -25,11 +25,11 @@ Phase 1 complete. **[count] AORDL requirements** created, validated in STRICT mo
 
 | Artifact | Location | Status | Count/Size |
 |----------|----------|--------|------------|
-| AORDL Requirements | ARTIFACTS/01-requirements/REQ-*.yaml | ✅ Complete | [count] files |
-| Requirements Catalog | ARTIFACTS/01-requirements/requirements-catalog.md | ✅ Complete | 1 file |
-| Validation Report | ARTIFACTS/01-requirements/aordl-validation-report.md | ✅ Complete | 100% pass rate |
-| BDD Scenarios | ARTIFACTS/01-requirements/bdd-scenarios.md | ✅ Complete | [count] scenarios |
-| Phase Handover | ARTIFACTS/01-requirements/phase1-handover.md | ✅ Complete | This document |
+| AORDL Requirements | ARTIFACTS/_requirements/REQ-*.yaml | ✅ Complete | [count] files |
+| Requirements Catalog | ARTIFACTS/_requirements/requirements-catalog.md | ✅ Complete | 1 file |
+| Validation Report | ARTIFACTS/_requirements/aordl-validation-report.md | ✅ Complete | 100% pass rate |
+| BDD Scenarios | ARTIFACTS/_requirements/bdd-scenarios.md | ✅ Complete | [count] scenarios |
+| Phase Handover | ARTIFACTS/_requirements/phase1-handover.md | ✅ Complete | This document |
 
 ---
 
@@ -175,13 +175,13 @@ Phase 1 complete. **[count] AORDL requirements** created, validated in STRICT mo
 
 ### Input Location
 
-**AORDL Requirements:** `ARTIFACTS/01-requirements/REQ-*.yaml`
+**AORDL Requirements:** `ARTIFACTS/_requirements/REQ-*.yaml`
 
 ### Next Steps
 
 1. **Execute P2 Analysis Orchestration**
    ```bash
-   /execute-p2-analysis --requirements-directory ARTIFACTS/01-requirements --artifacts-directory ARTIFACTS
+   /execute-p2-analysis --requirements-directory ARTIFACTS/_requirements --artifacts-directory ARTIFACTS
    ```
 
 2. **P2 Will Analyze Requirements Across 8 Dimensions:**
@@ -387,7 +387,7 @@ Phase 1 complete. **[count] AORDL requirements** created, validated in STRICT mo
 ## Appendix A: File Manifest
 
 ```
-ARTIFACTS/01-requirements/
+ARTIFACTS/_requirements/
 ├── REQ-001.yaml
 ├── REQ-002.yaml
 ├── REQ-003.yaml

@@ -75,20 +75,20 @@ Skills are invoked via slash commands:
 
 ```bash
 /design-data-dictionary \
-  --requirements_matrix_file ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml
+  --requirements_matrix_file ARTIFACTS/_requirements/requirements-matrix.yaml
 
 /design-api-controllers \
-  --api_spec_file ARTIFACTS/03-design/api-contracts/api-spec.yaml \
+  --api_spec_file ARTIFACTS/_design/api-contracts/api-spec.yaml \
   --framework express
 
 /generate-architecture-diagram \
-  --component_structure_file ARTIFACTS/03-design/architecture/components.json \
+  --component_structure_file ARTIFACTS/_design/architecture/components.json \
   --diagram_type layered
 ```
 
 ## Outputs
 
-Phase 3 produces the following artifacts in `ARTIFACTS/03-design/`:
+Phase 3 produces the following artifacts in `ARTIFACTS/_design/`:
 
 - `tech-stack.yaml` - Technology selections with versions
 - `data-dictionary.yaml` - Single source of truth for data models

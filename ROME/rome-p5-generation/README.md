@@ -88,7 +88,7 @@ Ashok → Reena → Charlie form a dependency chain, but within each layer, work
 All generated code follows feature-based organization:
 
 ```
-[workspace]/
+SOURCE/[workspace]/
 └── features/
     ├── [feature_name]/
     │   ├── TRACEABILITY.md         # ✓ REQUIRED
@@ -122,9 +122,9 @@ Generate complete database layer (schema, migrations, ORM models, seed data)
 - tech-stack.md (database technology choice)
 
 **Outputs:**
-- migrations/001_initial_schema.sql
-- models/ (ORM entities)
-- seeds/ (development and test data)
+- SOURCE/migrations/001_initial_schema.sql
+- SOURCE/models/ (ORM entities)
+- SOURCE/seeds/ (development and test data)
 
 #### /rome-p5:generate-api
 
@@ -141,10 +141,10 @@ Generate API layer (endpoints, controllers, authentication middleware)
 - security-requirements.md (for auth)
 
 **Outputs:**
-- routes/ (endpoint definitions)
-- controllers/ (HTTP handlers)
-- middleware/ (authentication, authorization)
-- services/ (business logic)
+- SOURCE/routes/ (endpoint definitions)
+- SOURCE/controllers/ (HTTP handlers)
+- SOURCE/middleware/ (authentication, authorization)
+- SOURCE/services/ (business logic)
 
 #### /rome-p5:generate-ui
 
@@ -161,10 +161,10 @@ Generate UI layer (screens, components, navigation)
 - design-system.md (styling specifications)
 
 **Outputs:**
-- screens/ or pages/ (screen implementations)
-- components/ (reusable UI components)
-- navigation/ (routing configuration)
-- state/ (state management)
+- SOURCE/screens/ or SOURCE/pages/ (screen implementations)
+- SOURCE/components/ (reusable UI components)
+- SOURCE/navigation/ (routing configuration)
+- SOURCE/state/ (state management)
 
 ### Parallel Generation Workflow
 
@@ -200,7 +200,7 @@ Step 4: Integration & Testing
 Each agent generates code organized by feature (ROME-PROP-016):
 
 ```
-workspace/
+SOURCE/workspace/
 └── features/
     ├── user-management/
     │   ├── TRACEABILITY.md          # REQ-001 → User entity → API → Screen

@@ -20,7 +20,7 @@ Generates comprehensive technical specifications document. Documents workspace d
 
 ### Optional
 - `output_file` (string): Path to write technical specifications
-  - Default: ARTIFACTS/04-config/technical-specs/technical-specs.md
+  - Default: ARTIFACTS/_config/technical-specs/technical-specs.md
 
 ## Output
 

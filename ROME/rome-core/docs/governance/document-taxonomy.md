@@ -113,7 +113,7 @@ All documents created within ROME projects. Used for sponsor interaction, robot 
 ---
 
 ### 7. Test Artifacts
-**Location:** `/SOURCE/[workspace]/tests/`, `/ARTIFACTS/05-generation/`
+**Location:** `/SOURCE/[workspace]/tests/`, `/ARTIFACTS/_generation/`
 **Audience:** Quality assurance, validation
 **Purpose:** Test data, fixtures, test results
 

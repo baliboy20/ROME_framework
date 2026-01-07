@@ -44,8 +44,8 @@ Returns:
 
 ```bash
 /scaffold-workspace \
-  --actionlist_file ARTIFACTS/03-design/design-decisions/actionlist.md \
-  --tech_stack_file ARTIFACTS/03-design/design-decisions/tech-stack.yaml \
+  --actionlist_file ARTIFACTS/_design/design-decisions/actionlist.md \
+  --tech_stack_file ARTIFACTS/_design/design-decisions/tech-stack.yaml \
   --source_root SOURCE/
 ```
 

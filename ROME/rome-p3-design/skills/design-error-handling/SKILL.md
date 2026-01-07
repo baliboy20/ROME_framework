@@ -20,7 +20,7 @@ Designs error handling strategy across all layers. Defines exception hierarchy, 
 
 ### Optional
 - `output_file` (string): File path to write error handling design
-  - Default: ARTIFACTS/03-design/architecture/error-handling-design.md
+  - Default: ARTIFACTS/_design/architecture/error-handling-design.md
 
 ## Output
 

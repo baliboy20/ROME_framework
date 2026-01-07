@@ -23,7 +23,7 @@ Generates environment configuration files for all environments (dev, test, stagi
 - `environments` (string): Comma-separated list of environments
   - Default: dev,test,staging,prod
 - `output_doc` (string): Path to write environment-config.md
-  - Default: ARTIFACTS/04-config/environment-config/environment-config.md
+  - Default: ARTIFACTS/_config/environment-config/environment-config.md
 
 ## Execution
 
@@ -45,7 +45,7 @@ Returns:
 ```bash
 /configure-environment \
   --workspace SOURCE/api-workspace \
-  --system_architecture_file ARTIFACTS/03-design/architecture/system-architecture.md \
+  --system_architecture_file ARTIFACTS/_design/architecture/system-architecture.md \
   --environments dev,test,staging,prod
 ```
 

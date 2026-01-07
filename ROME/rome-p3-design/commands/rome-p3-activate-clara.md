@@ -41,18 +41,18 @@ Clara is activated ONLY when:
 
 ## Inputs from PMA
 
-- `ARTIFACTS/03-design/design-decisions/use-cases.md` - UI requirements
-- `ARTIFACTS/03-design/data-models/data-dictionary.yaml` - Entity fields for forms
-- `ARTIFACTS/03-design/design-decisions/tech-stack.yaml` - Platform info
-- `ARTIFACTS/02-analysis/requirements/user-stories.md` - User context
+- `ARTIFACTS/_design/design-decisions/use-cases.md` - UI requirements
+- `ARTIFACTS/_design/data-models/data-dictionary.yaml` - Entity fields for forms
+- `ARTIFACTS/_design/design-decisions/tech-stack.yaml` - Platform info
+- `ARTIFACTS/_requirements/user-stories.md` - User context
 
 ## Outputs
 
-- `ARTIFACTS/03-design/design-assets/design-system.md`
-- `ARTIFACTS/03-design/design-assets/user-flows.md`
-- `ARTIFACTS/03-design/design-assets/wireframes/` (per screen)
-- `ARTIFACTS/03-design/design-assets/mockups/` (per screen)
-- `ARTIFACTS/03-design/design-assets/accessibility.md`
+- `ARTIFACTS/_design/design-assets/design-system.md`
+- `ARTIFACTS/_design/design-assets/user-flows.md`
+- `ARTIFACTS/_design/design-assets/wireframes/` (per screen)
+- `ARTIFACTS/_design/design-assets/mockups/` (per screen)
+- `ARTIFACTS/_design/design-assets/accessibility.md`
 
 ## Integration with PMA
 

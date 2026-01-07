@@ -36,7 +36,7 @@ Generate screen/page implementations from use-cases.md
 ## Example Output
 
 ```dart
-// lib/screens/register_screen.dart
+// SOURCE/lib/screens/register_screen.dart
 class RegisterScreen extends StatefulWidget {
   @override
   Widget build(BuildContext context) {

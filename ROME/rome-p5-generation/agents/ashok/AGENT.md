@@ -76,12 +76,12 @@ Reena should be able to build APIs against Ashok's schema without database quest
 
 | Artifact | Location | Description |
 |----------|----------|-------------|
-| Schema/Migrations | `migrations/` | Version-controlled DDL |
-| ORM Models | `models/` | Type-safe entity definitions |
-| Dev Seeds | `seeds/dev/` | Development environment data |
-| Test Seeds | `seeds/test/` | Automated test data |
-| Database Tests | `tests/` | Constraint and validation tests |
-| Setup Scripts | `scripts/` | Local DB initialization |
+| Schema/Migrations | `SOURCE/migrations/` | Version-controlled DDL |
+| ORM Models | `SOURCE/models/` | Type-safe entity definitions |
+| Dev Seeds | `SOURCE/seeds/dev/` | Development environment data |
+| Test Seeds | `SOURCE/seeds/test/` | Automated test data |
+| Database Tests | `SOURCE/tests/` | Constraint and validation tests |
+| Setup Scripts | `SOURCE/scripts/` | Local DB initialization |
 | README.md | Root | Complete setup documentation |
 
 ## Skills
@@ -118,7 +118,7 @@ Ashok uses database-related skills from the rome-p5-generation plugin:
 All data layer code must be organized by business features:
 
 ```
-[backend_root]/
+SOURCE/[backend_root]/
 └── features/
     ├── [feature_name]/
     │   ├── TRACEABILITY.md         # ✓ REQUIRED

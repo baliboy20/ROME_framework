@@ -373,7 +373,7 @@ Bootstrap logs using `bootstrap` as robot identifier.
 After bootstrap completes:
 1. All robots access ROME via read-only symlink at `[project]/ROME/`
 2. Roma orchestrator takes over coordination
-3. Sponsor materials go to `ARTIFACTS/01-ingest/source-materials/`
+3. Sponsor materials go to `_user_input/raw-requirements/`
 4. Phase 1 (Ingest) can begin
 
 **Activity log files:**

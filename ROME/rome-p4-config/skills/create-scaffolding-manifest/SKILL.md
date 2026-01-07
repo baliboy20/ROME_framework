@@ -16,7 +16,7 @@ Creates scaffolding manifest documenting all created artifacts. Lists workspaces
 
 ### Optional
 - `output_file` (string): Path to write scaffolding manifest
-  - Default: ARTIFACTS/04-config/scaffolding-plans/scaffolding-manifest.md
+  - Default: ARTIFACTS/_config/scaffolding-plans/scaffolding-manifest.md
 
 ## Output
 

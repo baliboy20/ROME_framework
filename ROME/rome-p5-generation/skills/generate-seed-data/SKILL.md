@@ -33,7 +33,7 @@ Generate database seed data scripts for development, testing, and initial produc
 ## Example Output
 
 ```typescript
-// seeds/001-seed-users.ts
+// SOURCE/seeds/001-seed-users.ts
 import { QueryInterface } from 'sequelize';
 
 export async function up(queryInterface: QueryInterface) {

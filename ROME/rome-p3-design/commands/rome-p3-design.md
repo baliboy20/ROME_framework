@@ -49,22 +49,22 @@ Initiates the complete Phase 3 Design workflow. PMA reads P2 outputs, conducts s
 
 ## Inputs
 
-- `ARTIFACTS/02-analysis/requirements/phase2-handover.md` - Entry point
-- `ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml` - Requirements source
-- `ARTIFACTS/02-analysis/requirements/user-stories.md` - User context
-- `ARTIFACTS/02-analysis/requirements/acceptance-criteria.md` - Validation criteria
-- `ARTIFACTS/02-analysis/requirements/non-functional-requirements.md` - NFR specifications
+- `ARTIFACTS/_requirements/phase2-handover.md` - Entry point
+- `ARTIFACTS/_requirements/requirements-matrix.yaml` - Requirements source
+- `ARTIFACTS/_requirements/user-stories.md` - User context
+- `ARTIFACTS/_requirements/acceptance-criteria.md` - Validation criteria
+- `ARTIFACTS/_requirements/non-functional-requirements.md` - NFR specifications
 
 ## Outputs
 
-- `ARTIFACTS/03-design/design-decisions/tech-stack.yaml`
-- `ARTIFACTS/03-design/data-models/data-dictionary.yaml`
-- `ARTIFACTS/03-design/api-contracts/api-design.md`
-- `ARTIFACTS/03-design/design-decisions/use-cases.md`
-- `ARTIFACTS/03-design/architecture/system-architecture.md`
-- `ARTIFACTS/03-design/design-decisions/actionlist.md`
-- `ARTIFACTS/03-design/design-decisions/test-architecture.md`
-- `ARTIFACTS/03-design/design-decisions/phase3-handover.md`
+- `ARTIFACTS/_design/design-decisions/tech-stack.yaml`
+- `ARTIFACTS/_design/data-models/data-dictionary.yaml`
+- `ARTIFACTS/_design/api-contracts/api-design.md`
+- `ARTIFACTS/_design/design-decisions/use-cases.md`
+- `ARTIFACTS/_design/architecture/system-architecture.md`
+- `ARTIFACTS/_design/design-decisions/actionlist.md`
+- `ARTIFACTS/_design/design-decisions/test-architecture.md`
+- `ARTIFACTS/_design/design-decisions/phase3-handover.md`
 
 ## Related Commands
 

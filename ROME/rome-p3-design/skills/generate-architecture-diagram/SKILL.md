@@ -42,8 +42,8 @@ Returns:
 
 ```bash
 /generate-architecture-diagram \
-  --component_structure_file ARTIFACTS/03-design/architecture/components.json \
-  --output_file ARTIFACTS/03-design/architecture/system-diagram.mmd \
+  --component_structure_file ARTIFACTS/_design/architecture/components.json \
+  --output_file ARTIFACTS/_design/architecture/system-diagram.mmd \
   --diagram_type layered
 ```
 

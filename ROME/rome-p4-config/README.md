@@ -67,12 +67,12 @@ Skills are invoked via slash commands:
 
 ```bash
 /scaffold-workspace \
-  --actionlist_file ARTIFACTS/03-design/design-decisions/actionlist.md \
-  --tech_stack_file ARTIFACTS/03-design/design-decisions/tech-stack.yaml
+  --actionlist_file ARTIFACTS/_design/design-decisions/actionlist.md \
+  --tech_stack_file ARTIFACTS/_design/design-decisions/tech-stack.yaml
 
 /configure-environment \
   --workspace SOURCE/api-workspace \
-  --system_architecture_file ARTIFACTS/03-design/architecture/system-architecture.md
+  --system_architecture_file ARTIFACTS/_design/architecture/system-architecture.md
 
 /setup-cicd-pipeline \
   --platform github-actions \
@@ -91,7 +91,7 @@ Phase 4 produces the following artifacts:
 - Test configuration files
 - Environment templates (.env.example)
 
-### In `ARTIFACTS/04-config/`
+### In `ARTIFACTS/_config/`
 - `technical-specs.md` - Detailed implementation specs
 - `environment-config.md` - Environment configurations
 - `scaffolding-manifest.md` - What was created, where

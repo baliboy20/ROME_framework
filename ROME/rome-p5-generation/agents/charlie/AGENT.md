@@ -86,12 +86,12 @@ Create production-ready frontend application with screens, components, API integ
 
 | Artifact | Location | Description |
 |----------|----------|-------------|
-| Screens/Pages | `lib/screens/` or `src/pages/` | Screen implementations |
-| Components | `lib/widgets/` or `src/components/` | Reusable UI components |
-| Services | `lib/services/` or `src/services/` | API client classes |
-| State | `lib/state/` or `src/state/` | State management |
-| Models | `lib/models/` or `src/types/` | Data models/types |
-| Tests | `test/` or `tests/` | Widget/component tests |
+| Screens/Pages | `SOURCE/lib/screens/` or `SOURCE/src/pages/` | Screen implementations |
+| Components | `SOURCE/lib/widgets/` or `SOURCE/src/components/` | Reusable UI components |
+| Services | `SOURCE/lib/services/` or `SOURCE/src/services/` | API client classes |
+| State | `SOURCE/lib/state/` or `SOURCE/src/state/` | State management |
+| Models | `SOURCE/lib/models/` or `SOURCE/src/types/` | Data models/types |
+| Tests | `SOURCE/test/` or `SOURCE/tests/` | Widget/component tests |
 | README.md | Root | Application documentation |
 
 ## Skills
@@ -134,7 +134,7 @@ Charlie uses UI-related skills from the rome-p5-generation plugin:
 All frontend code must be organized by business features:
 
 ```
-lib/
+SOURCE/lib/
 └── features/
     ├── [feature_name]/              # One folder per business feature
     │   ├── TRACEABILITY.md         # ✓ REQUIRED - Traceability documentation

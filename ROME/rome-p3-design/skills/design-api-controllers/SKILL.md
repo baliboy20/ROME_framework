@@ -41,8 +41,8 @@ Returns:
 
 ```bash
 /design-api-controllers \
-  --api_spec_file ARTIFACTS/03-design/api-contracts/api-spec.yaml \
-  --output_file ARTIFACTS/03-design/api-contracts/controller-design.json \
+  --api_spec_file ARTIFACTS/_design/api-contracts/api-spec.yaml \
+  --output_file ARTIFACTS/_design/api-contracts/controller-design.json \
   --framework express
 ```
 

@@ -42,15 +42,15 @@ The rome-p1-aordl plugin provides the Talib agent (P1 mode), skills, and command
 # (Use editor or Claude to complete the requirement)
 
 # 3. Validate in STRICT mode
-/rome-p1:validate --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml --mode STRICT
+/rome-p1:validate --requirement-file ARTIFACTS/_requirements/REQ-001.yaml --mode STRICT
 
 # 4. Generate BDD scenarios for verification
-/rome-p1:transform-bdd --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml
+/rome-p1:transform-bdd --requirement-file ARTIFACTS/_requirements/REQ-001.yaml
 
 # 5. Repeat for all requirements
 
 # 6. Validate entire catalog before GATE-P1
-/rome-p1:validate --catalog-file ARTIFACTS/dev/requirements/requirements-catalog.md --mode STRICT
+/rome-p1:validate --catalog-file ARTIFACTS/_requirements/requirements-catalog.md --mode STRICT
 ```
 
 ### AORDL Structure
@@ -199,10 +199,10 @@ Before completing P1:
 ## Post-Phase 1
 
 After P1 completes:
-1. All AORDL requirements in `ARTIFACTS/dev/requirements/`
-2. Requirements catalog in `ARTIFACTS/dev/requirements/requirements-catalog.md`
-3. BDD scenarios in `ARTIFACTS/dev/requirements/bdd/`
-4. Phase 1 handover in `ARTIFACTS/dev/requirements/phase1-handover.md`
+1. All AORDL requirements in `ARTIFACTS/_requirements/`
+2. Requirements catalog in `ARTIFACTS/_requirements/requirements-catalog.md`
+3. BDD scenarios in `ARTIFACTS/_requirements/bdd/`
+4. Phase 1 handover in `ARTIFACTS/_requirements/phase1-handover.md`
 5. Ready for P2 Analysis transition
 
 ## Installation

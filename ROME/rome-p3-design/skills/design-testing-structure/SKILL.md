@@ -20,7 +20,7 @@ Designs test architecture including unit tests, integration tests, e2e tests, te
 
 ### Optional
 - `output_file` (string): File path to write test architecture design
-  - Default: ARTIFACTS/03-design/design-decisions/test-architecture.md
+  - Default: ARTIFACTS/_design/design-decisions/test-architecture.md
 
 ## Output
 

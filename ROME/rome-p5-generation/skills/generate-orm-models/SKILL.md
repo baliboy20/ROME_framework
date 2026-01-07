@@ -34,7 +34,7 @@ Generate ORM/Entity models from data-dictionary.yaml for application data access
 ## Example Output
 
 ```typescript
-// models/User.ts (TypeORM example)
+// SOURCE/models/User.ts (TypeORM example)
 import { Entity, PrimaryGeneratedColumn, Column, Index, OneToMany } from 'typeorm';
 
 @Entity('users')

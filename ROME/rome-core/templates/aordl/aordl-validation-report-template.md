@@ -283,11 +283,11 @@
 
 ```bash
 # Validation commands executed
-/validate-aordl --requirement-file ARTIFACTS/01-requirements/REQ-001.yaml --mode STRICT
-/validate-aordl --requirement-file ARTIFACTS/01-requirements/REQ-002.yaml --mode STRICT
-/validate-aordl --requirement-file ARTIFACTS/01-requirements/REQ-003.yaml --mode STRICT
-/validate-aordl --requirement-file ARTIFACTS/01-requirements/REQ-004.yaml --mode STRICT
-/validate-aordl --requirement-file ARTIFACTS/01-requirements/REQ-005.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-001.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-002.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-003.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-004.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-005.yaml --mode STRICT
 
 # All validations passed: 5/5 (100%)
 ```

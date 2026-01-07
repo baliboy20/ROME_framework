@@ -20,7 +20,7 @@ Designs Data Transfer Objects (DTOs) for API request/response payloads. DTOs def
 
 ### Optional
 - `output_file` (string): File path to write DTO specifications
-  - Default: ARTIFACTS/03-design/data-models/dto-models.yaml
+  - Default: ARTIFACTS/_design/data-models/dto-models.yaml
 
 ## Execution
 
@@ -40,8 +40,8 @@ Returns:
 
 ```bash
 /design-dto-models \
-  --data_dictionary_file ARTIFACTS/03-design/data-models/data-dictionary.yaml \
-  --output_file ARTIFACTS/03-design/data-models/dto-models.yaml
+  --data_dictionary_file ARTIFACTS/_design/data-models/data-dictionary.yaml \
+  --output_file ARTIFACTS/_design/data-models/dto-models.yaml
 ```
 
 ## Dependencies

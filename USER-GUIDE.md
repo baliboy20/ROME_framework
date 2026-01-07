@@ -59,7 +59,7 @@ ROME uses a 6-phase workflow from requirements to working code:
 - `transform-aordl-to-bdd` - Convert to BDD format
 
 **Input:** User needs, PRD, BRD
-**Output:** `_requirements/*.yaml` (AORDL files)
+**Output:** `ARTIFACTS/_requirements/*.yaml` (AORDL files)
 
 **Example AORDL:**
 ```yaml
@@ -275,7 +275,7 @@ REQ-001:
 
 # P1: Open Talib (P1 mode)
 # Open: ROME/rome-p1-aordl/agents/talib/AGENT.md
-# Work with Talib to create AORDL files in _requirements/
+# Work with Talib to create AORDL files in ARTIFACTS/_requirements/
 
 # Talib validates AORDL as you create them
 ```
@@ -284,7 +284,7 @@ REQ-001:
 ```bash
 # P2: Open Talib (P2 mode)
 # Open: ROME/rome-p2-analysis/agents/talib/AGENT.md
-# Talib analyzes requirements in _requirements/
+# Talib analyzes requirements in ARTIFACTS/_requirements/
 
 # P3: Open PMA for architecture
 # Open: ROME/rome-p3-design/agents/pma/AGENT.md
@@ -316,22 +316,26 @@ REQ-001:
 
 ```
 my-app/
-├── _requirements/          # P1: AORDL requirements
-│   ├── REQ-001.yaml
-│   └── REQ-002.yaml
-├── _analysis/              # P2: Analysis artifacts
-│   └── entities.md
-├── _design/                # P3: Design docs
-│   ├── architecture.md
-│   ├── api-spec.yaml
-│   └── data-dictionary.md
-├── _config/                # P4: Configuration
-│   └── workspace-config.yaml
-├── src/                    # P5: Generated code
-│   ├── backend/
-│   ├── frontend/
-│   └── integration/
-└── tests/                  # P5: Generated tests
+├── _user_input/            # User-provided materials
+│   └── raw-requirements/
+├── ARTIFACTS/
+│   ├── _requirements/      # P1: AORDL requirements
+│   │   ├── REQ-001.yaml
+│   │   └── REQ-002.yaml
+│   ├── _analysis/          # P2: Analysis artifacts
+│   │   └── entities.md
+│   ├── _design/            # P3: Design docs
+│   │   ├── architecture.md
+│   │   ├── api-spec.yaml
+│   │   └── data-dictionary.md
+│   └── _config/            # P4: Configuration
+│       └── workspace-config.yaml
+└── SOURCE/
+    ├── src/                # P5: Generated code
+    │   ├── backend/
+    │   ├── frontend/
+    │   └── integration/
+    └── tests/              # P5: Generated tests
 ```
 
 ---

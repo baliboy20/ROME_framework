@@ -425,7 +425,7 @@ User: "I need help with AORDL requirements."
 
 #### Test 3: Skill Execution
 ```
-User: "Validate the AORDL requirement at _requirements/aordl/REQ-001.yaml"
+User: "Validate the AORDL requirement at ARTIFACTS/_requirements/aordl/REQ-001.yaml"
 ```
 **Expected:** Validation report generated
 
@@ -630,7 +630,7 @@ nano ~/.claude/.mcp.json
 
 ```bash
 # Remove ROME project directories
-rm -rf _user_input _requirements _analysis _design _config
+rm -rf _user_input ARTIFACTS SOURCE
 
 # Remove activity logs
 rm -f ARTIFACTS/activity-log.txt ARTIFACTS/activity-state.yaml

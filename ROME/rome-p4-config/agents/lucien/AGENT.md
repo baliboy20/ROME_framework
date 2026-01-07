@@ -125,12 +125,12 @@ mcp__activity-log__append({
 ### Step 3: Read All P3 Outputs
 
 ```
-Read: ARTIFACTS/03-design/design-decisions/phase3-handover.md (START HERE)
-Read: ARTIFACTS/03-design/design-decisions/tech-stack.yaml
-Read: ARTIFACTS/03-design/data-models/data-dictionary.yaml
-Read: ARTIFACTS/03-design/design-decisions/actionlist.md
-Read: ARTIFACTS/03-design/architecture/system-architecture.md
-Read: ARTIFACTS/03-design/api-contracts/api-design.md
+Read: ARTIFACTS/_design/design-decisions/phase3-handover.md (START HERE)
+Read: ARTIFACTS/_design/design-decisions/tech-stack.yaml
+Read: ARTIFACTS/_design/data-models/data-dictionary.yaml
+Read: ARTIFACTS/_design/design-decisions/actionlist.md
+Read: ARTIFACTS/_design/architecture/system-architecture.md
+Read: ARTIFACTS/_design/api-contracts/api-design.md
 ```
 
 Extract:
@@ -142,7 +142,7 @@ Extract:
 
 ### Step 4: Create Technical Specifications
 
-Output: `ARTIFACTS/04-config/technical-specs/technical-specs.md`
+Output: `ARTIFACTS/_config/technical-specs/technical-specs.md`
 
 For each workspace:
 - Type (application / api / data / shared)
@@ -246,7 +246,7 @@ DATABASE_TEST_URL=postgresql://localhost:5432/[project]_test
 
 ### Step 7: Configure CI/CD
 
-Output: `ARTIFACTS/04-config/technical-specs/ci-cd-config.md` + pipeline files
+Output: `ARTIFACTS/_config/technical-specs/ci-cd-config.md` + pipeline files
 
 Determine platform (GitHub Actions, GitLab CI, CircleCI, Jenkins) from tech-stack or sponsor requirements.
 
@@ -263,7 +263,7 @@ Document:
 
 ### Step 8: Configure Environments
 
-Output: `ARTIFACTS/04-config/environment-config/environment-config.md`
+Output: `ARTIFACTS/_config/environment-config/environment-config.md`
 
 Define environments:
 - Development (local, debug enabled)
@@ -280,7 +280,7 @@ Document environment files:
 
 ### Step 9: Create Scaffolding Manifest
 
-Output: `ARTIFACTS/04-config/scaffolding-plans/scaffolding-manifest.md`
+Output: `ARTIFACTS/_config/scaffolding-plans/scaffolding-manifest.md`
 
 Document:
 - Created workspaces
@@ -291,7 +291,7 @@ Document:
 
 ### Step 10: Prepare Handover
 
-Output: `ARTIFACTS/04-config/technical-specs/phase4-handover.md`
+Output: `ARTIFACTS/_config/technical-specs/phase4-handover.md`
 
 Include:
 - Summary of completed work
@@ -345,12 +345,12 @@ Present P4 exit criteria summary and notify Roma to initiate GATE-P4 (Sarah audi
 
 | Input | Source | Purpose |
 |-------|--------|---------|
-| phase3-handover.md | ARTIFACTS/03-design/design-decisions/ | Entry point, context |
-| tech-stack.yaml | ARTIFACTS/03-design/design-decisions/ | Technology choices |
-| data-dictionary.yaml | ARTIFACTS/03-design/data-models/ | Database schema source |
-| actionlist.md | ARTIFACTS/03-design/design-decisions/ | Workspace definitions |
-| system-architecture.md | ARTIFACTS/03-design/architecture/ | Infrastructure requirements |
-| api-design.md | ARTIFACTS/03-design/api-contracts/ | API structure for backend scaffold |
+| phase3-handover.md | ARTIFACTS/_design/design-decisions/ | Entry point, context |
+| tech-stack.yaml | ARTIFACTS/_design/design-decisions/ | Technology choices |
+| data-dictionary.yaml | ARTIFACTS/_design/data-models/ | Database schema source |
+| actionlist.md | ARTIFACTS/_design/design-decisions/ | Workspace definitions |
+| system-architecture.md | ARTIFACTS/_design/architecture/ | Infrastructure requirements |
+| api-design.md | ARTIFACTS/_design/api-contracts/ | API structure for backend scaffold |
 
 ---
 
@@ -359,10 +359,10 @@ Present P4 exit criteria summary and notify Roma to initiate GATE-P4 (Sarah audi
 | Artifact | Location | Downstream Consumer |
 |----------|----------|---------------------|
 | Scaffolded workspaces | SOURCE/[workspaces]/ | Ashok, Reena, Charlie |
-| technical-specs.md | ARTIFACTS/04-config/technical-specs/ | All P5 robots |
-| environment-config.md | ARTIFACTS/04-config/environment-config/ | All P5 robots |
-| scaffolding-manifest.md | ARTIFACTS/04-config/scaffolding-plans/ | Sarah (GATE-P4), P5 robots |
-| phase4-handover.md | ARTIFACTS/04-config/technical-specs/ | Ashok, Reena, Charlie |
+| technical-specs.md | ARTIFACTS/_config/technical-specs/ | All P5 robots |
+| environment-config.md | ARTIFACTS/_config/environment-config/ | All P5 robots |
+| scaffolding-manifest.md | ARTIFACTS/_config/scaffolding-plans/ | Sarah (GATE-P4), P5 robots |
+| phase4-handover.md | ARTIFACTS/_config/technical-specs/ | Ashok, Reena, Charlie |
 
 ---
 

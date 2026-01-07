@@ -180,8 +180,8 @@ head -30 ~/.claude/plugins/rome-p1-aordl/skills/validate-aordl/SKILL.md
 **Setup:**
 ```bash
 # Create test AORDL requirement
-mkdir -p /tmp/rome-test/_requirements/aordl
-cat > /tmp/rome-test/_requirements/aordl/REQ-TEST-001.yaml <<EOF
+mkdir -p /tmp/rome-test/ARTIFACTS/_requirements/aordl
+cat > /tmp/rome-test/ARTIFACTS/_requirements/aordl/REQ-TEST-001.yaml <<EOF
 requirement_id: REQ-TEST-001
 title: Test Requirement
 version: 1.0.0
@@ -200,7 +200,7 @@ EOF
 
 **Test in Claude Code:**
 ```
-User: "Please validate the AORDL requirement at /tmp/rome-test/_requirements/aordl/REQ-TEST-001.yaml"
+User: "Please validate the AORDL requirement at /tmp/rome-test/ARTIFACTS/_requirements/aordl/REQ-TEST-001.yaml"
 ```
 
 **Expected Output:** Validation report showing requirement structure is valid.
@@ -216,7 +216,7 @@ User: "Please analyze REQ-TEST-001 and perform functional decomposition."
 - Functional decomposition breaking down the requirement
 - Identified actors, actions, entities
 - Proposed user stories
-- Analysis artifacts saved to `_analysis/functional-decomposition/`
+- Analysis artifacts saved to `ARTIFACTS/_analysis/functional-decomposition/`
 
 ### Validation Criteria
 - [ ] All 40 skill SKILL.md files exist
@@ -255,14 +255,14 @@ test -f ~/.claude/plugins/rome-p2-analysis/commands/rome-p2-analyze.md && echo "
 Initializing ROME project...
 Creating directory structure:
   ✓ _user_input/raw-requirements
-  ✓ _requirements/aordl
-  ✓ _analysis/functional-decomposition
-  ✓ _analysis/user-stories
-  ✓ _design/architecture
-  ✓ _design/api-specs
-  ✓ _design/data-models
-  ✓ _config
-  ✓ src/features
+  ✓ ARTIFACTS/_requirements/aordl
+  ✓ ARTIFACTS/_analysis/functional-decomposition
+  ✓ ARTIFACTS/_analysis/user-stories
+  ✓ ARTIFACTS/_design/architecture
+  ✓ ARTIFACTS/_design/api-specs
+  ✓ ARTIFACTS/_design/data-models
+  ✓ ARTIFACTS/_config
+  ✓ SOURCE/src/features
 
 Project initialized successfully.
 ```
@@ -271,7 +271,7 @@ Project initialized successfully.
 
 **Test in Claude Code:**
 ```
-/rome-p1:validate /tmp/rome-test/_requirements/aordl/REQ-TEST-001.yaml
+/rome-p1:validate /tmp/rome-test/ARTIFACTS/_requirements/aordl/REQ-TEST-001.yaml
 ```
 
 **Expected Output:**
@@ -290,13 +290,13 @@ Validation complete. No issues found.
 **Setup:**
 ```bash
 # Create multiple AORDL requirements
-cp /tmp/rome-test/_requirements/aordl/REQ-TEST-001.yaml \
-   /tmp/rome-test/_requirements/aordl/REQ-TEST-002.yaml
+cp /tmp/rome-test/ARTIFACTS/_requirements/aordl/REQ-TEST-001.yaml \
+   /tmp/rome-test/ARTIFACTS/_requirements/aordl/REQ-TEST-002.yaml
 ```
 
 **Test in Claude Code:**
 ```
-/rome-p2:batch-analyze /tmp/rome-test/_requirements/aordl/*.yaml
+/rome-p2:batch-analyze /tmp/rome-test/ARTIFACTS/_requirements/aordl/*.yaml
 ```
 
 **Expected Output:**
@@ -306,7 +306,7 @@ Batch analyzing 2 AORDL requirements...
 Processing REQ-TEST-001... ✓
 Processing REQ-TEST-002... ✓
 
-Analysis complete. Results saved to _analysis/functional-decomposition/
+Analysis complete. Results saved to ARTIFACTS/_analysis/functional-decomposition/
 ```
 
 #### Test 4.5: Test All Commands
@@ -474,14 +474,14 @@ Verify plugins integrate correctly and share data across phases.
    /rome-p1:create
    # Create REQ-USER-001
    ```
-   **Verify:** `_requirements/aordl/REQ-USER-001.yaml` exists
+   **Verify:** `ARTIFACTS/_requirements/aordl/REQ-USER-001.yaml` exists
 
 2. **P2: Analyze Requirement**
    ```
    /rome-p2:analyze REQ-USER-001
    ```
    **Verify:**
-   - `_analysis/functional-decomposition/REQ-USER-001-analysis.md` created
+   - `ARTIFACTS/_analysis/functional-decomposition/REQ-USER-001-analysis.md` created
    - Analysis references `upstream: [REQ-USER-001]`
 
 3. **P2: Generate User Stories**
@@ -489,7 +489,7 @@ Verify plugins integrate correctly and share data across phases.
    /rome-p2:generate-stories REQ-USER-001
    ```
    **Verify:**
-   - User stories created in `_analysis/user-stories/`
+   - User stories created in `ARTIFACTS/_analysis/user-stories/`
    - Stories reference `upstream: [REQ-USER-001]`
 
 4. **P3: Design API**
@@ -498,7 +498,7 @@ Verify plugins integrate correctly and share data across phases.
    # "Design authentication API based on REQ-USER-001"
    ```
    **Verify:**
-   - API spec created in `_design/api-specs/authentication-api.yaml`
+   - API spec created in `ARTIFACTS/_design/api-specs/authentication-api.yaml`
    - API spec references `upstream: [REQ-USER-001, US-AUTH-001]`
 
 5. **Verify Traceability Chain**
@@ -532,7 +532,7 @@ Verify plugins integrate correctly and share data across phases.
    # "Generate data dictionary from user stories"
    ```
    **Verify:**
-   - `_design/data-models/data-dictionary.yaml` created
+   - `ARTIFACTS/_design/data-models/data-dictionary.yaml` created
    - Entities: User, Session, Credential defined
    - Attributes specified for each entity
 
@@ -541,7 +541,7 @@ Verify plugins integrate correctly and share data across phases.
    /rome-p5:generate-db
    ```
    **Verify:**
-   - `src/features/auth/database/schema.sql` created
+   - `SOURCE/src/features/auth/database/schema.sql` created
    - Tables correspond to data dictionary entities
    - Columns match data dictionary attributes
 
@@ -565,7 +565,7 @@ Verify plugins integrate correctly and share data across phases.
    /rome-p3:architecture
    ```
    **Verify:**
-   - `_design/architecture/system-architecture.md` created
+   - `ARTIFACTS/_design/architecture/system-architecture.md` created
    - Layers defined: Database, API, UI
    - Components identified
 
@@ -574,9 +574,9 @@ Verify plugins integrate correctly and share data across phases.
    /rome-p4:scaffold
    ```
    **Verify:**
-   - `_config/scaffolding-manifest.yaml` references architecture diagram
+   - `ARTIFACTS/_config/scaffolding-manifest.yaml` references architecture diagram
    - Workspace structure matches architecture layers
-   - Directory structure created in `src/`
+   - Directory structure created in `SOURCE/src/`
 
 3. **Validate Alignment**
    ```
@@ -627,7 +627,7 @@ Validate complete ROME workflow from requirements to generated code.
      - Password strength requirements
      - Duplicate email prevention
 
-   **Verify:** `_requirements/aordl/REQ-REG-001.yaml` created
+   **Verify:** `ARTIFACTS/_requirements/aordl/REQ-REG-001.yaml` created
 
 3. **P1: Validate Requirement**
    ```
@@ -662,8 +662,8 @@ Validate complete ROME workflow from requirements to generated code.
    # "Design registration API and data models"
    ```
    **Verify:**
-   - API spec: `_design/api-specs/registration-api.yaml`
-   - Data dictionary: `_design/data-models/data-dictionary.yaml`
+   - API spec: `ARTIFACTS/_design/api-specs/registration-api.yaml`
+   - Data dictionary: `ARTIFACTS/_design/data-models/data-dictionary.yaml`
    - Architecture diagram updated
 
 8. **P3: Quality Gate**
@@ -687,26 +687,26 @@ Validate complete ROME workflow from requirements to generated code.
     /rome-p5:generate-db
     ```
     **Verify:**
-    - Schema: `src/features/registration/database/schema.sql`
-    - Migrations: `src/features/registration/database/migrations/`
-    - Models: `src/features/registration/database/models/`
+    - Schema: `SOURCE/src/features/registration/database/schema.sql`
+    - Migrations: `SOURCE/src/features/registration/database/migrations/`
+    - Models: `SOURCE/src/features/registration/database/models/`
 
 11. **P5: Generate API Layer**
     ```
     /rome-p5:generate-api
     ```
     **Verify:**
-    - Controller: `src/features/registration/api/registration-controller.js`
-    - Service: `src/features/registration/services/registration-service.js`
-    - Repository: `src/features/registration/repositories/user-repository.js`
+    - Controller: `SOURCE/src/features/registration/api/registration-controller.js`
+    - Service: `SOURCE/src/features/registration/services/registration-service.js`
+    - Repository: `SOURCE/src/features/registration/repositories/user-repository.js`
 
 12. **P5: Generate UI Layer**
     ```
     /rome-p5:generate-ui
     ```
     **Verify:**
-    - Screen: `src/features/registration/ui/registration-screen.dart`
-    - Components: `src/features/registration/ui/components/`
+    - Screen: `SOURCE/src/features/registration/ui/registration-screen.dart`
+    - Components: `SOURCE/src/features/registration/ui/components/`
 
 13. **QA: Final Validation**
     ```

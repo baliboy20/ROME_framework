@@ -90,12 +90,12 @@ Initiates the complete Phase 4 Configuration workflow. Lucien reads P3 outputs, 
 
 ## Inputs
 
-- `ARTIFACTS/03-design/design-decisions/phase3-handover.md` - Entry point
-- `ARTIFACTS/03-design/design-decisions/tech-stack.yaml` - Technology choices
-- `ARTIFACTS/03-design/data-models/data-dictionary.yaml` - Database schema source
-- `ARTIFACTS/03-design/design-decisions/actionlist.md` - Workspace definitions
-- `ARTIFACTS/03-design/architecture/system-architecture.md` - Infrastructure requirements
-- `ARTIFACTS/03-design/api-contracts/api-design.md` - API structure
+- `ARTIFACTS/_design/design-decisions/phase3-handover.md` - Entry point
+- `ARTIFACTS/_design/design-decisions/tech-stack.yaml` - Technology choices
+- `ARTIFACTS/_design/data-models/data-dictionary.yaml` - Database schema source
+- `ARTIFACTS/_design/design-decisions/actionlist.md` - Workspace definitions
+- `ARTIFACTS/_design/architecture/system-architecture.md` - Infrastructure requirements
+- `ARTIFACTS/_design/api-contracts/api-design.md` - API structure
 
 ## Outputs
 
@@ -107,7 +107,7 @@ Initiates the complete Phase 4 Configuration workflow. Lucien reads P3 outputs, 
   - Test configuration files
   - Environment templates (.env.example)
 
-### In ARTIFACTS/04-config/
+### In ARTIFACTS/_config/
 - `technical-specs/technical-specs.md` - Implementation specifications
 - `environment-config/environment-config.md` - Environment configurations
 - `scaffolding-plans/scaffolding-manifest.md` - What was created

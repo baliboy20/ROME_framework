@@ -36,13 +36,13 @@ The rome-p2-analysis plugin provides the Talib agent (P2 mode), skills, and comm
 
 ```bash
 # 1. Analyze individual requirements
-/rome-p2:analyze --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml
+/rome-p2:analyze --requirement-file ARTIFACTS/_requirements/REQ-001.yaml
 
 # 2. Batch analyze all requirements
-/rome-p2:batch-analyze --requirements-dir ARTIFACTS/dev/requirements
+/rome-p2:batch-analyze --requirements-dir ARTIFACTS/_requirements
 
 # 3. Generate user stories from AORDL
-/rome-p2:generate-stories --source-file ARTIFACTS/dev/requirements/requirements-catalog.md
+/rome-p2:generate-stories --source-file ARTIFACTS/_requirements/requirements-catalog.md
 
 # 4. Review analysis outputs:
 # - Individual requirement analyses
@@ -130,11 +130,11 @@ P2 analysis covers all 8 dimensions derived from AORDL:
 
 P2 produces the following artifacts:
 
-- `ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml` - 8-dimension coverage matrix
-- `ARTIFACTS/02-analysis/requirements/user-stories.md` - Generated user stories
-- `ARTIFACTS/02-analysis/requirements/acceptance-criteria.md` - Testable acceptance criteria
-- `ARTIFACTS/02-analysis/requirements/non-functional-requirements.md` - NFR aggregation
-- `ARTIFACTS/02-analysis/requirements/phase2-handover.md` - P2 exit documentation
+- `ARTIFACTS/_requirements/requirements-matrix.yaml` - 8-dimension coverage matrix
+- `ARTIFACTS/_requirements/user-stories.md` - Generated user stories
+- `ARTIFACTS/_requirements/acceptance-criteria.md` - Testable acceptance criteria
+- `ARTIFACTS/_requirements/non-functional-requirements.md` - NFR aggregation
+- `ARTIFACTS/_requirements/phase2-handover.md` - P2 exit documentation
 
 ## Complexity Scoring
 
@@ -210,7 +210,7 @@ Before completing P2:
 ## Post-Phase 2
 
 After P2 completes:
-1. Requirements matrix in `ARTIFACTS/02-analysis/requirements/`
+1. Requirements matrix in `ARTIFACTS/_requirements/`
 2. User stories with full traceability
 3. Acceptance criteria ready for testing
 4. Non-functional requirements aggregated

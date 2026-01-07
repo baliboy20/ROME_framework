@@ -20,7 +20,7 @@ Designs logging and monitoring strategy. Defines log levels, log formats, log ag
 
 ### Optional
 - `output_file` (string): File path to write logging strategy design
-  - Default: ARTIFACTS/03-design/architecture/logging-strategy.md
+  - Default: ARTIFACTS/_design/architecture/logging-strategy.md
 
 ## Output
 

@@ -37,14 +37,14 @@ Generates visual architecture diagrams in Mermaid format from P3 design artifact
 
 ### Required
 - `component_structure_file` (string): Path to component structure JSON
-  - Default: `ARTIFACTS/03-design/architecture/components.json`
+  - Default: `ARTIFACTS/_design/architecture/components.json`
 
 ### Optional
 - `diagram_type` (string): Type of diagram to generate
   - Options: `layered`, `deployment`, `dataflow`
   - Default: `layered`
 - `output_file` (string): Output path for Mermaid diagram
-  - Default: `ARTIFACTS/03-design/architecture/system-diagram.mmd`
+  - Default: `ARTIFACTS/_design/architecture/system-diagram.mmd`
 
 ## Diagram Types
 
@@ -75,7 +75,7 @@ Visualizes data transformations:
 
 ## Inputs
 
-- `ARTIFACTS/03-design/architecture/components.json` - Component structure
+- `ARTIFACTS/_design/architecture/components.json` - Component structure
 
 ## Outputs
 
@@ -86,7 +86,7 @@ Visualizes data transformations:
 ## Integration
 
 Output diagrams are:
-1. Written to `ARTIFACTS/03-design/architecture/`
+1. Written to `ARTIFACTS/_design/architecture/`
 2. Referenced in `system-architecture.md`
 3. Visualized via Seez for sponsor review
 4. Included in `phase3-handover.md`

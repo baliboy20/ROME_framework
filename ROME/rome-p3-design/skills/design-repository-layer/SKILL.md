@@ -20,7 +20,7 @@ Designs the data access repository layer. Repositories abstract database operati
 
 ### Optional
 - `output_file` (string): File path to write repository layer design
-  - Default: ARTIFACTS/03-design/architecture/repository-layer.md
+  - Default: ARTIFACTS/_design/architecture/repository-layer.md
 
 ## Execution
 
@@ -40,7 +40,7 @@ Returns:
 
 ```bash
 /design-repository-layer \
-  --data_dictionary_file ARTIFACTS/03-design/data-models/data-dictionary.yaml
+  --data_dictionary_file ARTIFACTS/_design/data-models/data-dictionary.yaml
 ```
 
 ## Dependencies

@@ -197,7 +197,7 @@ create, read, update, delete, view, list, search, filter, authenticate, authoriz
 **Validate each requirement:**
 
 ```bash
-/validate-aordl --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-001.yaml --mode STRICT
 ```
 
 **Expected:** 100% pass rate in STRICT mode for GATE-P1 approval.
@@ -259,7 +259,7 @@ Generates BDD scenarios to verify completeness.
 
 ### Step 7: Create Requirements Catalog
 
-Output: `ARTIFACTS/dev/requirements/requirements-catalog.md`
+Output: `ARTIFACTS/_requirements/requirements-catalog.md`
 
 **Include:**
 - Coverage assessment (actors, intents, CRUD operations)
@@ -290,14 +290,14 @@ Output: `ARTIFACTS/dev/requirements/requirements-catalog.md`
 /validate-aordl-catalog --catalog-file requirements-catalog.md --mode STRICT
 
 # Generate validation report
-/generate-aordl-report --output ARTIFACTS/dev/requirements/aordl-validation-report.md
+/generate-aordl-report --output ARTIFACTS/_requirements/aordl-validation-report.md
 ```
 
 **CRITICAL:** GATE-P1 must show 100% pass rate. No exceptions.
 
 ### Step 9: Create Phase 1 Handover
 
-Output: `ARTIFACTS/dev/requirements/phase1-handover.md`
+Output: `ARTIFACTS/_requirements/phase1-handover.md`
 
 **Include:**
 - All REQ-*.yaml files list

@@ -20,7 +20,7 @@ Configures build system for workspaces. Sets up build tools (webpack, vite, roll
 
 ### Optional
 - `output_doc` (string): Path to write build configuration documentation
-  - Default: ARTIFACTS/04-config/technical-specs/build-config.md
+  - Default: ARTIFACTS/_config/technical-specs/build-config.md
 
 ## Output
 

@@ -19,7 +19,7 @@ Designs input validation layer for API requests and UI forms. Defines validation
 
 ### Optional
 - `output_file` (string): File path to write validation design
-  - Default: ARTIFACTS/03-design/architecture/validation-layer.md
+  - Default: ARTIFACTS/_design/architecture/validation-layer.md
 
 ## Output
 

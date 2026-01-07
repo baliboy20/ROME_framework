@@ -34,7 +34,7 @@ Generate authentication and authorization middleware from security requirements
 ## Example Output
 
 ```typescript
-// middleware/authenticate.ts
+// SOURCE/middleware/authenticate.ts
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 

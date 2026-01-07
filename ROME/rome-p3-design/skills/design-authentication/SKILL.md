@@ -20,7 +20,7 @@ Designs authentication and authorization system. Selects authentication strategy
 
 ### Optional
 - `output_file` (string): File path to write authentication design
-  - Default: ARTIFACTS/03-design/architecture/authentication-design.md
+  - Default: ARTIFACTS/_design/architecture/authentication-design.md
 
 ## Output
 

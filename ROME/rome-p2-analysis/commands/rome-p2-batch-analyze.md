@@ -19,13 +19,13 @@ Analyze multiple AORDL requirements in batch, generating a consolidated analysis
 
 ```bash
 # Analyze all requirements in directory
-/rome-p2:batch-analyze --requirements-dir ARTIFACTS/dev/requirements
+/rome-p2:batch-analyze --requirements-dir ARTIFACTS/_requirements
 
 # Batch analyze with custom output
-/rome-p2:batch-analyze --requirements-dir ARTIFACTS/dev/requirements --output-file batch-analysis.json
+/rome-p2:batch-analyze --requirements-dir ARTIFACTS/_requirements --output-file batch-analysis.json
 
 # Batch analyze without cross-analysis
-/rome-p2:batch-analyze --requirements-dir ARTIFACTS/dev/requirements --include-cross-analysis false
+/rome-p2:batch-analyze --requirements-dir ARTIFACTS/_requirements --include-cross-analysis false
 ```
 
 ## Parameters
@@ -51,7 +51,7 @@ Analyze multiple AORDL requirements in batch, generating a consolidated analysis
   "metadata": {
     "analyzed_at": "2026-01-07T...",
     "requirements_count": 15,
-    "requirements_dir": "ARTIFACTS/dev/requirements"
+    "requirements_dir": "ARTIFACTS/_requirements"
   },
   "individual_analyses": [
     {

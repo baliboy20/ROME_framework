@@ -21,7 +21,7 @@ Configures testing framework for workspaces. Sets up test runners (Jest, Vitest,
 
 ### Optional
 - `output_doc` (string): Path to write test configuration documentation
-  - Default: ARTIFACTS/04-config/technical-specs/test-config.md
+  - Default: ARTIFACTS/_config/technical-specs/test-config.md
 
 ## Output
 

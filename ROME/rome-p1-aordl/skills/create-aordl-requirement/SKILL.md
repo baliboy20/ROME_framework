@@ -86,7 +86,7 @@ CopilotMode: STRICT
 ```json
 {
   "requirement_id": "REQ-001",
-  "file_path": "ARTIFACTS/dev/requirements/REQ-001.yaml",
+  "file_path": "ARTIFACTS/_requirements/REQ-001.yaml",
   "status": "created"
 }
 ```

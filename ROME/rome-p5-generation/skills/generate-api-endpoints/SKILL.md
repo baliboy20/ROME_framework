@@ -33,11 +33,11 @@ Generate RESTful API endpoint implementations from api-design.md
 ## Example Output
 
 ```typescript
-// routes/users.routes.ts
+// SOURCE/routes/users.routes.ts
 router.post('/users', authenticate, validate(createUserSchema), UserController.create);
 router.get('/users', authenticate, UserController.list);
 
-// controllers/user.controller.ts
+// SOURCE/controllers/user.controller.ts
 export class UserController {
   static async create(req: Request, res: Response) {
     const result = await UserService.create(req.body);

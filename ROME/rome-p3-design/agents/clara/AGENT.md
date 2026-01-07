@@ -136,7 +136,7 @@ Extract from tech-stack.md:
 
 ### Step 3: Create Design System
 
-Output: `ARTIFACTS/03-design/design-assets/design-system.md`
+Output: `ARTIFACTS/_design/design-assets/design-system.md`
 
 Define:
 - Color palette (primary, secondary, neutral, semantic)
@@ -148,7 +148,7 @@ Define:
 
 ### Step 4: Create User Flows
 
-Output: `ARTIFACTS/03-design/design-assets/user-flows.md`
+Output: `ARTIFACTS/_design/design-assets/user-flows.md`
 
 For each major feature:
 - Create visual flow diagram (Mermaid)
@@ -158,7 +158,7 @@ For each major feature:
 
 ### Step 5: Create Wireframes
 
-Output: `ARTIFACTS/03-design/design-assets/wireframes/`
+Output: `ARTIFACTS/_design/design-assets/wireframes/`
 
 For each screen:
 - ASCII layout diagram
@@ -169,7 +169,7 @@ For each screen:
 
 ### Step 6: Create Mockup Descriptions
 
-Output: `ARTIFACTS/03-design/design-assets/mockups/`
+Output: `ARTIFACTS/_design/design-assets/mockups/`
 
 For each wireframe:
 - Visual specifications using design system tokens
@@ -179,7 +179,7 @@ For each wireframe:
 
 ### Step 7: Document Accessibility
 
-Output: `ARTIFACTS/03-design/design-assets/accessibility.md`
+Output: `ARTIFACTS/_design/design-assets/accessibility.md`
 
 Specify:
 - Color contrast ratios (WCAG 2.1 Level AA)
@@ -215,11 +215,11 @@ mcp__Seez__show_doc({
 
 | Artifact | Location | Status |
 |----------|----------|--------|
-| design-system.md | ARTIFACTS/03-design/design-assets/ | Complete |
-| user-flows.md | ARTIFACTS/03-design/design-assets/ | Complete |
-| wireframes/ | ARTIFACTS/03-design/design-assets/wireframes/ | [N] screens |
-| mockups/ | ARTIFACTS/03-design/design-assets/mockups/ | [N] screens |
-| accessibility.md | ARTIFACTS/03-design/design-assets/ | Complete |
+| design-system.md | ARTIFACTS/_design/design-assets/ | Complete |
+| user-flows.md | ARTIFACTS/_design/design-assets/ | Complete |
+| wireframes/ | ARTIFACTS/_design/design-assets/wireframes/ | [N] screens |
+| mockups/ | ARTIFACTS/_design/design-assets/mockups/ | [N] screens |
+| accessibility.md | ARTIFACTS/_design/design-assets/ | Complete |
 
 Ready for PMA review and integration.`
 })
@@ -231,10 +231,10 @@ Ready for PMA review and integration.`
 
 | Input | Source | Purpose |
 |-------|--------|---------|
-| use-cases.md | ARTIFACTS/03-design/design-decisions/ | UI requirements per use case |
-| data-dictionary.yaml | ARTIFACTS/03-design/data-models/ | Entity fields for form design |
-| tech-stack.yaml | ARTIFACTS/03-design/design-decisions/ | Platform (web/mobile/desktop) |
-| user-stories.md | ARTIFACTS/02-analysis/requirements/ | User context |
+| use-cases.md | ARTIFACTS/_design/design-decisions/ | UI requirements per use case |
+| data-dictionary.yaml | ARTIFACTS/_design/data-models/ | Entity fields for form design |
+| tech-stack.yaml | ARTIFACTS/_design/design-decisions/ | Platform (web/mobile/desktop) |
+| user-stories.md | ARTIFACTS/_requirements/ | User context |
 
 ---
 
@@ -242,11 +242,11 @@ Ready for PMA review and integration.`
 
 | Artifact | Location | Description |
 |----------|----------|-------------|
-| design-system.md | ARTIFACTS/03-design/design-assets/ | Colors, typography, spacing, components |
-| wireframes/ | ARTIFACTS/03-design/design-assets/wireframes/ | Low-fidelity wireframes for all screens |
-| user-flows.md | ARTIFACTS/03-design/design-assets/ | Visual user journey maps (Mermaid) |
-| accessibility.md | ARTIFACTS/03-design/design-assets/ | WCAG compliance guidelines |
-| mockups/ | ARTIFACTS/03-design/design-assets/mockups/ | High-fidelity mockups or detailed descriptions |
+| design-system.md | ARTIFACTS/_design/design-assets/ | Colors, typography, spacing, components |
+| wireframes/ | ARTIFACTS/_design/design-assets/wireframes/ | Low-fidelity wireframes for all screens |
+| user-flows.md | ARTIFACTS/_design/design-assets/ | Visual user journey maps (Mermaid) |
+| accessibility.md | ARTIFACTS/_design/design-assets/ | WCAG compliance guidelines |
+| mockups/ | ARTIFACTS/_design/design-assets/mockups/ | High-fidelity mockups or detailed descriptions |
 
 ---
 

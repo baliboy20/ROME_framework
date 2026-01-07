@@ -44,7 +44,7 @@ Creates CI/CD pipeline configuration for continuous integration and deployment. 
 ```bash
 /rome-p4:cicd \
   --platform github-actions \
-  --tech_stack_file ARTIFACTS/03-design/design-decisions/tech-stack.yaml
+  --tech_stack_file ARTIFACTS/_design/design-decisions/tech-stack.yaml
 ```
 
 ## Parameters
@@ -55,9 +55,9 @@ Creates CI/CD pipeline configuration for continuous integration and deployment. 
 
 ### Optional
 - `tech_stack_file` (string): Path to tech-stack.yaml from P3
-  - Default: `ARTIFACTS/03-design/design-decisions/tech-stack.yaml`
+  - Default: `ARTIFACTS/_design/design-decisions/tech-stack.yaml`
 - `output_doc` (string): Path to write ci-cd-config.md
-  - Default: `ARTIFACTS/04-config/technical-specs/ci-cd-config.md`
+  - Default: `ARTIFACTS/_config/technical-specs/ci-cd-config.md`
 - `enable_deployment` (boolean): Include deployment stages
   - Default: `true`
 
@@ -111,7 +111,7 @@ Creates CI/CD pipeline configuration for continuous integration and deployment. 
 
 ## Documentation Output
 
-Creates `ARTIFACTS/04-config/technical-specs/ci-cd-config.md`:
+Creates `ARTIFACTS/_config/technical-specs/ci-cd-config.md`:
 
 ```markdown
 # CI/CD Configuration

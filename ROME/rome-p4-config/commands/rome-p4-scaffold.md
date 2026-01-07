@@ -37,9 +37,9 @@ Scaffolds a single workspace by creating its root directory structure, initializ
 
 ### Required
 - `actionlist_file` (string): Path to actionlist.md from P3
-  - Default: `ARTIFACTS/03-design/design-decisions/actionlist.md`
+  - Default: `ARTIFACTS/_design/design-decisions/actionlist.md`
 - `tech_stack_file` (string): Path to tech-stack.yaml from P3
-  - Default: `ARTIFACTS/03-design/design-decisions/tech-stack.yaml`
+  - Default: `ARTIFACTS/_design/design-decisions/tech-stack.yaml`
 
 ### Optional
 - `workspace_name` (string): Specific workspace to scaffold

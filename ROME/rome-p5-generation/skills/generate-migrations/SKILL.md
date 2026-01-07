@@ -16,7 +16,7 @@ Create version-controlled migration scripts for database schema changes
 
 ## Outputs
 
-- migrations/[NNN]_[description].sql
+- SOURCE/migrations/[NNN]_[description].sql
 - Forward migration (UP)
 - Rollback migration (DOWN) if applicable
 
@@ -31,13 +31,13 @@ Create version-controlled migration scripts for database schema changes
 ## Example Output
 
 ```sql
--- migrations/002_add_organisations_table.sql
+-- SOURCE/migrations/002_add_organisations_table.sql
 CREATE TABLE organisations (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     name VARCHAR(255) NOT NULL UNIQUE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- migrations/002_rollback.sql
+-- SOURCE/migrations/002_rollback.sql
 DROP TABLE organisations;
 ```

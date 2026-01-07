@@ -16,7 +16,7 @@ Generate database schema DDL from data-dictionary.yaml
 
 ## Outputs
 
-- migrations/001_initial_schema.sql (or appropriate file for chosen DB)
+- SOURCE/migrations/001_initial_schema.sql (or appropriate file for chosen DB)
 - Schema with tables, fields, constraints, indexes
 
 ## Process

@@ -20,7 +20,7 @@ Analyzes multiple AORDL requirements in batch, generating a consolidated analysi
 ## Usage
 
 ```bash
-/batch-analyze-requirements --requirements-dir ARTIFACTS/dev/requirements --output-file batch-analysis.json
+/batch-analyze-requirements --requirements-dir ARTIFACTS/_requirements --output-file batch-analysis.json
 ```
 
 ## Parameters
@@ -46,7 +46,7 @@ Analyzes multiple AORDL requirements in batch, generating a consolidated analysi
   "metadata": {
     "analyzed_at": "2026-01-07T...",
     "requirements_count": 15,
-    "requirements_dir": "ARTIFACTS/dev/requirements"
+    "requirements_dir": "ARTIFACTS/_requirements"
   },
   "individual_analyses": [...],
   "cross_analysis": {

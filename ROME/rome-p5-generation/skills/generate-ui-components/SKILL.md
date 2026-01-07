@@ -34,7 +34,7 @@ Generate reusable UI component library from design system and screen designs
 ## Example Output
 
 ```typescript
-// components/Button/Button.tsx
+// SOURCE/components/Button/Button.tsx
 import React from 'react';
 import styles from './Button.module.css';
 
@@ -68,7 +68,7 @@ export function Button({
 ```
 
 ```css
-/* components/Button/Button.module.css */
+/* SOURCE/components/Button/Button.module.css */
 .button {
   font-family: var(--font-primary);
   border-radius: var(--border-radius-md);

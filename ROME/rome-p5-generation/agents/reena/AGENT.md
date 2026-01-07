@@ -78,11 +78,11 @@ Create production-ready API endpoints with business logic, authentication, valid
 
 | Artifact | Location | Description |
 |----------|----------|-------------|
-| Controllers | `src/controllers/` | HTTP request handlers |
-| Services | `src/services/` | Business logic |
-| Middleware | `src/middleware/` | Auth, validation, logging |
-| Routes | `src/routes/` | API route definitions |
-| Tests | `tests/` | Unit and integration tests |
+| Controllers | `SOURCE/src/controllers/` | HTTP request handlers |
+| Services | `SOURCE/src/services/` | Business logic |
+| Middleware | `SOURCE/src/middleware/` | Auth, validation, logging |
+| Routes | `SOURCE/src/routes/` | API route definitions |
+| Tests | `SOURCE/tests/` | Unit and integration tests |
 | README.md | Root | API documentation |
 
 ## Skills
@@ -121,7 +121,7 @@ Reena uses API-related skills from the rome-p5-generation plugin:
 All API code must be organized by business features:
 
 ```
-[backend_root]/
+SOURCE/[backend_root]/
 └── features/
     ├── [feature_name]/
     │   ├── TRACEABILITY.md         # ✓ REQUIRED

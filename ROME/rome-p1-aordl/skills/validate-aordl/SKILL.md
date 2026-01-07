@@ -33,7 +33,7 @@ Validates AORDL requirement files according to STRICT, GUIDED, or PERMISSIVE mod
 ## Usage
 
 ```bash
-/validate-aordl --requirement-file ARTIFACTS/dev/requirements/REQ-001.yaml --mode STRICT
+/validate-aordl --requirement-file ARTIFACTS/_requirements/REQ-001.yaml --mode STRICT
 ```
 
 ## Parameters

@@ -173,9 +173,9 @@ rome-p0-bootup/
 - rome-core: ^1.0.0
 
 #### Artifacts Created
-- `_requirements/aordl/REQ-*.yaml` - AORDL requirement files
-- `_requirements/bdd/` - BDD feature files (optional)
-- `_requirements/requirements-catalog.md` - Requirements catalog
+- `ARTIFACTS/_requirements/aordl/REQ-*.yaml` - AORDL requirement files
+- `ARTIFACTS/_requirements/bdd/` - BDD feature files (optional)
+- `ARTIFACTS/_requirements/requirements-catalog.md` - Requirements catalog
 
 #### Key Files
 ```
@@ -237,10 +237,10 @@ rome-p1-aordl/
 - rome-p1-aordl: >=1.0.0 (requires AORDL requirements as input)
 
 #### Artifacts Created
-- `_analysis/functional-decomposition/REQ-*-analysis.md` - Analysis documents
-- `_analysis/user-stories/US-*.md` - User story files
-- `_analysis/entity-catalog.yaml` - Discovered entities
-- `_analysis/actor-catalog.yaml` - Discovered actors
+- `ARTIFACTS/_analysis/functional-decomposition/REQ-*-analysis.md` - Analysis documents
+- `ARTIFACTS/_analysis/user-stories/US-*.md` - User story files
+- `ARTIFACTS/_analysis/entity-catalog.yaml` - Discovered entities
+- `ARTIFACTS/_analysis/actor-catalog.yaml` - Discovered actors
 
 #### Key Files
 ```
@@ -316,19 +316,19 @@ rome-p2-analysis/
 - rome-p2-analysis: >=1.0.0 (requires user stories as input)
 
 #### Artifacts Created
-- `_design/architecture/system-architecture.md` - Architecture documentation
-- `_design/architecture/diagrams/` - Architecture diagrams
-- `_design/api-specs/*.yaml` - API specifications (OpenAPI)
-- `_design/data-models/data-dictionary.yaml` - Data dictionary
-- `_design/data-models/dto-models.yaml` - DTO specifications
-- `_design/services/*.md` - Service layer specs
-- `_design/repositories/*.md` - Repository specs
-- `_design/authentication/auth-spec.md` - Authentication specs
-- `_design/error-handling/error-strategy.md` - Error handling specs
-- `_design/logging/logging-strategy.md` - Logging specs
-- `_design/testing/test-plan.md` - Test plan
-- `_design/validation/validation-rules.yaml` - Validation specs
-- `_design/ui/component-structure.md` - UI component hierarchy (Clara)
+- `ARTIFACTS/_design/architecture/system-architecture.md` - Architecture documentation
+- `ARTIFACTS/_design/architecture/diagrams/` - Architecture diagrams
+- `ARTIFACTS/_design/api-specs/*.yaml` - API specifications (OpenAPI)
+- `ARTIFACTS/_design/data-models/data-dictionary.yaml` - Data dictionary
+- `ARTIFACTS/_design/data-models/dto-models.yaml` - DTO specifications
+- `ARTIFACTS/_design/services/*.md` - Service layer specs
+- `ARTIFACTS/_design/repositories/*.md` - Repository specs
+- `ARTIFACTS/_design/authentication/auth-spec.md` - Authentication specs
+- `ARTIFACTS/_design/error-handling/error-strategy.md` - Error handling specs
+- `ARTIFACTS/_design/logging/logging-strategy.md` - Logging specs
+- `ARTIFACTS/_design/testing/test-plan.md` - Test plan
+- `ARTIFACTS/_design/validation/validation-rules.yaml` - Validation specs
+- `ARTIFACTS/_design/ui/component-structure.md` - UI component hierarchy (Clara)
 
 #### Key Files
 ```
@@ -415,13 +415,13 @@ rome-p3-design/
 - rome-p3-design: >=1.0.0 (requires architecture specs as input)
 
 #### Artifacts Created
-- `_config/scaffolding-manifest.yaml` - Workspace structure manifest
-- `_config/environment/` - Environment configuration files
-- `_config/build/` - Build system configuration
-- `_config/cicd/` - CI/CD pipeline configurations
-- `_config/testing/` - Test framework configuration
-- `_config/technical-specs/` - Technical specifications
-- `src/features/` - Feature-based directory structure
+- `ARTIFACTS/_config/scaffolding-manifest.yaml` - Workspace structure manifest
+- `ARTIFACTS/_config/environment/` - Environment configuration files
+- `ARTIFACTS/_config/build/` - Build system configuration
+- `ARTIFACTS/_config/cicd/` - CI/CD pipeline configurations
+- `ARTIFACTS/_config/testing/` - Test framework configuration
+- `ARTIFACTS/_config/technical-specs/` - Technical specifications
+- `SOURCE/src/features/` - Feature-based directory structure
 - `.env.example` - Environment variable template
 - `.gitignore` - Git ignore rules
 - `package.json` or equivalent - Project manifest
@@ -513,30 +513,30 @@ rome-p4-config/
 #### Artifacts Created
 
 **Database Layer (Ashok):**
-- `src/features/*/database/schema.sql` - Database schemas
-- `src/features/*/database/migrations/` - Migration files
-- `src/features/*/database/models/` - ORM model classes
-- `src/features/*/database/seeds/` - Seed data scripts
+- `SOURCE/src/features/*/database/schema.sql` - Database schemas
+- `SOURCE/src/features/*/database/migrations/` - Migration files
+- `SOURCE/src/features/*/database/models/` - ORM model classes
+- `SOURCE/src/features/*/database/seeds/` - Seed data scripts
 
 **API Layer (Reena):**
-- `src/features/*/api/controllers/` - API controllers
-- `src/features/*/api/routes/` - Route definitions
-- `src/features/*/services/` - Business logic services
-- `src/features/*/repositories/` - Data access layer
-- `src/middleware/authentication/` - Auth middleware
-- `src/middleware/validation/` - Validation middleware
-- `src/middleware/error-handling/` - Error handlers
+- `SOURCE/src/features/*/api/controllers/` - API controllers
+- `SOURCE/src/features/*/api/routes/` - Route definitions
+- `SOURCE/src/features/*/services/` - Business logic services
+- `SOURCE/src/features/*/repositories/` - Data access layer
+- `SOURCE/src/middleware/authentication/` - Auth middleware
+- `SOURCE/src/middleware/validation/` - Validation middleware
+- `SOURCE/src/middleware/error-handling/` - Error handlers
 
 **UI Layer (Charlie):**
-- `src/features/*/ui/screens/` - UI screens/pages
-- `src/features/*/ui/components/` - UI components
-- `src/features/*/ui/widgets/` - Reusable widgets
-- `src/features/*/ui/state/` - State management
+- `SOURCE/src/features/*/ui/screens/` - UI screens/pages
+- `SOURCE/src/features/*/ui/components/` - UI components
+- `SOURCE/src/features/*/ui/widgets/` - Reusable widgets
+- `SOURCE/src/features/*/ui/state/` - State management
 
 #### Code Organization
 Feature-based structure per ROME-PROP-016:
 ```
-src/features/authentication/
+SOURCE/src/features/authentication/
 ├── database/
 │   ├── schema.sql
 │   ├── models/
@@ -975,11 +975,11 @@ Charlie (UI) → depends on → API Layer → generates → UI Layer
 Plugins communicate through shared artifacts in the ROME directory structure:
 
 ```
-_requirements/aordl/  → P1 writes, P2 reads
-_analysis/            → P2 writes, P3 reads
-_design/              → P3 writes, P4 reads
-_config/              → P4 writes, P5 reads
-src/                  → P5 writes, QA reads
+ARTIFACTS/_requirements/aordl/  → P1 writes, P2 reads
+ARTIFACTS/_analysis/            → P2 writes, P3 reads
+ARTIFACTS/_design/              → P3 writes, P4 reads
+ARTIFACTS/_config/              → P4 writes, P5 reads
+SOURCE/src/                     → P5 writes, QA reads
 ```
 
 #### Traceability Integration

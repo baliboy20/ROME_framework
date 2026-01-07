@@ -270,11 +270,11 @@ STAGE 3: FINALIZATION (Steps 11-17)
 
 | Artifact | Location | Purpose |
 |----------|----------|---------|
-| requirements-matrix.yaml | ARTIFACTS/02-analysis/requirements/ | Source for features, entities, dimensions |
-| user-stories.md | ARTIFACTS/02-analysis/requirements/ | Source for use cases, user roles |
-| acceptance-criteria.md | ARTIFACTS/02-analysis/requirements/ | Validation for use case completeness |
-| non-functional-requirements.md | ARTIFACTS/02-analysis/requirements/ | Input for tech stack, architecture decisions |
-| phase2-handover.md | ARTIFACTS/02-analysis/requirements/ | Technical requests, decisions log, notes |
+| requirements-matrix.yaml | ARTIFACTS/_requirements/ | Source for features, entities, dimensions |
+| user-stories.md | ARTIFACTS/_requirements/ | Source for use cases, user roles |
+| acceptance-criteria.md | ARTIFACTS/_requirements/ | Validation for use case completeness |
+| non-functional-requirements.md | ARTIFACTS/_requirements/ | Input for tech stack, architecture decisions |
+| phase2-handover.md | ARTIFACTS/_requirements/ | Technical requests, decisions log, notes |
 
 ---
 
@@ -282,14 +282,14 @@ STAGE 3: FINALIZATION (Steps 11-17)
 
 | Artifact | Location | Used By |
 |----------|----------|---------|
-| tech-stack.yaml | ARTIFACTS/03-design/design-decisions/ | Lucien (workspace init) |
-| data-dictionary.yaml | ARTIFACTS/03-design/data-models/ | Ashok, Reena, Charlie |
-| api-design.md | ARTIFACTS/03-design/api-contracts/ | Reena (API implementation) |
-| use-cases.md | ARTIFACTS/03-design/design-decisions/ | Charlie (UI), Reena (logic) |
-| system-architecture.md | ARTIFACTS/03-design/architecture/ | Lucien, all P5 robots |
-| actionlist.md | ARTIFACTS/03-design/design-decisions/ | Roma, all P5 robots |
-| test-architecture.md | ARTIFACTS/03-design/design-decisions/ | Charlie, all P5 robots |
-| phase3-handover.md | ARTIFACTS/03-design/design-decisions/ | Lucien, all P5 robots |
+| tech-stack.yaml | ARTIFACTS/_design/design-decisions/ | Lucien (workspace init) |
+| data-dictionary.yaml | ARTIFACTS/_design/data-models/ | Ashok, Reena, Charlie |
+| api-design.md | ARTIFACTS/_design/api-contracts/ | Reena (API implementation) |
+| use-cases.md | ARTIFACTS/_design/design-decisions/ | Charlie (UI), Reena (logic) |
+| system-architecture.md | ARTIFACTS/_design/architecture/ | Lucien, all P5 robots |
+| actionlist.md | ARTIFACTS/_design/design-decisions/ | Roma, all P5 robots |
+| test-architecture.md | ARTIFACTS/_design/design-decisions/ | Charlie, all P5 robots |
+| phase3-handover.md | ARTIFACTS/_design/design-decisions/ | Lucien, all P5 robots |
 
 ---
 
