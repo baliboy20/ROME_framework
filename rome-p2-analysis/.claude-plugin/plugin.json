@@ -13,7 +13,11 @@
       "batch-analyze-requirements",
       "generate-user-stories"
     ],
-    "commands": []
+    "commands": [
+      "rome-p2:analyze",
+      "rome-p2:batch-analyze",
+      "rome-p2:generate-stories"
+    ]
   },
   "dependencies": {
     "rome-core": "^1.0.0"
@@ -22,7 +26,10 @@
     "agents/talib/AGENT.md": "Talib agent for requirements analysis (P2 mode)",
     "skills/analyze-requirement/SKILL.md": "Comprehensive requirement analysis skill",
     "skills/batch-analyze-requirements/SKILL.md": "Batch requirement analysis skill",
-    "skills/generate-user-stories/SKILL.md": "User story generation from AORDL skill"
+    "skills/generate-user-stories/SKILL.md": "User story generation from AORDL skill",
+    "commands/rome-p2-analyze.md": "Slash command for requirement analysis",
+    "commands/rome-p2-batch-analyze.md": "Slash command for batch requirement analysis",
+    "commands/rome-p2-generate-stories.md": "Slash command for user story generation"
   },
   "author": "ROME Framework Team",
   "license": "MIT",

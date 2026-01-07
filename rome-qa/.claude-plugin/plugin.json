@@ -55,7 +55,20 @@
       "robot": "sarah"
     }
   ],
-  "commands": [],
+  "commands": [
+    {
+      "name": "validate",
+      "description": "Validate AORDL structure, requirements coverage, data dictionary, and traceability",
+      "agent": "sarah",
+      "skills": ["validate-aordl-structure", "validate-requirements-coverage", "validate-data-dictionary", "verify-traceability"]
+    },
+    {
+      "name": "quality-gate",
+      "description": "Execute quality gate validation for phase transitions (P2, P3)",
+      "agent": "sarah",
+      "skills": ["quality-gate-p2", "quality-gate-p3", "verify-traceability"]
+    }
+  ],
   "dependencies": {
     "rome-core": "^1.0.0"
   },

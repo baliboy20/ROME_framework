@@ -9,13 +9,16 @@
       "bootstrap"
     ],
     "skills": [],
-    "commands": []
+    "commands": [
+      "rome-p0:bootstrap"
+    ]
   },
   "dependencies": {
     "rome-core": "^1.0.0"
   },
   "exports": {
-    "agents/bootstrap/AGENT.md": "Bootstrap agent for project initialization"
+    "agents/bootstrap/AGENT.md": "Bootstrap agent for project initialization",
+    "commands/rome-p0-bootstrap.md": "Slash command for project bootstrap"
   },
   "author": "ROME Framework Team",
   "license": "MIT",

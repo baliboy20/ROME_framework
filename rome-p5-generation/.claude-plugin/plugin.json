@@ -81,7 +81,26 @@
       "robot": "charlie"
     }
   ],
-  "commands": [],
+  "commands": [
+    {
+      "name": "generate-db",
+      "description": "Generate database schema, migrations, ORM models, and seed data",
+      "agent": "ashok",
+      "skills": ["generate-database-schema", "generate-migrations", "generate-orm-models", "generate-seed-data"]
+    },
+    {
+      "name": "generate-api",
+      "description": "Generate API endpoints, controllers, and authentication middleware",
+      "agent": "reena",
+      "skills": ["generate-api-endpoints", "generate-authentication-middleware"]
+    },
+    {
+      "name": "generate-ui",
+      "description": "Generate UI screens and reusable components",
+      "agent": "charlie",
+      "skills": ["generate-ui-screens", "generate-ui-components"]
+    }
+  ],
   "dependencies": {
     "rome-core": "^1.0.0"
   },

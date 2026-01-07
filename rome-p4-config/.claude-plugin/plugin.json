@@ -18,7 +18,11 @@
       "generate-technical-specs",
       "create-scaffolding-manifest"
     ],
-    "commands": []
+    "commands": [
+      "rome-p4:configure",
+      "rome-p4:scaffold",
+      "rome-p4:cicd"
+    ]
   },
   "dependencies": {
     "rome-core": "^1.0.0"

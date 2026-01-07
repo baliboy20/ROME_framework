@@ -23,7 +23,11 @@
       "design-validation-layer",
       "design-component-structure"
     ],
-    "commands": []
+    "commands": [
+      "rome-p3:design",
+      "rome-p3:activate-clara",
+      "rome-p3:architecture"
+    ]
   },
   "dependencies": {
     "rome-core": "^1.0.0"

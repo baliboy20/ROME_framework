@@ -13,7 +13,11 @@
       "transform-aordl-to-bdd",
       "create-aordl-requirement"
     ],
-    "commands": []
+    "commands": [
+      "rome-p1:validate",
+      "rome-p1:create",
+      "rome-p1:transform-bdd"
+    ]
   },
   "dependencies": {
     "rome-core": "^1.0.0"
@@ -22,7 +26,10 @@
     "agents/talib/AGENT.md": "Talib agent for AORDL requirements engineering (P1 mode)",
     "skills/validate-aordl/SKILL.md": "AORDL requirement validation skill",
     "skills/transform-aordl-to-bdd/SKILL.md": "AORDL to BDD transformation skill",
-    "skills/create-aordl-requirement/SKILL.md": "AORDL requirement creation skill"
+    "skills/create-aordl-requirement/SKILL.md": "AORDL requirement creation skill",
+    "commands/rome-p1-validate.md": "Slash command for AORDL validation",
+    "commands/rome-p1-create.md": "Slash command for AORDL requirement creation",
+    "commands/rome-p1-transform-bdd.md": "Slash command for AORDL to BDD transformation"
   },
   "author": "ROME Framework Team",
   "license": "MIT",
