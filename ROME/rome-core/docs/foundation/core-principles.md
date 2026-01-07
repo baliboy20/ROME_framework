@@ -205,7 +205,7 @@ Maintains integrity and consistency through inter-document references within the
 - Escalation protocols define when to engage sponsor vs. resolve internally
 - Decision authority boundaries specify robot autonomy limits
 - Communication logged in activity system for traceability
-- **Reference:** ROME-PROC-002 (Sponsor Interaction Protocol)
+- **Reference:** ROME-GOV-006 (Sponsor Interaction)
 
 ### 12. Iterative Refinement
 **Definition:** The framework accommodates product evolution through controlled refinement mechanisms, both within a single ROME cycle and across multiple cycles.

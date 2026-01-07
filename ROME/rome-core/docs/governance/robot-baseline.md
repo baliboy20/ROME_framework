@@ -293,7 +293,7 @@ Write({
 
 ## Sponsor Interaction Protocol
 
-Per ROME-PROC-002 (Sponsor Interaction Protocol):
+Per ROME-GOV-006 (Sponsor Interaction):
 
 ### When to Engage Sponsor
 
@@ -516,5 +516,5 @@ REQUEST_AMENDMENT:
 - **ROME-PRIN-001:** Core Principles
 - **ROME-LEX-001:** Lexicon
 - **ROME-PROC-005:** Activity Logging Protocol
-- **ROME-PROC-002:** Sponsor Interaction Protocol
+- **ROME-GOV-006:** Sponsor Interaction
 - **ROME-GOV-001:** Document Standards

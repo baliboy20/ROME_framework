@@ -71,7 +71,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-GOV-003 | Amendment Procedures | `/ROME/framework-governance/amendment-procedures.md` | Draft |
 | ROME-GOV-004 | Terminology Management | `/ROME/framework-governance/terminology-management.md` | Draft |
 | ROME-GOV-005 | Document Architecture | `/ROME/framework-governance/document-architecture.md` | Draft |
-| ROME-GOV-006 | Sponsor Interaction Policy | `/ROME/framework-governance/sponsor-interaction-policy.md` | Draft |
+| ROME-GOV-006 | Sponsor Interaction | `/ROME/rome-core/docs/governance/sponsor-interaction.md` | Active |
 | ROME-GOV-007 | Framework Fidelity | `/ROME/framework-governance/framework-fidelity.md` | Draft |
 | ROME-GOV-008 | Activity Log Format | `/ROME/framework-governance/activity-log-format.md` | Draft |
 
@@ -79,13 +79,13 @@ ROME-[TYPE]-[NUMBER]
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-CFG-001 | Sponsor Interaction Config | `/ROME/framework-governance/sponsor-interaction-config.md` | Draft |
+| ROME-CFG-001 | ~~Sponsor Interaction Config~~ | Superseded by ROME-GOV-006 | Deprecated |
 
 ### Procedure Documents
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-PROC-002 | Sponsor Interaction Protocol | `/ROME/robot-templates/robot-operations-protocols/sponsor-interaction-protocol.md` | Draft |
+| ROME-PROC-002 | ~~Sponsor Interaction Protocol~~ | Superseded by ROME-GOV-006 | Deprecated |
 | ROME-PROC-005 | Activity Logging Protocol | `/ROME/robot-templates/robot-operations-protocols/activity-logging-protocol.md` | Draft |
 | ROME-PROC-006 | Quality Gate Protocol | `/ROME/life-cycle/cross-phase-procedures/quality-gate-protocol.md` | Draft |
 
