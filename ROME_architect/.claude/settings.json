@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "terminal-notifier -title 'ROME Framework' -message 'Archie has completed the task' -sound default -group 'rome-archie'"
+          }
+        ]
+      }
+    ]
+  }
+}
