@@ -54,8 +54,7 @@ ROME/                   # Operational framework (all plugins)
   ├── rome-p3-design/   # Phase 3: System design
   ├── rome-p4-config/   # Phase 4: Workspace configuration
   ├── rome-p5-generation/ # Phase 5: Code generation
-  ├── rome-qa/          # Quality assurance
-  └── rome-full/        # Meta-plugin (complete bundle)
+  └── rome-qa/          # Quality assurance
 
 ROME_architect/         # Archie working directory (support)
 ROME_framework_maintenance/  # Framework improvement (support)
@@ -91,9 +90,8 @@ These directories represent the **new phase-based plugin architecture** implemen
 | `ROME/rome-p4-config/` | 84K | ✅ ACTIVE | Phase 4: Workspace configuration (Lucien agent) |
 | `ROME/rome-p5-generation/` | 72K | ✅ ACTIVE | Phase 5: Parallel code generation (Ashok, Reena, Charlie) |
 | `ROME/rome-qa/` | 52K | ✅ ACTIVE | Quality assurance (Sarah agent) |
-| `ROME/rome-full/` | 16K | ✅ ACTIVE | Meta-plugin (complete framework bundle) |
 
-**Total New Architecture:** ~1.4MB, 9 plugins, 10 agents (all in `ROME/`)
+**Total New Architecture:** ~1.4MB, 8 plugins, 10 agents (all in `ROME/`)
 
 ---
 

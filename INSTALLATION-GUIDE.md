@@ -2,20 +2,33 @@
 
 Document UID: ROME-INSTALL-001
 Version: 1.0.0
-Status: Complete
+Status: **ASPIRATIONAL** (Plugin system not yet implemented)
 Date: 2026-01-07
+
+---
+
+## ⚠️ IMPORTANT NOTICE
+
+**This guide describes a future plugin installation system that does not currently exist.**
+
+The `claude-plugin install` commands shown here are **not yet functional**.
+
+**For current working instructions, see:** `USER-GUIDE.md`
+
+**Current Reality:** Open AGENT.md files directly from ROME/ directory in Claude Code.
+
+---
 
 ## Overview
 
-This guide provides comprehensive installation instructions for the ROME Framework phase-based plugin architecture. It covers multiple installation patterns tailored to different user needs and experience levels.
+This guide describes the planned installation procedures for the ROME Framework phase-based plugin architecture once the Claude Code plugin system is operational. It covers multiple installation patterns tailored to different user needs and experience levels.
 
 ## Table of Contents
 
 1. [Prerequisites](#prerequisites)
 2. [Installation Patterns](#installation-patterns)
-3. [Pattern 1: Beginner (Full Bundle)](#pattern-1-beginner-full-bundle)
-4. [Pattern 2: Selective (Phase-Specific)](#pattern-2-selective-phase-specific)
-5. [Pattern 3: Developer (Manual Installation)](#pattern-3-developer-manual-installation)
+3. [Pattern 1: Selective (Phase-Specific)](#pattern-1-selective-phase-specific)
+4. [Pattern 2: Developer (Manual Installation)](#pattern-2-developer-manual-installation)
 6. [Post-Installation Configuration](#post-installation-configuration)
 7. [Verification](#verification)
 8. [Troubleshooting](#troubleshooting)
@@ -75,123 +88,7 @@ Choose the installation pattern that best fits your needs:
 
 ---
 
-## Pattern 1: Beginner (Full Bundle)
-
-### Overview
-Install the complete ROME Framework with all plugins in a single command. Best for users who want the full requirements-to-code workflow immediately.
-
-### Installation Steps
-
-#### Step 1: Install rome-full Meta-Plugin
-
-```bash
-claude-plugin install rome-full
-```
-
-This single command installs all 8 plugins:
-- rome-core (foundation)
-- rome-p0-bootup (project initialization)
-- rome-p1-aordl (requirements)
-- rome-p2-analysis (functional decomposition)
-- rome-p3-design (architecture)
-- rome-p4-config (workspace setup)
-- rome-p5-generation (code generation)
-- rome-qa (quality assurance)
-
-**Expected Output:**
-```
-Installing rome-full@1.0.0...
-Resolving dependencies...
-  ✓ rome-core@1.0.0
-  ✓ rome-p0-bootup@1.0.0
-  ✓ rome-p1-aordl@1.0.0
-  ✓ rome-p2-analysis@1.0.0
-  ✓ rome-p3-design@1.0.0
-  ✓ rome-p4-config@1.0.0
-  ✓ rome-p5-generation@1.0.0
-  ✓ rome-qa@1.0.0
-Installation complete! 9 plugins installed.
-```
-
-#### Step 2: Configure MCP Server
-
-Create or update `.mcp.json` in your project root:
-
-```bash
-cat > ~/.claude/.mcp.json <<'EOF'
-{
-  "mcpServers": {
-    "activity-log": {
-      "command": "node",
-      "args": ["${pluginPath}/rome-core/servers/activity-log/activity-log-file/index.js"],
-      "env": {
-        "PROJECT_ROOT": "${projectRoot}"
-      }
-    }
-  }
-}
-EOF
-```
-
-#### Step 3: Verify Installation
-
-```bash
-claude-plugin list | grep rome-
-```
-
-**Expected Output:**
-```
-rome-core@1.0.0
-rome-full@1.0.0
-rome-p0-bootup@1.0.0
-rome-p1-aordl@1.0.0
-rome-p2-analysis@1.0.0
-rome-p3-design@1.0.0
-rome-p4-config@1.0.0
-rome-p5-generation@1.0.0
-rome-qa@1.0.0
-```
-
-#### Step 4: Test Installation
-
-Start Claude Code and test:
-
-```
-/rome-p0:bootstrap
-```
-
-**Expected:** Project structure created successfully.
-
-### Quick Start Workflow
-
-```bash
-# Initialize project
-/rome-p0:bootstrap
-
-# Create requirement
-/rome-p1:create
-
-# Analyze requirements
-/rome-p2:batch-analyze
-
-# Design system
-/rome-p3:design
-
-# Configure workspace
-/rome-p4:configure
-
-# Generate code
-/rome-p5:generate-db
-/rome-p5:generate-api
-/rome-p5:generate-ui
-
-# Validate
-/rome-qa:validate
-```
-
----
-
-## Pattern 2: Selective (Phase-Specific)
+## Pattern 1: Selective (Phase-Specific)
 
 ### Overview
 Install only the phase plugins you need. Best for experienced users who understand the ROME workflow and only need specific phases.
@@ -319,7 +216,7 @@ claude-plugin install rome-p5-generation
 
 ---
 
-## Pattern 3: Developer (Manual Installation)
+## Pattern 2: Developer (Manual Installation)
 
 ### Overview
 Install plugins manually from source for development, customization, or contributing to the framework.
@@ -342,7 +239,7 @@ git clone https://github.com/rome-framework/rome-p3-design.git
 git clone https://github.com/rome-framework/rome-p4-config.git
 git clone https://github.com/rome-framework/rome-p5-generation.git
 git clone https://github.com/rome-framework/rome-qa.git
-git clone https://github.com/rome-framework/rome-full.git
+git clone https://github.com/rome-framework/rome-core.git
 ```
 
 #### Step 2: Install Dependencies
@@ -369,7 +266,7 @@ ln -s ~/rome-plugins/rome-p3-design ~/.claude/plugins/rome-p3-design
 ln -s ~/rome-plugins/rome-p4-config ~/.claude/plugins/rome-p4-config
 ln -s ~/rome-plugins/rome-p5-generation ~/.claude/plugins/rome-p5-generation
 ln -s ~/rome-plugins/rome-qa ~/.claude/plugins/rome-qa
-ln -s ~/rome-plugins/rome-full ~/.claude/plugins/rome-full
+ln -s ~/rome-plugins/rome-core ~/.claude/plugins/rome-core
 ```
 
 #### Step 4: Configure MCP Server
@@ -560,7 +457,7 @@ claude-plugin list
 **Solution:**
 ```bash
 # Reinstall plugins
-claude-plugin install rome-full
+claude-plugin install rome-core
 
 # Or manually check plugin directory
 ls ~/.claude/plugins/
@@ -601,7 +498,7 @@ Error: rome-p3-design requires rome-p2-analysis@>=1.0.0
 claude-plugin install rome-p2-analysis
 
 # Or install full bundle
-claude-plugin install rome-full
+claude-plugin install rome-core
 ```
 
 ### Issue 4: Command Not Recognized
@@ -637,7 +534,7 @@ Error: EACCES: permission denied, mkdir '~/.claude/plugins/rome-core'
 chmod -R 755 ~/.claude/plugins/
 
 # Or use sudo (not recommended)
-sudo claude-plugin install rome-full
+sudo claude-plugin install rome-core
 ```
 
 ### Issue 6: Version Mismatch
@@ -678,10 +575,10 @@ claude-plugin update rome-p1-aordl
 claude-plugin outdated | grep rome-
 ```
 
-### Update rome-full Meta-Plugin
+### Update rome-core Meta-Plugin
 
 ```bash
-claude-plugin update rome-full
+claude-plugin update rome-core
 # Automatically updates all dependencies
 ```
 
@@ -705,7 +602,7 @@ Pin specific versions in project `package.json`:
 ### Uninstall All ROME Plugins
 
 ```bash
-claude-plugin uninstall rome-full
+claude-plugin uninstall rome-core
 claude-plugin uninstall rome-core
 claude-plugin uninstall rome-p0-bootup
 claude-plugin uninstall rome-p1-aordl
@@ -749,7 +646,7 @@ Install plugins to custom directory:
 
 ```bash
 export CLAUDE_PLUGIN_PATH=~/my-custom-plugins
-claude-plugin install rome-full --path $CLAUDE_PLUGIN_PATH
+claude-plugin install rome-core --path $CLAUDE_PLUGIN_PATH
 ```
 
 ### Multiple ROME Versions
@@ -758,20 +655,20 @@ Run different ROME versions side-by-side:
 
 ```bash
 # Install v1.0.0
-claude-plugin install rome-full@1.0.0
+claude-plugin install rome-core@1.0.0
 
 # Install v2.0.0 to separate profile
-claude-plugin install rome-full@2.0.0 --profile rome-v2
+claude-plugin install rome-core@2.0.0 --profile rome-v2
 ```
 
 ### Offline Installation
 
 ```bash
 # Download plugin packages
-claude-plugin pack rome-full --output rome-full-1.0.0.tgz
+claude-plugin pack rome-core --output rome-core-1.0.0.tgz
 
 # Install from tarball
-claude-plugin install rome-full-1.0.0.tgz
+claude-plugin install rome-core-1.0.0.tgz
 ```
 
 ---
@@ -789,4 +686,4 @@ claude-plugin install rome-full-1.0.0.tgz
 - ROME-PROP-018: Phase-Based Plugin Architecture
 - PLUGIN-MANIFEST.md: Complete plugin catalog
 - TESTING.md: Validation procedures
-- rome-full/README.md: Meta-plugin documentation
+- rome-core/README.md: Meta-plugin documentation

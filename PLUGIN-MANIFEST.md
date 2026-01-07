@@ -21,10 +21,9 @@ This document provides a complete catalog of all ROME Framework plugins, includi
 | rome-p4-config | 1.0.0 | Phase | 1 | 8 | 3 | P4 |
 | rome-p5-generation | 1.0.0 | Phase | 3 | 8 | 3 | P5 |
 | rome-qa | 1.0.0 | Cross-Phase | 1 | 6 | 2 | QA |
-| rome-full | 1.0.0 | Meta-Plugin | 10 | 40 | 18 | All |
 
 **Totals:**
-- **9 Plugins**
+- **8 Plugins**
 - **10 Unique Agents**
 - **40 Skills**
 - **18 Commands**
@@ -695,62 +694,6 @@ rome-qa/
 
 ---
 
-### 9. rome-full
-
-**Version:** 1.0.0
-**Type:** Meta-Plugin
-**Phase:** All phases
-**Description:** Complete ROME Framework bundle with all phase plugins.
-
-#### Provides
-
-**Aggregates all agents, skills, and commands from:**
-- rome-core
-- rome-p0-bootup
-- rome-p1-aordl
-- rome-p2-analysis
-- rome-p3-design
-- rome-p4-config
-- rome-p5-generation
-- rome-qa
-
-**Total Provisions:**
-- 10 Agents
-- 40 Skills
-- 18 Commands
-- 7 Phases (P0-P5, QA)
-
-#### Dependencies
-```json
-{
-  "rome-core": "^1.0.0",
-  "rome-p0-bootup": "^1.0.0",
-  "rome-p1-aordl": "^1.0.0",
-  "rome-p2-analysis": "^1.0.0",
-  "rome-p3-design": "^1.0.0",
-  "rome-p4-config": "^1.0.0",
-  "rome-p5-generation": "^1.0.0",
-  "rome-qa": "^1.0.0"
-}
-```
-
-#### Installation
-Single command installs all dependencies:
-```bash
-claude-plugin install rome-full
-```
-
-#### Key Files
-```
-rome-full/
-├── .claude-plugin/
-│   └── plugin.json
-├── README.md
-└── package.json
-```
-
----
-
 ## Agent Reference
 
 ### Complete Agent Catalog
@@ -968,9 +911,6 @@ rome-core (foundation)
 ├── rome-p5-generation
 │   └── (peer) rome-p4-config
 └── rome-qa
-
-rome-full (meta-plugin)
-└── All plugins above
 ```
 
 ### Agent Dependencies (P5)
@@ -1126,7 +1066,6 @@ ROME Framework supports multiple technology stacks through configuration:
 - ROME-ROBOT-001 to ROME-ROBOT-011: Agent definitions
 - INSTALLATION-GUIDE.md: Installation procedures
 - TESTING.md: Validation procedures
-- rome-full/README.md: Meta-plugin documentation
 
 ---
 
@@ -1136,7 +1075,6 @@ ROME Framework supports multiple technology stacks through configuration:
 
 | Need | Plugin(s) | Install Command |
 |------|-----------|-----------------|
-| Everything | rome-full | `claude-plugin install rome-full` |
 | Requirements only | rome-core, rome-p0-bootup, rome-p1-aordl | `claude-plugin install rome-core rome-p0-bootup rome-p1-aordl` |
 | Requirements + Analysis | + rome-p2-analysis | `+ rome-p2-analysis` |
 | Design only | rome-core, rome-p3-design | `claude-plugin install rome-core rome-p3-design` |

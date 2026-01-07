@@ -118,10 +118,9 @@ ROME/                        # Operational framework (all plugins)
   ├── rome-p3-design/   100K  Phase 3: System design
   ├── rome-p4-config/    84K  Phase 4: Workspace configuration
   ├── rome-p5-generation/ 72K  Phase 5: Code generation
-  ├── rome-qa/           52K  Quality assurance
-  └── rome-full/         16K  Meta-plugin (complete bundle)
+  └── rome-qa/           52K  Quality assurance
 
-Total: ~1.4MB across 9 plugins in ROME/
+Total: ~1.4MB across 8 plugins in ROME/
 ```
 
 ### ✅ Support & Ancillary Folders
