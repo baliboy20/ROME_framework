@@ -1,0 +1,33 @@
+{
+  "name": "rome-p0-bootup",
+  "version": "1.0.0",
+  "description": "ROME Phase 0 (Bootup) - Project initialization and bootstrap",
+  "type": "phase-plugin",
+  "phase": "P00-bootup",
+  "provides": {
+    "agents": [
+      "bootstrap"
+    ],
+    "skills": [],
+    "commands": []
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "exports": {
+    "agents/bootstrap/AGENT.md": "Bootstrap agent for project initialization"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p0-bootup"
+  },
+  "keywords": [
+    "rome",
+    "phase-0",
+    "bootup",
+    "bootstrap",
+    "project-initialization"
+  ]
+}

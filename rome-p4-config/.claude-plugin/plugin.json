@@ -1,0 +1,51 @@
+{
+  "name": "rome-p4-config",
+  "version": "1.0.0",
+  "description": "ROME Framework P4 Config Phase plugin - Workspace configuration and scaffolding",
+  "type": "phase",
+  "phase": "P4",
+  "provides": {
+    "agents": [
+      "lucien"
+    ],
+    "skills": [
+      "scaffold-workspace",
+      "configure-environment",
+      "setup-cicd-pipeline",
+      "configure-build-system",
+      "setup-test-framework",
+      "validate-workspace-structure",
+      "generate-technical-specs",
+      "create-scaffolding-manifest"
+    ],
+    "commands": []
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rome-p3-design": ">=1.0.0"
+  },
+  "exports": {
+    "agents/lucien/AGENT.md": "Lucien agent definition (DevOps Engineer)",
+    "skills/scaffold-workspace/SKILL.md": "Scaffold workspace directory structure",
+    "skills/configure-environment/SKILL.md": "Configure environment files",
+    "skills/setup-cicd-pipeline/SKILL.md": "Setup CI/CD pipeline configuration"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p4-config"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "phase4",
+    "config",
+    "scaffolding",
+    "devops",
+    "cicd",
+    "workspace"
+  ]
+}

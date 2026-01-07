@@ -1,0 +1,40 @@
+{
+  "name": "rome-p5-generation",
+  "version": "1.0.0",
+  "description": "ROME Phase 5 Generation plugin - Parallel code generation for Database, API, and UI layers",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [
+    "rome",
+    "framework",
+    "plugin",
+    "generation",
+    "phase5",
+    "database",
+    "api",
+    "frontend",
+    "code-generation"
+  ],
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rome-p4-config": ">=1.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p5-generation"
+  },
+  "files": [
+    "agents/",
+    "skills/",
+    "commands/",
+    ".claude-plugin/",
+    "README.md"
+  ]
+}

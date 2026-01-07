@@ -1,0 +1,25 @@
+{
+  "name": "rome-p0-bootup",
+  "version": "1.0.0",
+  "description": "ROME Phase 0 (Bootup) - Project initialization and bootstrap",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"No tests yet\" && exit 0"
+  },
+  "keywords": [
+    "rome",
+    "phase-0",
+    "bootup",
+    "bootstrap"
+  ],
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "peerDependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p0-bootup"
+  }
+}

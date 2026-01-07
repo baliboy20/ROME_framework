@@ -1,0 +1,98 @@
+{
+  "name": "rome-p5-generation",
+  "version": "1.0.0",
+  "description": "ROME Phase 5 Generation plugin - Parallel code generation for Database, API, and UI layers",
+  "type": "plugin",
+  "agents": [
+    {
+      "name": "ashok",
+      "path": "agents/ashok/AGENT.md",
+      "role": "Data Architect & Database Engineer",
+      "phase": "P5-Generation-Data"
+    },
+    {
+      "name": "reena",
+      "path": "agents/reena/AGENT.md",
+      "role": "Backend Engineer",
+      "phase": "P5-Generation-API"
+    },
+    {
+      "name": "charlie",
+      "path": "agents/charlie/AGENT.md",
+      "role": "Frontend/Application Developer",
+      "phase": "P5-Generation-UI"
+    }
+  ],
+  "skills": [
+    {
+      "id": "generate-database-schema",
+      "path": "skills/generate-database-schema",
+      "category": "Database & Data",
+      "phase": "P5",
+      "robot": "ashok"
+    },
+    {
+      "id": "generate-migrations",
+      "path": "skills/generate-migrations",
+      "category": "Database & Data",
+      "phase": "P5",
+      "robot": "ashok"
+    },
+    {
+      "id": "generate-orm-models",
+      "path": "skills/generate-orm-models",
+      "category": "Database & Data",
+      "phase": "P5",
+      "robot": "ashok"
+    },
+    {
+      "id": "generate-seed-data",
+      "path": "skills/generate-seed-data",
+      "category": "Database & Data",
+      "phase": "P5",
+      "robot": "ashok"
+    },
+    {
+      "id": "generate-api-endpoints",
+      "path": "skills/generate-api-endpoints",
+      "category": "Backend & API",
+      "phase": "P5",
+      "robot": "reena"
+    },
+    {
+      "id": "generate-authentication-middleware",
+      "path": "skills/generate-authentication-middleware",
+      "category": "Backend & API",
+      "phase": "P5",
+      "robot": "reena"
+    },
+    {
+      "id": "generate-ui-screens",
+      "path": "skills/generate-ui-screens",
+      "category": "Frontend & UI",
+      "phase": "P5",
+      "robot": "charlie"
+    },
+    {
+      "id": "generate-ui-components",
+      "path": "skills/generate-ui-components",
+      "category": "Frontend & UI",
+      "phase": "P5",
+      "robot": "charlie"
+    }
+  ],
+  "commands": [],
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rome-p4-config": ">=1.0.0"
+  },
+  "framework": {
+    "name": "ROME",
+    "version": "v3",
+    "compatibility": "^3.0.0"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT"
+}

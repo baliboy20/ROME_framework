@@ -1,0 +1,36 @@
+{
+  "name": "rome-qa",
+  "version": "1.0.0",
+  "description": "ROME Quality Assurance plugin - Quality gates and validation across all phases",
+  "main": "index.js",
+  "type": "module",
+  "keywords": [
+    "rome",
+    "framework",
+    "plugin",
+    "quality-assurance",
+    "validation",
+    "quality-gates",
+    "traceability"
+  ],
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "peerDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-qa"
+  },
+  "files": [
+    "agents/",
+    "skills/",
+    "commands/",
+    ".claude-plugin/",
+    "README.md"
+  ]
+}

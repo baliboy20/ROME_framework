@@ -1,0 +1,57 @@
+{
+  "name": "rome-p3-design",
+  "version": "1.0.0",
+  "description": "ROME Framework P3 Design Phase plugin - System architecture and API design",
+  "type": "phase",
+  "phase": "P3",
+  "provides": {
+    "agents": [
+      "pma",
+      "clara"
+    ],
+    "skills": [
+      "design-api-controllers",
+      "generate-architecture-diagram",
+      "design-data-dictionary",
+      "design-dto-models",
+      "design-service-layer",
+      "design-repository-layer",
+      "design-authentication",
+      "design-error-handling",
+      "design-logging-strategy",
+      "design-testing-structure",
+      "design-validation-layer",
+      "design-component-structure"
+    ],
+    "commands": []
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "peerDependencies": {
+    "rome-p2-analysis": ">=1.0.0"
+  },
+  "exports": {
+    "agents/pma/AGENT.md": "PMA agent definition (Project Manager / Architect)",
+    "agents/clara/AGENT.md": "Clara agent definition (UX Designer)",
+    "skills/design-api-controllers/SKILL.md": "Design API controller layer",
+    "skills/generate-architecture-diagram/SKILL.md": "Generate system architecture diagrams",
+    "skills/design-data-dictionary/SKILL.md": "Generate data dictionary from requirements"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p3-design"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "phase3",
+    "design",
+    "architecture",
+    "api-design",
+    "data-modeling",
+    "ux-design"
+  ]
+}

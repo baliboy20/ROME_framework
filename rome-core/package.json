@@ -1,0 +1,42 @@
+{
+  "name": "rome-core",
+  "version": "1.0.0",
+  "description": "ROME Framework foundation plugin - shared libraries, orchestrator, and activity logging",
+  "main": "lib/SkillInvoker.js",
+  "type": "module",
+  "scripts": {
+    "test": "node servers/activity-log/activity-log-file/test.js"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "plugin",
+    "orchestration",
+    "aordl",
+    "requirements",
+    "activity-logging",
+    "mcp"
+  ],
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-core"
+  },
+  "files": [
+    "lib/",
+    "agents/",
+    "servers/",
+    "templates/",
+    ".claude-plugin/",
+    ".mcp.json",
+    "README.md"
+  ]
+}

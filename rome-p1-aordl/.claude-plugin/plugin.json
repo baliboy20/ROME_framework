@@ -1,0 +1,40 @@
+{
+  "name": "rome-p1-aordl",
+  "version": "1.0.0",
+  "description": "ROME Phase 1 (AORDL) - Requirements capture and validation using Actor-Oriented Requirements Definition Language",
+  "type": "phase-plugin",
+  "phase": "P01-aordl",
+  "provides": {
+    "agents": [
+      "talib"
+    ],
+    "skills": [
+      "validate-aordl",
+      "transform-aordl-to-bdd",
+      "create-aordl-requirement"
+    ],
+    "commands": []
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "exports": {
+    "agents/talib/AGENT.md": "Talib agent for AORDL requirements engineering (P1 mode)",
+    "skills/validate-aordl/SKILL.md": "AORDL requirement validation skill",
+    "skills/transform-aordl-to-bdd/SKILL.md": "AORDL to BDD transformation skill",
+    "skills/create-aordl-requirement/SKILL.md": "AORDL requirement creation skill"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p1-aordl"
+  },
+  "keywords": [
+    "rome",
+    "phase-1",
+    "aordl",
+    "requirements",
+    "validation"
+  ]
+}

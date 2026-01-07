@@ -1,0 +1,47 @@
+{
+  "name": "rome-core",
+  "version": "1.0.0",
+  "description": "ROME Framework foundation - shared libraries and orchestrator",
+  "type": "foundation",
+  "provides": {
+    "libraries": [
+      "skillInvoker",
+      "skillRegistry",
+      "aordlParser",
+      "aordlValidator"
+    ],
+    "agents": [
+      "roma"
+    ],
+    "mcpServers": [
+      "activity-log"
+    ],
+    "templates": [
+      "aordl"
+    ]
+  },
+  "dependencies": {},
+  "exports": {
+    "lib/SkillInvoker.js": "Skill invocation library for ROME phase plugins",
+    "lib/SkillRegistry.js": "Skill registry management for auto-discovery",
+    "lib/aordl-parser/validate-aordl.js": "AORDL requirement validation utility",
+    "lib/aordl-parser/transform-aordl-to-bdd.js": "AORDL to BDD transformation utility",
+    "agents/roma/AGENT.md": "Roma orchestrator agent definition",
+    "servers/activity-log/activity-log-file/": "Activity logging MCP server",
+    "templates/aordl/": "AORDL requirement authoring templates"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-core"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "orchestration",
+    "aordl",
+    "requirements",
+    "activity-logging"
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "name": "rome-p2-analysis",
+  "version": "1.0.0",
+  "description": "ROME Phase 2 (Analysis) - Requirements analysis and functional decomposition from AORDL",
+  "type": "phase-plugin",
+  "phase": "P02-analysis",
+  "provides": {
+    "agents": [
+      "talib"
+    ],
+    "skills": [
+      "analyze-requirement",
+      "batch-analyze-requirements",
+      "generate-user-stories"
+    ],
+    "commands": []
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "exports": {
+    "agents/talib/AGENT.md": "Talib agent for requirements analysis (P2 mode)",
+    "skills/analyze-requirement/SKILL.md": "Comprehensive requirement analysis skill",
+    "skills/batch-analyze-requirements/SKILL.md": "Batch requirement analysis skill",
+    "skills/generate-user-stories/SKILL.md": "User story generation from AORDL skill"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p2-analysis"
+  },
+  "keywords": [
+    "rome",
+    "phase-2",
+    "analysis",
+    "requirements",
+    "user-stories"
+  ]
+}
