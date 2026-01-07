@@ -17,11 +17,11 @@
 - ✅ Created `ROME-backup-20260107.tar.gz` (729K compressed)
 - Backed up: `ROME/` and `Experts/` directories
 
-**Phase 2: Governance Documents Migrated**
-- ✅ Migrated 22 governance files to `ROME_framework_maintenance/`
-  - 4 files: `foundation/` → `ROME_framework_maintenance/foundation/`
-  - 11 files: `framework-governance/` → `ROME_framework_maintenance/governance/`
-  - 2 files: `framework-specifications/` → `ROME_framework_maintenance/specifications/`
+**Phase 2: Core Framework Documents Migrated**
+- ✅ Migrated 17 core framework files to `rome-core/docs/`
+  - 4 files: `foundation/` → `rome-core/docs/foundation/`
+  - 11 files: `framework-governance/` → `rome-core/docs/governance/`
+  - 2 files: `framework-specifications/` → `rome-core/docs/specifications/`
 
 **Phase 3: Fully Migrated Content Deleted**
 - ✅ Deleted `ROME/robot-templates/` (832K) - All agents migrated to `rome-*/agents/`
@@ -43,6 +43,10 @@
 ### Remaining Structure
 ```
 rome-core/              # Foundation plugin
+  └── docs/             # Core framework documentation
+      ├── foundation/       # Core principles, lexicon (MIGRATED)
+      ├── governance/       # Document standards, policies (MIGRATED)
+      └── specifications/   # Framework specs (MIGRATED)
 rome-p0-bootup/         # Phase 0
 rome-p1-aordl/          # Phase 1
 rome-p2-analysis/       # Phase 2
@@ -53,9 +57,8 @@ rome-qa/                # QA
 rome-full/              # Meta-plugin
 ROME_architect/         # Archie working directory
 ROME_framework_maintenance/
-  ├── foundation/       # Core principles, lexicon (MIGRATED)
-  ├── governance/       # Document standards, policies (MIGRATED)
-  ├── specifications/   # Framework specs (MIGRATED)
+  ├── proposals/        # Active proposals
+  ├── implemented-proposals/ # Implemented proposals
   └── archive/          # Historical docs (ARCHIVED)
 ```
 
