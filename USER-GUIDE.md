@@ -6,34 +6,30 @@
 
 ## Quick Start
 
-**1. Setup ROME**
-
-Copy the agent you need from `ROME/` to your project:
-```bash
-# Example: Copy Bootstrap agent
-cp -r /path/to/ROME/rome-p0-bootup/agents/bootstrap .claude/
-```
-
-Or reference the full ROME directory in your Claude Code workspace.
-
-**2. Create Project Directory**
+**1. Create Project Directory**
 ```bash
 mkdir my-app
 cd my-app
 ```
 
-**3. Start Building**
+**2. Start Building**
 
-Launch Claude Code in your project directory and invoke agents by opening their AGENT.md files:
+Launch Claude Code and open agent AGENT.md files directly from ROME:
 ```bash
-# Open Bootstrap agent
-open ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
-
-# Or if copied locally
-open .claude/bootstrap/AGENT.md
+# Open Bootstrap agent from ROME directory
+open /path/to/ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
 ```
 
 Claude Code will load the agent context and you can begin working through phases.
+
+**Optional:** Copy agents to your project if preferred:
+```bash
+# Example: Copy Bootstrap agent locally
+cp -r /path/to/ROME/rome-p0-bootup/agents/bootstrap .claude/
+open .claude/bootstrap/AGENT.md
+```
+
+No copying required - use agents directly from ROME/.
 
 ---
 
