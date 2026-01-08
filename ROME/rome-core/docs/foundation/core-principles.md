@@ -72,11 +72,11 @@ Maintains integrity and consistency through inter-document references within the
 **Definition:** Requirements-to-code transformation occurs through discrete, sequential phases.
 
 **Phases:**
-- **Phase 1 (Ingest)**: Intake of raw user materials (PRDs, BRDs, notes)
-- **Phase 2 (Analysis)**: Structuring inputs into atomic logical requirements
+- **Phase 1 (AORDL)**: Capture and validation of structured requirements in Actor-Oriented Requirements Definition Language (AORDL) format
+- **Phase 2 (Analysis)**: Functional decomposition, entity extraction, and user story generation from AORDL requirements
 - **Phase 3 (Design)**: Converting requirements into architectural schemas and logic flows
 - **Phase 4 (Config)**: Defining technical constraints, environment variables, scaffolding instructions
-- **Phase 5 (Generation)**: Mechanical production of executable code from Phase 3 outputs
+- **Phase 5 (Generation)**: Mechanical production of executable code from Phase 4 outputs
 
 ### 5. Central Orchestration
 **Definition:** A designated orchestrator maintains process integrity and coordination across agents.

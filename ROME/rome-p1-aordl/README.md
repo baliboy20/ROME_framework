@@ -4,7 +4,7 @@ ROME Phase 1 (AORDL) Plugin - Requirements capture and validation using Actor-Or
 
 **Version:** 1.0.0
 **Status:** Active
-**Phase:** P01-aordl
+**Phase:** P1-aordl
 
 ---
 
@@ -249,10 +249,3 @@ https://github.com/rome-framework/rome-p1-aordl
 
 rome, phase-1, aordl, requirements, validation
 
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 1.0.0 | 2026-01-07T00:00:00Z | Initial release of rome-p1-aordl plugin |

@@ -24,7 +24,7 @@ flowchart TD
     P1[P1: AORDL REQUIREMENTS<br/>Agent: Talib P1]
     P1_IN[Input:<br/>• User needs<br/>• PRD/BRD docs<br/>• Business requirements]
     P1_OPS[Operations:<br/>• Create AORDL requirements<br/>• Validate 13 required fields<br/>• Transform to BDD format]
-    P1_OUT[Output:<br/>• ARTIFACTS/_requirements/*.yaml<br/>• AORDL requirement files<br/>• BDD test scenarios]
+    P1_OUT[Output:<br/>• ARTIFACTS/_requirements/aordl/*.yaml<br/>• AORDL requirement files<br/>• BDD test scenarios]
 
     P0_OUT --> P1_IN
     P1_IN --> P1
@@ -39,7 +39,7 @@ flowchart TD
 
     %% Phase 2: Analysis
     P2[P2: ANALYSIS<br/>Agent: Talib P2]
-    P2_IN[Input:<br/>• ARTIFACTS/_requirements/*.yaml<br/>• AORDL requirements]
+    P2_IN[Input:<br/>• ARTIFACTS/_requirements/aordl/*.yaml<br/>• AORDL requirements]
     P2_OPS[Operations:<br/>• Analyze requirements<br/>• Extract entities<br/>• Identify dependencies<br/>• Decompose features<br/>• Generate user stories]
     P2_OUT[Output:<br/>• ARTIFACTS/_analysis/entities.md<br/>• ARTIFACTS/_analysis/dependencies.md<br/>• ARTIFACTS/_analysis/user-stories.md<br/>• Entity models<br/>• Data relationships]
 
@@ -156,7 +156,7 @@ flowchart TD
 | From Phase | To Phase | Handover Artifacts | Quality Gate |
 |------------|----------|-------------------|--------------|
 | P0 (Bootstrap) | P1 (AORDL) | Project structure, ARTIFACTS/ folder, SOURCE/ folder | None |
-| P1 (AORDL) | P2 (Analysis) | ARTIFACTS/_requirements/*.yaml (AORDL files) | Sarah validates AORDL structure |
+| P1 (AORDL) | P2 (Analysis) | ARTIFACTS/_requirements/aordl/*.yaml (AORDL files) | Sarah validates AORDL structure |
 | P2 (Analysis) | P3 (Design) | ARTIFACTS/_analysis/entities.md, dependencies.md, user-stories.md | Sarah validates analysis completeness |
 | P3 (Design) | P4 (Config) | ARTIFACTS/_design/architecture.md, api-spec.yaml, data-dictionary.md | Sarah validates design + data dictionary |
 | P4 (Config) | P5 (Generation) | ARTIFACTS/_config/scaffolding-manifest.json, SOURCE/ scaffolded | Sarah validates workspace configuration |
@@ -173,7 +173,7 @@ flowchart TD
 - Capture requirements in AORDL format (13 required fields)
 - Validate AORDL syntax
 - Transform to BDD scenarios
-- Store in ARTIFACTS/_requirements/*.yaml
+- Store in ARTIFACTS/_requirements/aordl/*.yaml
 
 **P2 - Analysis (Talib P2):**
 - Parse AORDL requirements
@@ -239,7 +239,8 @@ project/
 │   └── raw-requirements/
 ├── ARTIFACTS/                # P0 created (workflow artifacts)
 │   ├── _requirements/        # P1 output
-│   │   └── *.yaml
+│   │   └── aordl/
+│   │       └── REQ-*.yaml
 │   ├── _analysis/            # P2 output
 │   │   ├── entities.md
 │   │   ├── dependencies.md
@@ -282,9 +283,12 @@ Time →
 ```
 
 **Dependencies:**
-- Reena may wait for Ashok's API specs
-- Charlie waits for both Ashok and Reena outputs
-- All converge before Sarah's final validation
+- **Ashok (Backend)** runs first: Creates database schema and API specifications
+- **Reena (Frontend)** starts after Ashok completes: Builds against Ashok's API specs
+- **Charlie (Integration)** starts after both complete: Integrates backend + frontend, generates tests
+- All outputs converge before Sarah's final validation
+
+**Parallelization:** Within each agent's layer, work can be parallelized across multiple features/stories.
 
 ---
 

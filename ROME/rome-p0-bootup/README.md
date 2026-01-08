@@ -4,7 +4,7 @@ ROME Phase 0 (Bootup) Plugin - Project initialization and bootstrap
 
 **Version:** 1.0.0
 **Status:** Active
-**Phase:** P00-bootup
+**Phase:** P0-bootup
 
 ---
 
@@ -146,10 +146,3 @@ https://github.com/rome-framework/rome-p0-bootup
 
 rome, phase-0, bootup, bootstrap, project-initialization
 
----
-
-## Revision History
-
-| Version | Date | Summary of Changes |
-|---------|------|-------------------|
-| 1.0.0 | 2026-01-07T00:00:00Z | Initial release of rome-p0-bootup plugin |

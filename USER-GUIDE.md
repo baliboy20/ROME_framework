@@ -59,7 +59,7 @@ ROME uses a 6-phase workflow from requirements to working code:
 - `transform-aordl-to-bdd` - Convert to BDD format
 
 **Input:** User needs, PRD, BRD
-**Output:** `ARTIFACTS/_requirements/*.yaml` (AORDL files)
+**Output:** `ARTIFACTS/_requirements/aordl/*.yaml` (AORDL files)
 
 **Example AORDL:**
 ```yaml
@@ -447,11 +447,11 @@ Work directly with agents in the ROME directory - no copying needed. Just open t
 
 ## Documentation
 
-- `INSTALLATION-GUIDE.md` - Installation & setup
-- `PLUGIN-MANIFEST.md` - Complete plugin/agent/skill catalog
+- `INSTALLATION-GUIDE.md` (ROME-INSTALL-001) - Future installation system (aspirational)
+- `PLUGIN-MANIFEST.md` (ROME-MANIFEST-001) - Complete plugin/agent/skill catalog
 - `TESTING.md` - Testing procedures
 - `ROME/rome-core/docs/` - Framework internals (for developers)
-- `ROME_framework_maintenance/archive/GETTING-STARTED-GUIDE.md` - Legacy guide
+- `ROME_framework_maintenance/archive/GETTING-STARTED-GUIDE.md` (ROME-GUIDE-001) - Legacy guide
 
 ---
 

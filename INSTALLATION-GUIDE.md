@@ -2,20 +2,20 @@
 
 Document UID: ROME-INSTALL-001
 Version: 1.0.0
-Status: **ASPIRATIONAL** (Plugin system not yet implemented)
+Status: **ASPIRATIONAL** (Future vision - not currently implemented)
 Date: 2026-01-07
 
 ---
 
-## ⚠️ IMPORTANT NOTICE
+## ⚠️ DO NOT USE THIS GUIDE FOR CURRENT SETUP
 
-**This guide describes a future plugin installation system that does not currently exist.**
+**This document describes a future plugin installation system that does not currently exist.**
 
-The `claude-plugin install` commands shown here are **not yet functional**.
+Commands shown here (`claude-plugin install`) are **NOT FUNCTIONAL**.
 
-**For current working instructions, see:** `USER-GUIDE.md`
+**→ FOR CURRENT SETUP: See `USER-GUIDE.md` (ROME-USER-001)**
 
-**Current Reality:** Open AGENT.md files directly from ROME/ directory in Claude Code.
+**Current Working Method:** Open AGENT.md files directly from `ROME/` directory in Claude Code. No installation needed.
 
 ---
 

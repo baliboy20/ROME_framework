@@ -101,7 +101,7 @@ rome-core/
 
 **Version:** 1.0.0
 **Type:** Phase Plugin
-**Phase:** P00-bootup
+**Phase:** P0-bootup
 **Description:** Project initialization and workspace setup for ROME projects.
 
 #### Provides
@@ -145,7 +145,7 @@ rome-p0-bootup/
 
 **Version:** 1.0.0
 **Type:** Phase Plugin
-**Phase:** P01-aordl
+**Phase:** P1-aordl
 **Description:** Requirements capture and validation using Actor-Oriented Requirements Definition Language (AORDL).
 
 #### Provides
@@ -206,7 +206,7 @@ rome-p1-aordl/
 
 **Version:** 1.0.0
 **Type:** Phase Plugin
-**Phase:** P02-analysis
+**Phase:** P2-analysis
 **Description:** Functional decomposition and user story generation from AORDL requirements.
 
 #### Provides
@@ -271,7 +271,7 @@ rome-p2-analysis/
 
 **Version:** 1.0.0
 **Type:** Phase Plugin
-**Phase:** P03-design
+**Phase:** P3-design
 **Description:** System architecture, API design, and data modeling.
 
 #### Provides
@@ -379,7 +379,7 @@ rome-p3-design/
 
 **Version:** 1.0.0
 **Type:** Phase Plugin
-**Phase:** P04-config
+**Phase:** P4-config
 **Description:** Workspace scaffolding, environment configuration, and build system setup.
 
 #### Provides
@@ -465,7 +465,7 @@ rome-p4-config/
 
 **Version:** 1.0.0
 **Type:** Phase Plugin
-**Phase:** P05-generation
+**Phase:** P5-generation
 **Description:** Database, API, and UI code generation.
 
 #### Provides

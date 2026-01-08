@@ -31,8 +31,8 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | Phase | Name | Description | Output |
 |-------|------|-------------|--------|
 | P0 | Bootup | Framework initialization and project setup | Project structure, activity log initialized |
-| P1 | Ingest | Intake and preliminary structuring of raw user materials (PRDs, BRDs, notes) | Organized input corpus ready for analysis |
-| P2 | Analysis | Transformation of raw inputs into atomic logical requirements | Structured requirement artifacts |
+| P1 | AORDL | Capture and validation of structured requirements in Actor-Oriented Requirements Definition Language (AORDL) format | AORDL requirement files (ARTIFACTS/_requirements/aordl/*.yaml) |
+| P2 | Analysis | Functional decomposition, entity extraction, and user story generation from AORDL requirements | Entity models, dependency graphs, user stories |
 | P3 | Design | Conversion of requirements into architectural schemas and logic flows | System design specifications |
 | P4 | Config | Definition of technical constraints, environment variables, scaffolding instructions | Implementation configuration specifications |
 | P5 | Generation | Mechanical production of executable code based strictly on Phase 4 outputs | Executable application code |
