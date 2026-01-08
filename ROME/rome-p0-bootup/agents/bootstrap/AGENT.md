@@ -66,6 +66,38 @@ Before starting, confirm:
 
 **Auto-Config:** If launched via `ignite_bootstrap-robot.sh`, check for `.bootstrap-config` file in current directory - it contains PROJECT_NAME, PROJECT_PATH, and ROME_PATH.
 
+### ROME Setup Modes
+
+**Copied Mode (Recommended for Production):**
+```bash
+# Copy ROME into project first
+mkdir my-project
+cp -r /path/to/ROME my-project/
+cd my-project
+# Run bootstrap (will detect existing ROME directory)
+```
+
+**Benefits:**
+- Version isolated (framework locked at project creation)
+- Portable (self-contained project)
+- Stable (framework updates won't break project)
+- Production-ready (no external dependencies)
+
+**Symlink Mode (Framework Development):**
+```bash
+# Bootstrap creates symlink to shared ROME
+mkdir my-project
+cd my-project
+# Run bootstrap with ROME_PATH set
+```
+
+**Benefits:**
+- Single ROME installation
+- Framework updates automatically available
+- Smaller disk footprint
+
+**Note:** Bootstrap script auto-detects which mode by checking if `ROME/` directory exists.
+
 ### Step 1: Create Project Structure
 
 Execute the following script (copy and run in terminal, or have Claude execute via Bash):
@@ -99,9 +131,18 @@ fi
 # Create main project directory
 mkdir -p "$PROJECT_PATH"
 
-# Create ROME symlink
-ln -s "$ROME_PATH" "$PROJECT_PATH/ROME"
-echo "✓ Created ROME symlink"
+# Setup ROME (copy or symlink)
+if [ -d "$PROJECT_PATH/ROME" ]; then
+    echo "✓ ROME directory already present (copied mode - version isolated)"
+    # Validate it's actually ROME
+    if [ ! -f "$PROJECT_PATH/ROME/rome-core/docs/foundation/core-principles.md" ]; then
+        echo "ERROR: ROME directory exists but appears invalid"
+        exit 1
+    fi
+else
+    ln -s "$ROME_PATH" "$PROJECT_PATH/ROME"
+    echo "✓ Created ROME symlink (linked mode - shared framework)"
+fi
 
 # Create .rome-project.json
 cat > "$PROJECT_PATH/.rome-project.json" << EOF

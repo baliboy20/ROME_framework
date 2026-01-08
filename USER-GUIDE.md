@@ -6,30 +6,38 @@
 
 ## Quick Start
 
-**1. Create Project Directory**
+**Recommended Setup: Copy ROME into Project**
+
 ```bash
+# 1. Create project and copy ROME framework
+mkdir my-app
+cp -r /path/to/ROME my-app/
+cd my-app
+
+# 2. Launch Bootstrap agent
+# Open: my-app/ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
+```
+
+**Why copy?**
+- **Version isolated:** Framework locked at project creation
+- **Portable:** Self-contained, no external dependencies
+- **Stable:** Framework updates won't break your project
+- **Production-ready:** Can move/archive project independently
+
+**Alternative: Symlink Mode (Framework Development)**
+
+```bash
+# 1. Create project directory
 mkdir my-app
 cd my-app
+
+# 2. Bootstrap will create symlink to shared ROME
+# Open: /path/to/ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
 ```
 
-**2. Start Building**
+**Use for:** Framework development, quick prototyping, shared ROME installation
 
-Launch Claude Code and open agent AGENT.md files directly from ROME:
-```bash
-# Open Bootstrap agent from ROME directory
-open /path/to/ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
-```
-
-Claude Code will load the agent context and you can begin working through phases.
-
-**Optional:** Copy agents to your project if preferred:
-```bash
-# Example: Copy Bootstrap agent locally
-cp -r /path/to/ROME/rome-p0-bootup/agents/bootstrap .claude/
-open .claude/bootstrap/AGENT.md
-```
-
-No copying required - use agents directly from ROME/.
+**Note:** Bootstrap auto-detects mode (checks if `ROME/` exists before creating symlink)
 
 ---
 
@@ -500,31 +508,38 @@ Roma coordinates all agents and manages phase transitions automatically.
 
 ## Setup Options
 
-**Option 1: Reference ROME directory**
+**Recommended: Copy Entire ROME Framework**
 
-Point your Claude Code workspace to the ROME framework directory:
 ```bash
-# Add ROME to your project context
-# Open agents from: /path/to/ROME/rome-*/agents/
+# Copy complete framework into project
+mkdir my-project
+cp -r /path/to/ROME my-project/
+cd my-project
+# Open agents from: my-project/ROME/rome-*/agents/
 ```
 
-**Option 2: Copy specific agents**
+**Benefits:**
+- Self-contained, portable project
+- Framework version locked (stable)
+- No external dependencies
+- Production-ready
 
-Copy only the agents you need to your project:
+**Alternative: Symlink Mode**
+
 ```bash
-# Copy P1 agent
-cp -r ROME/rome-p1-aordl/agents/talib .claude/
-
-# Copy P3 agents
-cp -r ROME/rome-p3-design/agents/pma .claude/
-cp -r ROME/rome-p3-design/agents/clara .claude/
+# Bootstrap creates symlink to shared ROME
+mkdir my-project
+cd my-project
+# Bootstrap will create: my-project/ROME -> /path/to/ROME
+# Open agents from: my-project/ROME/rome-*/agents/
 ```
 
-**Option 3: Use from ROME directory**
+**Benefits:**
+- Single ROME installation
+- Automatic framework updates
+- Useful for framework development
 
-Work directly with agents in the ROME directory - no copying needed. Just open the AGENT.md files in Claude Code.
-
-**See:** `INSTALLATION-GUIDE.md` for detailed setup instructions
+**See:** Bootstrap agent (`ROME/rome-p0-bootup/agents/bootstrap/AGENT.md`) for auto-detection details
 
 ---
 
