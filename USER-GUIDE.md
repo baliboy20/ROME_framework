@@ -340,6 +340,89 @@ my-app/
 
 ---
 
+## Project Tracking & Governance
+
+### Activity Logging
+
+All robot work is automatically tracked:
+
+**Activity Log:**
+- Location: `ARTIFACTS/activity-log.txt`
+- Format: Event stream (TIMESTAMP | TYPE | ID | ATTRIBUTES)
+- Tracks: Phase transitions, work items, blockers, amendments
+
+**Activity State:**
+- Location: `ARTIFACTS/activity-state.yaml`
+- Purpose: Current state snapshot (rebuilt from log)
+- Queries: by_status, by_robot, by_phase
+
+**How it works:**
+- Robots use MCP server (`activity-log-file`) to append events
+- State file auto-rebuilds on each append
+- No manual editing required
+
+### Robot Workspaces
+
+Each robot has an isolated workspace for working documents:
+
+```
+robots/<robot_name>/
+  ├── CLAUDE.md           # Role definition (loaded by Claude Code)
+  ├── .claude/            # Claude Code settings
+  └── notes/              # Working documents (ephemeral)
+      ├── current_work.md # Active work tracking
+      ├── completed.md    # Session notes
+      └── blockers.md     # Issues encountered
+```
+
+**Working Documents vs Formal Artifacts:**
+- **Working docs** (`robots/*/notes/`): Scratch analysis, drafts, personal notes (not version controlled)
+- **Formal artifacts** (`ARTIFACTS/`): Phase deliverables, validated outputs (version controlled)
+
+**Rule:** Draft in `notes/`, promote to `ARTIFACTS/` when validated and ready for downstream phases.
+
+**Reference:** ROME-GOV-BASELINE (robot-baseline.md) - Working Documents vs Formal Artifacts section
+
+### Project Configuration
+
+Bootstrap creates project metadata:
+
+**`.rome-project.json`:**
+```json
+{
+  "projectName": "my-app",
+  "createdAt": "2026-01-08T00:00:00Z",
+  "romeVersion": "10",
+  "currentPhase": "P01-ingest",
+  "phaseStatus": {
+    "P00-bootup": "COMPLETED",
+    "P01-ingest": "IN_PROGRESS",
+    "P02-analysis": "NOT_STARTED",
+    "P03-design": "NOT_STARTED",
+    "P04-config": "NOT_STARTED",
+    "P05-generation": "NOT_STARTED"
+  }
+}
+```
+
+**Purpose:**
+- Project identification
+- Phase status tracking
+- ROME version compatibility
+
+### Governance Documents
+
+Key framework documents for understanding robot behavior:
+
+- **ROME-GOV-BASELINE** (`robot-baseline.md`): Common rules all robots follow
+- **ROME-GOV-006** (`sponsor-interaction.md`): When/how robots ask questions
+- **ROME-PROC-005** (`activity-logging-protocol.md`): Activity tracking requirements
+- **ROME-PRIN-001** (`core-principles.md`): Framework principles
+
+**Location:** `ROME/rome-core/docs/governance/` and `ROME/rome-core/docs/foundation/`
+
+---
+
 ## AORDL Quick Reference
 
 **Required Fields (13):**
