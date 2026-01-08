@@ -163,30 +163,49 @@ cat > "$PROJECT_PATH/.rome-project.json" << EOF
 EOF
 echo "✓ Created .rome-project.json"
 
-# Create robots/ directory structure
-ROBOTS=("bootstrap" "roma" "talib" "pma" "sarah" "clara" "lucien" "ashok" "charlie" "reena")
+# Create robots/ directory (workspaces created on-demand)
 mkdir -p "$PROJECT_PATH/robots"
+cat > "$PROJECT_PATH/robots/README.md" << 'ROBOTS_README'
+# Robot Workspaces
 
-for robot in "${ROBOTS[@]}"; do
-    ROBOT_DIR="$PROJECT_PATH/robots/$robot"
-    mkdir -p "$ROBOT_DIR/.claude"
-    mkdir -p "$ROBOT_DIR/notes"
+**With plugin architecture, robots create workspaces on-demand when first used.**
 
-    # Copy CLAUDE.md from templates (except bootstrap - already exists)
-    if [ "$robot" != "bootstrap" ]; then
-        TEMPLATE="$ROME_PATH/robot-templates/$robot/CLAUDE.md"
-        if [ -f "$TEMPLATE" ]; then
-            cp "$TEMPLATE" "$ROBOT_DIR/CLAUDE.md"
-        fi
-    fi
+## Usage
 
-    touch "$ROBOT_DIR/.claude/.gitkeep"
-    touch "$ROBOT_DIR/notes/.gitkeep"
-    echo "# Current Work - $robot" > "$ROBOT_DIR/notes/current_work.md"
-    echo "# Completed - $robot" > "$ROBOT_DIR/notes/completed.md"
-    echo "# Blockers - $robot" > "$ROBOT_DIR/notes/blockers.md"
-done
-echo "✓ Created robot workspaces"
+When you open an agent from a plugin (e.g., `ROME/rome-p1-aordl/agents/talib/AGENT.md`), the robot creates its workspace folder automatically:
+
+```
+robots/<robot_name>/
+  ├── .claude/            # Claude Code settings
+  └── notes/              # Working documents
+      ├── current_work.md
+      ├── completed.md
+      └── blockers.md
+```
+
+## Agent Locations
+
+Agents live in plugins, not in robot folders:
+
+- **P0:** `ROME/rome-p0-bootup/agents/bootstrap/`
+- **P1:** `ROME/rome-p1-aordl/agents/talib/`
+- **P2:** `ROME/rome-p2-analysis/agents/talib/`
+- **P3:** `ROME/rome-p3-design/agents/pma/`, `clara/`
+- **P4:** `ROME/rome-p4-config/agents/lucien/`
+- **P5:** `ROME/rome-p5-generation/agents/ashok/`, `reena/`, `charlie/`
+- **QA:** `ROME/rome-qa/agents/sarah/`
+- **Core:** `ROME/rome-core/agents/roma/`
+
+## Working Documents
+
+Per ROME-GOV-BASELINE:
+
+- **Working docs** (`robots/*/notes/`): Scratch analysis, drafts
+- **Formal artifacts** (`ARTIFACTS/`): Phase deliverables
+
+Draft in `notes/`, promote to `ARTIFACTS/` when validated.
+ROBOTS_README
+echo "✓ Created robots/ directory (on-demand workspaces)"
 
 # Create SOURCE/ directory
 mkdir -p "$PROJECT_PATH/SOURCE/tests"
