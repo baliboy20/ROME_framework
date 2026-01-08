@@ -1,0 +1,1 @@
+rome-core/scripts/add-mcps-v4.sh

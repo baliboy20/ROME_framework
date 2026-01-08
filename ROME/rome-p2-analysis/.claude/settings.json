@@ -5,10 +5,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bash \"$CLAUDE_PROJECT_DIR/../../rome-core/scripts/add-mcps-v4.sh\" > /dev/null 2>&1"
-          },
-          {
-            "type": "command",
             "command": "cat \"$CLAUDE_PROJECT_DIR/agents/talib/AGENT.md\""
           }
         ]

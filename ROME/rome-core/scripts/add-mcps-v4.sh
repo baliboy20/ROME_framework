@@ -39,6 +39,14 @@ if ! command -v claude &> /dev/null; then
 fi
 log_success "Claude Code CLI found"
 
+
+
+echo ""
+log_info "Reset Project choices"
+echo ""
+claude mcp reset-project-choices
+
+
 echo ""
 log_info "Adding MCP servers..."
 echo ""
@@ -61,13 +69,13 @@ claude mcp add --scope local --transport stdio Seez -- \
   || log_warning "Seez may already exist or failed to add"
 log_success "Seez configured"
 
-# Add rome-terminal MCP server
+# Add iterm2-terminal MCP server
 echo ""
-echo "3. Adding rome-terminal MCP server..."
-claude mcp add --scope local  --transport stdio rome-terminal -- \
-  dart run Users/will/flutterProjects/Apps/Local/mcps/rome/version7/iterm2-mcp-server/bin/iterm2_mcp_server.dart \
-  || log_warning "rome-terminal may already exist or failed to add"
-log_success "rome-terminal configured"
+echo "3. Adding iterm2-terminal MCP server..."
+claude mcp add --scope local  --transport stdio iterm2-terminal -- \
+  dart run /Users/will/flutterProjects/Apps/Local/mcps/rome/version7/iterm2-mcp-server/bin/iterm2_mcp_server.dart \
+  || log_warning "iterm2-terminal may already exist or failed to add"
+log_success "iterm2-terminal configured"
 
 echo ""
 echo "=========================================="
@@ -77,7 +85,7 @@ echo ""
 echo "Added servers:"
 echo "  • activity-log - Activity tracking database"
 echo "  • Seez         - Visual tabbed interface"
-echo "  • rome-terminal - Terminal bridge"
+echo "  • iterm2-terminal - Terminal bridge"
 echo ""
 echo "To verify, run:"
 echo "  claude mcp list"
