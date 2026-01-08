@@ -1,0 +1,20 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/ROME/rome-core/scripts/add-mcps-v4.sh\" > /dev/null 2>&1",
+            "comment": "Ensure MCP servers configured"
+          },
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/ROME/rome-p4-config/agents/lucien/AGENT.md\"",
+            "comment": "Load Lucien agent (P4: Configuration & Scaffolding)"
+          }
+        ]
+      }
+    ]
+  }
+}

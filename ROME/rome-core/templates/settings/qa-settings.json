@@ -1,0 +1,20 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/ROME/rome-core/scripts/add-mcps-v4.sh\" > /dev/null 2>&1",
+            "comment": "Ensure MCP servers configured"
+          },
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/ROME/rome-qa/agents/sarah/AGENT.md\"",
+            "comment": "Load Sarah agent (QA: Quality Gates & Validation)"
+          }
+        ]
+      }
+    ]
+  }
+}
