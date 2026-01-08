@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-BASELINE |
-| **Version** | 1.0 |
-| **Date** | 2025-12-19T17:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2026-01-08T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -256,6 +256,160 @@ Write({
   content: "[file contents]"
 })
 ```
+
+---
+
+## Working Documents vs Formal Artifacts
+
+### Purpose
+Establish clear boundaries between ephemeral working documents and formal phase deliverables to prevent artifact folder pollution.
+
+### Robot Workspace Structure
+
+Each robot has an isolated workspace:
+```
+robots/<robot_name>/
+  ├── CLAUDE.md           # Role definition (permanent)
+  ├── .claude/            # Claude Code settings
+  └── notes/              # Working documents (ephemeral)
+      ├── current_work.md
+      ├── completed.md
+      └── blockers.md
+```
+
+### Working Documents (Ephemeral)
+
+**Location:** `robots/<robot_name>/notes/`
+
+**Use for:**
+- Scratch analysis and exploration notes
+- Draft content pending refinement
+- Temporary planning documents
+- Personal reasoning traces
+- Session-specific state tracking
+- Research notes not yet formalized
+- Alternative approaches being evaluated
+
+**Characteristics:**
+- Not tracked in version control (per `.gitignore`)
+- Not referenced by other robots
+- Not visible to sponsor
+- May be deleted after session ends
+- No formatting requirements
+- No UID allocation
+
+**Example Content:**
+```markdown
+# Current Work - Talib
+
+## Analyzing requirement REQ-042
+- Source BRD mentions "user authentication" 3 times
+- Conflicting: page 12 says OAuth, page 18 says JWT
+- TODO: Ask sponsor via Roma
+
+## Draft AORDL (not ready)
+<working draft here>
+```
+
+### Formal Artifacts (Permanent)
+
+**Location:** Phase-specific folders under `ARTIFACTS/`
+
+**Use for:**
+- Phase deliverables meeting exit criteria
+- Documents consumed by downstream phases
+- Sponsor-visible artifacts
+- Documents requiring traceability
+- Outputs referenced in handover documents
+
+**Characteristics:**
+- Tracked in version control
+- Referenced across phases
+- Must meet quality standards
+- Subject to validation
+- May require UID (for framework docs)
+- Follow formatting standards
+
+**Phase Deliverable Locations:**
+```
+ARTIFACTS/
+  ├── _requirements/    # P1 formal outputs (AORDL files)
+  ├── _analysis/        # P2 formal outputs (entities, dependencies)
+  ├── _design/          # P3 formal outputs (architecture, schemas)
+  └── _config/          # P4 formal outputs (tech specs, env vars)
+
+SOURCE/                 # P5 formal outputs (generated code)
+```
+
+### Decision Criteria
+
+**Ask: "Will another robot need this?"**
+- YES → Place in appropriate `ARTIFACTS/` subfolder
+- NO → Keep in `robots/<robot_name>/notes/`
+
+**Ask: "Does this meet phase exit criteria?"**
+- YES → Formal artifact in `ARTIFACTS/`
+- NO → Working document in `notes/`
+
+**Ask: "Is this visible to sponsor?"**
+- YES → Formal artifact in `ARTIFACTS/`
+- NO → Working document in `notes/`
+
+### Workflow Pattern
+
+**Typical Robot Session:**
+```javascript
+SESSION_START:
+  // 1. Use notes/ for exploration
+  Write("robots/talib/notes/current_work.md", "Analyzing REQ-042...")
+
+  // 2. Draft content in notes/
+  Write("robots/talib/notes/draft-req-042.yaml", "<draft AORDL>")
+
+  // 3. Refine until meets quality criteria
+  ITERATE_ON_DRAFT()
+
+  // 4. Promote to formal artifact
+  Write("ARTIFACTS/_requirements/REQ-042.yaml", "<validated AORDL>")
+
+  // 5. Log completion
+  mcp__activity-log__append({type: "REQUIREMENT", id: "REQ-042", status: COMPLETED})
+
+  // 6. Clean up working notes (optional)
+  Edit("robots/talib/notes/current_work.md", old: "Analyzing REQ-042...", new: "")
+```
+
+### Cleanup Guidelines
+
+**During Session:**
+- Keep active work items in `current_work.md`
+- Move completed items to `completed.md` for reference
+- Document blockers in `blockers.md`
+
+**Between Sessions:**
+- `notes/` contents may persist or be cleared
+- No requirement to maintain notes/ history
+- Robots can delete stale working documents
+
+**Phase Completion:**
+- All formal artifacts must be in `ARTIFACTS/` or `SOURCE/`
+- `notes/` should reflect completed state but not required for handover
+- Downstream robots never read upstream `notes/` folders
+
+### Anti-Patterns
+
+❌ **Don't:**
+- Place drafts directly in `ARTIFACTS/` before validation
+- Reference `notes/` content from formal artifacts
+- Store formal deliverables in `notes/` folders
+- Create ad-hoc folders outside robot workspace for working documents
+- Use `ARTIFACTS/reference/` as personal scratch space
+
+✓ **Do:**
+- Draft in `notes/`, promote to `ARTIFACTS/` when ready
+- Keep workspace isolated to assigned robot folder
+- Use `ARTIFACTS/reference/` only for project-level reference materials (shared research, templates)
+- Delete obsolete working documents to reduce noise
 
 ---
 
