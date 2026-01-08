@@ -267,9 +267,78 @@ echo "Project '$PROJECT_NAME' created at: $PROJECT_PATH"
 echo "=========================================="
 ```
 
-### Step 2: Initialize Activity Log
+### Step 2: Validate MCP Server Requirements
 
-After folder creation, run:
+**Read plugin requirements:**
+
+```javascript
+// Read plugin.json to check MCP server requirements
+const pluginConfig = Read("ROME/rome-p0-bootup/.claude-plugin/plugin.json")
+const requiredServers = pluginConfig.requires.mcpServers.filter(s => !s.optional)
+
+console.log("Validating required MCP servers:")
+requiredServers.forEach(server => {
+  console.log(`  • ${server.name}: ${server.reason}`)
+})
+```
+
+**Test each required server:**
+
+```javascript
+// Validate required servers are available
+const results = []
+
+for (const server of requiredServers) {
+  try {
+    if (server.name === "activity-log-file") {
+      mcp__activity-log__get_statistics()
+    } else if (server.name === "Seez") {
+      mcp__Seez__list_tabs()
+    } else if (server.name === "rome-terminal") {
+      mcp__rome-terminal__list_terminals()
+    }
+    console.log(`✓ ${server.name} available`)
+    results.push({ server: server.name, available: true })
+  } catch (error) {
+    console.error(`✗ ${server.name} UNAVAILABLE`)
+    console.error(`  Reason needed: ${server.reason}`)
+    console.error(`  Error: ${error.message}`)
+    results.push({ server: server.name, available: false, error: error.message })
+  }
+}
+
+// Check if all required servers available
+const allAvailable = results.every(r => r.available)
+if (!allAvailable) {
+  console.error("\n❌ Cannot proceed: Required MCP servers unavailable")
+  console.error("Configure MCP servers in Claude Code settings before bootstrapping")
+  throw new Error("MCP server validation failed")
+}
+
+console.log("\n✅ All required MCP servers validated")
+```
+
+**Optional servers (best-effort):**
+
+```javascript
+// Test optional servers (rome-terminal)
+const optionalServers = pluginConfig.requires.mcpServers.filter(s => s.optional)
+
+for (const server of optionalServers) {
+  try {
+    if (server.name === "rome-terminal") {
+      mcp__rome-terminal__list_terminals()
+      console.log(`✓ Optional server ${server.name} available`)
+    }
+  } catch (error) {
+    console.log(`⚠️  Optional server ${server.name} unavailable (continuing anyway)`)
+  }
+}
+```
+
+### Step 3: Initialize Activity Log
+
+After MCP validation, run:
 
 **Create activity log file with header:**
 
@@ -323,20 +392,6 @@ tail -5 ARTIFACTS/activity-log.txt
 head -20 ARTIFACTS/activity-state.yaml
 # Should contain PHASE-0 entry
 ```
-
-### Step 3: Validate MCP Connectivity
-
-```javascript
-// Test each server - all should return without error
-mcp__activity-log__get_statistics()
-mcp__Seez__list_tabs()
-mcp__rome-terminal__list_terminals()
-```
-
-**Expected results:**
-- `activity-log`: Returns statistics with event_count: 1
-- `Seez`: Returns empty tabs list or current tabs
-- `rome-terminal`: Returns terminals list
 
 ### Step 4: Notify Sponsor
 
@@ -400,13 +455,13 @@ mcp__activity-log__get_history({ id: "PHASE-0" })
 
 Before marking bootup complete:
 - [ ] All folders created per structure specification
-- [ ] All 10 robot workspaces initialized
-- [ ] ROME symlink functional (read access verified)
+- [ ] robots/ directory created with README.md
+- [ ] ROME framework present (copied or symlinked)
 - [ ] .rome-project.json created with correct metadata
+- [ ] MCP server requirements validated (plugin.json → runtime check)
 - [ ] Activity log initialized with header
 - [ ] PHASE-0 events logged (IN_PROGRESS → COMPLETED)
 - [ ] State index generated
-- [ ] MCP server connectivity verified
 - [ ] Sponsor notified
 
 ---
