@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-IMPL-001 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-20T00:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2026-01-08T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
 | **Author** | Framework Analyst & Architect |
@@ -20,10 +20,6 @@ Defines policies that operationalize core principles from `core-principles.md` (
 **Purpose:** Initialize framework infrastructure and establish operational foundation before project-specific work begins.
 
 **Principle Applications:**
-
-
- //TODO: Archie to add section on Consistency and Reproceability, given same inputs (or same intent) with same transformation proc will lead to
-// to the same outcome or ouputs.
 
 #### 1. Flexibility & Adaptability
 - Framework directory structure created to support non-breaking additions
@@ -426,8 +422,126 @@ Defines policies that operationalize core principles from `core-principles.md` (
 
 ---
 
+## Consistency & Reproducibility
+
+**Definition:** Given the same inputs (or same intent), the same transformation process will produce equivalent outcomes. Framework processes must yield consistent, predictable results to establish trust, enable debugging, and support collaborative development.
+
+### Three Levels of Consistency
+
+#### 1. Structural Consistency (Deterministic)
+Mechanical aspects that produce identical results every time:
+
+**Phase 0 (Bootup):**
+- Directory structure creation follows fixed template
+- Quality gate definitions identical across projects
+- Document templates generated with standard structure
+
+**Phase 1 (Ingest):**
+- Document checksums deterministically calculated
+- File organization follows consistent patterns
+- Metadata extraction applies uniform rules
+
+**Phase 2 (Analysis):**
+- AORDL validation rules produce consistent pass/fail results
+- Entity extraction follows repeatable decomposition patterns
+- Requirement numbering follows fixed sequences
+
+**Phase 3 (Design):**
+- Schema validation applies identical rules
+- Interface contract structure follows standard templates
+- System boundary definitions use consistent criteria
+
+**Phase 4 (Config):**
+- Environment variable naming follows conventions
+- Dependency versioning rules consistently applied
+- Scaffolding instructions follow standard patterns
+
+**Phase 5 (Generation):**
+- Code validation (linting, compilation) produces deterministic results
+- Test execution follows identical sequences
+- Build artifacts validated against same criteria
+
+#### 2. Semantic Consistency (Intent-Based)
+Same functional requirement yields same behavior (not identical implementation):
+
+**Behavior vs Expression:**
+- Two agents analyzing "user can reset password" should produce functionally equivalent requirements
+- Generated code may vary (variable names, formatting) but behavior must align
+- Design decisions may differ in syntax but must preserve semantic intent
+
+**Cross-Phase Semantic Alignment:**
+- Phase 2 requirement → Phase 3 design element → Phase 5 code must preserve intent
+- Functional behavior remains consistent even as representation transforms
+- Traceability validates semantic preservation across transformations
+
+**Decision Criteria Documentation:**
+- Design pattern selection criteria documented for repeatability
+- Technology stack choices justified with consistent reasoning
+- Feature prioritization follows documented rules
+
+#### 3. Process Consistency (Reproducible Workflow)
+Same workflow applied to similar projects yields predictable outcomes:
+
+**Phase Sequencing:**
+- P0 → P1 → P2 → P3 → P4 → P5 always executes in order
+- Quality gates enforce consistent entry/exit criteria
+- Phase transitions require documented approval
+
+**Activity Logging:**
+- All work tracked with consistent event structure
+- Status transitions follow defined state machine
+- Blocker handling follows standard escalation protocol
+
+**Traceability Chain:**
+- Requirements reference source materials
+- Design references requirements
+- Code references configuration specifications
+- Audit trail reconstructible from activity log
+
+### Benefits
+
+**Trustworthiness:**
+Framework behavior becomes predictable. Sponsors can trust that similar inputs will yield similar quality outputs across projects.
+
+**Debuggability:**
+When issues arise, consistent processes enable root cause analysis. Deviation from expected behavior becomes detectable and traceable.
+
+**Version Control & Auditing:**
+Structural consistency enables meaningful diffs. Changes to framework documents show actual semantic changes, not arbitrary formatting variations.
+
+**Team Collaboration:**
+Multiple agents (or agent sessions) can work on same project with confidence. Shared understanding of "correct" transformation enables coordination.
+
+**Framework Evolution:**
+Enhancements can be validated by comparing outputs before/after changes. Regression testing becomes feasible when processes are reproducible.
+
+**Client Confidence:**
+Demonstrable consistency across phases builds sponsor trust. Predictable behavior at each gate reduces uncertainty about final deliverables.
+
+### Key Trade-offs
+
+**Don't Over-Constrain:**
+LLM-generated code naturally varies in non-semantic dimensions (variable naming, code style, comment phrasing). Excessive enforcement of textual consistency wastes effort and constrains legitimate variation.
+
+**Balance Determinism with Flexibility:**
+- Structural rules: Enforce strictly (folder structure, file formats, UID allocation)
+- Semantic rules: Validate intent, allow expression variance
+- Process rules: Require adherence to sequence, allow phase-internal flexibility
+
+**Consistency ≠ Rigidity:**
+Framework must evolve. Consistency means "given same framework version and inputs, same outputs" — not "framework never changes."
+
+### Implementation References
+
+- **Structural Consistency:** ROME-GOV-001 (Document Standards), ROME-GOV-002 (UID Registry)
+- **Semantic Consistency:** ROME-PRIN-001 §2 (Traceability), ROME-PROC-005 (Activity Logging)
+- **Process Consistency:** Phase-specific operations-guidelines.md documents in `./life-cycle/`
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-11-20T00:00:00Z | Initial document creation |
+| 1.1 | 2026-01-08T00:00:00Z | Added Consistency & Reproducibility section covering structural, semantic, and process consistency across all phases |
