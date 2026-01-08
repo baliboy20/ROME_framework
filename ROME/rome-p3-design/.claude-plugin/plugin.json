@@ -35,6 +35,20 @@
   "peerDependencies": {
     "rome-p2-analysis": ">=1.0.0"
   },
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track design work items, architecture decisions, and design validation",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Request sponsor approval for architecture decisions and design alternatives",
+        "optional": false
+      }
+    ]
+  },
   "exports": {
     "agents/pma/AGENT.md": "PMA agent definition (Project Manager / Architect)",
     "agents/clara/AGENT.md": "Clara agent definition (UX Designer)",

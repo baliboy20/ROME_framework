@@ -22,6 +22,20 @@
   "dependencies": {
     "rome-core": "^1.0.0"
   },
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track analysis work items and requirement decomposition progress",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Request sponsor clarification on requirement conflicts or ambiguities",
+        "optional": false
+      }
+    ]
+  },
   "exports": {
     "agents/talib/AGENT.md": "Talib agent for requirements analysis (P2 mode)",
     "skills/analyze-requirement/SKILL.md": "Comprehensive requirement analysis skill",

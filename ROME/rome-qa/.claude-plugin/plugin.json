@@ -73,6 +73,20 @@
     "rome-core": "^1.0.0"
   },
   "peerDependencies": {},
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track quality gate validations and phase transition approvals/blocks",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Notify sponsor of quality gate results and critical validation failures",
+        "optional": false
+      }
+    ]
+  },
   "framework": {
     "name": "ROME",
     "version": "v3",

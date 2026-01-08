@@ -74,6 +74,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-GOV-006 | Sponsor Interaction | `/ROME/rome-core/docs/governance/sponsor-interaction.md` | Active |
 | ROME-GOV-007 | Framework Fidelity | `/ROME/framework-governance/framework-fidelity.md` | Draft |
 | ROME-GOV-008 | Activity Log Format | `/ROME/framework-governance/activity-log-format.md` | Draft |
+| ROME-GOV-009 | MCP Server Dependencies | `/ROME/rome-core/docs/governance/mcp-server-dependencies.md` | Draft |
 
 ### Configuration Documents
 

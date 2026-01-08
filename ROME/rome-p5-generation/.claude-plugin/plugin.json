@@ -107,6 +107,20 @@
   "peerDependencies": {
     "rome-p4-config": ">=1.0.0"
   },
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track code generation work items for parallel backend/frontend/integration tasks",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Request sponsor clarification on implementation details and edge cases",
+        "optional": false
+      }
+    ]
+  },
   "framework": {
     "name": "ROME",
     "version": "v3",

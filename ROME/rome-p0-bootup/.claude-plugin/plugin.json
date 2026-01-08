@@ -16,6 +16,25 @@
   "dependencies": {
     "rome-core": "^1.0.0"
   },
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track bootstrap phase progress and log project initialization events",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Notify sponsor of project initialization completion",
+        "optional": false
+      },
+      {
+        "name": "rome-terminal",
+        "reason": "Validate terminal connectivity during bootstrap",
+        "optional": true
+      }
+    ]
+  },
   "exports": {
     "agents/bootstrap/AGENT.md": "Bootstrap agent for project initialization",
     "commands/rome-p0-bootstrap.md": "Slash command for project bootstrap"

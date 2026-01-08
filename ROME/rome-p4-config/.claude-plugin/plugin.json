@@ -30,6 +30,20 @@
   "peerDependencies": {
     "rome-p3-design": ">=1.0.0"
   },
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track workspace configuration and scaffolding work items",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Request sponsor input on environment configurations and tech stack choices",
+        "optional": false
+      }
+    ]
+  },
   "exports": {
     "agents/lucien/AGENT.md": "Lucien agent definition (DevOps Engineer)",
     "skills/scaffold-workspace/SKILL.md": "Scaffold workspace directory structure",

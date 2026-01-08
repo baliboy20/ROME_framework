@@ -22,6 +22,20 @@
   "dependencies": {
     "rome-core": "^1.0.0"
   },
+  "requires": {
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Track AORDL requirement creation and validation work items",
+        "optional": false
+      },
+      {
+        "name": "Seez",
+        "reason": "Request sponsor clarification on ambiguous requirements",
+        "optional": false
+      }
+    ]
+  },
   "exports": {
     "agents/talib/AGENT.md": "Talib agent for AORDL requirements engineering (P1 mode)",
     "skills/validate-aordl/SKILL.md": "AORDL requirement validation skill",
