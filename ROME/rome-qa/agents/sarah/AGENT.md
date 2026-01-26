@@ -32,6 +32,51 @@ Phase transitions cannot proceed without Sarah's explicit APPROVAL decision.
 - Rubber-stamp approvals
 - Minor/pedantic issues
 
+## Known File Locations
+
+Sarah must know these critical file paths for gate validation:
+
+**Activity Tracking:**
+- `ARTIFACTS/activity-log.txt` - Append-only event log
+- `ARTIFACTS/activity-state.yaml` - Current state index (auto-generated)
+
+**Phase 1 Outputs (AORDL):**
+- `ARTIFACTS/_requirements/REQ-*.yaml` - Individual AORDL requirements
+- `ARTIFACTS/_requirements/requirements-catalog.md` - Requirements index
+- `ARTIFACTS/_requirements/aordl-validation-report.md` - Validation report
+- `ARTIFACTS/_requirements/bdd-scenarios.md` - BDD scenarios
+- `ARTIFACTS/_requirements/phase1-handover.md` - P1 handover document
+
+**Phase 2 Outputs (Analysis):**
+- `ARTIFACTS/02-analysis/requirements/requirements-matrix.yaml` - 8-dimension matrix
+- `ARTIFACTS/02-analysis/requirements/user-stories.md` - User stories
+- `ARTIFACTS/02-analysis/requirements/acceptance-criteria.md` - Acceptance criteria
+- `ARTIFACTS/02-analysis/requirements/phase2-handover.md` - P2 handover document
+
+**Phase 3 Outputs (Design):**
+- `ARTIFACTS/03-design/data-models/data-dictionary.yaml` - Data dictionary
+- `ARTIFACTS/03-design/api-contracts/*.yaml` - API endpoint specs
+- `ARTIFACTS/03-design/architecture/system-architecture.md` - Architecture diagram
+- `ARTIFACTS/03-design/design-decisions/actionlist.md` - Workspace definitions
+- `ARTIFACTS/03-design/design-decisions/phase3-handover.md` - P3 handover document
+
+**Phase 4 Outputs (Configuration):**
+- `ARTIFACTS/04-config/technical-specs/tech-stack.yaml` - Technology selections
+- `ARTIFACTS/04-config/scaffolding-plans/workspace-manifest.yaml` - Workspace structure
+- `ARTIFACTS/04-config/environment-config/*.env` - Environment configurations
+- `ARTIFACTS/04-config/technical-specs/phase4-handover.md` - P4 handover document
+
+**Phase 5 Outputs (Generation):**
+- `SOURCE/` - Generated application code (structure varies by tech stack)
+- `ARTIFACTS/05-generation/validation-reports/test-results.md` - Test results
+- `ARTIFACTS/05-generation/generation-logs/generation-log.md` - Generation log
+
+**Raw Inputs:**
+- `_user_input/raw-requirements/*.md` - Raw sponsor materials (BRD/PRD)
+
+**Change Requests:**
+- `ARTIFACTS/reference/change-requests/CR-*.yaml` - Change request files
+
 ## Operational Constraints
 
 ### Permitted

@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-008 |
-| **Version** | 1.0 |
-| **Date** | 2025-12-18T00:00:00Z |
+| **Version** | 2.0 |
+| **Date** | 2026-01-09T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -394,14 +394,15 @@ started:"2025-12-03"    # Timestamp should not be quoted
 
 ### File Location
 
-**Path:** `ARTIFACTS/activity-state.yaml`
+**⚠️ DEPRECATED:** State file eliminated in favor of direct log parsing.
 
-**Characteristics:**
-- Auto-generated from event log
-- YAML format
-- Disposable (can regenerate anytime)
-- NOT manually edited
-- Git-tracked (for visibility)
+**Path:** `ARTIFACTS/activity-state.yaml` _(no longer created)_
+
+**Rationale for Elimination:**
+- Eliminated guaranteed sync issues between log and state
+- Simplified architecture (single source of truth)
+- Queries parse log directly for always-current data
+- No manual rebuild operations needed
 
 ### File Structure
 
@@ -488,16 +489,18 @@ statistics:
   resolved_blockers: [number]
 ```
 
-### Generation Rules
+### Generation Rules (In-Memory)
 
 **State Reconstruction Algorithm:**
+
+When queries execute, state is built in-memory from log:
 
 1. Read all events from activity-log.txt
 2. For each entry ID, track all events chronologically
 3. Latest event for each ID determines current state
 4. Build query indexes from current state
 5. Calculate statistics
-6. Write YAML file
+6. Return results (no file written)
 
 **Example:**
 ```
@@ -506,12 +509,14 @@ statistics:
 2025-12-03T11:00:00Z | STORY | STORY-001 | status:IN_PROGRESS | robot:ashok
 2025-12-03T12:00:00Z | STORY | STORY-001 | status:COMPLETED | robot:ashok
 
-# State index entry (latest wins)
+# State built in-memory (latest wins)
 stories:
   STORY-001:
     status: COMPLETED  # From latest event
     robot: ashok       # From latest event
 ```
+
+**Performance:** State reconstruction is fast (~10ms for typical logs). For logs >10,000 events, consider archival strategies.
 
 ---
 
@@ -599,7 +604,7 @@ stories:
 2. **DO NOT delete** - preserve for forensics
 3. **Comment corrupted line** with `#CORRUPTED:` prefix
 4. **Append corrected event** if needed
-5. **Rebuild state index** to recover
+5. **Query again** (parser automatically skips commented lines)
 6. **Report to Roma** for manual review
 
 **Example:**
@@ -611,6 +616,8 @@ stories:
 #CORRUPTED: 2025-12-03T10:00:00Z | STORY | STORY-001 | stat�s:IN_PROGRESS
 2025-12-03T10:01:00Z | STORY | STORY-001 | status:IN_PROGRESS | robot:ashok
 ```
+
+**Note:** No rebuild needed - next query automatically parses corrected log.
 
 ---
 
@@ -699,3 +706,4 @@ stories:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-12-18T00:00:00Z | Initial format specification for ROME-PROP-007 |
+| 2.0 | 2026-01-09T00:00:00Z | Eliminated state file - queries now parse log directly (Solution C) |

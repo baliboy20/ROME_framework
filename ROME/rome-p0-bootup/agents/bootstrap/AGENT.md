@@ -221,8 +221,6 @@ echo "✓ Created _user_input/"
 # Create ARTIFACTS/ directory structure
 ARTIFACT_DIRS=(
     "00-bootup/project-initialization"
-    "01-ingest/source-materials"
-    "01-ingest/intake-logs"
     "02-analysis/requirements"
     "02-analysis/data-dictionary"
     "02-analysis/requirement-maps"

@@ -116,11 +116,11 @@ async function appendEvent(params) {
 
 /**
  * Rebuild activity state from event log
+ * @deprecated State file eliminated - queries now parse log directly
  * @returns {Object} Result with statistics
  */
 async function rebuildState() {
   const logPath = getActivityLogPath();
-  const statePath = getActivityStatePath();
 
   // Read event log
   let eventLogContent;
@@ -130,23 +130,14 @@ async function rebuildState() {
     throw new Error(`Failed to read activity log: ${error.message}`);
   }
 
-  // Build state
+  // Build state (but don't write file - state file eliminated)
   const state = buildState(eventLogContent);
 
-  // Write state YAML
-  const yamlContent = [
-    '# ROME Activity State Index',
-    '# Auto-generated from activity-log.txt',
-    `# Last updated: ${state.metadata.generated}`,
-    '# DO NOT EDIT MANUALLY - use rebuild_activity_state()',
-    '',
-    yaml.dump(state, { indent: 2, lineWidth: 120 })
-  ].join('\n');
-
-  await fs.writeFile(statePath, yamlContent);
-
+  // Return stats for backward compatibility
   return {
     success: true,
+    deprecated: true,
+    message: 'State file eliminated - queries now parse log directly. This operation is a no-op.',
     event_count: state.metadata.event_count,
     entry_count: Object.keys(state.phases).length +
                  Object.keys(state.features).length +
@@ -163,22 +154,18 @@ async function rebuildState() {
  * @returns {Object} Result with matching entries
  */
 async function queryState(params = {}) {
-  const statePath = getActivityStatePath();
+  const logPath = getActivityLogPath();
 
-  // Read state YAML
-  let stateContent;
+  // Read event log directly (no state file)
+  let eventLogContent;
   try {
-    stateContent = await fs.readFile(statePath, 'utf8');
+    eventLogContent = await fs.readFile(logPath, 'utf8');
   } catch (error) {
-    // State file doesn't exist, rebuild it
-    await rebuildState();
-    stateContent = await fs.readFile(statePath, 'utf8');
+    throw new Error(`Failed to read activity log: ${error.message}`);
   }
 
-  // Parse YAML (skip header comments)
-  const lines = stateContent.split('\n');
-  const yamlLines = lines.filter(line => !line.startsWith('#'));
-  const state = yaml.load(yamlLines.join('\n'));
+  // Build state in memory from log
+  const state = buildState(eventLogContent);
 
   // Query based on filter
   let results = [];
@@ -246,22 +233,18 @@ async function getEventHistory(params) {
  * @returns {Object} Statistics from state
  */
 async function getStatistics() {
-  const statePath = getActivityStatePath();
+  const logPath = getActivityLogPath();
 
-  // Read state YAML
-  let stateContent;
+  // Read event log directly (no state file)
+  let eventLogContent;
   try {
-    stateContent = await fs.readFile(statePath, 'utf8');
+    eventLogContent = await fs.readFile(logPath, 'utf8');
   } catch (error) {
-    // State file doesn't exist, rebuild it
-    await rebuildState();
-    stateContent = await fs.readFile(statePath, 'utf8');
+    throw new Error(`Failed to read activity log: ${error.message}`);
   }
 
-  // Parse YAML
-  const lines = stateContent.split('\n');
-  const yamlLines = lines.filter(line => !line.startsWith('#'));
-  const state = yaml.load(yamlLines.join('\n'));
+  // Build state in memory from log
+  const state = buildState(eventLogContent);
 
   return {
     metadata: state.metadata,

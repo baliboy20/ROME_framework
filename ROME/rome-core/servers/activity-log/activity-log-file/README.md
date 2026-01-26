@@ -8,11 +8,12 @@ This MCP server replaces the MongoDB-based activity-log system with a simpler, f
 
 **Key Features:**
 - ✅ Append-only event log (`ARTIFACTS/activity-log.txt`)
-- ✅ Auto-generated state index (`ARTIFACTS/activity-state.yaml`)
-- ✅ 40x faster writes, 5-20x faster reads vs. MongoDB
+- ✅ Direct log parsing (no intermediate state file)
+- ✅ 40x faster writes vs. MongoDB
 - ✅ Git-trackable complete audit trail
 - ✅ No database dependency
 - ✅ Human-readable text files
+- ✅ Always current data (no sync issues)
 
 ## Installation
 
@@ -82,32 +83,25 @@ mcp__activity-log__append({
 
 ---
 
-### 2. `mcp__activity-log__rebuild_state()`
+### 2. `mcp__activity-log__rebuild_state()` **[DEPRECATED]**
 
-Rebuild activity state index from event log.
+**⚠️ DEPRECATED:** State file eliminated in favor of direct log parsing. This operation is now a no-op.
 
-**Parameters:** None
+Queries (`query`, `get_statistics`) now parse the event log directly on every call, ensuring always-current data with no sync issues.
 
 **Returns:**
 ```javascript
 {
   success: true,
+  deprecated: true,
+  message: "State file eliminated - queries now parse log directly. This operation is a no-op.",
   event_count: 127,
   entry_count: 43,
   generated_at: "2025-12-03T15:00:00Z"
 }
 ```
 
-**Example:**
-```javascript
-mcp__activity-log__rebuild_state()
-```
-
-**When to use:**
-- After manual event log edits
-- After git merge conflicts in event log
-- If state file is corrupted or missing
-- Daily (recommended by Roma for validation)
+**Migration Note:** Remove calls to this function. It's kept for backward compatibility but does nothing.
 
 ---
 
@@ -261,7 +255,7 @@ mcp__activity-log__get_statistics()
 
 ### Event Log (`ARTIFACTS/activity-log.txt`)
 
-Append-only event stream:
+**Single source of truth** - Append-only event stream:
 
 ```
 # ROME Activity Log
@@ -278,47 +272,11 @@ Append-only event stream:
 - ONLY append new events
 - Timestamps MUST be chronologically increasing
 
-### State Index (`ARTIFACTS/activity-state.yaml`)
-
-Auto-generated from event log:
-
-```yaml
-# ROME Activity State Index
-# Auto-generated from activity-log.txt
-# Last updated: 2025-12-03T15:00:00Z
-# DO NOT EDIT MANUALLY - use rebuild_activity_state()
-
-metadata:
-  generated: 2025-12-03T15:00:00Z
-  event_count: 127
-
-phases:
-  PHASE-2:
-    status: IN_PROGRESS
-    robot: talib
-    phase: 2
-    start: 2025-12-02T16:30:00Z
-
-stories:
-  STORY-001-001-1-db:
-    status: COMPLETED
-    robot: ashok
-    feature: FEAT-001
-    title: User table
-    estimate: 2h
-    started: 2025-12-03T10:00:00Z
-    completed: 2025-12-03T12:00:00Z
-
-by_robot:
-  ashok:
-    - STORY-001-001-1-db
-
-by_status:
-  COMPLETED:
-    - STORY-001-001-1-db
-```
-
-**Regeneration:** Run `rebuild_state()` to regenerate from event log.
+**Query Behavior:**
+- All queries parse this file directly
+- State built in-memory on each query
+- Always returns current data
+- No intermediate state files
 
 ---
 
@@ -350,19 +308,12 @@ See `/ROME_framework_maintenance/migration/MIGRATION-GUIDE.md`
 
 ## Troubleshooting
 
-### State file missing or corrupted
-
-```javascript
-// Regenerate from event log
-mcp__activity-log__rebuild_state()
-```
-
 ### Event log corrupted line
 
 1. Find corrupted line via parser error
 2. Comment line with `#CORRUPTED:` prefix
 3. Append corrected event
-4. Rebuild state
+4. Query again (automatically parses corrected log)
 
 ```bash
 # In activity-log.txt
@@ -372,15 +323,22 @@ mcp__activity-log__rebuild_state()
 
 ### Query returns empty results
 
-Check if state is up-to-date:
+Verify event log format:
 
-```javascript
-// Rebuild state first
-mcp__activity-log__rebuild_state()
+```bash
+# Check log file exists and has events
+tail ARTIFACTS/activity-log.txt
 
-// Then query
-mcp__activity-log__query({ status: "BLOCKED" })
+# Verify event format
+grep "STORY-001" ARTIFACTS/activity-log.txt
 ```
+
+### Performance concerns
+
+For very large logs (>10,000 events), consider:
+- Archiving old events to separate log files
+- Implementing log rotation strategy
+- Adding caching layer if needed
 
 ---
 
