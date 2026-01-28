@@ -49,6 +49,10 @@
     "generate-ui-tests",
     "generate-accessibility-features"
   ],
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P5-generation.md": "P5 frontend/application implementation mode"
+  },
   "hooks": {
     "SessionStart": {
       "enabled": true,

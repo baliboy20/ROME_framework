@@ -41,5 +41,9 @@
     "Seez",
     "iterm2-terminal"
   ],
-  "status": "active"
+  "status": "active",
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P4-config.md": "P4 DevOps and environment configuration mode"
+  }
 }

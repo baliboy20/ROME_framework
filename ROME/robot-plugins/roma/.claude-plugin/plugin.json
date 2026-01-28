@@ -12,7 +12,8 @@
     "rome-core": "^1.0.0"
   },
   "exports": {
-    "ROBOT.md": "Core robot identity and baseline behavior"
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/orchestrator.md": "Cross-phase orchestration and coordination mode"
   },
   "author": "ROME Framework Team",
   "license": "MIT",

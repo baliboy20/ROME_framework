@@ -18,5 +18,9 @@
     "database-testing",
     "setup-documentation"
   ],
-  "mcps": []
+  "mcps": [],
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P5-generation.md": "P5 data layer implementation mode"
+  }
 }

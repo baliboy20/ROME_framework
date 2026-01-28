@@ -60,6 +60,10 @@
     "foregroundColor": "#ffffff",
     "title": "Sarah (QA Validator)"
   },
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/QA-validator.md": "Quality gate validation mode (phase-agnostic)"
+  },
   "coordination": {
     "reportsTo": "roma",
     "createsBlockersFor": [

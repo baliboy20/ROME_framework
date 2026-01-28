@@ -13,5 +13,9 @@
   },
   "upstream": ["talib"],
   "downstream": ["lucien", "ashok", "reena", "charlie"],
-  "orchestrator": "roma"
+  "orchestrator": "roma",
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P3-design.md": "P3 system design and architecture mode"
+  }
 }

@@ -531,10 +531,45 @@ Sarah validates AORDL structure before P1→P2 transition.
 - Phase plugins define WHAT (skills, commands, phase logic)
 - Mode files define HOW (phase-specific behavior overlays)
 
-### Known Limitations
-- Mode files only created for Bootstrap (P0-bootup.md)
-- Talib P1-aordl.md and P2-analysis.md mode files not yet created (original AGENT.md files contain mode logic)
-- Other robots rely on phase plugin AGENT.md files for detailed procedures
+### Mode Files Extraction (2026-01-28)
+
+**All mode files extracted and created:**
+
+✓ **Bootstrap:** modes/P0-bootup.md (167 lines)
+✓ **Talib P1:** modes/P1-aordl.md (369 lines) - Extracted from rome-p1-aordl/agents/talib/AGENT.md
+✓ **Talib P2:** modes/P2-analysis.md (329 lines) - Extracted from rome-p2-analysis/agents/talib/AGENT.md
+✓ **PMA P3:** modes/P3-design.md (409 lines) - Extracted from rome-p3-design/agents/pma/AGENT.md
+✓ **Clara P3:** modes/P3-design.md (312 lines) - Extracted from rome-p3-design/agents/clara/AGENT.md
+✓ **Lucien P4:** modes/P4-config.md (379 lines) - Extracted from rome-p4-config/agents/lucien/AGENT.md
+✓ **Ashok P5:** modes/P5-generation.md (379 lines) - Extracted from rome-p5-generation/agents/ashok/AGENT.md
+✓ **Reena P5:** modes/P5-generation.md (410 lines) - Extracted from rome-p5-generation/agents/reena/AGENT.md
+✓ **Charlie P5:** modes/P5-generation.md (455 lines) - Extracted from rome-p5-generation/agents/charlie/AGENT.md
+✓ **Sarah QA:** modes/QA-validator.md (421 lines) - Extracted from rome-qa/agents/sarah/AGENT.md
+✓ **Roma:** modes/orchestrator.md (603 lines) - Extracted from rome-core/agents/roma/AGENT.md
+
+**Total:** 15 mode files (4,232 lines) extracted across 10 robots
+
+**Mode File Structure:**
+Each mode file contains:
+- Phase-specific purpose statement
+- Phase-specific skills catalog
+- Detailed phase procedures (step-by-step)
+- Phase-specific inputs/outputs
+- Activity logging format
+- Exit criteria checklist
+- Traceability requirements (ROME-PROP-016)
+- AORDL awareness (where applicable)
+
+**Old AGENT.md Files:**
+- Preserved as reference material in phase plugin directories
+- Can be deprecated/removed in future after validation
+- Serve as backup and historical context
+
+### Architecture Now Complete
+- ✓ Robot plugins define WHO (identity, role, capabilities)
+- ✓ Phase plugins define WHAT (skills, commands, phase logic)
+- ✓ Mode files define HOW (phase-specific behavior overlays)
+- ✓ All 15 mode files extracted with complete phase procedures
 
 ---
 
@@ -544,3 +579,4 @@ Sarah validates AORDL structure before P1→P2 transition.
 |---------|------|---------|
 | 1.0 | 2026-01-28 | Initial proposal - separate robot identity from phase behavior via robot-plugins architecture |
 | 1.0-impl | 2026-01-28 | Implemented - all 10 robots migrated, phase plugins updated, USER-GUIDE.md updated |
+| 1.0-complete | 2026-01-28 | Mode file extraction complete - all 15 mode files (4,232 lines) extracted from old AGENT.md files across 10 robots. Robot-plugins architecture now 100% complete. |

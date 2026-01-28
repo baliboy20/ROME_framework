@@ -6,5 +6,9 @@
   "modes": [
     "P5-generation"
   ],
-  "mcps": []
+  "mcps": [],
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P5-generation.md": "P5 backend API implementation mode"
+  }
 }
