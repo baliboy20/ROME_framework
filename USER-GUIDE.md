@@ -14,8 +14,8 @@ mkdir my-app
 cp -r /path/to/ROME my-app/
 cd my-app
 
-# 2. Launch Bootstrap agent
-# Open: my-app/ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
+# 2. Launch Bootstrap robot
+# Open: my-app/ROME/robot-plugins/bootstrap/ROBOT.md
 ```
 
 **Why copy?**
@@ -32,7 +32,7 @@ mkdir my-app
 cd my-app
 
 # 2. Bootstrap will create symlink to shared ROME
-# Open: /path/to/ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
+# Open: /path/to/ROME/robot-plugins/bootstrap/ROBOT.md
 ```
 
 **Use for:** Framework development, quick prototyping, shared ROME installation
@@ -50,7 +50,7 @@ ROME uses a 6-phase workflow from requirements to working code:
 **Purpose:** Initialize project structure
 **Location:** `ROME/robot-plugins/bootstrap/ROBOT.md` (mode: P0-bootup)
 
-**How to use:** Open AGENT.md file in Claude Code, it will load agent context
+**How to use:** Open ROBOT.md file in Claude Code, it will load robot context
 
 **When:** Start of every new project
 
@@ -500,7 +500,7 @@ Sarah enforces these gates:
 - Custom workflow automation
 - Cross-phase orchestration
 
-**How to use:** Open Roma's AGENT.md file in Claude Code
+**How to use:** Open Roma's ROBOT.md file in Claude Code
 
 Roma coordinates all agents and manages phase transitions automatically.
 
@@ -539,7 +539,7 @@ cd my-project
 - Automatic framework updates
 - Useful for framework development
 
-**See:** Bootstrap agent (`ROME/rome-p0-bootup/agents/bootstrap/AGENT.md`) for auto-detection details
+**See:** Bootstrap robot (`ROME/robot-plugins/bootstrap/ROBOT.md`) for auto-detection details
 
 ---
 
