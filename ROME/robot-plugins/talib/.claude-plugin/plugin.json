@@ -12,7 +12,13 @@
     ]
   },
   "dependencies": {
-    "rome-core": "^1.0.0"
+    "rome-core": "^1.0.0",
+    "plugins": [],
+    "mcps": [
+      "activity-log-file",
+      "iterm2-terminal",
+      "Seez"
+    ]
   },
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",

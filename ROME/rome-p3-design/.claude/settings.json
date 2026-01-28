@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"$CLAUDE_PROJECT_DIR/agents/pma/AGENT.md\""
+            "command": "cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/pma/ROBOT.md\" && echo '\n---\n' && cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/pma/modes/P3-design.md\""
           }
         ]
       }

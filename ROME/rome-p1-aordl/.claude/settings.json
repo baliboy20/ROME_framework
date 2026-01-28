@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"$CLAUDE_PROJECT_DIR/agents/talib/AGENT.md\""
+            "command": "cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/talib/ROBOT.md\" && echo '\n---\n' && cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/talib/modes/P1-aordl.md\""
           }
         ]
       }

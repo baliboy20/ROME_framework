@@ -9,7 +9,13 @@
   "status": "active",
   "dependencies": {
     "rome-core": "^1.0.0",
-    "rome-p2-analysis": ">=1.0.0"
+    "rome-p2-analysis": ">=1.0.0",
+    "plugins": [],
+    "mcps": [
+      "activity-log-file",
+      "iterm2-terminal",
+      "Seez"
+    ]
   },
   "upstream": ["talib"],
   "downstream": ["lucien", "ashok", "reena", "charlie"],

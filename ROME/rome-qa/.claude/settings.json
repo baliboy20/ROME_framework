@@ -5,7 +5,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"$CLAUDE_PROJECT_DIR/agents/sarah/AGENT.md\""
+            "command": "cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/sarah/ROBOT.md\" && echo '\n---\n' && cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/sarah/modes/QA-validator.md\""
           }
         ]
       }
