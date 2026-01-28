@@ -74,13 +74,34 @@ Check:
 - phase4-handover.md exists
 - data-dictionary.yaml exists (ARTIFACTS/_design/data-models/)
 - test-data-specification.md exists
+- actionlist.md exists (ARTIFACTS/_design/design-decisions/)
 - Data workspace prepared by Lucien (SOURCE/[data-workspace]/)
-- Roma has assigned data layer features to Ashok
 ```
 
 **If not met:** Report to Roma, do not proceed.
 
-### Step 2: Log Feature Start
+### Step 2: Query Assigned Features
+
+Query activity log for data layer feature assignments:
+
+```javascript
+mcp__activity-log__query({
+  robot: "ashok",
+  status: "PENDING"
+})
+```
+
+**Alternative:** Read actionlist.md directly:
+```
+ARTIFACTS/_design/design-decisions/actionlist.md
+```
+
+**For each assigned feature (FEAT-###):**
+- Note feature ID, title, priority
+- Identify database entities from data-dictionary.yaml
+- Check dependencies on other features
+
+### Step 3: Log Feature Start
 
 For each feature assigned:
 ```javascript
@@ -97,7 +118,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 3: Read Design Artifacts
+### Step 4: Read Design Artifacts
 
 **Critical:** Read data-dictionary.yaml as single source of truth:
 ```
@@ -114,7 +135,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Business rules
 - Seed data requirements
 
-### Step 4: Generate Database Schema
+### Step 5: Generate Database Schema
 
 **Output:** `SOURCE/[data-workspace]/migrations/001_initial_schema.sql`
 
@@ -131,7 +152,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 /generate-database-schema --source data-dictionary.yaml --output migrations/001_initial_schema.sql
 ```
 
-### Step 5: Create Migration Scripts
+### Step 6: Create Migration Scripts
 
 **Output:** `SOURCE/[data-workspace]/migrations/` (sequential files)
 
@@ -146,7 +167,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Be sequentially numbered
 - Include timestamp metadata
 
-### Step 6: Generate ORM Models
+### Step 7: Generate ORM Models
 
 **Output:** `SOURCE/[data-workspace]/models/`
 
@@ -162,7 +183,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 /generate-orm-models --dictionary data-dictionary.yaml --output models/
 ```
 
-### Step 7: Create Repository Pattern (Optional)
+### Step 8: Create Repository Pattern (Optional)
 
 **Output:** `SOURCE/[data-workspace]/repositories/`
 
@@ -172,7 +193,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Add custom query methods
 - Include transaction support
 
-### Step 8: Generate Seed Data
+### Step 9: Generate Seed Data
 
 **Output:** `SOURCE/[data-workspace]/seeds/dev/` and `seeds/test/`
 
@@ -193,7 +214,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 /generate-seed-data --spec test-data-specification.md --env test --output seeds/test/
 ```
 
-### Step 9: Create Database Tests
+### Step 10: Create Database Tests
 
 **Output:** `SOURCE/[data-workspace]/tests/`
 
@@ -209,7 +230,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 /generate-database-tests --schema migrations/001_initial_schema.sql --output tests/
 ```
 
-### Step 10: Create Setup Scripts
+### Step 11: Create Setup Scripts
 
 **Output:** `SOURCE/[data-workspace]/scripts/`
 
@@ -219,7 +240,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - `seed_database.sh` - Load seed data
 - `reset_database.sh` - Drop and recreate
 
-### Step 11: Document Setup
+### Step 12: Document Setup
 
 **Output:** `SOURCE/[data-workspace]/README.md`
 
@@ -231,7 +252,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Running database tests
 - Troubleshooting
 
-### Step 12: Validate Implementation
+### Step 13: Validate Implementation
 
 **Self-check:**
 - [ ] Schema matches data-dictionary.yaml exactly
@@ -244,7 +265,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - [ ] Database tests pass
 - [ ] Setup scripts work
 
-### Step 13: Create Feature Traceability
+### Step 14: Create Feature Traceability
 
 **Output:** `SOURCE/[data-workspace]/features/[feature]/TRACEABILITY.md`
 
@@ -268,7 +289,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - seeds/dev/users.sql
 ```
 
-### Step 14: Log Feature Completion
+### Step 15: Log Feature Completion
 
 ```javascript
 mcp__activity-log__append({
@@ -285,7 +306,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 15: Notify Reena
+### Step 16: Notify Reena
 
 Inform Reena that data layer is ready:
 ```javascript
@@ -336,6 +357,7 @@ SOURCE/[backend_root]/
 | Artifact | Location | Purpose |
 |----------|----------|---------|
 | data-dictionary.yaml | ARTIFACTS/_design/data-models/ | PRIMARY - defines all entities, fields, relationships |
+| actionlist.md | ARTIFACTS/_design/design-decisions/ | Feature assignments and work breakdown |
 | test-data-specification.md | ARTIFACTS/_design/design-decisions/ | Seed data requirements |
 | phase4-handover.md | ARTIFACTS/_config/technical-specs/ | Workspace location, environment setup |
 | tech-stack.yaml | ARTIFACTS/_design/design-decisions/ | Database technology chosen |
