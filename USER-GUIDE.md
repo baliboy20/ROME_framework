@@ -39,7 +39,7 @@ cd my-app
 
 **Note:** Bootstrap auto-detects mode (checks if `ROME/` exists before creating symlink)
 
----
+---[USER-GUIDE.md](USER-GUIDE.md)
 
 ## Phase Workflow
 
@@ -48,7 +48,7 @@ ROME uses a 6-phase workflow from requirements to working code:
 ### P0: Bootstrap
 **Agent:** Bootstrap
 **Purpose:** Initialize project structure
-**Location:** `ROME/rome-p0-bootup/agents/bootstrap/AGENT.md`
+**Location:** `ROME/robot-plugins/bootstrap/ROBOT.md` (mode: P0-bootup)
 
 **How to use:** Open AGENT.md file in Claude Code, it will load agent context
 
@@ -59,7 +59,7 @@ ROME uses a 6-phase workflow from requirements to working code:
 ### P1: AORDL Requirements
 **Agent:** Talib (P1 mode)
 **Purpose:** Capture structured requirements in AORDL format
-**Location:** `ROME/rome-p1-aordl/agents/talib/AGENT.md`
+**Location:** `ROME/robot-plugins/talib/ROBOT.md` (mode: P1-aordl)
 
 **Skills available:**
 - `create-aordl-requirement` - Create new AORDL requirement
@@ -85,7 +85,7 @@ REQ-001:
 ### P2: Analysis
 **Agent:** Talib (P2 mode)
 **Purpose:** Decompose requirements, extract entities, identify dependencies
-**Location:** `ROME/rome-p2-analysis/agents/talib/AGENT.md`
+**Location:** `ROME/robot-plugins/talib/ROBOT.md` (mode: P2-analysis)
 
 **Skills available:**
 - `analyze-requirement` - Analyze single requirement
@@ -101,8 +101,8 @@ REQ-001:
 **Agents:** PMA (architecture), Clara (validation)
 **Purpose:** Design system architecture, technical specs, data models
 **Locations:**
-- PMA: `ROME/rome-p3-design/agents/pma/AGENT.md`
-- Clara: `ROME/rome-p3-design/agents/clara/AGENT.md`
+- PMA: `ROME/robot-plugins/pma/ROBOT.md` (mode: P3-design)
+- Clara: `ROME/robot-plugins/clara/ROBOT.md` (mode: P3-design)
 
 **Skills available:**
 - `design-api-controllers`, `design-dto-models`
@@ -124,7 +124,7 @@ REQ-001:
 ### P4: Configuration
 **Agent:** Lucien
 **Purpose:** Configure workspace, build system, CI/CD
-**Location:** `ROME/rome-p4-config/agents/lucien/AGENT.md`
+**Location:** `ROME/robot-plugins/lucien/ROBOT.md` (mode: P4-config)
 
 **Skills available:**
 - `scaffold-workspace` - Create project scaffolding
@@ -148,9 +148,9 @@ REQ-001:
 **Purpose:** Generate production code in parallel
 
 **Locations:**
-- Ashok: `ROME/rome-p5-generation/agents/ashok/AGENT.md`
-- Reena: `ROME/rome-p5-generation/agents/reena/AGENT.md`
-- Charlie: `ROME/rome-p5-generation/agents/charlie/AGENT.md`
+- Ashok: `ROME/robot-plugins/ashok/ROBOT.md` (mode: P5-generation)
+- Reena: `ROME/robot-plugins/reena/ROBOT.md` (mode: P5-generation)
+- Charlie: `ROME/robot-plugins/charlie/ROBOT.md` (mode: P5-generation)
 
 **Backend (Ashok):**
 - API endpoints, database models, auth middleware, business logic
@@ -169,7 +169,7 @@ REQ-001:
 ### QA: Quality Assurance
 **Agent:** Sarah
 **Purpose:** Validate deliverables, enforce quality gates
-**Location:** `ROME/rome-qa/agents/sarah/AGENT.md`
+**Location:** `ROME/robot-plugins/sarah/ROBOT.md` (phase-agnostic validator)
 **Authority:** APPROVE or BLOCK phase transitions
 
 **Sarah validates:**
@@ -277,12 +277,12 @@ REQ-001:
 ```bash
 # Launch Claude Code in your project directory
 
-# P0: Open Bootstrap agent
-# Open: ROME/rome-p0-bootup/agents/bootstrap/AGENT.md
+# P0: Open Bootstrap robot
+# Open: ROME/robot-plugins/bootstrap/ROBOT.md
 # Bootstrap creates initial project structure
 
 # P1: Open Talib (P1 mode)
-# Open: ROME/rome-p1-aordl/agents/talib/AGENT.md
+# Open: ROME/robot-plugins/talib/ROBOT.md (loads P1-aordl mode)
 # Work with Talib to create AORDL files in ARTIFACTS/_requirements/
 
 # Talib validates AORDL as you create them
@@ -291,31 +291,31 @@ REQ-001:
 **Day 2: Analysis & Design**
 ```bash
 # P2: Open Talib (P2 mode)
-# Open: ROME/rome-p2-analysis/agents/talib/AGENT.md
+# Open: ROME/robot-plugins/talib/ROBOT.md (loads P2-analysis mode)
 # Talib analyzes requirements in ARTIFACTS/_requirements/
 
 # P3: Open PMA for architecture
-# Open: ROME/rome-p3-design/agents/pma/AGENT.md
+# Open: ROME/robot-plugins/pma/ROBOT.md (loads P3-design mode)
 # PMA creates architecture & designs
 
 # Open Clara for validation
-# Open: ROME/rome-p3-design/agents/clara/AGENT.md
+# Open: ROME/robot-plugins/clara/ROBOT.md (loads P3-design mode)
 # Clara validates design completeness
 ```
 
 **Day 3: Configuration & Code**
 ```bash
 # P4: Open Lucien
-# Open: ROME/rome-p4-config/agents/lucien/AGENT.md
+# Open: ROME/robot-plugins/lucien/ROBOT.md (loads P4-config mode)
 # Lucien configures workspace
 
-# P5: Open generation agents (can work in parallel Claude sessions)
-# Open: ROME/rome-p5-generation/agents/ashok/AGENT.md    (Backend)
-# Open: ROME/rome-p5-generation/agents/reena/AGENT.md    (Frontend)
-# Open: ROME/rome-p5-generation/agents/charlie/AGENT.md  (Integration)
+# P5: Open generation robots (can work in parallel Claude sessions)
+# Open: ROME/robot-plugins/ashok/ROBOT.md    (Backend, P5-generation mode)
+# Open: ROME/robot-plugins/reena/ROBOT.md    (Frontend, P5-generation mode)
+# Open: ROME/robot-plugins/charlie/ROBOT.md  (Integration, P5-generation mode)
 
 # QA: Open Sarah for validation
-# Open: ROME/rome-qa/agents/sarah/AGENT.md
+# Open: ROME/robot-plugins/sarah/ROBOT.md (phase-agnostic validator)
 ```
 
 ---
@@ -492,7 +492,7 @@ Sarah enforces these gates:
 ## Advanced: Roma Orchestrator
 
 **Roma:** Master orchestrator for complex workflows
-**Location:** `ROME/rome-core/agents/roma/AGENT.md`
+**Location:** `ROME/robot-plugins/roma/ROBOT.md` (phase-agnostic orchestrator)
 
 **Use Roma for:**
 - Multi-requirement projects

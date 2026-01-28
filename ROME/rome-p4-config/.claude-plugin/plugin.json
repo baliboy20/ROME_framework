@@ -2,12 +2,9 @@
   "name": "rome-p4-config",
   "version": "1.0.0",
   "description": "ROME Framework P4 Config Phase plugin - Workspace configuration and scaffolding",
-  "type": "phase",
-  "phase": "P4",
+  "type": "phase-plugin",
+  "phase": "P04-config",
   "provides": {
-    "agents": [
-      "lucien"
-    ],
     "skills": [
       "scaffold-workspace",
       "configure-environment",
@@ -25,12 +22,20 @@
     ]
   },
   "dependencies": {
-    "rome-core": "^1.0.0"
+    "rome-core": "^1.0.0",
+    "robot-plugins/lucien": "^1.0.0"
   },
   "peerDependencies": {
     "rome-p3-design": ">=1.0.0"
   },
   "requires": {
+    "robots": [
+      {
+        "name": "lucien",
+        "mode": "P4-config",
+        "source": "robot-plugins/lucien"
+      }
+    ],
     "mcpServers": [
       {
         "name": "activity-log-file",
@@ -45,7 +50,6 @@
     ]
   },
   "exports": {
-    "agents/lucien/AGENT.md": "Lucien agent definition (DevOps Engineer)",
     "skills/scaffold-workspace/SKILL.md": "Scaffold workspace directory structure",
     "skills/configure-environment/SKILL.md": "Configure environment files",
     "skills/setup-cicd-pipeline/SKILL.md": "Setup CI/CD pipeline configuration"

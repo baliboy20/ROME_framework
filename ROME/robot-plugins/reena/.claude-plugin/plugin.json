@@ -1,0 +1,10 @@
+{
+  "name": "reena",
+  "version": "1.0.0",
+  "description": "Backend Engineer robot for API/service layer implementation",
+  "role": "Backend Engineer",
+  "modes": [
+    "P5-generation"
+  ],
+  "mcps": []
+}

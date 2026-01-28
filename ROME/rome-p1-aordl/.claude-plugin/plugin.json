@@ -5,9 +5,6 @@
   "type": "phase-plugin",
   "phase": "P01-aordl",
   "provides": {
-    "agents": [
-      "talib"
-    ],
     "skills": [
       "validate-aordl",
       "transform-aordl-to-bdd",
@@ -20,9 +17,17 @@
     ]
   },
   "dependencies": {
-    "rome-core": "^1.0.0"
+    "rome-core": "^1.0.0",
+    "robot-plugins/talib": "^1.0.0"
   },
   "requires": {
+    "robots": [
+      {
+        "name": "talib",
+        "mode": "P1-aordl",
+        "source": "robot-plugins/talib"
+      }
+    ],
     "mcpServers": [
       {
         "name": "activity-log-file",
@@ -37,7 +42,6 @@
     ]
   },
   "exports": {
-    "agents/talib/AGENT.md": "Talib agent for AORDL requirements engineering (P1 mode)",
     "skills/validate-aordl/SKILL.md": "AORDL requirement validation skill",
     "skills/transform-aordl-to-bdd/SKILL.md": "AORDL to BDD transformation skill",
     "skills/create-aordl-requirement/SKILL.md": "AORDL requirement creation skill",

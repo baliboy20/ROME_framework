@@ -2,112 +2,52 @@
   "name": "rome-p5-generation",
   "version": "1.0.0",
   "description": "ROME Phase 5 Generation plugin - Parallel code generation for Database, API, and UI layers",
-  "type": "plugin",
-  "agents": [
-    {
-      "name": "ashok",
-      "path": "agents/ashok/AGENT.md",
-      "role": "Data Architect & Database Engineer",
-      "phase": "P5-Generation-Data"
-    },
-    {
-      "name": "reena",
-      "path": "agents/reena/AGENT.md",
-      "role": "Backend Engineer",
-      "phase": "P5-Generation-API"
-    },
-    {
-      "name": "charlie",
-      "path": "agents/charlie/AGENT.md",
-      "role": "Frontend/Application Developer",
-      "phase": "P5-Generation-UI"
-    }
-  ],
-  "skills": [
-    {
-      "id": "generate-database-schema",
-      "path": "skills/generate-database-schema",
-      "category": "Database & Data",
-      "phase": "P5",
-      "robot": "ashok"
-    },
-    {
-      "id": "generate-migrations",
-      "path": "skills/generate-migrations",
-      "category": "Database & Data",
-      "phase": "P5",
-      "robot": "ashok"
-    },
-    {
-      "id": "generate-orm-models",
-      "path": "skills/generate-orm-models",
-      "category": "Database & Data",
-      "phase": "P5",
-      "robot": "ashok"
-    },
-    {
-      "id": "generate-seed-data",
-      "path": "skills/generate-seed-data",
-      "category": "Database & Data",
-      "phase": "P5",
-      "robot": "ashok"
-    },
-    {
-      "id": "generate-api-endpoints",
-      "path": "skills/generate-api-endpoints",
-      "category": "Backend & API",
-      "phase": "P5",
-      "robot": "reena"
-    },
-    {
-      "id": "generate-authentication-middleware",
-      "path": "skills/generate-authentication-middleware",
-      "category": "Backend & API",
-      "phase": "P5",
-      "robot": "reena"
-    },
-    {
-      "id": "generate-ui-screens",
-      "path": "skills/generate-ui-screens",
-      "category": "Frontend & UI",
-      "phase": "P5",
-      "robot": "charlie"
-    },
-    {
-      "id": "generate-ui-components",
-      "path": "skills/generate-ui-components",
-      "category": "Frontend & UI",
-      "phase": "P5",
-      "robot": "charlie"
-    }
-  ],
-  "commands": [
-    {
-      "name": "generate-db",
-      "description": "Generate database schema, migrations, ORM models, and seed data",
-      "agent": "ashok",
-      "skills": ["generate-database-schema", "generate-migrations", "generate-orm-models", "generate-seed-data"]
-    },
-    {
-      "name": "generate-api",
-      "description": "Generate API endpoints, controllers, and authentication middleware",
-      "agent": "reena",
-      "skills": ["generate-api-endpoints", "generate-authentication-middleware"]
-    },
-    {
-      "name": "generate-ui",
-      "description": "Generate UI screens and reusable components",
-      "agent": "charlie",
-      "skills": ["generate-ui-screens", "generate-ui-components"]
-    }
-  ],
+  "type": "phase-plugin",
+  "phase": "P05-generation",
+  "provides": {
+    "skills": [
+      "generate-database-schema",
+      "generate-migrations",
+      "generate-orm-models",
+      "generate-seed-data",
+      "generate-api-endpoints",
+      "generate-authentication-middleware",
+      "generate-ui-screens",
+      "generate-ui-components"
+    ],
+    "commands": [
+      "rome-p5:generate-db",
+      "rome-p5:generate-api",
+      "rome-p5:generate-ui"
+    ]
+  },
   "dependencies": {
-    "rome-core": "^1.0.0"
+    "rome-core": "^1.0.0",
+    "robot-plugins/ashok": "^1.0.0",
+    "robot-plugins/reena": "^1.0.0",
+    "robot-plugins/charlie": "^1.0.0"
   },
   "peerDependencies": {
     "rome-p4-config": ">=1.0.0"
   },
   "requires": {
+    "robots": [
+      {
+        "name": "ashok",
+        "mode": "P5-generation",
+        "source": "robot-plugins/ashok"
+      },
+      {
+        "name": "reena",
+        "mode": "P5-generation",
+        "source": "robot-plugins/reena"
+      },
+      {
+        "name": "charlie",
+        "mode": "P5-generation",
+        "source": "robot-plugins/charlie"
+      }
+    ],
     "mcpServers": [
       {
         "name": "activity-log-file",
@@ -121,11 +61,35 @@
       }
     ]
   },
+  "exports": {
+    "skills/generate-database-schema/SKILL.md": "Generate database schema from data dictionary",
+    "skills/generate-migrations/SKILL.md": "Generate database migrations",
+    "skills/generate-orm-models/SKILL.md": "Generate ORM models",
+    "skills/generate-seed-data/SKILL.md": "Generate seed data",
+    "skills/generate-api-endpoints/SKILL.md": "Generate API endpoints",
+    "skills/generate-authentication-middleware/SKILL.md": "Generate authentication middleware",
+    "skills/generate-ui-screens/SKILL.md": "Generate UI screens",
+    "skills/generate-ui-components/SKILL.md": "Generate UI components"
+  },
   "framework": {
     "name": "ROME",
     "version": "v3",
     "compatibility": "^3.0.0"
   },
   "author": "ROME Framework Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-p5-generation"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "phase5",
+    "generation",
+    "code-generation",
+    "database",
+    "api",
+    "ui"
+  ]
 }

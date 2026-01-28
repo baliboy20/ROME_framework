@@ -10,9 +10,6 @@
       "aordlParser",
       "aordlValidator"
     ],
-    "agents": [
-      "roma"
-    ],
     "mcpServers": [
       "activity-log"
     ],
@@ -20,13 +17,23 @@
       "aordl"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "robot-plugins/roma": "^1.0.0"
+  },
+  "requires": {
+    "robots": [
+      {
+        "name": "roma",
+        "mode": "phase-agnostic",
+        "source": "robot-plugins/roma"
+      }
+    ]
+  },
   "exports": {
     "lib/SkillInvoker.js": "Skill invocation library for ROME phase plugins",
     "lib/SkillRegistry.js": "Skill registry management for auto-discovery",
     "lib/aordl-parser/validate-aordl.js": "AORDL requirement validation utility",
     "lib/aordl-parser/transform-aordl-to-bdd.js": "AORDL to BDD transformation utility",
-    "agents/roma/AGENT.md": "Roma orchestrator agent definition",
     "servers/activity-log/activity-log-file/": "Activity logging MCP server",
     "templates/aordl/": "AORDL requirement authoring templates"
   },

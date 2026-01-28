@@ -1,0 +1,17 @@
+{
+  "name": "pma",
+  "version": "1.0.0",
+  "description": "PMA: Project Manager / Architect - Phase 3 Design Robot",
+  "robot": "pma",
+  "role": "Project Manager / Architect",
+  "modes": ["P3-design"],
+  "phase": "P3",
+  "status": "active",
+  "dependencies": {
+    "rome-core": "^1.0.0",
+    "rome-p2-analysis": ">=1.0.0"
+  },
+  "upstream": ["talib"],
+  "downstream": ["lucien", "ashok", "reena", "charlie"],
+  "orchestrator": "roma"
+}

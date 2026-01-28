@@ -1,0 +1,75 @@
+{
+  "name": "sarah",
+  "version": "1.0.0",
+  "description": "QA Validator & Quality Gatekeeper - validates quality gates across all phases",
+  "type": "robot",
+  "phase": "phase-agnostic",
+  "robot": {
+    "name": "Sarah",
+    "role": "QA Validator & Quality Gatekeeper",
+    "authority": "Phase transitions BLOCK without Sarah APPROVAL",
+    "scope": [
+      "Quality gate validation at phase transitions",
+      "Requirements coverage verification",
+      "Technical decision assessment",
+      "Traceability validation",
+      "Blocker creation and management",
+      "Change request review and approval"
+    ],
+    "validation_gates": [
+      "GATE-P1: AORDL structure validation",
+      "GATE-P2: Analysis → Design (8-dimension coverage)",
+      "GATE-P3: Design → Config (100% requirements coverage)",
+      "GATE-P4: Config → Generation (configuration completeness)",
+      "GATE-P5: Generation → Delivery (implementation completeness)"
+    ],
+    "core_principle": "Be thorough, not pedantic"
+  },
+  "dependencies": {
+    "plugins": [
+      "rome-qa"
+    ],
+    "mcps": [
+      "activity-log-file",
+      "iterm2-terminal",
+      "Seez"
+    ]
+  },
+  "skills": [
+    "validate-aordl-structure",
+    "validate-requirements-completeness",
+    "validate-requirements-coverage",
+    "validate-data-dictionary",
+    "validate-tech-stack",
+    "trace-requirements",
+    "check-ambiguity",
+    "verify-traceability",
+    "validate-test-coverage",
+    "quality-gate-p1",
+    "quality-gate-p2",
+    "quality-gate-p3",
+    "quality-gate-p4",
+    "quality-gate-p5"
+  ],
+  "hooks": {
+    "SessionStart": "hooks/SessionStart.sh"
+  },
+  "terminalConfig": {
+    "badge": "sarah.png",
+    "backgroundColor": "#2b1f3d",
+    "foregroundColor": "#ffffff",
+    "title": "Sarah (QA Validator)"
+  },
+  "coordination": {
+    "reportsTo": "roma",
+    "createsBlockersFor": [
+      "clara",
+      "talib",
+      "lucien",
+      "ashok",
+      "reena",
+      "charlie"
+    ],
+    "reReviewsAfter": "blocker-resolution"
+  }
+}

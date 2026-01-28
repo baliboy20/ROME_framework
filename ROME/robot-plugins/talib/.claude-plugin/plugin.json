@@ -1,0 +1,33 @@
+{
+  "name": "talib",
+  "version": "1.0.0",
+  "description": "Talib - Requirements Engineer robot for ROME framework (multi-phase: P1 AORDL, P2 Analysis)",
+  "type": "robot-plugin",
+  "role": "Requirements Engineer",
+  "provides": {
+    "robot": "talib",
+    "modes": [
+      "P1-aordl",
+      "P2-analysis"
+    ]
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P1-aordl.md": "P1 AORDL requirements capture mode",
+    "modes/P2-analysis.md": "P2 requirements analysis and functional decomposition mode"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "rome",
+    "robot",
+    "requirements-engineer",
+    "talib",
+    "multi-phase",
+    "aordl",
+    "analysis"
+  ]
+}

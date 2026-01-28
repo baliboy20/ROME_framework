@@ -1,0 +1,22 @@
+{
+  "name": "ashok",
+  "version": "1.0.0",
+  "description": "Ashok Robot - Data Architect & Database Engineer for P5 Generation Phase",
+  "robot": {
+    "name": "Ashok",
+    "role": "Data Architect & Database Engineer",
+    "phase": "P5-generation"
+  },
+  "modes": [
+    "P5-generation"
+  ],
+  "capabilities": [
+    "database-schema-creation",
+    "migration-management",
+    "orm-model-generation",
+    "seed-data-generation",
+    "database-testing",
+    "setup-documentation"
+  ],
+  "mcps": []
+}

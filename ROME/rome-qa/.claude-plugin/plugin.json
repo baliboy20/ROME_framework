@@ -2,78 +2,34 @@
   "name": "rome-qa",
   "version": "1.0.0",
   "description": "ROME Quality Assurance plugin - Quality gates and validation across all phases",
-  "type": "plugin",
-  "agents": [
-    {
-      "name": "sarah",
-      "path": "agents/sarah/AGENT.md",
-      "role": "System Auditor & Quality Gatekeeper",
-      "phase": "Quality-Gates"
-    }
-  ],
-  "skills": [
-    {
-      "id": "validate-aordl-structure",
-      "path": "skills/validate-aordl-structure",
-      "category": "Quality & Validation",
-      "phase": "GATE-P1",
-      "robot": "sarah"
-    },
-    {
-      "id": "validate-requirements-coverage",
-      "path": "skills/validate-requirements-coverage",
-      "category": "Quality & Validation",
-      "phase": ["GATE-P2", "GATE-P3"],
-      "robot": "sarah"
-    },
-    {
-      "id": "validate-data-dictionary",
-      "path": "skills/validate-data-dictionary",
-      "category": "Quality & Validation",
-      "phase": "GATE-P3",
-      "robot": "sarah"
-    },
-    {
-      "id": "quality-gate-p2",
-      "path": "skills/quality-gate-p2",
-      "category": "Quality Gate",
-      "phase": "GATE-P2",
-      "robot": "sarah"
-    },
-    {
-      "id": "quality-gate-p3",
-      "path": "skills/quality-gate-p3",
-      "category": "Quality Gate",
-      "phase": "GATE-P3",
-      "robot": "sarah"
-    },
-    {
-      "id": "verify-traceability",
-      "path": "skills/verify-traceability",
-      "category": "Quality & Validation",
-      "phase": ["GATE-P2", "GATE-P3", "GATE-P5"],
-      "robot": "sarah"
-    }
-  ],
-  "commands": [
-    {
-      "name": "validate",
-      "description": "Validate AORDL structure, requirements coverage, data dictionary, and traceability",
-      "agent": "sarah",
-      "skills": ["validate-aordl-structure", "validate-requirements-coverage", "validate-data-dictionary", "verify-traceability"]
-    },
-    {
-      "name": "quality-gate",
-      "description": "Execute quality gate validation for phase transitions (P2, P3)",
-      "agent": "sarah",
-      "skills": ["quality-gate-p2", "quality-gate-p3", "verify-traceability"]
-    }
-  ],
+  "type": "cross-phase-plugin",
+  "provides": {
+    "skills": [
+      "validate-aordl-structure",
+      "validate-requirements-coverage",
+      "validate-data-dictionary",
+      "quality-gate-p2",
+      "quality-gate-p3",
+      "verify-traceability"
+    ],
+    "commands": [
+      "rome-qa:validate",
+      "rome-qa:quality-gate"
+    ]
+  },
   "dependencies": {
-    "rome-core": "^1.0.0"
+    "rome-core": "^1.0.0",
+    "robot-plugins/sarah": "^1.0.0"
   },
   "peerDependencies": {},
   "requires": {
+    "robots": [
+      {
+        "name": "sarah",
+        "mode": "phase-agnostic",
+        "source": "robot-plugins/sarah"
+      }
+    ],
     "mcpServers": [
       {
         "name": "activity-log-file",
@@ -87,11 +43,31 @@
       }
     ]
   },
+  "exports": {
+    "skills/validate-aordl-structure/SKILL.md": "Validate AORDL structure",
+    "skills/validate-requirements-coverage/SKILL.md": "Validate requirements coverage",
+    "skills/validate-data-dictionary/SKILL.md": "Validate data dictionary",
+    "skills/quality-gate-p2/SKILL.md": "Quality gate for P2 phase transition",
+    "skills/quality-gate-p3/SKILL.md": "Quality gate for P3 phase transition",
+    "skills/verify-traceability/SKILL.md": "Verify traceability across phases"
+  },
   "framework": {
     "name": "ROME",
     "version": "v3",
     "compatibility": "^3.0.0"
   },
   "author": "ROME Framework Team",
-  "license": "MIT"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-qa"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "qa",
+    "quality-assurance",
+    "validation",
+    "quality-gates"
+  ]
 }

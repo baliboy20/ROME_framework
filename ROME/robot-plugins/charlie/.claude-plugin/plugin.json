@@ -1,0 +1,58 @@
+{
+  "name": "charlie",
+  "version": "1.0.0",
+  "description": "Frontend/Application Developer robot for ROME Generation phase",
+  "type": "robot",
+  "robot": {
+    "identity": "Charlie",
+    "role": "Frontend / Application Developer",
+    "phases": ["P5-generation"],
+    "capabilities": [
+      "Screen/page implementation",
+      "Component development",
+      "API integration",
+      "State management",
+      "Form validation",
+      "Navigation flows",
+      "Accessibility implementation",
+      "UI testing",
+      "Application documentation"
+    ]
+  },
+  "modes": [
+    "P5-generation"
+  ],
+  "mcpServers": {
+    "activity-log-file": {
+      "enabled": true,
+      "required": true,
+      "description": "Activity logging for traceability"
+    },
+    "Seez": {
+      "enabled": true,
+      "required": false,
+      "description": "Interactive UI for user feedback"
+    },
+    "iterm2-terminal": {
+      "enabled": true,
+      "required": false,
+      "description": "Terminal management for build/test tasks"
+    }
+  },
+  "skills": [
+    "generate-ui-screens",
+    "generate-ui-components",
+    "generate-ui-forms",
+    "generate-api-integration",
+    "generate-state-management",
+    "generate-navigation",
+    "generate-ui-tests",
+    "generate-accessibility-features"
+  ],
+  "hooks": {
+    "SessionStart": {
+      "enabled": true,
+      "script": "hooks/SessionStart.sh"
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "lucien",
+  "version": "1.0.0",
+  "description": "Configuration Specialist - DevOps Engineer for P4 Config phase",
+  "robot": "lucien",
+  "role": "Configuration Specialist",
+  "phases": ["P4-config"],
+  "modes": ["P4-config"],
+  "requires": [
+    "rome-core@^1.0.0",
+    "rome-p3-design@>=1.0.0"
+  ],
+  "provides": [
+    "project-scaffolding",
+    "environment-configuration",
+    "ci-cd-setup",
+    "build-configuration"
+  ],
+  "upstream": ["PMA"],
+  "downstream": ["Ashok", "Reena", "Charlie"],
+  "orchestrator": "Roma",
+  "artifacts": {
+    "inputs": [
+      "ARTIFACTS/_design/design-decisions/phase3-handover.md",
+      "ARTIFACTS/_design/design-decisions/tech-stack.yaml",
+      "ARTIFACTS/_design/data-models/data-dictionary.yaml",
+      "ARTIFACTS/_design/design-decisions/actionlist.md",
+      "ARTIFACTS/_design/architecture/system-architecture.md",
+      "ARTIFACTS/_design/api-contracts/api-design.md"
+    ],
+    "outputs": [
+      "SOURCE/[workspaces]/",
+      "ARTIFACTS/_config/technical-specs/technical-specs.md",
+      "ARTIFACTS/_config/environment-config/environment-config.md",
+      "ARTIFACTS/_config/scaffolding-plans/scaffolding-manifest.md",
+      "ARTIFACTS/_config/technical-specs/phase4-handover.md"
+    ]
+  },
+  "mcps": [
+    "activity-log-file",
+    "Seez",
+    "iterm2-terminal"
+  ],
+  "status": "active"
+}
