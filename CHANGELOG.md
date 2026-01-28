@@ -2,6 +2,170 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-01-28] - Robot Plugins Architecture (ROME-PROP-019)
+
+### Implemented
+- **Robot Plugins Directory Structure**
+  - Created `/ROME/robot-plugins/` with 10 robot subdirectories
+  - Each robot contains: `ROBOT.md` (identity), `.claude-plugin/plugin.json` (metadata), `modes/` (phase-specific behavior)
+  - Robots: bootstrap, talib, roma, pma, clara, lucien, ashok, reena, charlie, sarah
+
+- **Robot Identity Separation**
+  - **bootstrap**: P0 bootup robot with `modes/P0-bootup.md`
+  - **talib**: Multi-phase robot (P1-aordl, P2-analysis) - single ROBOT.md replaces duplicate agent definitions
+  - **roma**: Phase-agnostic orchestrator across all phases
+  - **pma**: P3 design architect
+  - **clara**: P3 UX designer
+  - **lucien**: P4 configuration specialist
+  - **ashok**: P5 backend engineer
+  - **reena**: P5 frontend engineer
+  - **charlie**: P5 integration engineer
+  - **sarah**: Phase-agnostic QA validator
+
+- **Phase Plugin Updates**
+  - Updated 8 phase `plugin.json` files (rome-p0-bootup through rome-qa, rome-core)
+  - Removed `agents` array from `provides` section
+  - Added robot dependencies to `dependencies` section
+  - Added `requires.robots` array with mode specifications
+  - Removed agent exports from `exports` section
+
+- **Documentation Updates**
+  - **USER-GUIDE.md**: Updated all robot locations to `robot-plugins/{robot}/ROBOT.md`
+  - Added mode information in parentheses for clarity
+  - Updated typical session flow examples with new paths
+  - Changed terminology from "agent" to "robot" throughout
+
+### Rationale
+- **Eliminates Duplication**: Talib previously existed in 2 locations with 2 separate Agent UIDs (`rome-p1-aordl:talib`, `rome-p2-analysis:talib`)
+- **Single Source of Truth**: Each robot now defined once with phase-specific modes
+- **Clear Separation of Concerns**:
+  - Robot plugins define WHO (identity, role, capabilities)
+  - Phase plugins define WHAT (skills, commands, phase logic)
+  - Mode files define HOW (phase-specific behavior overlays)
+- **Scalability**: Adding new phase for existing robot only requires new mode file
+- **Framework Intent Alignment**: USER-GUIDE.md documented "Talib (P1 mode)" and "Talib (P2 mode)" - architecture now matches
+
+### Architecture Transformation
+
+**Before (Phase-Embedded Agents):**
+```
+/ROME/
+  rome-p1-aordl/
+    agents/talib/AGENT.md         # Agent UID: rome-p1-aordl:talib
+  rome-p2-analysis/
+    agents/talib/AGENT.md         # Agent UID: rome-p2-analysis:talib (DUPLICATE)
+  rome-p3-design/
+    agents/pma/AGENT.md
+    agents/clara/AGENT.md
+```
+
+**After (Robot Plugins):**
+```
+/ROME/
+  robot-plugins/
+    talib/
+      ROBOT.md                    # Robot UID: talib (SINGLE SOURCE)
+      .claude-plugin/plugin.json
+      modes/
+        P1-aordl.md              # Phase-specific behavior
+        P2-analysis.md           # Phase-specific behavior
+    pma/
+      ROBOT.md
+      .claude-plugin/plugin.json
+    clara/
+      ROBOT.md
+      .claude-plugin/plugin.json
+
+  rome-p1-aordl/
+    .claude-plugin/plugin.json    # References: robot-plugins/talib (P1 mode)
+    skills/                       # Phase owns skills
+
+  rome-p2-analysis/
+    .claude-plugin/plugin.json    # References: robot-plugins/talib (P2 mode)
+    skills/
+```
+
+### Pattern Changes
+
+```json
+// OLD: Phase plugin.json (rome-p1-aordl)
+{
+  "provides": {
+    "agents": ["talib"],
+    "skills": [...]
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "exports": {
+    "agents/talib/AGENT.md": "Talib agent for AORDL",
+    "skills/...": "..."
+  }
+}
+
+// NEW: Phase plugin.json (rome-p1-aordl)
+{
+  "provides": {
+    "skills": [...]
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0",
+    "robot-plugins/talib": "^1.0.0"
+  },
+  "requires": {
+    "robots": [
+      {
+        "name": "talib",
+        "mode": "P1-aordl",
+        "source": "robot-plugins/talib"
+      }
+    ]
+  },
+  "exports": {
+    "skills/...": "..."
+  }
+}
+```
+
+### Impact
+- **All Phases**: Robot identity now centralized in robot-plugins directory
+- **Talib (P1/P2)**: Single robot definition replaces duplicate agent definitions
+- **USER-GUIDE.md**: All paths updated from `agents/{robot}/AGENT.md` to `robot-plugins/{robot}/ROBOT.md`
+- **Plugin Dependencies**: Phase plugins explicitly declare robot dependencies with mode specifications
+- **Developer Experience**: Clear separation between robot identity (WHO) and phase behavior (HOW)
+- **Discoverability**: `ls robot-plugins/` shows all available robots, `ls robot-plugins/talib/modes/` shows robot's phase capabilities
+
+### Implementation Statistics
+- **Files Created**: 23 files (10 ROBOT.md, 10 plugin.json, 1 P0-bootup.md mode file, 1 proposal, 1 proposal update)
+- **Files Modified**: 9 files (8 phase plugin.json, 1 USER-GUIDE.md)
+- **Total Changes**: 68 files changed, +2962 lines, -25835 lines
+- **Commits**: 3 commits (implementation, proposal marking, documentation fix)
+  - 982b614: feat(architecture): implement robot-plugins architecture (ROME-PROP-019)
+  - 7d260c5: docs(proposal): mark ROME-PROP-019 as implemented
+  - d0c4e3a: fix(docs): complete USER-GUIDE.md migration to robot-plugins
+
+### Success Criteria Met
+✓ Talib exists in ONE location: `robot-plugins/talib/ROBOT.md`
+✓ Talib P1 mode activates via rome-p1-aordl plugin reference
+✓ Talib P2 mode activates via rome-p2-analysis plugin reference
+✓ No duplication of robot identity metadata
+✓ Phase plugins declare robot dependencies explicitly
+✓ USER-GUIDE.md structure matches actual architecture
+✓ All 10 robots migrated to robot-plugins
+
+### Related Documents
+- ROME-PROP-019: Robot Plugins Architecture Proposal
+- ROME-DEF-001: Framework Analyst & Architect Role Definition
+- USER-GUIDE.md: Framework user documentation
+
+### Known Limitations
+- Mode files only created for Bootstrap (`modes/P0-bootup.md`)
+- Talib P1-aordl.md and P2-analysis.md mode files not yet created (procedural logic remains in phase plugin AGENT.md files)
+- Other robots rely on phase plugin AGENT.md files for detailed procedures
+- Future work: Extract phase-specific procedures from AGENT.md to mode files
+
+---
+
 ## [2025-12-30] - Project-Level MCP Configuration & Activity Log Server Update (ROME-PROP-014)
 
 ### Implemented
