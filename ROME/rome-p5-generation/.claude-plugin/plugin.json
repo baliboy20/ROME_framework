@@ -13,7 +13,10 @@
     "commands": [
       "rome-p5:generate-db",
       "rome-p5:generate-api",
-      "rome-p5:generate-ui"
+      "rome-p5:generate-ui",
+      "rome-p5:parallel-generate",
+      "rome-p5:status",
+      "switch-robot"
     ]
   },
   "dependencies": {
@@ -56,13 +59,23 @@
         "optional": false
       },
       {
+        "name": "iterm2-terminal",
+        "reason": "Create multi-robot workspace for parallel code generation",
+        "optional": true
+      },
+      {
         "name": "Seez",
         "reason": "Request sponsor clarification on implementation details and edge cases",
         "optional": false
       }
     ]
   },
-  "exports": {},
+  "exports": {
+    ".claude/hooks/init-workspace.sh": "Multi-robot workspace initialization hook",
+    "commands/switch-robot.sh": "Switch between robots in P5 phase",
+    "commands/rome-p5-parallel-generate.sh": "Launch all robots with dependency coordination",
+    "commands/rome-p5-status.sh": "Monitor P5 parallel generation progress"
+  },
   "framework": {
     "name": "ROME",
     "version": "v3",

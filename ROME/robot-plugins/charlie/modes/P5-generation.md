@@ -98,7 +98,42 @@ Check:
 
 **If not met:** Report to Roma, do not proceed.
 
-### Step 2: Query Assigned Features
+### Step 2: Check Dependencies (Reena Completion)
+
+**Dependency Chain:** Charlie depends on Reena (backend API layer must be complete)
+
+Check Reena's backend API completion status:
+
+```javascript
+// Query Reena's P5 work items
+const reenaStatus = await mcp__activity_log__query({
+  robot: "reena",
+  phase: "P5-generation"
+});
+
+// Check if all Reena items are completed
+const pendingReena = reenaStatus.filter(item =>
+  item.status === 'PENDING' || item.status === 'IN_PROGRESS'
+);
+
+if (pendingReena.length > 0) {
+  console.log("⏳ Waiting for Reena to complete backend API layer...");
+  console.log(`   Pending: ${pendingReena.length} items`);
+  // DO NOT PROCEED - wait for Reena completion
+  return;
+}
+
+console.log("✅ Reena backend API layer complete - proceeding with frontend generation");
+```
+
+**If Reena not complete:**
+- Log blocker: "BLOCKER: Charlie cannot start - waiting for Reena backend API layer"
+- Wait until Reena marks API generation complete
+- Re-check before proceeding
+
+**If Reena complete:** Proceed to Step 3.
+
+### Step 3: Query Assigned Features
 
 Query activity log for frontend layer feature assignments:
 
@@ -120,7 +155,7 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Verify Reena's backend API dependencies completed
 - Check dependencies on other features
 
-### Step 3: Log Feature Start
+### Step 4: Log Feature Start
 
 For each feature assigned:
 ```javascript
@@ -137,7 +172,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 4: Read Design Artifacts
+### Step 5: Read Design Artifacts
 
 **Critical:** Read use-cases.md and Clara's designs:
 ```
@@ -158,7 +193,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Design tokens (if Clara provided design system)
 - API endpoints to integrate
 
-### Step 5: Create Project Structure
+### Step 6: Create Project Structure
 
 **Feature-based organization (ROME-PROP-016):**
 ```
@@ -178,7 +213,7 @@ SOURCE/lib/
     │       └── [test].dart
 ```
 
-### Step 6: Generate Data Models
+### Step 7: Generate Data Models
 
 **Output:** `SOURCE/lib/features/[feature]/models/`
 
@@ -194,7 +229,7 @@ SOURCE/lib/
 /generate-api-models --dictionary data-dictionary.yaml --output models/
 ```
 
-### Step 7: Create API Service Layer
+### Step 8: Create API Service Layer
 
 **Output:** `SOURCE/lib/features/[feature]/services/`
 
@@ -222,7 +257,7 @@ class UserService {
 /generate-api-integration --api api-design.md --output services/
 ```
 
-### Step 8: Implement State Management
+### Step 9: Implement State Management
 
 **Output:** `SOURCE/lib/features/[feature]/state/` or `SOURCE/lib/state/`
 
@@ -238,7 +273,7 @@ class UserService {
 /generate-state-management --pattern [redux|provider|bloc] --output state/
 ```
 
-### Step 9: Create Reusable Components
+### Step 10: Create Reusable Components
 
 **Output:** `SOURCE/lib/features/[feature]/widgets/` or `SOURCE/lib/widgets/`
 
@@ -255,7 +290,7 @@ class UserService {
 /generate-ui-components --design-system design-system.md --output widgets/
 ```
 
-### Step 10: Implement Screens
+### Step 11: Implement Screens
 
 **Output:** `SOURCE/lib/features/[feature]/screens/`
 
@@ -272,7 +307,7 @@ class UserService {
 /generate-ui-screens --use-cases use-cases.md --wireframes wireframes/ --output screens/
 ```
 
-### Step 11: Implement Forms
+### Step 12: Implement Forms
 
 **Output:** Forms within screens
 
@@ -295,7 +330,7 @@ class UserService {
 /generate-form-validation --dictionary data-dictionary.yaml
 ```
 
-### Step 12: Implement Navigation
+### Step 13: Implement Navigation
 
 **Output:** `SOURCE/lib/navigation/` or routing configuration
 
@@ -312,7 +347,7 @@ class UserService {
 /generate-route-guards --auth-requirements tech-stack.yaml
 ```
 
-### Step 13: Implement Accessibility
+### Step 14: Implement Accessibility
 
 **Output:** Accessibility enhancements across screens
 
@@ -330,7 +365,7 @@ class UserService {
 /validate-accessibility --wcag-level AA
 ```
 
-### Step 14: Generate UI Tests
+### Step 15: Generate UI Tests
 
 **Output:** `SOURCE/test/features/[feature]/` or `SOURCE/tests/`
 
@@ -352,7 +387,7 @@ class UserService {
 /generate-integration-tests --user-flows user-flows.md --output tests/integration/
 ```
 
-### Step 15: Create Application Documentation
+### Step 16: Create Application Documentation
 
 **Output:** `SOURCE/README.md` or `SOURCE/docs/`
 
@@ -365,7 +400,7 @@ class UserService {
 - Common tasks (add new screen, component, etc.)
 - Troubleshooting
 
-### Step 16: Validate Implementation
+### Step 17: Validate Implementation
 
 **Self-check:**
 - [ ] All screens from use-cases.md implemented
@@ -381,7 +416,7 @@ class UserService {
 - [ ] No hardcoded API URLs (use environment config)
 - [ ] Application builds without errors
 
-### Step 17: Create Feature Traceability
+### Step 18: Create Feature Traceability
 
 **Output:** `SOURCE/lib/features/[feature]/TRACEABILITY.md`
 
@@ -406,7 +441,7 @@ class UserService {
 - tests/user_list_test.dart
 ```
 
-### Step 18: Log Feature Completion
+### Step 19: Log Feature Completion
 
 ```javascript
 mcp__activity-log__append({
@@ -423,7 +458,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 19: Notify Completion
+### Step 20: Notify Completion
 
 ```javascript
 mcp__Seez__show_doc({

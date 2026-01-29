@@ -73,15 +73,77 @@ Implements the user-facing application:
 - generate-ui-screens
 - generate-ui-components
 
-## Parallel Execution
+## Parallel Execution (ROME-PROP-021)
 
-The three agents can work in parallel with coordination:
+The three robots work in parallel with automatic dependency coordination:
 
-1. **Ashok** creates database schema first
-2. **Reena** builds APIs against Ashok's schema (sequential dependency)
-3. **Charlie** builds UI against Reena's APIs (sequential dependency)
+1. **Ashok** creates database schema first (no dependencies, starts immediately)
+2. **Reena** builds APIs against Ashok's schema (waits for Ashok completion via activity log)
+3. **Charlie** builds UI against Reena's APIs (waits for Reena completion via activity log)
 
-Ashok → Reena → Charlie form a dependency chain, but within each layer, work can be parallelized.
+**Dependency Chain:** Ashok → Reena → Charlie
+
+### Session Initialization
+
+When you navigate to `rome-p5-generation/`, the SessionStart hook automatically:
+- Loads Ashok's context (primary robot)
+- Displays available robots and commands
+- Shows dependency information
+
+```bash
+cd rome-p5-generation
+# SessionStart hook fires → Ashok loaded
+```
+
+### Robot Switching
+
+Switch between robots in the current terminal:
+
+```bash
+bash commands/switch-robot.sh ashok   # Database Layer
+bash commands/switch-robot.sh reena   # Backend API
+bash commands/switch-robot.sh charlie # Frontend UI
+```
+
+### Parallel Launch
+
+Launch all robots with dependency coordination:
+
+```bash
+bash commands/rome-p5-parallel-generate.sh
+# Provides instructions for multi-terminal setup
+```
+
+### Progress Monitoring
+
+Check status of all three robots:
+
+```bash
+bash commands/rome-p5-status.sh
+# Shows progress via activity log
+```
+
+### Automatic Dependency Checking
+
+Robots automatically check dependencies before starting:
+
+**Reena** (Step 2 of P5-generation mode):
+```javascript
+const ashokStatus = await mcp__activity_log__query({
+  robot: "ashok", phase: "P5-generation"
+});
+// Waits if Ashok has pending items
+// Proceeds when Ashok completes database layer
+```
+
+**Charlie** (Step 2 of P5-generation mode):
+```javascript
+const reenaStatus = await mcp__activity_log__query({
+  robot: "reena", phase: "P5-generation"
+});
+// Waits if Reena has pending items
+// Proceeds when Reena completes API layer
+```
 
 ## Feature-Based Organization (ROME-PROP-016)
 

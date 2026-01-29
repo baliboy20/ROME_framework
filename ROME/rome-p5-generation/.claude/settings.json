@@ -5,7 +5,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/ashok/ROBOT.md\" && echo '\n---\n' && cat \"$CLAUDE_PROJECT_DIR/../robot-plugins/ashok/modes/P5-generation.md\""
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/init-workspace.sh\"",
+            "description": "Initialize P5 multi-robot workspace (Ashok, Reena, Charlie)"
           }
         ]
       }
