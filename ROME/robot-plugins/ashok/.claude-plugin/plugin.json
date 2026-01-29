@@ -10,6 +10,16 @@
   "modes": [
     "P5-generation"
   ],
+  "provides": {
+    "robot": "ashok",
+    "modes": ["P5-generation"],
+    "skills": [
+      "generate-database-schema",
+      "generate-migrations",
+      "generate-orm-models",
+      "generate-seed-data"
+    ]
+  },
   "capabilities": [
     "database-schema-creation",
     "migration-management",
@@ -21,6 +31,10 @@
   "mcps": [],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
-    "modes/P5-generation.md": "P5 data layer implementation mode"
+    "modes/P5-generation.md": "P5 data layer implementation mode",
+    "skills/generate-database-schema/SKILL.md": "Generate database schema skill",
+    "skills/generate-migrations/SKILL.md": "Generate migrations skill",
+    "skills/generate-orm-models/SKILL.md": "Generate ORM models skill",
+    "skills/generate-seed-data/SKILL.md": "Generate seed data skill"
   }
 }

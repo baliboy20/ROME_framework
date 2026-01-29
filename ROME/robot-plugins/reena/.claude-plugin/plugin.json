@@ -6,9 +6,19 @@
   "modes": [
     "P5-generation"
   ],
+  "provides": {
+    "robot": "reena",
+    "modes": ["P5-generation"],
+    "skills": [
+      "generate-api-endpoints",
+      "generate-authentication-middleware"
+    ]
+  },
   "mcps": [],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
-    "modes/P5-generation.md": "P5 backend API implementation mode"
+    "modes/P5-generation.md": "P5 backend API implementation mode",
+    "skills/generate-api-endpoints/SKILL.md": "Generate API endpoints skill",
+    "skills/generate-authentication-middleware/SKILL.md": "Generate authentication middleware skill"
   }
 }

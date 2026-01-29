@@ -5,15 +5,10 @@
   "type": "phase-plugin",
   "phase": "P05-generation",
   "provides": {
-    "skills": [
-      "generate-database-schema",
-      "generate-migrations",
-      "generate-orm-models",
-      "generate-seed-data",
-      "generate-api-endpoints",
-      "generate-authentication-middleware",
-      "generate-ui-screens",
-      "generate-ui-components"
+    "orchestration": "P5 parallel code generation coordination",
+    "workflows": [
+      "parallel-generation",
+      "layer-dependency-management"
     ],
     "commands": [
       "rome-p5:generate-db",
@@ -35,17 +30,23 @@
       {
         "name": "ashok",
         "mode": "P5-generation",
-        "source": "robot-plugins/ashok"
+        "source": "robot-plugins/ashok",
+        "expectedSkills": ["generate-database-schema", "generate-migrations", "generate-orm-models", "generate-seed-data"],
+        "dependsOn": []
       },
       {
         "name": "reena",
         "mode": "P5-generation",
-        "source": "robot-plugins/reena"
+        "source": "robot-plugins/reena",
+        "expectedSkills": ["generate-api-endpoints", "generate-authentication-middleware"],
+        "dependsOn": ["ashok"]
       },
       {
         "name": "charlie",
         "mode": "P5-generation",
-        "source": "robot-plugins/charlie"
+        "source": "robot-plugins/charlie",
+        "expectedSkills": ["generate-ui-screens", "generate-ui-components"],
+        "dependsOn": ["reena"]
       }
     ],
     "mcpServers": [
@@ -61,16 +62,7 @@
       }
     ]
   },
-  "exports": {
-    "skills/generate-database-schema/SKILL.md": "Generate database schema from data dictionary",
-    "skills/generate-migrations/SKILL.md": "Generate database migrations",
-    "skills/generate-orm-models/SKILL.md": "Generate ORM models",
-    "skills/generate-seed-data/SKILL.md": "Generate seed data",
-    "skills/generate-api-endpoints/SKILL.md": "Generate API endpoints",
-    "skills/generate-authentication-middleware/SKILL.md": "Generate authentication middleware",
-    "skills/generate-ui-screens/SKILL.md": "Generate UI screens",
-    "skills/generate-ui-components/SKILL.md": "Generate UI components"
-  },
+  "exports": {},
   "framework": {
     "name": "ROME",
     "version": "v3",

@@ -25,6 +25,18 @@
     ],
     "core_principle": "Be thorough, not pedantic"
   },
+  "provides": {
+    "robot": "sarah",
+    "modes": ["QA-validator"],
+    "skills": [
+      "quality-gate-p2",
+      "quality-gate-p3",
+      "validate-aordl-structure",
+      "validate-data-dictionary",
+      "validate-requirements-coverage",
+      "verify-traceability"
+    ]
+  },
   "dependencies": {
     "plugins": [
       "rome-qa"
@@ -35,22 +47,6 @@
       "Seez"
     ]
   },
-  "skills": [
-    "validate-aordl-structure",
-    "validate-requirements-completeness",
-    "validate-requirements-coverage",
-    "validate-data-dictionary",
-    "validate-tech-stack",
-    "trace-requirements",
-    "check-ambiguity",
-    "verify-traceability",
-    "validate-test-coverage",
-    "quality-gate-p1",
-    "quality-gate-p2",
-    "quality-gate-p3",
-    "quality-gate-p4",
-    "quality-gate-p5"
-  ],
   "hooks": {
     "SessionStart": "hooks/SessionStart.sh"
   },
@@ -62,7 +58,13 @@
   },
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
-    "modes/QA-validator.md": "Quality gate validation mode (phase-agnostic)"
+    "modes/QA-validator.md": "Quality gate validation mode (phase-agnostic)",
+    "skills/quality-gate-p2/SKILL.md": "Quality gate P2 skill",
+    "skills/quality-gate-p3/SKILL.md": "Quality gate P3 skill",
+    "skills/validate-aordl-structure/SKILL.md": "Validate AORDL structure skill",
+    "skills/validate-data-dictionary/SKILL.md": "Validate data dictionary skill",
+    "skills/validate-requirements-coverage/SKILL.md": "Validate requirements coverage skill",
+    "skills/verify-traceability/SKILL.md": "Verify traceability skill"
   },
   "coordination": {
     "reportsTo": "roma",

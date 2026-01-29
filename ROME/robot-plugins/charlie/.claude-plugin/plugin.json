@@ -22,6 +22,14 @@
   "modes": [
     "P5-generation"
   ],
+  "provides": {
+    "robot": "charlie",
+    "modes": ["P5-generation"],
+    "skills": [
+      "generate-ui-screens",
+      "generate-ui-components"
+    ]
+  },
   "mcpServers": {
     "activity-log-file": {
       "enabled": true,
@@ -39,19 +47,11 @@
       "description": "Terminal management for build/test tasks"
     }
   },
-  "skills": [
-    "generate-ui-screens",
-    "generate-ui-components",
-    "generate-ui-forms",
-    "generate-api-integration",
-    "generate-state-management",
-    "generate-navigation",
-    "generate-ui-tests",
-    "generate-accessibility-features"
-  ],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
-    "modes/P5-generation.md": "P5 frontend/application implementation mode"
+    "modes/P5-generation.md": "P5 frontend/application implementation mode",
+    "skills/generate-ui-screens/SKILL.md": "Generate UI screens skill",
+    "skills/generate-ui-components/SKILL.md": "Generate UI components skill"
   },
   "hooks": {
     "SessionStart": {

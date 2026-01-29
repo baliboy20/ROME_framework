@@ -9,6 +9,14 @@
     "modes": [
       "P1-aordl",
       "P2-analysis"
+    ],
+    "skills": [
+      "create-aordl-requirement",
+      "transform-aordl-to-bdd",
+      "validate-aordl",
+      "analyze-requirement",
+      "batch-analyze-requirements",
+      "generate-user-stories"
     ]
   },
   "dependencies": {
@@ -23,7 +31,13 @@
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
     "modes/P1-aordl.md": "P1 AORDL requirements capture mode",
-    "modes/P2-analysis.md": "P2 requirements analysis and functional decomposition mode"
+    "modes/P2-analysis.md": "P2 requirements analysis and functional decomposition mode",
+    "skills/create-aordl-requirement/SKILL.md": "Create AORDL requirement skill",
+    "skills/transform-aordl-to-bdd/SKILL.md": "Transform AORDL to BDD skill",
+    "skills/validate-aordl/SKILL.md": "Validate AORDL skill",
+    "skills/analyze-requirement/SKILL.md": "Analyze requirement skill",
+    "skills/batch-analyze-requirements/SKILL.md": "Batch analyze requirements skill",
+    "skills/generate-user-stories/SKILL.md": "Generate user stories skill"
   },
   "author": "ROME Framework Team",
   "license": "MIT",

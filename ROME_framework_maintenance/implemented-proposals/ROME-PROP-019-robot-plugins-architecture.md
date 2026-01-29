@@ -565,11 +565,14 @@ Each mode file contains:
 - Can be deprecated/removed in future after validation
 - Serve as backup and historical context
 
-### Architecture Now Complete
-- ✓ Robot plugins define WHO (identity, role, capabilities)
-- ✓ Phase plugins define WHAT (skills, commands, phase logic)
+### Architecture Now Complete (v2.0 - Corrected)
+- ✓ Robot plugins define WHO (identity, role, **capabilities**)
+  - **Skills now live here** (robot-plugins/*/skills/) - PROP-020 correction
+- ✓ Phase plugins define WHAT (**orchestration**, commands, phase logic)
+  - **Skills removed** - phase plugins are now pure orchestrators
 - ✓ Mode files define HOW (phase-specific behavior overlays)
 - ✓ All 15 mode files extracted with complete phase procedures
+- ✓ All 40 skills migrated to robot ownership (7 robots)
 
 ---
 
@@ -580,3 +583,4 @@ Each mode file contains:
 | 1.0 | 2026-01-28 | Initial proposal - separate robot identity from phase behavior via robot-plugins architecture |
 | 1.0-impl | 2026-01-28 | Implemented - all 10 robots migrated, phase plugins updated, USER-GUIDE.md updated |
 | 1.0-complete | 2026-01-28 | Mode file extraction complete - all 15 mode files (4,232 lines) extracted from old AGENT.md files across 10 robots. Robot-plugins architecture now 100% complete. |
+| 2.0 | 2026-01-29 | **ARCHITECTURAL CORRECTION** (ROME-PROP-020): Skills migrated from phase plugins to robot plugins. Corrects inconsistency where stated principle "robot plugins define capabilities" was violated by placing skills (which ARE capabilities) in phase plugins. All 40 skills now live in robot-plugins/*/skills/. Phase plugins become pure orchestrators. See ROME-PROP-020 for full migration details. |

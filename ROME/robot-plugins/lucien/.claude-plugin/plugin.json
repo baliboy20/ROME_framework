@@ -10,12 +10,26 @@
     "rome-core@^1.0.0",
     "rome-p3-design@>=1.0.0"
   ],
-  "provides": [
-    "project-scaffolding",
-    "environment-configuration",
-    "ci-cd-setup",
-    "build-configuration"
-  ],
+  "provides": {
+    "robot": "lucien",
+    "modes": ["P4-config"],
+    "skills": [
+      "configure-build-system",
+      "configure-environment",
+      "create-scaffolding-manifest",
+      "generate-technical-specs",
+      "scaffold-workspace",
+      "setup-cicd-pipeline",
+      "setup-test-framework",
+      "validate-workspace-structure"
+    ],
+    "capabilities": [
+      "project-scaffolding",
+      "environment-configuration",
+      "ci-cd-setup",
+      "build-configuration"
+    ]
+  },
   "upstream": ["PMA"],
   "downstream": ["Ashok", "Reena", "Charlie"],
   "orchestrator": "Roma",
@@ -44,6 +58,14 @@
   "status": "active",
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
-    "modes/P4-config.md": "P4 DevOps and environment configuration mode"
+    "modes/P4-config.md": "P4 DevOps and environment configuration mode",
+    "skills/configure-build-system/SKILL.md": "Configure build system skill",
+    "skills/configure-environment/SKILL.md": "Configure environment skill",
+    "skills/create-scaffolding-manifest/SKILL.md": "Create scaffolding manifest skill",
+    "skills/generate-technical-specs/SKILL.md": "Generate technical specs skill",
+    "skills/scaffold-workspace/SKILL.md": "Scaffold workspace skill",
+    "skills/setup-cicd-pipeline/SKILL.md": "Setup CI/CD pipeline skill",
+    "skills/setup-test-framework/SKILL.md": "Setup test framework skill",
+    "skills/validate-workspace-structure/SKILL.md": "Validate workspace structure skill"
   }
 }
