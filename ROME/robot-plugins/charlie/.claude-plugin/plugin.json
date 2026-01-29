@@ -11,14 +11,24 @@
       "Screen/page implementation",
       "Component development",
       "API integration",
-      "State management",
+      "State management (BLoC, Provider, Riverpod)",
       "Form validation",
       "Navigation flows",
       "Accessibility implementation",
       "UI testing",
       "Application documentation",
       "Flutter coding standards enforcement",
-      "Flutter library selection and integration"
+      "Flutter library selection and integration",
+      "Domain-Driven Design architecture",
+      "Error handling patterns (Result types, sealed classes)",
+      "Parse Server integration",
+      "Stripe payment integration",
+      "Platform-adaptive UI (iOS, Android, web, desktop)",
+      "Performance optimization for large datasets",
+      "Build configuration and deployment",
+      "Theming and design systems",
+      "Responsive layout design",
+      "CI/CD pipeline setup"
     ]
   },
   "modes": [
@@ -31,7 +41,14 @@
       "generate-ui-screens",
       "generate-ui-components",
       "apply-flutter-standards",
-      "select-flutter-libraries"
+      "select-flutter-libraries",
+      "flutter-ddd-architecture",
+      "flutter-error-handling",
+      "flutter-integration-patterns",
+      "flutter-ui-ux-patterns",
+      "flutter-platform-specific",
+      "flutter-performance-optimization",
+      "flutter-deployment"
     ]
   },
   "mcpServers": {
@@ -57,7 +74,14 @@
     "skills/generate-ui-screens/SKILL.md": "Generate UI screens skill",
     "skills/generate-ui-components/SKILL.md": "Generate UI components skill",
     "skills/apply-flutter-standards/SKILL.md": "Apply Flutter coding standards skill",
-    "skills/select-flutter-libraries/SKILL.md": "Select Flutter libraries skill"
+    "skills/select-flutter-libraries/SKILL.md": "Select Flutter libraries skill",
+    "skills/flutter-ddd-architecture/SKILL.md": "Flutter DDD architecture skill",
+    "skills/flutter-error-handling/SKILL.md": "Flutter error handling skill",
+    "skills/flutter-integration-patterns/SKILL.md": "Flutter integration patterns skill",
+    "skills/flutter-ui-ux-patterns/SKILL.md": "Flutter UI/UX patterns skill",
+    "skills/flutter-platform-specific/SKILL.md": "Flutter platform-specific patterns skill",
+    "skills/flutter-performance-optimization/SKILL.md": "Flutter performance optimization skill",
+    "skills/flutter-deployment/SKILL.md": "Flutter deployment skill"
   },
   "hooks": {
     "SessionStart": {
