@@ -2,7 +2,33 @@
   "name": "reena",
   "version": "1.0.0",
   "description": "Backend Engineer robot for API/service layer implementation",
-  "role": "Backend Engineer",
+  "type": "robot",
+  "robot": {
+    "identity": "Reena",
+    "role": "Backend / API Developer",
+    "phases": ["P5-generation"],
+    "capabilities": [
+      "API endpoint implementation",
+      "Authentication middleware",
+      "Parse Server configuration and initialization",
+      "Cloud function development (Parse.Cloud.define)",
+      "Database schema definition and validation",
+      "Query optimization and pagination",
+      "Pointer resolution and relationship management",
+      "Email integration (SMTP adapter, nodemailer)",
+      "Webhook handling (Stripe, external APIs)",
+      "Payment processing integration",
+      "Role-based access control (RBAC)",
+      "Master key security patterns",
+      "Data migration utilities",
+      "Admin bootstrap functions",
+      "Integration testing (Mocha, Chai)",
+      "Logging and monitoring setup",
+      "Production deployment configuration",
+      "Environment variable management",
+      "Health check endpoints"
+    ]
+  },
   "modes": [
     "P5-generation"
   ],
@@ -11,14 +37,50 @@
     "modes": ["P5-generation"],
     "skills": [
       "generate-api-endpoints",
-      "generate-authentication-middleware"
+      "generate-authentication-middleware",
+      "parse-server-architecture",
+      "parse-server-cloud-functions",
+      "parse-server-schemas",
+      "parse-server-queries",
+      "parse-server-integrations",
+      "parse-server-security",
+      "parse-server-deployment"
     ]
   },
-  "mcps": [],
+  "mcpServers": {
+    "activity-log-file": {
+      "enabled": true,
+      "required": true,
+      "description": "Activity logging for traceability"
+    },
+    "Seez": {
+      "enabled": true,
+      "required": false,
+      "description": "Interactive UI for user feedback"
+    },
+    "iterm2-terminal": {
+      "enabled": true,
+      "required": false,
+      "description": "Terminal management for server tasks"
+    }
+  },
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
     "modes/P5-generation.md": "P5 backend API implementation mode",
     "skills/generate-api-endpoints/SKILL.md": "Generate API endpoints skill",
-    "skills/generate-authentication-middleware/SKILL.md": "Generate authentication middleware skill"
+    "skills/generate-authentication-middleware/SKILL.md": "Generate authentication middleware skill",
+    "skills/parse-server-architecture/SKILL.md": "Parse Server architecture skill",
+    "skills/parse-server-cloud-functions/SKILL.md": "Parse Server cloud functions skill",
+    "skills/parse-server-schemas/SKILL.md": "Parse Server schemas skill",
+    "skills/parse-server-queries/SKILL.md": "Parse Server queries skill",
+    "skills/parse-server-integrations/SKILL.md": "Parse Server integrations skill",
+    "skills/parse-server-security/SKILL.md": "Parse Server security skill",
+    "skills/parse-server-deployment/SKILL.md": "Parse Server deployment skill"
+  },
+  "hooks": {
+    "SessionStart": {
+      "enabled": true,
+      "script": "hooks/SessionStart.sh"
+    }
   }
 }
