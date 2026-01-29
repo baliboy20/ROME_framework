@@ -14,3 +14,7 @@
 /ROME/life-cycle/P02-analysis/.idea/P02-analysis.iml
 /ROME/life-cycle/P01-ingest/.idea/vcs.xml
 /ROME/life-cycle/P02-analysis/.idea/vcs.xml
+
+# macOS system files
+.DS_Store
+**/.DS_Store
