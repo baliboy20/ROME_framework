@@ -16,7 +16,9 @@
       "Navigation flows",
       "Accessibility implementation",
       "UI testing",
-      "Application documentation"
+      "Application documentation",
+      "Flutter coding standards enforcement",
+      "Flutter library selection and integration"
     ]
   },
   "modes": [
@@ -27,7 +29,9 @@
     "modes": ["P5-generation"],
     "skills": [
       "generate-ui-screens",
-      "generate-ui-components"
+      "generate-ui-components",
+      "apply-flutter-standards",
+      "select-flutter-libraries"
     ]
   },
   "mcpServers": {
@@ -51,7 +55,9 @@
     "ROBOT.md": "Core robot identity and baseline behavior",
     "modes/P5-generation.md": "P5 frontend/application implementation mode",
     "skills/generate-ui-screens/SKILL.md": "Generate UI screens skill",
-    "skills/generate-ui-components/SKILL.md": "Generate UI components skill"
+    "skills/generate-ui-components/SKILL.md": "Generate UI components skill",
+    "skills/apply-flutter-standards/SKILL.md": "Apply Flutter coding standards skill",
+    "skills/select-flutter-libraries/SKILL.md": "Select Flutter libraries skill"
   },
   "hooks": {
     "SessionStart": {
