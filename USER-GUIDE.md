@@ -14,8 +14,10 @@ mkdir my-app
 cp -r /path/to/ROME my-app/
 cd my-app
 
-# 2. Launch Bootstrap robot
-# Open: my-app/ROME/robot-plugins/bootstrap/ROBOT.md
+# 2. Navigate to P0 bootstrap phase
+cd ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma (Project Manager)
+# Roma initializes project structure
 ```
 
 **Why copy?**
@@ -31,13 +33,17 @@ cd my-app
 mkdir my-app
 cd my-app
 
-# 2. Bootstrap will create symlink to shared ROME
-# Open: /path/to/ROME/robot-plugins/bootstrap/ROBOT.md
+# 2. Navigate to shared ROME framework
+cd /path/to/ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma
 ```
 
 **Use for:** Framework development, quick prototyping, shared ROME installation
 
-**Note:** Bootstrap auto-detects mode (checks if `ROME/` exists before creating symlink)
+**How It Works:**
+- Navigate to phase directory → SessionStart hook fires → Robot auto-loads
+- No manual file opening required
+- Robot context = ROBOT.md + phase-specific mode file
 
 ---[USER-GUIDE.md](USER-GUIDE.md)
 
@@ -46,25 +52,39 @@ cd my-app
 ROME uses a 6-phase workflow from requirements to working code:
 
 ### P0: Bootstrap
-**Agent:** Bootstrap
+**Robot:** Roma (Project Manager & Orchestrator)
 **Purpose:** Initialize project structure
-**Location:** `ROME/robot-plugins/bootstrap/ROBOT.md` (mode: P0-bootup)
+**How to start:** Navigate to `ROME/rome-p0-bootup/`
 
-**How to use:** Open ROBOT.md file in Claude Code, it will load robot context
+```bash
+cd ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma in P0-bootup mode
+```
 
 **When:** Start of every new project
+
+**What Roma does:**
+- Creates ARTIFACTS/ directory structure
+- Initializes activity log
+- Creates project metadata files
+- Prepares for P1 requirements capture
 
 ---
 
 ### P1: AORDL Requirements
-**Agent:** Talib (P1 mode)
+**Robot:** Talib (Requirements Analyst)
 **Purpose:** Capture structured requirements in AORDL format
-**Location:** `ROME/robot-plugins/talib/ROBOT.md` (mode: P1-aordl)
+**How to start:** Navigate to `ROME/rome-p1-aordl/`
 
-**Skills available:**
-- `create-aordl-requirement` - Create new AORDL requirement
-- `validate-aordl` - Validate AORDL syntax
-- `transform-aordl-to-bdd` - Convert to BDD format
+```bash
+cd ROME/rome-p1-aordl
+# SessionStart hook auto-loads Talib in P1-aordl mode
+```
+
+**Skills available** (from `robot-plugins/talib/skills/`):
+- `/create-aordl-requirement` - Create new AORDL requirement
+- `/validate-aordl` - Validate AORDL syntax
+- `/transform-aordl-to-bdd` - Convert to BDD format
 
 **Input:** User needs, PRD, BRD
 **Output:** `ARTIFACTS/_requirements/aordl/*.yaml` (AORDL files)
@@ -83,14 +103,19 @@ REQ-001:
 ---
 
 ### P2: Analysis
-**Agent:** Talib (P2 mode)
+**Robot:** Talib (Requirements Analyst)
 **Purpose:** Decompose requirements, extract entities, identify dependencies
-**Location:** `ROME/robot-plugins/talib/ROBOT.md` (mode: P2-analysis)
+**How to start:** Navigate to `ROME/rome-p2-analysis/`
 
-**Skills available:**
-- `analyze-requirement` - Analyze single requirement
-- `batch-analyze-requirements` - Analyze all requirements
-- `generate-user-stories` - Generate user stories
+```bash
+cd ROME/rome-p2-analysis
+# SessionStart hook auto-loads Talib in P2-analysis mode
+```
+
+**Skills available** (from `robot-plugins/talib/skills/`):
+- `/analyze-requirement` - Analyze single requirement
+- `/batch-analyze-requirements` - Analyze all requirements
+- `/generate-user-stories` - Generate user stories
 
 **Input:** AORDL requirements from P1
 **Output:** Analysis artifacts, entity models, user stories
@@ -98,93 +123,189 @@ REQ-001:
 ---
 
 ### P3: Design
-**Agents:** PMA (architecture), Clara (validation)
+**Robot:** PMA (Principal Metadata Architect)
 **Purpose:** Design system architecture, technical specs, data models
-**Locations:**
-- PMA: `ROME/robot-plugins/pma/ROBOT.md` (mode: P3-design)
-- Clara: `ROME/robot-plugins/clara/ROBOT.md` (mode: P3-design)
+**How to start:** Navigate to `ROME/rome-p3-design/`
 
-**Skills available:**
-- `design-api-controllers`, `design-dto-models`
-- `design-authentication`, `design-component-structure`
-- `generate-architecture-diagram`
+```bash
+cd ROME/rome-p3-design
+# SessionStart hook auto-loads PMA in P3-design mode
+```
+
+**Skills available** (from `robot-plugins/pma/skills/`):
+- `/design-api-controllers`, `/design-dto-models`
+- `/design-authentication`, `/design-component-structure`
+- `/generate-architecture-diagram`
+- `/generate-work-breakdown` - Creates actionlist.md for P5
 
 **Input:** Analysis from P2
-**Output:** Architecture docs, API specs, data dictionary, component designs
+**Output:** Architecture docs, API specs, data dictionary, **actionlist.md**
 
 **Key artifacts:**
+- `data-dictionary.yaml` - All entities, fields, relationships
+- `api-design.md` - API contracts (endpoints, requests, responses)
+- `tech-stack.yaml` - Technology decisions
+- `actionlist.md` - Work breakdown by robot for P5
 - Architecture diagrams
-- API specifications
-- Data dictionary
-- Component structure
-- Authentication design
 
 ---
 
 ### P4: Configuration
-**Agent:** Lucien
+**Robot:** Lucien (DevOps & Environment Specialist)
 **Purpose:** Configure workspace, build system, CI/CD
-**Location:** `ROME/robot-plugins/lucien/ROBOT.md` (mode: P4-config)
+**How to start:** Navigate to `ROME/rome-p4-config/`
 
-**Skills available:**
-- `scaffold-workspace` - Create project scaffolding
-- `configure-build-system` - Configure environment
-- `setup-cicd-pipeline` - Setup CI/CD
+```bash
+cd ROME/rome-p4-config
+# SessionStart hook auto-loads Lucien in P4-config mode
+```
+
+**Skills available** (from `robot-plugins/lucien/skills/`):
+- `/scaffold-workspace` - Create project scaffolding
+- `/configure-build-system` - Configure environment
+- `/setup-cicd-pipeline` - Setup CI/CD
 
 **Input:** Designs from P3
 **Output:** Configured workspace, build config, test framework
 
 **Lucien creates:**
-- Project structure
+- `SOURCE/` directory structure
+- Package files (package.json, requirements.txt, etc.)
 - Build configuration
 - Test framework setup
-- Environment configs
+- Environment configs (dev, staging, prod)
 - CI/CD pipelines
 
 ---
 
-### P5: Code Generation
-**Agents:** Ashok (backend), Reena (frontend), Charlie (integration)
-**Purpose:** Generate production code in parallel
+### P5: Code Generation (Parallel Execution)
+**Robots:** Ashok (Database), Reena (Backend API), Charlie (Frontend UI)
+**Purpose:** Generate production code in parallel with automatic dependency coordination
+**How to start:** Navigate to `ROME/rome-p5-generation/`
 
-**Locations:**
-- Ashok: `ROME/robot-plugins/ashok/ROBOT.md` (mode: P5-generation)
-- Reena: `ROME/robot-plugins/reena/ROBOT.md` (mode: P5-generation)
-- Charlie: `ROME/robot-plugins/charlie/ROBOT.md` (mode: P5-generation)
+```bash
+cd ROME/rome-p5-generation
+# SessionStart hook auto-loads Ashok (primary robot)
+# Displays available robots and commands
+```
 
-**Backend (Ashok):**
-- API endpoints, database models, auth middleware, business logic
+**Dependency Chain:** Ashok → Reena → Charlie
 
-**Frontend (Reena):**
-- UI components, screens, state management, API integration
+**Database Layer (Ashok):**
+- Database schema (DDL)
+- Migrations (version-controlled)
+- ORM models
+- Seed data
+- **No dependencies** - starts immediately
 
-**Integration (Charlie):**
-- API client code, end-to-end tests, integration tests
+**Backend API Layer (Reena):**
+- API endpoints (RESTful)
+- Business logic / service layer
+- Authentication middleware
+- Validation middleware
+- **Depends on Ashok** - waits for database layer completion
 
-**Input:** Configuration from P4
-**Output:** Working application code
+**Frontend UI Layer (Charlie):**
+- Screens/pages
+- UI components
+- State management
+- API integration
+- **Depends on Reena** - waits for backend API completion
+
+**Input:** Configuration from P4, actionlist.md from P3
+**Output:** Working application code across all three layers
+
+#### Working with Multiple Robots in P5
+
+**Option 1: Sequential (Single Terminal)**
+
+Switch between robots as you complete each layer:
+
+```bash
+cd ROME/rome-p5-generation
+# Ashok auto-loads (database layer)
+# ... work with Ashok to complete database layer ...
+
+# Switch to Reena after Ashok completes
+bash commands/switch-robot.sh reena
+# ... work with Reena to complete backend API ...
+
+# Switch to Charlie after Reena completes
+bash commands/switch-robot.sh charlie
+# ... work with Charlie to complete frontend UI ...
+```
+
+**Option 2: Parallel (Multiple Terminals)**
+
+Run all three robots simultaneously with automatic coordination:
+
+```bash
+# Terminal 1: Ashok (Database)
+cd ROME/rome-p5-generation
+bash commands/switch-robot.sh ashok
+# Ashok starts immediately, generates database layer
+
+# Terminal 2: Reena (Backend API)
+cd ROME/rome-p5-generation
+bash commands/switch-robot.sh reena
+# Reena checks: is Ashok complete? If yes, proceed. If no, wait.
+
+# Terminal 3: Charlie (Frontend UI)
+cd ROME/rome-p5-generation
+bash commands/switch-robot.sh charlie
+# Charlie checks: is Reena complete? If yes, proceed. If no, wait.
+```
+
+**Automatic Dependency Coordination:**
+
+Robots check activity log before starting:
+- Reena queries: "Is Ashok done with all database features?"
+- Charlie queries: "Is Reena done with all API features?"
+- If dependencies not met → robot waits
+- If dependencies satisfied → robot proceeds automatically
+
+**Monitor Progress:**
+
+```bash
+bash commands/rome-p5-status.sh
+# Shows completion status for all three robots
+```
+
+**Launch All Robots:**
+
+```bash
+bash commands/rome-p5-parallel-generate.sh
+# Provides instructions for multi-terminal setup
+```
 
 ---
 
 ### QA: Quality Assurance
-**Agent:** Sarah
+**Robot:** Sarah (QA Validator & Quality Gatekeeper)
 **Purpose:** Validate deliverables, enforce quality gates
-**Location:** `ROME/robot-plugins/sarah/ROBOT.md` (phase-agnostic validator)
+**How to start:** Navigate to `ROME/rome-qa/`
 **Authority:** APPROVE or BLOCK phase transitions
 
-**Sarah validates:**
-- AORDL structure (P1→P2 gate)
-- Requirements coverage (P2→P3 gate)
-- Design completeness (P3→P4 gate)
-- Data dictionary (P3→P4 gate)
-- Traceability (all phases)
+```bash
+cd ROME/rome-qa
+# SessionStart hook auto-loads Sarah in QA-validator mode
+```
 
-**Skills available:**
-- `quality-gate-p2`, `quality-gate-p3`
-- `validate-aordl-structure`, `validate-data-dictionary`
-- `verify-traceability`
+**Sarah validates:**
+- GATE-P1: AORDL structure validation
+- GATE-P2: Analysis → Design (8-dimension coverage)
+- GATE-P3: Design → Config (100% requirements coverage)
+- GATE-P4: Config → Generation (configuration completeness)
+- GATE-P5: Generation → Delivery (implementation completeness)
+
+**Skills available** (from `robot-plugins/sarah/skills/`):
+- `/quality-gate-p2`, `/quality-gate-p3`
+- `/validate-aordl-structure`, `/validate-data-dictionary`
+- `/validate-requirements-coverage`, `/verify-traceability`
 
 **Quality Gates:** Sarah must APPROVE before moving to next phase
+
+**Sarah's Authority:** Phase transitions BLOCK without Sarah APPROVAL
 
 ---
 
@@ -219,104 +340,237 @@ REQ-001:
 
 ---
 
-## Agent Quick Reference
+## Robot Quick Reference
 
-| Agent | Phase | Use For |
-|-------|-------|---------|
-| Bootstrap | P0 | Project initialization |
-| Talib | P1 | AORDL requirements capture |
-| Talib | P2 | Requirements analysis |
-| PMA | P3 | Architecture & design |
-| Clara | P3 | Design validation |
-| Lucien | P4 | Workspace configuration |
-| Ashok | P5 | Backend code generation |
-| Reena | P5 | Frontend code generation |
-| Charlie | P5 | Integration code |
-| Roma | All | Orchestration (advanced) |
-| Sarah | QA | Quality gates & validation |
+| Robot | Phase | Use For | Navigate To |
+|-------|-------|---------|-------------|
+| Roma | P0 | Project initialization & orchestration | `rome-p0-bootup/` |
+| Talib | P1 | AORDL requirements capture | `rome-p1-aordl/` |
+| Talib | P2 | Requirements analysis | `rome-p2-analysis/` |
+| PMA | P3 | Architecture & design | `rome-p3-design/` |
+| Lucien | P4 | Workspace configuration | `rome-p4-config/` |
+| Ashok | P5 | **Database layer** code generation | `rome-p5-generation/` |
+| Reena | P5 | **Backend API** code generation | `rome-p5-generation/` |
+| Charlie | P5 | **Frontend UI** code generation | `rome-p5-generation/` |
+| Sarah | QA | Quality gates & validation | `rome-qa/` |
 
----
-
-## Essential Skills
-
-**P1 Skills:**
-- `create-aordl-requirement` - Author new requirement
-- `validate-aordl` - Check AORDL syntax
-- `transform-aordl-to-bdd` - Convert to BDD
-
-**P2 Skills:**
-- `analyze-requirement` - Decompose requirement
-- `batch-analyze-requirements` - Analyze multiple
-
-**P3 Skills:**
-- `design-dto-models` - Design data models
-- `design-api-controllers` - Design APIs
-- `design-authentication` - Design auth system
-- `design-component-structure` - Design UI components
-
-**P4 Skills:**
-- `scaffold-workspace` - Create project structure
-- `configure-build-system` - Setup build tools
-- `setup-test-framework` - Configure testing
-
-**P5 Skills:**
-- `generate-api-endpoints` - Generate backend APIs
-- `generate-ui-components` - Generate frontend UI
-- `generate-database-schema` - Generate DB schema
-
-**QA Skills:**
-- `quality-gate-p2` - Validate P1→P2 transition
-- `quality-gate-p3` - Validate P2→P3 transition
-- `verify-traceability` - Check requirement traceability
+**Note:** Navigate to phase directory → SessionStart hook auto-loads robot
 
 ---
 
-## Typical Session Flow
+## Essential Skills (ROME-PROP-020)
 
-**Day 1: Requirements**
+**Skills live in robot-plugins/** - Each robot owns their capabilities
+
+**Talib Skills** (`robot-plugins/talib/skills/`):
+- `/create-aordl-requirement` - Author new requirement (P1)
+- `/validate-aordl` - Check AORDL syntax (P1)
+- `/transform-aordl-to-bdd` - Convert to BDD (P1)
+- `/analyze-requirement` - Decompose requirement (P2)
+- `/batch-analyze-requirements` - Analyze multiple (P2)
+- `/generate-user-stories` - Create user stories (P2)
+
+**PMA Skills** (`robot-plugins/pma/skills/`):
+- `/design-dto-models` - Design data models
+- `/design-api-controllers` - Design APIs
+- `/design-authentication` - Design auth system
+- `/generate-work-breakdown` - Create actionlist.md
+- `/generate-architecture-diagram` - Create architecture docs
+
+**Lucien Skills** (`robot-plugins/lucien/skills/`):
+- `/scaffold-workspace` - Create project structure
+- `/configure-build-system` - Setup build tools
+- `/setup-test-framework` - Configure testing
+- `/setup-cicd-pipeline` - Configure CI/CD
+
+**Ashok Skills** (`robot-plugins/ashok/skills/`):
+- `/generate-database-schema` - Generate DB schema
+- `/generate-migrations` - Generate migrations
+- `/generate-orm-models` - Generate ORM models
+- `/generate-seed-data` - Generate seed data
+
+**Reena Skills** (`robot-plugins/reena/skills/`):
+- `/generate-api-endpoints` - Generate backend APIs
+- `/generate-authentication-middleware` - Generate auth
+
+**Charlie Skills** (`robot-plugins/charlie/skills/`):
+- `/generate-ui-screens` - Generate UI screens
+- `/generate-ui-components` - Generate UI components
+
+**Sarah Skills** (`robot-plugins/sarah/skills/`):
+- `/quality-gate-p2` - Validate P1→P2 transition
+- `/quality-gate-p3` - Validate P2→P3 transition
+- `/verify-traceability` - Check requirement traceability
+- `/validate-aordl-structure` - Validate AORDL format
+- `/validate-data-dictionary` - Validate data dictionary
+
+---
+
+## Typical Session Flow (ROME-PROP-019)
+
+**Day 1: Project Setup & Requirements**
 ```bash
 # Launch Claude Code in your project directory
 
-# P0: Open Bootstrap robot
-# Open: ROME/robot-plugins/bootstrap/ROBOT.md
-# Bootstrap creates initial project structure
+# P0: Navigate to bootup phase
+cd ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma
+# Roma creates initial project structure
 
-# P1: Open Talib (P1 mode)
-# Open: ROME/robot-plugins/talib/ROBOT.md (loads P1-aordl mode)
+# P1: Navigate to AORDL phase
+cd ../rome-p1-aordl
+# SessionStart hook auto-loads Talib in P1-aordl mode
 # Work with Talib to create AORDL files in ARTIFACTS/_requirements/
-
 # Talib validates AORDL as you create them
+
+# Request Sarah validation
+cd ../rome-qa
+# SessionStart hook auto-loads Sarah
+# Sarah validates GATE-P1, approves P1→P2 transition
 ```
 
 **Day 2: Analysis & Design**
 ```bash
-# P2: Open Talib (P2 mode)
-# Open: ROME/robot-plugins/talib/ROBOT.md (loads P2-analysis mode)
-# Talib analyzes requirements in ARTIFACTS/_requirements/
+# P2: Navigate to analysis phase
+cd ROME/rome-p2-analysis
+# SessionStart hook auto-loads Talib in P2-analysis mode
+# Talib analyzes requirements, generates user stories
 
-# P3: Open PMA for architecture
-# Open: ROME/robot-plugins/pma/ROBOT.md (loads P3-design mode)
-# PMA creates architecture & designs
+# Request Sarah validation
+cd ../rome-qa
+# Sarah validates GATE-P2, approves P2→P3 transition
 
-# Open Clara for validation
-# Open: ROME/robot-plugins/clara/ROBOT.md (loads P3-design mode)
-# Clara validates design completeness
+# P3: Navigate to design phase
+cd ../rome-p3-design
+# SessionStart hook auto-loads PMA in P3-design mode
+# PMA creates architecture, data dictionary, API design, actionlist.md
+
+# Request Sarah validation
+cd ../rome-qa
+# Sarah validates GATE-P3, approves P3→P4 transition
 ```
 
-**Day 3: Configuration & Code**
+**Day 3: Configuration**
 ```bash
-# P4: Open Lucien
-# Open: ROME/robot-plugins/lucien/ROBOT.md (loads P4-config mode)
-# Lucien configures workspace
+# P4: Navigate to config phase
+cd ROME/rome-p4-config
+# SessionStart hook auto-loads Lucien in P4-config mode
+# Lucien scaffolds workspace, configures build system
 
-# P5: Open generation robots (can work in parallel Claude sessions)
-# Open: ROME/robot-plugins/ashok/ROBOT.md    (Backend, P5-generation mode)
-# Open: ROME/robot-plugins/reena/ROBOT.md    (Frontend, P5-generation mode)
-# Open: ROME/robot-plugins/charlie/ROBOT.md  (Integration, P5-generation mode)
-
-# QA: Open Sarah for validation
-# Open: ROME/robot-plugins/sarah/ROBOT.md (phase-agnostic validator)
+# Request Sarah validation
+cd ../rome-qa
+# Sarah validates GATE-P4, approves P4→P5 transition
 ```
+
+**Day 4-5: Code Generation (Parallel)**
+```bash
+# P5: Navigate to generation phase
+cd ROME/rome-p5-generation
+# SessionStart hook auto-loads Ashok (database layer)
+
+# Option 1: Sequential - switch robots as you complete layers
+# ... work with Ashok to complete database ...
+bash commands/switch-robot.sh reena
+# ... work with Reena to complete backend API ...
+bash commands/switch-robot.sh charlie
+# ... work with Charlie to complete frontend UI ...
+
+# Option 2: Parallel - use multiple terminals
+# Terminal 1: Ashok (database) - starts immediately
+# Terminal 2: Reena (backend) - waits for Ashok via activity log
+# Terminal 3: Charlie (frontend) - waits for Reena via activity log
+
+# Monitor progress
+bash commands/rome-p5-status.sh
+
+# Request final validation
+cd ../rome-qa
+# Sarah validates GATE-P5, approves project delivery
+```
+
+---
+
+## P5 Phase Commands (ROME-PROP-021)
+
+When working in `rome-p5-generation/`, you have access to multi-robot orchestration commands:
+
+### Switch Between Robots
+
+```bash
+bash commands/switch-robot.sh <robot-name>
+
+# Examples:
+bash commands/switch-robot.sh ashok    # Database Layer
+bash commands/switch-robot.sh reena    # Backend API
+bash commands/switch-robot.sh charlie  # Frontend UI
+```
+
+**What it does:**
+- Unloads current robot context
+- Loads specified robot's ROBOT.md + P5-generation.md
+- Shows dependency reminders (e.g., "Reena depends on Ashok")
+
+### Launch Parallel Generation
+
+```bash
+bash commands/rome-p5-parallel-generate.sh
+```
+
+**What it does:**
+- Provides instructions for multi-terminal setup
+- Explains dependency chain (Ashok → Reena → Charlie)
+- Shows how to monitor progress
+
+### Check Progress
+
+```bash
+bash commands/rome-p5-status.sh
+```
+
+**What it does:**
+- Shows completion status for all three robots
+- Queries activity log for each robot's work items
+- Displays overall progress percentage
+
+### Automatic Dependency Coordination
+
+**How Robots Check Dependencies:**
+
+Reena automatically checks if Ashok is complete:
+```javascript
+// Reena's Step 2 in P5-generation mode
+const ashokStatus = await mcp__activity_log__query({
+  robot: "ashok",
+  phase: "P5-generation"
+});
+
+if (ashokStatus has pending items) {
+  console.log("⏳ Waiting for Ashok to complete database layer...");
+  // WAIT - do not proceed
+} else {
+  console.log("✅ Ashok complete - starting API generation");
+  // PROCEED
+}
+```
+
+Charlie automatically checks if Reena is complete:
+```javascript
+// Charlie's Step 2 in P5-generation mode
+const reenaStatus = await mcp__activity_log__query({
+  robot: "reena",
+  phase: "P5-generation"
+});
+
+if (reenaStatus has pending items) {
+  console.log("⏳ Waiting for Reena to complete API layer...");
+  // WAIT
+} else {
+  console.log("✅ Reena complete - starting UI generation");
+  // PROCEED
+}
+```
+
+**No manual coordination required** - robots automatically wait for dependencies.
 
 ---
 
@@ -491,18 +745,29 @@ Sarah enforces these gates:
 
 ## Advanced: Roma Orchestrator
 
-**Roma:** Master orchestrator for complex workflows
-**Location:** `ROME/robot-plugins/roma/ROBOT.md` (phase-agnostic orchestrator)
+**Roma:** Project Manager & Master Orchestrator
+**Purpose:** Complex workflow coordination, phase management
+**How to start:** Navigate to `ROME/rome-p0-bootup/` or `ROME/rome-core/`
+
+```bash
+cd ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma in P0-bootup mode
+```
 
 **Use Roma for:**
+- Project initialization (P0)
 - Multi-requirement projects
 - Complex phase coordination
 - Custom workflow automation
 - Cross-phase orchestration
 
-**How to use:** Open Roma's ROBOT.md file in Claude Code
+Roma coordinates all robots and manages phase transitions automatically.
 
-Roma coordinates all agents and manages phase transitions automatically.
+**Roma's authority:**
+- Creates work breakdown (actionlist.md) in P3
+- Assigns features to robots
+- Monitors overall project progress
+- Coordinates phase transitions
 
 ---
 
@@ -515,7 +780,10 @@ Roma coordinates all agents and manages phase transitions automatically.
 mkdir my-project
 cp -r /path/to/ROME my-project/
 cd my-project
-# Open agents from: my-project/ROME/rome-*/agents/
+
+# Start with P0 bootup
+cd ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma
 ```
 
 **Benefits:**
@@ -527,11 +795,14 @@ cd my-project
 **Alternative: Symlink Mode**
 
 ```bash
-# Bootstrap creates symlink to shared ROME
+# Use shared ROME installation
 mkdir my-project
 cd my-project
-# Bootstrap will create: my-project/ROME -> /path/to/ROME
-# Open agents from: my-project/ROME/rome-*/agents/
+
+# Navigate to shared ROME
+cd /path/to/ROME/rome-p0-bootup
+# SessionStart hook auto-loads Roma
+# Roma can create symlink if needed
 ```
 
 **Benefits:**
@@ -539,7 +810,11 @@ cd my-project
 - Automatic framework updates
 - Useful for framework development
 
-**See:** Bootstrap robot (`ROME/robot-plugins/bootstrap/ROBOT.md`) for auto-detection details
+**How SessionStart Hooks Work:**
+- Navigate to phase directory (e.g., `cd rome-p1-aordl`)
+- `.claude/settings.json` defines SessionStart hook
+- Hook executes: `cat robot-plugins/{robot}/ROBOT.md && cat robot-plugins/{robot}/modes/{mode}.md`
+- Robot context auto-loads (no manual file opening)
 
 ---
 
@@ -556,16 +831,22 @@ cd my-project
 ## Summary: Requirements → Code
 
 ```
-1. Bootstrap (P0)      → Project structure
-2. AORDL (P1)          → Structured requirements
-3. Analysis (P2)       → Decomposed requirements
-4. Design (P3)         → Architecture & specs
-5. Configuration (P4)  → Workspace setup
-6. Generation (P5)     → Working code
-7. QA (Sarah)          → Quality validation
+1. Bootup (P0)         → Project structure (Roma)
+2. AORDL (P1)          → Structured requirements (Talib)
+3. Analysis (P2)       → User stories & entities (Talib)
+4. Design (P3)         → Architecture, API, data models, actionlist (PMA)
+5. Configuration (P4)  → Workspace setup (Lucien)
+6. Generation (P5)     → Working code (Ashok → Reena → Charlie)
+7. QA (Sarah)          → Quality gates at each transition
 ```
 
-**Key principle:** Each phase builds on previous phase outputs. Sarah validates transitions.
+**Key principles:**
+- **Phase navigation** → SessionStart hook auto-loads robot
+- **Skills in robots** → Capabilities live in robot-plugins/*/skills/
+- **Phase plugins orchestrate** → Declare robots, dependencies, workflows
+- **Parallel execution** → P5 robots coordinate via activity log
+- **Quality gates** → Sarah must approve each phase transition
+- **Each phase builds on previous** → Outputs become inputs
 
 ---
 
