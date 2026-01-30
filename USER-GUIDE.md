@@ -81,10 +81,14 @@ cd ROME/rome-p1-aordl
 # SessionStart hook auto-loads Talib in P1-aordl mode
 ```
 
+**MANDATORY FIRST ACTION:** Log phase start with `/log-phase-start --phase P1 --robot talib`
+
 **Skills available** (from `robot-plugins/talib/skills/`):
+- `/log-phase-start` - Log phase start (MANDATORY)
 - `/create-aordl-requirement` - Create new AORDL requirement
 - `/validate-aordl` - Validate AORDL syntax
 - `/transform-aordl-to-bdd` - Convert to BDD format
+- `/log-phase-complete` - Log phase completion (MANDATORY before GATE-P1)
 
 **Input:** User needs, PRD, BRD
 **Output:** `ARTIFACTS/_requirements/aordl/*.yaml` (AORDL files)
@@ -112,10 +116,14 @@ cd ROME/rome-p2-analysis
 # SessionStart hook auto-loads Talib in P2-analysis mode
 ```
 
+**MANDATORY FIRST ACTION:** Log phase start with `/log-phase-start --phase P2 --robot talib`
+
 **Skills available** (from `robot-plugins/talib/skills/`):
+- `/log-phase-start` - Log phase start (MANDATORY)
 - `/analyze-requirement` - Analyze single requirement
 - `/batch-analyze-requirements` - Analyze all requirements
 - `/generate-user-stories` - Generate user stories
+- `/log-phase-complete` - Log phase completion (MANDATORY before GATE-P2)
 
 **Input:** AORDL requirements from P1
 **Output:** Analysis artifacts, entity models, user stories
@@ -192,25 +200,31 @@ cd ROME/rome-p5-generation
 **Dependency Chain:** Ashok → Reena → Charlie
 
 **Database Layer (Ashok):**
+- **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot ashok`
 - Database schema (DDL)
 - Migrations (version-controlled)
 - ORM models
 - Seed data
 - **No dependencies** - starts immediately
+- **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot ashok`
 
 **Backend API Layer (Reena):**
+- **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot reena`
 - API endpoints (RESTful)
 - Business logic / service layer
 - Authentication middleware
 - Validation middleware
-- **Depends on Ashok** - waits for database layer completion
+- **Depends on Ashok** - waits for database layer completion (checks activity log)
+- **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot reena`
 
 **Frontend UI Layer (Charlie):**
+- **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot charlie`
 - Screens/pages
 - UI components
 - State management
 - API integration
-- **Depends on Reena** - waits for backend API completion
+- **Depends on Reena** - waits for backend API completion (checks activity log)
+- **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot charlie`
 
 **Input:** Configuration from P4, actionlist.md from P3
 **Output:** Working application code across all three layers
@@ -258,11 +272,12 @@ bash commands/switch-robot.sh charlie
 
 **Automatic Dependency Coordination:**
 
-Robots check activity log before starting:
-- Reena queries: "Is Ashok done with all database features?"
-- Charlie queries: "Is Reena done with all API features?"
+Robots check activity log before starting (requires upstream robots to log completion):
+- Reena queries activity log: "Is P5-ASHOK status = COMPLETED?"
+- Charlie queries activity log: "Is P5-REENA status = COMPLETED?"
 - If dependencies not met → robot waits
 - If dependencies satisfied → robot proceeds automatically
+- **Critical:** Upstream robots MUST log phase completion or downstream robots will wait indefinitely
 
 **Monitor Progress:**
 
@@ -282,7 +297,7 @@ bash commands/rome-p5-parallel-generate.sh
 
 ### QA: Quality Assurance
 **Robot:** Sarah (QA Validator & Quality Gatekeeper)
-**Purpose:** Validate deliverables, enforce quality gates
+**Purpose:** Validate deliverables, enforce quality gates, **validate activity log**
 **How to start:** Navigate to `ROME/rome-qa/`
 **Authority:** APPROVE or BLOCK phase transitions
 
@@ -291,12 +306,12 @@ cd ROME/rome-qa
 # SessionStart hook auto-loads Sarah in QA-validator mode
 ```
 
-**Sarah validates:**
-- GATE-P1: AORDL structure validation
-- GATE-P2: Analysis → Design (8-dimension coverage)
-- GATE-P3: Design → Config (100% requirements coverage)
-- GATE-P4: Config → Generation (configuration completeness)
-- GATE-P5: Generation → Delivery (implementation completeness)
+**Sarah validates (MANDATORY activity log check at every gate):**
+- GATE-P1: Activity log + AORDL structure validation
+- GATE-P2: Activity log + Analysis → Design (8-dimension coverage)
+- GATE-P3: Activity log + Design → Config (100% requirements coverage)
+- GATE-P4: Activity log + Config → Generation (configuration completeness)
+- GATE-P5: Activity log + Generation → Delivery (implementation completeness)
 
 **Skills available** (from `robot-plugins/sarah/skills/`):
 - `/quality-gate-p2`, `/quality-gate-p3`
@@ -306,6 +321,11 @@ cd ROME/rome-qa
 **Quality Gates:** Sarah must APPROVE before moving to next phase
 
 **Sarah's Authority:** Phase transitions BLOCK without Sarah APPROVAL
+
+**Activity Log Enforcement:** Sarah BLOCKS if activity log incomplete:
+- Missing phase start (IN_PROGRESS) entry
+- Missing phase completion (COMPLETED) entry
+- Robots must use `/log-phase-start` and `/log-phase-complete` skills
 
 ---
 
@@ -369,6 +389,8 @@ cd ROME/rome-qa
 - `/analyze-requirement` - Decompose requirement (P2)
 - `/batch-analyze-requirements` - Analyze multiple (P2)
 - `/generate-user-stories` - Create user stories (P2)
+- `/log-phase-start` - Log phase start with verification (All phases)
+- `/log-phase-complete` - Log phase completion with verification (All phases)
 
 **PMA Skills** (`robot-plugins/pma/skills/`):
 - `/design-dto-models` - Design data models
@@ -606,12 +628,13 @@ my-app/
 
 ### Activity Logging
 
-All robot work is automatically tracked:
+All robot work is **MANDATORY** tracked with enforcement at quality gates:
 
 **Activity Log:**
 - Location: `ARTIFACTS/activity-log.txt`
 - Format: Event stream (TIMESTAMP | TYPE | ID | ATTRIBUTES)
 - Tracks: Phase transitions, work items, blockers, amendments
+- **Required:** Every phase must log start (IN_PROGRESS) and completion (COMPLETED)
 
 **Activity State:**
 - Location: `ARTIFACTS/activity-state.yaml`
@@ -622,6 +645,13 @@ All robot work is automatically tracked:
 - Robots use MCP server (`activity-log-file`) to append events
 - State file auto-rebuilds on each append
 - No manual editing required
+- **Enforcement:** Sarah validates activity log at every quality gate
+
+**Mandatory Logging:**
+- **Phase Start:** Every robot MUST log phase start before work begins
+- **Phase Complete:** Every robot MUST log phase completion before gate validation
+- **Verification:** Sarah BLOCKS phase transitions if activity log incomplete
+- **Skills:** `/log-phase-start` and `/log-phase-complete` for easy logging
 
 ### Robot Workspaces
 
@@ -708,25 +738,53 @@ Key framework documents for understanding robot behavior:
 
 ## Quality Gates
 
-Sarah enforces these gates:
+Sarah enforces these gates with **MANDATORY activity log validation**:
 
-**P1→P2:** AORDL structure valid
-**P2→P3:** Requirements analyzed, entities extracted
-**P3→P4:** Design complete, data dictionary exists
-**P4→P5:** Workspace configured, build system ready
-**P5→Done:** Code generated, tests pass, traceability verified
+**GATE-P1 (P1→P2):**
+- Activity log: PHASE-1 IN_PROGRESS and COMPLETED logged
+- AORDL structure valid (13 fields, no anti-patterns)
+- All OpenQuestions resolved
+
+**GATE-P2 (P2→P3):**
+- Activity log: PHASE-2 IN_PROGRESS and COMPLETED logged
+- Requirements analyzed, 8-dimension coverage
+- User stories and acceptance criteria complete
+
+**GATE-P3 (P3→P4):**
+- Activity log: PHASE-3 IN_PROGRESS and COMPLETED logged
+- Design complete, 100% requirements coverage
+- Data dictionary, API design, tech stack documented
+
+**GATE-P4 (P4→P5):**
+- Activity log: PHASE-4 IN_PROGRESS and COMPLETED logged
+- Workspace configured, build system ready
+- Environment configs, dependencies installed
+
+**GATE-P5 (P5→Done):**
+- Activity log: P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED
+- Code generated, all tests pass
+- Traceability verified (AORDL→Code chain intact)
 
 **Sarah's authority:** APPROVE or BLOCK (no bypass)
+
+**Activity Log Enforcement:** Sarah BLOCKS phase transitions if activity log entries missing or incomplete. Robots must use `/log-phase-start` and `/log-phase-complete` skills.
 
 ---
 
 ## Troubleshooting
 
+**Sarah blocks phase transition (activity log missing)**
+→ Check activity log: `ARTIFACTS/activity-log.txt`
+→ Verify phase start logged: use `/log-phase-start --phase PX --robot robotname`
+→ Verify phase completion logged: use `/log-phase-complete --phase PX --robot robotname`
+→ Query activity log: `mcp__activity_log__query({id: "PHASE-X"})`
+→ Re-invoke Sarah for approval after logging
+
 **AORDL validation fails**
 → Check all 13 required fields present
 → Use Talib P1's `validate-aordl` skill on the file
 
-**Sarah blocks phase transition**
+**Sarah blocks phase transition (artifact issues)**
 → Read Sarah's feedback (specific issues)
 → Fix identified gaps
 → Re-invoke Sarah for approval
@@ -740,6 +798,12 @@ Sarah enforces these gates:
 → Check P4 configuration complete
 → Verify Lucien created scaffolding manifest
 → Re-run P5 agents with manifest
+
+**P5 robot waiting for dependency**
+→ Check activity log for upstream robot completion
+→ Ashok must complete before Reena starts
+→ Reena must complete before Charlie starts
+→ Use `bash commands/rome-p5-status.sh` to check progress
 
 ---
 
