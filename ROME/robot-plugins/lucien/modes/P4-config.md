@@ -330,9 +330,37 @@ mcp__activity-log__append({
 terminal-notifier -title "ROME: P4 Config Complete" -message "All workspaces scaffolded. Development environment ready." -sound Ping
 ```
 
-### Step 14: Request Gate Review
+### Step 14: Request Gate Validation
 
-Present P4 exit criteria summary and notify Roma to initiate GATE-P4 (Sarah audit).
+Present exit criteria summary and notify user to request GATE-P4 validation:
+
+```
+✓ Phase 4 Configuration Complete
+
+All configuration artifacts created:
+- Workspace scaffolded (SOURCE/ directories)
+- Build system configured
+- Dependencies installed
+- Environment configs (dev, test, staging, prod)
+- Security settings configured
+- CI/CD pipeline setup
+- Scaffolding manifest documented
+
+Next step: Request GATE-P4 validation from Sarah
+
+To proceed:
+  cd ROME/rome-qa
+  # Sarah will validate:
+  #   - Activity log (PHASE-4 IN_PROGRESS and COMPLETED)
+  #   - Workspace structure completeness
+  #   - Environment configuration
+  #   - Security configuration
+  #   - No hardcoded secrets
+
+Sarah will APPROVE or BLOCK the P4→P5 transition.
+```
+
+**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P4 validation.
 
 ---
 

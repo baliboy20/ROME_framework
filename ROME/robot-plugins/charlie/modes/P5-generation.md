@@ -488,7 +488,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 20: Notify Completion
+### Step 20: Notify Completion and Request Gate Validation
 
 ```javascript
 mcp__Seez__show_doc({
@@ -502,7 +502,26 @@ mcp__Seez__show_doc({
 **Tests:** [N] tests passing
 **Accessibility:** WCAG AA compliant
 
-Application ready for use.`
+✓ P5-CHARLIE Complete
+
+All three P5 robots have completed:
+- ✓ Ashok: Database layer
+- ✓ Reena: Backend API
+- ✓ Charlie: Frontend UI
+
+Next step: Request GATE-P5 validation from Sarah
+
+To proceed:
+  cd ROME/rome-qa
+  # Sarah will validate:
+  #   - Activity log (P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED)
+  #   - All features implemented
+  #   - All tests passing
+  #   - Traceability (AORDL→Code chain intact)
+  #   - Documentation complete
+
+Sarah will APPROVE or BLOCK project delivery.
+`
 })
 ```
 

@@ -345,7 +345,36 @@ terminal-notifier -title "ROME: P3 Design Complete" -message "System design comp
 
 #### Step 20: Request Gate Review
 
-Present exit criteria summary and notify Roma to initiate GATE-P3.
+Notify user to request GATE-P3 validation from Sarah:
+
+```
+✓ Phase 3 Design Complete
+
+All design artifacts created:
+- Tech stack selected
+- Data dictionary complete
+- API design documented
+- Use cases elaborated
+- System architecture defined
+- Work breakdown (actionlist.md) ready for P5
+- Test architecture designed
+
+Next step: Request GATE-P3 validation from Sarah
+
+To proceed:
+  cd ROME/rome-qa
+  # Sarah will validate:
+  #   - Activity log (PHASE-3 IN_PROGRESS and COMPLETED)
+  #   - 100% requirements coverage
+  #   - Data dictionary completeness
+  #   - API design completeness
+  #   - Tech stack appropriateness
+  #   - System architecture meets NFRs
+
+Sarah will APPROVE or BLOCK the P3→P4 transition.
+```
+
+**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P3 validation.
 
 ---
 

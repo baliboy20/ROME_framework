@@ -226,29 +226,38 @@ Complete all 12 sections with AORDL traceability.
 terminal-notifier -title "ROME: P2 Analysis Complete" -message "Requirements analysis complete. Ready for gate review and design phase." -sound Ping
 ```
 
-### Step 8: Request Phase Gate Approval
+### Step 8: Request Gate Validation
+
+Present exit criteria summary and notify user to request GATE-P2 validation:
 
 ```javascript
 mcp__Seez__show_doc({
   label: "P2 Exit Summary",
-  content: "[Exit criteria checklist]"
-})
+  content: `# P2 Analysis Complete
 
-mcp__Seez__ask_questions({
-  label: "Phase Gate: P2 -> P3",
-  title: "Approve Transition",
-  questions: [{
-    id: "approval",
-    type: "radio",
-    label: "Approve transition to Design?",
-    options: [
-      {label: "Approve", description: "Proceed to P3"},
-      {label: "Reject", description: "Return with feedback"},
-      {label: "Defer", description: "Need review time"}
-    ]
-  }]
+All analysis artifacts created:
+- Requirements matrix (8-dimension coverage)
+- User stories generated
+- Acceptance criteria defined
+- NFR specifications documented
+- Vertical slices identified
+
+Next step: Request GATE-P2 validation from Sarah
+
+To proceed:
+  cd ROME/rome-qa
+  # Sarah will validate:
+  #   - Activity log (PHASE-2 IN_PROGRESS and COMPLETED)
+  #   - Requirements coverage (REQ→FUNC mapping)
+  #   - 8-dimension coverage
+  #   - User stories and acceptance criteria completeness
+
+Sarah will APPROVE or BLOCK the P2→P3 transition.
+`
 })
 ```
+
+**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P2 validation.
 
 ---
 

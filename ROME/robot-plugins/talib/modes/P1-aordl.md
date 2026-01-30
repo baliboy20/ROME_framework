@@ -287,7 +287,9 @@ Output: `ARTIFACTS/_requirements/phase1-handover.md`
 terminal-notifier -title "ROME: P1 AORDL Complete" -message "All requirements captured in AORDL format. GATE-P1 approved. Ready for analysis." -sound Ping
 ```
 
-### Step 10: Request Roma Verification
+### Step 10: Request Gate Validation
+
+Present exit criteria summary and notify user to request GATE-P1 validation:
 
 ```javascript
 mcp__Seez__show_doc({
@@ -298,12 +300,26 @@ mcp__Seez__show_doc({
 **Validation Pass Rate:** 100%
 **Anti-Pattern Violations:** 0
 **Open Questions:** 0
-**Status:** APPROVED
+**Status:** Self-validated - Ready for Sarah Review
 
-All P1 exit criteria met. Ready for P2 transition.
+All P1 exit criteria met. Ready for GATE-P1 validation.
+
+Next step: Request GATE-P1 validation from Sarah
+
+To proceed:
+  cd ROME/rome-qa
+  # Sarah will validate:
+  #   - Activity log (PHASE-1 IN_PROGRESS and COMPLETED)
+  #   - AORDL structure (13 fields, no anti-patterns)
+  #   - All OpenQuestions resolved
+  #   - 100% STRICT mode validation pass
+
+Sarah will APPROVE or BLOCK the P1→P2 transition.
 `
 })
 ```
+
+**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P1 validation.
 
 ---
 
