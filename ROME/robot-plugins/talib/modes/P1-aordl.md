@@ -11,6 +11,35 @@
 
 ---
 
+## ⚠️ CRITICAL: MANDATORY FIRST ACTION
+
+**BEFORE doing ANY work, you MUST log phase start:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "PHASE-1",
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "talib",
+    phase: "P1-AORDL",
+    started: new Date().toISOString()
+  }
+})
+```
+
+**Verify logging worked:**
+```javascript
+const verify = await mcp__activity_log__query({id: "PHASE-1"});
+console.log(`✓ Phase start logged:`, verify);
+```
+
+**DO NOT PROCEED until you've logged phase start and verified it.**
+
+**Alternative:** Use skill: `/log-phase-start --phase P1 --robot talib`
+
+---
+
 ## Phase-Specific Purpose
 
 Transform raw sponsor materials into AORDL requirements (Actor-Oriented Requirements Definition Language). AORDL enforces strict structure with 13 required fields, anti-pattern detection, and ambiguity resolution.
@@ -65,22 +94,7 @@ Check:
 - Bootstrap phase completed
 ```
 
-### Step 2: Log Phase Start
-
-```javascript
-mcp__activity-log__append({
-  type: "PHASE",
-  id: "PHASE-1",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "talib",
-    phase: "P1-AORDL",
-    started: "[ISO-8601]"
-  }
-})
-```
-
-### Step 3: Read and Analyze Raw Materials
+### Step 2: Read and Analyze Raw Materials
 
 Use Read tool on every file in `_user_input/raw-requirements/`. Extract:
 - Actors (user roles, system components)
@@ -89,7 +103,7 @@ Use Read tool on every file in `_user_input/raw-requirements/`. Extract:
 - Non-functional requirements
 - Technical preferences
 
-### Step 4: Transform to AORDL Requirements
+### Step 3: Transform to AORDL Requirements
 
 For each identified intent, create `REQ-###.yaml` with **all 13 fields**:
 
@@ -152,7 +166,7 @@ CopilotMode: STRICT|GUIDED|PERMISSIVE
 **Approved Atomic Verbs:**
 create, read, update, delete, view, list, search, filter, authenticate, authorize, assign, submit, approve, reject, export, import, validate, calculate, notify, schedule
 
-### Step 5: Use Skills for Validation
+### Step 4: Use Skills for Validation
 
 **Validate each requirement:**
 
@@ -170,7 +184,7 @@ create, read, update, delete, view, list, search, filter, authenticate, authoriz
 
 Generates BDD scenarios to verify completeness.
 
-### Step 6: Resolve All Ambiguities
+### Step 5: Resolve All Ambiguities
 
 **For each OpenQuestion with status=OPEN:**
 
@@ -217,7 +231,7 @@ Generates BDD scenarios to verify completeness.
 
 **GATE-P1 Requirement:** Zero open questions. All must be RESOLVED.
 
-### Step 7: Create Requirements Catalog
+### Step 6: Create Requirements Catalog
 
 Output: `ARTIFACTS/_requirements/requirements-catalog.md`
 
@@ -228,7 +242,7 @@ Output: `ARTIFACTS/_requirements/requirements-catalog.md`
 - NFR aggregation
 - Notes for P2 analysis
 
-### Step 8: Run GATE-P1 Validation
+### Step 7: Run GATE-P1 Validation
 
 **Validation Criteria:**
 
@@ -255,7 +269,7 @@ Output: `ARTIFACTS/_requirements/requirements-catalog.md`
 
 **CRITICAL:** GATE-P1 must show 100% pass rate. No exceptions.
 
-### Step 9: Create Phase 1 Handover
+### Step 8: Create Phase 1 Handover
 
 Output: `ARTIFACTS/_requirements/phase1-handover.md`
 
@@ -267,30 +281,13 @@ Output: `ARTIFACTS/_requirements/phase1-handover.md`
 - Technical requests for PMA
 - Notes for P2 analysis (suggested decomposition)
 
-### Step 10: Log Completion
-
-```javascript
-mcp__activity-log__append({
-  type: "PHASE",
-  id: "PHASE-1",
-  attributes: {
-    status: "COMPLETED",
-    robot: "talib",
-    phase: "P1-AORDL",
-    requirementsCount: [N],
-    gateP1Status: "APPROVED",
-    completed: "[ISO-8601]"
-  }
-})
-```
-
-### Step 11: Notify Sponsor
+### Step 9: Notify Sponsor
 
 ```bash
 terminal-notifier -title "ROME: P1 AORDL Complete" -message "All requirements captured in AORDL format. GATE-P1 approved. Ready for analysis." -sound Ping
 ```
 
-### Step 12: Request Roma Verification
+### Step 10: Request Roma Verification
 
 ```javascript
 mcp__Seez__show_doc({
@@ -342,9 +339,52 @@ Talib logs using `talib` as robot identifier in P1 mode.
 
 ---
 
+---
+
+## ⚠️ MANDATORY FINAL ACTIONS
+
+### Before Requesting Gate Validation:
+
+**1. Log phase completion:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "PHASE-1",
+  attributes: {
+    status: "COMPLETED",
+    robot: "talib",
+    phase: "P1-AORDL",
+    requirementsCount: [N],
+    completed: new Date().toISOString()
+  }
+})
+```
+
+**Alternative:** Use skill: `/log-phase-complete --phase P1 --robot talib --summary "Created N requirements"`
+
+**2. Verify all logged:**
+
+```javascript
+const allWork = await mcp__activity_log__query({
+  robot: "talib",
+  phase: "P1-AORDL"
+});
+
+console.log(`✓ Activity log entries: ${allWork.length}`);
+// Should have: phase start + work items + phase complete
+```
+
+---
+
 ## Exit Criteria
 
-Before marking P1 complete:
+**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
+- [ ] Phase start logged (PHASE-1 status: IN_PROGRESS)
+- [ ] Phase completion logged (PHASE-1 status: COMPLETED)
+- [ ] Verify: `mcp__activity_log__query({id: "PHASE-1"})` returns both entries
+
+**ARTIFACT REQUIREMENTS:**
 - [ ] All raw materials read and analyzed
 - [ ] All requirements captured in AORDL format (13 fields each)
 - [ ] Zero anti-pattern violations

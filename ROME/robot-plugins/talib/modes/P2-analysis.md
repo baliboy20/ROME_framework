@@ -11,6 +11,35 @@
 
 ---
 
+## ⚠️ CRITICAL: MANDATORY FIRST ACTION
+
+**BEFORE doing ANY work, you MUST log phase start:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "PHASE-2",
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "talib",
+    phase: "P2-Analysis",
+    started: new Date().toISOString()
+  }
+})
+```
+
+**Verify logging worked:**
+```javascript
+const verify = await mcp__activity_log__query({id: "PHASE-2"});
+console.log(`✓ Phase start logged:`, verify);
+```
+
+**DO NOT PROCEED until you've logged phase start and verified it.**
+
+**Alternative:** Use skill: `/log-phase-start --phase P2 --robot talib`
+
+---
+
 ## Phase-Specific Purpose
 
 Perform functional decomposition from AORDL requirements into Features, User Stories, and Acceptance Criteria with full traceability across 8 dimensions.
@@ -76,23 +105,7 @@ Check:
 - Roma approved P1 → P2 transition
 ```
 
-### Step 2: Log Phase Start
-
-```javascript
-mcp__activity-log__append({
-  type: "PHASE",
-  id: "PHASE-2",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "talib",
-    phase: "P2-Analysis",
-    aordlRequirementsCount: [N],
-    started: "[ISO-8601]"
-  }
-})
-```
-
-### Step 3: Perform Functional Decomposition from AORDL
+### Step 2: Perform Functional Decomposition from AORDL
 
 **Process:**
 
@@ -126,7 +139,7 @@ mcp__activity-log__append({
 /validate-user-story --story-file user-stories.md
 ```
 
-### Step 4: Resolve Ambiguities
+### Step 3: Resolve Ambiguities
 
 **When ambiguity found:**
 
@@ -167,7 +180,7 @@ mcp__activity-log__append({
    - Log decision in handover Section 4
 ```
 
-### Step 5: Capture Technical Requests
+### Step 4: Capture Technical Requests
 
 **When sponsor specifies technical preference:**
 
@@ -193,7 +206,7 @@ mcp__activity-log__append({
 3. Add to handover Section 3
 ```
 
-### Step 6: Create Artifacts
+### Step 5: Create Artifacts
 
 Produce all outputs:
 - `ARTIFACTS/_requirements/requirements-matrix.yaml`
@@ -201,35 +214,19 @@ Produce all outputs:
 - `ARTIFACTS/_requirements/acceptance-criteria.md`
 - `ARTIFACTS/_requirements/non-functional-requirements.md`
 
-### Step 7: Prepare Handover
+### Step 6: Prepare Handover
 
 Output: `ARTIFACTS/_requirements/phase2-handover.md`
 
 Complete all 12 sections with AORDL traceability.
 
-### Step 8: Log Completion
-
-```javascript
-mcp__activity-log__append({
-  type: "PHASE",
-  id: "PHASE-2",
-  attributes: {
-    status: "COMPLETED",
-    robot: "talib",
-    featuresCount: [N],
-    userStoriesCount: [M],
-    completed: "[ISO-8601]"
-  }
-})
-```
-
-### Step 9: Notify Sponsor
+### Step 7: Notify Sponsor
 
 ```bash
 terminal-notifier -title "ROME: P2 Analysis Complete" -message "Requirements analysis complete. Ready for gate review and design phase." -sound Ping
 ```
 
-### Step 10: Request Phase Gate Approval
+### Step 8: Request Phase Gate Approval
 
 ```javascript
 mcp__Seez__show_doc({
@@ -303,9 +300,52 @@ Talib logs using `talib` as robot identifier in P2 mode.
 
 ---
 
+---
+
+## ⚠️ MANDATORY FINAL ACTIONS
+
+### Before Requesting Gate Validation:
+
+**1. Log phase completion:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "PHASE-2",
+  attributes: {
+    status: "COMPLETED",
+    robot: "talib",
+    phase: "P2-Analysis",
+    featuresCount: [N],
+    userStoriesCount: [M],
+    completed: new Date().toISOString()
+  }
+})
+```
+
+**Alternative:** Use skill: `/log-phase-complete --phase P2 --robot talib --summary "Created N features, M stories"`
+
+**2. Verify all logged:**
+
+```javascript
+const allWork = await mcp__activity_log__query({
+  robot: "talib",
+  phase: "P2-Analysis"
+});
+
+console.log(`✓ Activity log entries: ${allWork.length}`);
+```
+
+---
+
 ## Exit Criteria
 
-Before marking P2 complete:
+**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
+- [ ] Phase start logged (PHASE-2 status: IN_PROGRESS)
+- [ ] Phase completion logged (PHASE-2 status: COMPLETED)
+- [ ] Verify: `mcp__activity_log__query({id: "PHASE-2"})` returns both entries
+
+**ARTIFACT REQUIREMENTS:**
 - [ ] PHASE-1 = COMPLETED verified
 - [ ] All AORDL requirements read and analyzed
 - [ ] Requirements matrix created (8 dimensions)

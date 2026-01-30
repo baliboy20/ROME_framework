@@ -135,27 +135,34 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Structure Compliance
+1. Activity Log Validation (MANDATORY)
+   - Verify: mcp__activity_log__query({id: "PHASE-1"}) returns entries
+   - PHASE-1 has status: IN_PROGRESS (start logged)
+   - PHASE-1 has status: COMPLETED (completion logged)
+   - Robot: talib
+   - BLOCK if missing or incomplete
+
+2. Structure Compliance
    - All REQ-*.yaml files have 13 fields
    - All fields have meaningful content (not placeholders)
 
-2. Anti-Pattern Detection
+3. Anti-Pattern Detection
    - Zero UI language (no "click", "dropdown", "modal")
    - Zero technical jargon (no "POST /api", "Redux", "JOIN")
    - All actors are specific roles (no generic "User", "System")
 
-3. Intent Atomicity
+4. Intent Atomicity
    - All intents single verb + object
    - Approved verbs only (create, read, update, delete, etc.)
 
-4. Ambiguity Resolution
+5. Ambiguity Resolution
    - All OpenQuestions status = RESOLVED
    - All decisions have decisionDate and decisionBy
 
-5. BDD Scenarios
+6. BDD Scenarios
    - BDD scenarios generated for all requirements
 
-6. Validation Report
+7. Validation Report
    - 100% pass rate in STRICT mode
 ```
 
@@ -179,23 +186,30 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Requirements Coverage
+1. Activity Log Validation (MANDATORY)
+   - Verify: mcp__activity_log__query({id: "PHASE-2"}) returns entries
+   - PHASE-2 has status: IN_PROGRESS (start logged)
+   - PHASE-2 has status: COMPLETED (completion logged)
+   - Robot: talib
+   - BLOCK if missing or incomplete
+
+2. Requirements Coverage
    - All AORDL requirements mapped to features (REQ-###→FUNC-###)
    - No orphan requirements
 
-2. 8-Dimension Coverage
+3. 8-Dimension Coverage
    - Functional, Data, Business Rules, Security, Performance, Quality, Integration, Deployment
    - All dimensions addressed in requirements-matrix.yaml
 
-3. User Stories
+4. User Stories
    - All features have user stories
    - Story format: "As a [actor], I want to [intent], So that [outcome]"
 
-4. Acceptance Criteria
+5. Acceptance Criteria
    - All stories have testable acceptance criteria
    - Criteria derived from AORDL Outcomes/Postconditions
 
-5. Handover Completeness
+6. Handover Completeness
    - phase2-handover.md complete
    - Technical requests documented
    - Decisions log present
@@ -221,28 +235,35 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Requirements Coverage (100%)
+1. Activity Log Validation (MANDATORY)
+   - Verify: mcp__activity_log__query({id: "PHASE-3"}) returns entries
+   - PHASE-3 has status: IN_PROGRESS (start logged)
+   - PHASE-3 has status: COMPLETED (completion logged)
+   - Robot: PMA (clara, roma, or assigned design robot)
+   - BLOCK if missing or incomplete
+
+2. Requirements Coverage (100%)
    - All P2 requirements addressed in P3 design
    - Every requirement → use case mapping
 
-2. Data Dictionary
+3. Data Dictionary
    - All entities from requirements present
    - All fields have database_type, api_type, ui_type
    - Relationships defined
    - Business rules documented
 
-3. API Design
+4. API Design
    - All endpoints specified
    - Request/response schemas defined
    - Error responses documented
    - Authentication/authorization defined
 
-4. Tech Stack
+5. Tech Stack
    - Technology selections justified
    - Appropriate for requirements
    - Dependencies identified
 
-5. System Architecture
+6. System Architecture
    - Architecture meets NFRs
    - Scalability addressed
    - Security requirements met
@@ -270,26 +291,33 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Workspace Structure
+1. Activity Log Validation (MANDATORY)
+   - Verify: mcp__activity_log__query({id: "PHASE-4"}) returns entries
+   - PHASE-4 has status: IN_PROGRESS (start logged)
+   - PHASE-4 has status: COMPLETED (completion logged)
+   - Robot: lucien
+   - BLOCK if missing or incomplete
+
+2. Workspace Structure
    - All workspaces from actionlist.md scaffolded
    - Directory structure correct
    - Dependencies installed
 
-2. Environment Configuration
+3. Environment Configuration
    - All environments defined (dev, test, staging, prod)
    - Environment variables documented
    - Secrets management configured
 
-3. Dependencies
+4. Dependencies
    - All dependencies versioned
    - Dependency conflicts resolved
 
-4. Security Configuration
+5. Security Configuration
    - Security settings appropriate
    - No hardcoded secrets
    - Authentication config present
 
-5. Handover Completeness
+6. Handover Completeness
    - phase4-handover.md complete
    - Getting started instructions clear
 ```
@@ -314,26 +342,36 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Implementation Completeness
+1. Activity Log Validation (MANDATORY)
+   - Verify: mcp__activity_log__query({id: "P5-ASHOK"}) returns entries
+   - P5-ASHOK has status: COMPLETED (database layer complete)
+   - Verify: mcp__activity_log__query({id: "P5-REENA"}) returns entries
+   - P5-REENA has status: COMPLETED (backend API complete)
+   - Verify: mcp__activity_log__query({id: "P5-CHARLIE"}) returns entries
+   - P5-CHARLIE has status: COMPLETED (frontend complete)
+   - All P5 robots: ashok, reena, charlie
+   - BLOCK if any missing or incomplete
+
+2. Implementation Completeness
    - All workspaces implemented
    - All features from actionlist.md complete
 
-2. Test Coverage
+3. Test Coverage
    - All unit tests passing
    - All integration tests passing
    - Test coverage adequate
 
-3. Traceability
+4. Traceability
    - AORDL→FUNC→UC→Code chain intact
    - All TRACEABILITY.md files present (ROME-PROP-016)
    - Git commits reference feature IDs
 
-4. Documentation
+5. Documentation
    - API documentation complete
    - Application documentation complete
    - Setup instructions present
 
-5. Quality
+6. Quality
    - No critical bugs
    - Performance requirements met
    - Security requirements met
@@ -465,6 +503,7 @@ Sarah logs using `sarah` as robot identifier.
 ## Exit Criteria
 
 Before issuing APPROVAL decision:
+- [ ] **Activity log validation PASS (MANDATORY)**
 - [ ] All validation checks PASS
 - [ ] No CRITICAL blockers
 - [ ] Handover document complete

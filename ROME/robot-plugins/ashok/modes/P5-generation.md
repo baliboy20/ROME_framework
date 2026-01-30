@@ -11,6 +11,36 @@
 
 ---
 
+## ⚠️ CRITICAL: MANDATORY FIRST ACTION
+
+**BEFORE doing ANY work, you MUST log phase start:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "P5-ASHOK",
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "ashok",
+    phase: "P5-generation",
+    layer: "database",
+    started: new Date().toISOString()
+  }
+})
+```
+
+**Verify logging worked:**
+```javascript
+const verify = await mcp__activity_log__query({robot: "ashok", phase: "P5-generation"});
+console.log(`✓ Phase start logged:`, verify);
+```
+
+**DO NOT PROCEED until you've logged phase start and verified it.**
+
+**Alternative:** Use skill: `/log-phase-start --phase P5 --robot ashok`
+
+---
+
 ## Phase-Specific Purpose
 
 Implement the complete database layer from PMA's data dictionary. Generate schema, migrations, ORM models, seed data, and database tests.
@@ -407,9 +437,57 @@ Ashok logs using `ashok` as robot identifier.
 
 ---
 
+## ⚠️ MANDATORY FINAL ACTIONS
+
+### Before Notifying Reena or Requesting Gate Validation:
+
+**1. Log overall phase completion:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "P5-ASHOK",
+  attributes: {
+    status: "COMPLETED",
+    robot: "ashok",
+    phase: "P5-generation",
+    layer: "database",
+    featuresCompleted: [N],
+    tablesCreated: [N],
+    completed: new Date().toISOString()
+  }
+})
+```
+
+**Alternative:** Use skill: `/log-phase-complete --phase P5 --robot ashok --summary "Database layer: N tables, N migrations"`
+
+**2. Verify all logged:**
+
+```javascript
+const allWork = await mcp__activity_log__query({
+  robot: "ashok",
+  phase: "P5-generation"
+});
+
+console.log(`✓ Activity log entries: ${allWork.length}`);
+// Should have: phase start + feature entries + phase complete
+```
+
+**3. Verify Reena can proceed:**
+
+Reena will check your completion status. Ensure your activity log shows `status: "COMPLETED"` for P5-ASHOK.
+
+---
+
 ## Exit Criteria
 
-Before completing data layer work:
+**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
+- [ ] Phase start logged (P5-ASHOK status: IN_PROGRESS)
+- [ ] All features logged as COMPLETED
+- [ ] Phase completion logged (P5-ASHOK status: COMPLETED)
+- [ ] Verify: `mcp__activity_log__query({robot: "ashok", phase: "P5-generation"})` returns all entries
+
+**ARTIFACT REQUIREMENTS:**
 - [ ] PHASE-4 = COMPLETED verified
 - [ ] Data dictionary read and analyzed
 - [ ] Database schema created and matches data dictionary
@@ -425,7 +503,6 @@ Before completing data layer work:
 - [ ] Setup scripts created and working
 - [ ] README documentation complete
 - [ ] Feature traceability files created (TRACEABILITY.md)
-- [ ] All features logged as COMPLETED
 - [ ] Reena notified of completion
 - [ ] Setup validated (can initialize local DB from scratch)
 

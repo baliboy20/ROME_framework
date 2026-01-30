@@ -11,6 +11,36 @@
 
 ---
 
+## ⚠️ CRITICAL: MANDATORY FIRST ACTION
+
+**BEFORE doing ANY work, you MUST log phase start:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "P5-CHARLIE",
+  attributes: {
+    status: "IN_PROGRESS",
+    robot: "charlie",
+    phase: "P5-generation",
+    layer: "frontend",
+    started: new Date().toISOString()
+  }
+})
+```
+
+**Verify logging worked:**
+```javascript
+const verify = await mcp__activity_log__query({robot: "charlie", phase: "P5-generation"});
+console.log(`✓ Phase start logged:`, verify);
+```
+
+**DO NOT PROCEED until you've logged phase start and verified it.**
+
+**Alternative:** Use skill: `/log-phase-start --phase P5 --robot charlie`
+
+---
+
 ## Phase-Specific Purpose
 
 Implement the user-facing application based on PMA's architecture and Clara's designs (if available). Users should be able to accomplish all use cases through Charlie's UI.
@@ -542,9 +572,57 @@ Charlie logs using `charlie` as robot identifier.
 
 ---
 
+## ⚠️ MANDATORY FINAL ACTIONS
+
+### Before Completing P5 or Requesting Gate Validation:
+
+**1. Log overall phase completion:**
+
+```javascript
+mcp__activity_log__append({
+  type: "PHASE",
+  id: "P5-CHARLIE",
+  attributes: {
+    status: "COMPLETED",
+    robot: "charlie",
+    phase: "P5-generation",
+    layer: "frontend",
+    featuresCompleted: [N],
+    screensCreated: [N],
+    completed: new Date().toISOString()
+  }
+})
+```
+
+**Alternative:** Use skill: `/log-phase-complete --phase P5 --robot charlie --summary "Frontend: N screens, N features"`
+
+**2. Verify all logged:**
+
+```javascript
+const allWork = await mcp__activity_log__query({
+  robot: "charlie",
+  phase: "P5-generation"
+});
+
+console.log(`✓ Activity log entries: ${allWork.length}`);
+// Should have: phase start + feature entries + phase complete
+```
+
+**3. Verify P5 complete:**
+
+All three robots (Ashok, Reena, Charlie) must have logged completion for P5 phase to be complete.
+
+---
+
 ## Exit Criteria
 
-Before completing frontend work:
+**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
+- [ ] Phase start logged (P5-CHARLIE status: IN_PROGRESS)
+- [ ] All features logged as COMPLETED
+- [ ] Phase completion logged (P5-CHARLIE status: COMPLETED)
+- [ ] Verify: `mcp__activity_log__query({robot: "charlie", phase: "P5-generation"})` returns all entries
+
+**ARTIFACT REQUIREMENTS:**
 - [ ] PHASE-4 = COMPLETED verified
 - [ ] Reena's backend APIs ready (or documented)
 - [ ] Use cases and designs read
@@ -566,7 +644,6 @@ Before completing frontend work:
 - [ ] No hardcoded API URLs (environment config used)
 - [ ] Application documentation complete
 - [ ] Feature traceability files created (TRACEABILITY.md)
-- [ ] All features logged as COMPLETED
 - [ ] Application ready for end users
 
 ---
