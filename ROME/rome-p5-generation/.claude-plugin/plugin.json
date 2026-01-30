@@ -5,10 +5,9 @@
   "type": "phase-plugin",
   "phase": "P05-generation",
   "provides": {
-    "orchestration": "P5 parallel code generation coordination",
+    "orchestration": "P5 true parallel code generation - all robots start simultaneously",
     "workflows": [
-      "parallel-generation",
-      "layer-dependency-management"
+      "parallel-generation"
     ],
     "commands": [
       "rome-p5:generate-db",
@@ -34,22 +33,19 @@
         "name": "ashok",
         "mode": "P5-generation",
         "source": "robot-plugins/ashok",
-        "expectedSkills": ["generate-database-schema", "generate-migrations", "generate-orm-models", "generate-seed-data"],
-        "dependsOn": []
+        "expectedSkills": ["generate-database-schema", "generate-migrations", "generate-orm-models", "generate-seed-data"]
       },
       {
         "name": "reena",
         "mode": "P5-generation",
         "source": "robot-plugins/reena",
-        "expectedSkills": ["generate-api-endpoints", "generate-authentication-middleware"],
-        "dependsOn": ["ashok"]
+        "expectedSkills": ["generate-api-endpoints", "generate-authentication-middleware"]
       },
       {
         "name": "charlie",
         "mode": "P5-generation",
         "source": "robot-plugins/charlie",
-        "expectedSkills": ["generate-ui-screens", "generate-ui-components"],
-        "dependsOn": ["reena"]
+        "expectedSkills": ["generate-ui-screens", "generate-ui-components"]
       }
     ],
     "mcpServers": [

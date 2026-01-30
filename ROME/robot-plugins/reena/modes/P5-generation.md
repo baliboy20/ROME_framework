@@ -118,42 +118,7 @@ Check:
 
 **If not met:** Report to Roma, do not proceed.
 
-### Step 2: Check Dependencies (Ashok Completion)
-
-**Dependency Chain:** Reena depends on Ashok (database layer must be complete)
-
-Check Ashok's database layer completion status:
-
-```javascript
-// Query Ashok's P5 work items
-const ashokStatus = await mcp__activity_log__query({
-  robot: "ashok",
-  phase: "P5-generation"
-});
-
-// Check if all Ashok items are completed
-const pendingAshok = ashokStatus.filter(item =>
-  item.status === 'PENDING' || item.status === 'IN_PROGRESS'
-);
-
-if (pendingAshok.length > 0) {
-  console.log("⏳ Waiting for Ashok to complete database layer...");
-  console.log(`   Pending: ${pendingAshok.length} items`);
-  // DO NOT PROCEED - wait for Ashok completion
-  return;
-}
-
-console.log("✅ Ashok database layer complete - proceeding with API generation");
-```
-
-**If Ashok not complete:**
-- Log blocker: "BLOCKER: Reena cannot start - waiting for Ashok database layer"
-- Wait until Ashok marks database generation complete
-- Re-check before proceeding
-
-**If Ashok complete:** Proceed to Step 3.
-
-### Step 3: Query Assigned Features
+### Step 2: Query Assigned Features
 
 Query activity log for backend layer feature assignments:
 
@@ -175,7 +140,7 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Verify Ashok's data layer dependencies completed
 - Check dependencies on other features
 
-### Step 4: Log Feature Start
+### Step 3: Log Feature Start
 
 For each feature assigned:
 ```javascript
@@ -192,7 +157,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 5: Read Design Artifacts
+### Step 4: Read Design Artifacts
 
 **Critical:** Read api-design.md and use-cases.md:
 ```
@@ -210,7 +175,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Authentication requirements
 - Error responses
 
-### Step 6: Create Project Structure
+### Step 5: Create Project Structure
 
 **Feature-based organization (ROME-PROP-016):**
 ```
@@ -228,7 +193,7 @@ SOURCE/[backend_root]/
     │       └── [test].[ext]
 ```
 
-### Step 7: Generate DTO Models
+### Step 6: Generate DTO Models
 
 **Output:** `SOURCE/[backend]/features/[feature]/dto/`
 
@@ -243,7 +208,7 @@ SOURCE/[backend_root]/
 /generate-dto-models --dictionary data-dictionary.yaml --api api-design.md --output dto/
 ```
 
-### Step 8: Implement Controllers
+### Step 7: Implement Controllers
 
 **Output:** `SOURCE/[backend]/features/[feature]/controllers/`
 
@@ -273,7 +238,7 @@ async createUser(req, res) {
 /generate-api-controllers --api api-design.md --output controllers/
 ```
 
-### Step 9: Implement Service Layer
+### Step 8: Implement Service Layer
 
 **Output:** `SOURCE/[backend]/features/[feature]/services/`
 
@@ -289,7 +254,7 @@ async createUser(req, res) {
 /generate-api-services --use-cases use-cases.md --output services/
 ```
 
-### Step 10: Create Middleware
+### Step 9: Create Middleware
 
 **Output:** `SOURCE/[backend]/middleware/`
 
@@ -318,7 +283,7 @@ async createUser(req, res) {
 /generate-validation-middleware --dictionary data-dictionary.yaml --output middleware/
 ```
 
-### Step 11: Define Routes
+### Step 10: Define Routes
 
 **Output:** `SOURCE/[backend]/routes/`
 
@@ -328,7 +293,7 @@ async createUser(req, res) {
 - Group related endpoints
 - Document route structure
 
-### Step 12: Implement Error Handling
+### Step 11: Implement Error Handling
 
 **Create centralized error handling:**
 - Error types (ValidationError, NotFoundError, etc.)
@@ -346,7 +311,7 @@ async createUser(req, res) {
 }
 ```
 
-### Step 13: Generate API Tests
+### Step 12: Generate API Tests
 
 **Output:** `SOURCE/[backend]/features/[feature]/tests/`
 
@@ -367,7 +332,7 @@ async createUser(req, res) {
 /generate-api-tests --controllers controllers/ --services services/ --output tests/
 ```
 
-### Step 14: Create API Documentation
+### Step 13: Create API Documentation
 
 **Output:** `SOURCE/[backend]/docs/` or inline comments
 
@@ -383,7 +348,7 @@ async createUser(req, res) {
 /generate-api-documentation --api api-design.md --format openapi --output docs/api-spec.yaml
 ```
 
-### Step 15: Validate Implementation
+### Step 14: Validate Implementation
 
 **Self-check:**
 - [ ] All endpoints from api-design.md implemented
@@ -398,7 +363,7 @@ async createUser(req, res) {
 - [ ] No hardcoded secrets
 - [ ] API documentation complete
 
-### Step 16: Create Feature Traceability
+### Step 15: Create Feature Traceability
 
 **Output:** `SOURCE/[backend]/features/[feature]/TRACEABILITY.md`
 
@@ -423,7 +388,7 @@ async createUser(req, res) {
 - tests/user.test.ts
 ```
 
-### Step 17: Log Feature Completion
+### Step 16: Log Feature Completion
 
 ```javascript
 mcp__activity-log__append({
@@ -440,7 +405,7 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 18: Notify Charlie
+### Step 17: Notify Charlie
 
 Inform Charlie that APIs are ready:
 ```javascript

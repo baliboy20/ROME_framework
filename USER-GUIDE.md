@@ -197,7 +197,7 @@ cd ROME/rome-p5-generation
 # Displays available robots and commands
 ```
 
-**Dependency Chain:** Ashok → Reena → Charlie
+**True Parallel Execution:** All three robots start simultaneously
 
 **Database Layer (Ashok):**
 - **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot ashok`
@@ -205,7 +205,7 @@ cd ROME/rome-p5-generation
 - Migrations (version-controlled)
 - ORM models
 - Seed data
-- **No dependencies** - starts immediately
+- Reads: `data-dictionary.yaml`
 - **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot ashok`
 
 **Backend API Layer (Reena):**
@@ -214,7 +214,7 @@ cd ROME/rome-p5-generation
 - Business logic / service layer
 - Authentication middleware
 - Validation middleware
-- **Depends on Ashok** - waits for database layer completion (checks activity log)
+- Reads: `api-design.md`, `data-dictionary.yaml`, `use-cases.md`
 - **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot reena`
 
 **Frontend UI Layer (Charlie):**
@@ -223,8 +223,10 @@ cd ROME/rome-p5-generation
 - UI components
 - State management
 - API integration
-- **Depends on Reena** - waits for backend API completion (checks activity log)
+- Reads: `use-cases.md`, `api-design.md`, `data-dictionary.yaml`
 - **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot charlie`
+
+**Note:** All robots read from design artifacts, not from each other's generated code. They can run truly in parallel.
 
 **Input:** Configuration from P4, actionlist.md from P3
 **Output:** Working application code across all three layers
@@ -251,33 +253,33 @@ bash commands/switch-robot.sh charlie
 
 **Option 2: Parallel (Multiple Terminals)**
 
-Run all three robots simultaneously with automatic coordination:
+Run all three robots simultaneously - all start immediately:
 
 ```bash
 # Terminal 1: Ashok (Database)
 cd ROME/rome-p5-generation
 bash commands/switch-robot.sh ashok
-# Ashok starts immediately, generates database layer
+# Starts immediately, generates database layer
 
 # Terminal 2: Reena (Backend API)
 cd ROME/rome-p5-generation
 bash commands/switch-robot.sh reena
-# Reena checks: is Ashok complete? If yes, proceed. If no, wait.
+# Starts immediately, generates backend API
 
 # Terminal 3: Charlie (Frontend UI)
 cd ROME/rome-p5-generation
 bash commands/switch-robot.sh charlie
-# Charlie checks: is Reena complete? If yes, proceed. If no, wait.
+# Starts immediately, generates frontend UI
 ```
 
-**Automatic Dependency Coordination:**
+**True Parallel Execution:**
 
-Robots check activity log before starting (requires upstream robots to log completion):
-- Reena queries activity log: "Is P5-ASHOK status = COMPLETED?"
-- Charlie queries activity log: "Is P5-REENA status = COMPLETED?"
-- If dependencies not met → robot waits
-- If dependencies satisfied → robot proceeds automatically
-- **Critical:** Upstream robots MUST log phase completion or downstream robots will wait indefinitely
+All robots start immediately and work in parallel:
+- All read from design artifacts (data-dictionary.yaml, api-design.md, use-cases.md)
+- No waiting for other robots to complete
+- Maximum parallelism - 3x speedup potential
+- Code may have import errors until all three finish (expected)
+- Final validation at GATE-P5 after all complete
 
 **Monitor Progress:**
 
@@ -530,7 +532,7 @@ bash commands/switch-robot.sh charlie  # Frontend UI
 **What it does:**
 - Unloads current robot context
 - Loads specified robot's ROBOT.md + P5-generation.md
-- Shows dependency reminders (e.g., "Reena depends on Ashok")
+- Shows robot layer (Database/API/UI)
 
 ### Launch Parallel Generation
 
@@ -540,7 +542,7 @@ bash commands/rome-p5-parallel-generate.sh
 
 **What it does:**
 - Provides instructions for multi-terminal setup
-- Explains dependency chain (Ashok → Reena → Charlie)
+- Explains true parallel execution (all robots start simultaneously)
 - Shows how to monitor progress
 
 ### Check Progress
@@ -554,45 +556,28 @@ bash commands/rome-p5-status.sh
 - Queries activity log for each robot's work items
 - Displays overall progress percentage
 
-### Automatic Dependency Coordination
+### Why True Parallel Works
 
-**How Robots Check Dependencies:**
+**All information comes from design artifacts:**
 
-Reena automatically checks if Ashok is complete:
-```javascript
-// Reena's Step 2 in P5-generation mode
-const ashokStatus = await mcp__activity_log__query({
-  robot: "ashok",
-  phase: "P5-generation"
-});
+All three robots read from the same P3 design artifacts:
+- **data-dictionary.yaml**: Entities, fields, types, relationships
+- **api-design.md**: API contracts (endpoints, requests, responses)
+- **use-cases.md**: User workflows, business logic
+- **tech-stack.yaml**: Technology choices
 
-if (ashokStatus has pending items) {
-  console.log("⏳ Waiting for Ashok to complete database layer...");
-  // WAIT - do not proceed
-} else {
-  console.log("✅ Ashok complete - starting API generation");
-  // PROCEED
-}
-```
+**Design artifacts are the contract:**
+- Ashok generates schema based on data-dictionary.yaml
+- Reena generates API endpoints based on api-design.md
+- Charlie generates UI based on use-cases.md and api-design.md
+- No robot reads another robot's generated code
+- All robots have complete information to work independently
 
-Charlie automatically checks if Reena is complete:
-```javascript
-// Charlie's Step 2 in P5-generation mode
-const reenaStatus = await mcp__activity_log__query({
-  robot: "reena",
-  phase: "P5-generation"
-});
-
-if (reenaStatus has pending items) {
-  console.log("⏳ Waiting for Reena to complete API layer...");
-  // WAIT
-} else {
-  console.log("✅ Reena complete - starting UI generation");
-  // PROCEED
-}
-```
-
-**No manual coordination required** - robots automatically wait for dependencies.
+**Expected behavior:**
+- Code may show import errors during generation (Reena imports Ashok's models that don't exist yet)
+- Application won't compile until all three finish
+- Testing happens after GATE-P5 when all layers complete
+- 3x speedup from true parallelism
 
 ---
 
@@ -900,7 +885,7 @@ cd /path/to/ROME/rome-p0-bootup
 3. Analysis (P2)       → User stories & entities (Talib)
 4. Design (P3)         → Architecture, API, data models, actionlist (PMA)
 5. Configuration (P4)  → Workspace setup (Lucien)
-6. Generation (P5)     → Working code (Ashok → Reena → Charlie)
+6. Generation (P5)     → Working code (Ashok + Reena + Charlie in parallel)
 7. QA (Sarah)          → Quality gates at each transition
 ```
 
