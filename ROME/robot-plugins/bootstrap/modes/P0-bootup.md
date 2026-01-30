@@ -184,7 +184,6 @@ ARTIFACT_DIRS=(
     "00-bootup/project-initialization"
     "02-analysis/requirements"
     "02-analysis/data-dictionary"
-    "02-analysis/requirement-maps"
     "03-design/architecture"
     "03-design/design-assets"
     "03-design/data-models"
