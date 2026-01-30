@@ -69,7 +69,10 @@ Initiates the complete Phase 3 Design workflow. PMA reads P2 outputs, conducts s
 ## Related Commands
 
 - `/rome-p3:activate-clara` - Activate Clara for UX design work
-- `/rome-p3:architecture` - Generate architecture diagrams
+
+## Related Skills
+
+- `/generate-architecture-diagram` - Generate architecture diagrams (layered, deployment, dataflow)
 
 ## Notes
 

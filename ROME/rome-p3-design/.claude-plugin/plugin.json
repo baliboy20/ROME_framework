@@ -21,8 +21,7 @@
     ],
     "commands": [
       "rome-p3:design",
-      "rome-p3:activate-clara",
-      "rome-p3:architecture"
+      "rome-p3:activate-clara"
     ]
   },
   "dependencies": {
