@@ -191,13 +191,79 @@ cd ROME/rome-p4-config
 **Purpose:** Generate production code in parallel with automatic dependency coordination
 **How to start:** Navigate to `ROME/rome-p5-generation/`
 
+---
+
+#### 🆕 **Recommended: Roma Command Center (Hybrid Mode)**
+
+**New in PROP-022:** Single-terminal monitoring with autonomous background agents
+
+```bash
+cd ROME/rome-p5-generation
+
+# Launch Roma Command Center
+node commands/rome-p5-parallel-generate-hybrid.js
+```
+
+**What happens:**
+1. **Agents spawn automatically** in background (Ashok, Reena, Charlie)
+2. **Live monitoring dashboard** appears in your terminal
+3. **Auto-refresh every 10 seconds** showing real-time progress
+4. **Automatic dependency coordination** (Ashok → Reena → Charlie)
+5. **Interactive commands** available for manual intervention
+
+**Dashboard shows:**
+- 🤖 Robot status (ACTIVE, WAITING, COMPLETE, DEAD)
+- 📊 Story progress (completed, in progress, pending)
+- 💓 Heartbeat monitoring (agent health checks)
+- 🚨 Real-time alerts (dead agents, stuck agents, long blockers)
+- 📈 Overall progress bar
+- 🎮 Available commands
+
+**Interactive commands:**
+```bash
+> /details ashok       # View detailed robot status
+> /tail reena          # See agent output log
+> /force-continue      # Override dependency blocker
+> /pause               # Pause monitoring (agents continue)
+> /resume              # Resume monitoring
+> /stop                # Stop monitoring and exit
+> /help                # Show all commands
+```
+
+**How it works:**
+- Ashok starts immediately (no dependencies)
+- Reena waits for Ashok completion via activity log, then auto-starts
+- Charlie waits for Reena completion via activity log, then auto-starts
+- You monitor progress in real-time from one terminal
+- Manual intervention only if alerts appear
+
+**Advantages:**
+- ✅ Single terminal (vs 3 separate sessions)
+- ✅ Zero manual coordination required
+- ✅ Fast failure detection (90s for dead, 10min for stuck)
+- ✅ 2.4x speedup vs sequential execution
+- ✅ Professional monitoring interface
+- ✅ Easy debugging with interactive commands
+
+**When to use:**
+- Production runs (hands-off execution)
+- Large projects (many stories to generate)
+- When you want real-time visibility
+- When you need automatic coordination
+
+---
+
+#### Alternative: Manual Multi-Robot Execution
+
+**For learning, debugging, or manual control:**
+
 ```bash
 cd ROME/rome-p5-generation
 # SessionStart hook auto-loads Ashok (primary robot)
 # Displays available robots and commands
 ```
 
-**True Parallel Execution:** All three robots start simultaneously
+**Traditional Parallel Execution:** All three robots start simultaneously
 
 **Database Layer (Ashok):**
 - **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot ashok`
