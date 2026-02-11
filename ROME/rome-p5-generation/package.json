@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "ROME Phase 5 Generation plugin - Parallel code generation for Database, API, and UI layers",
   "main": "index.js",
-  "type": "module",
   "keywords": [
     "rome",
     "framework",

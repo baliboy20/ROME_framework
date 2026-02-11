@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "ROME Framework foundation plugin - shared libraries, orchestrator, and activity logging",
   "main": "lib/SkillInvoker.js",
-  "type": "module",
   "scripts": {
     "test": "node servers/activity-log/activity-log-file/test.js"
   },
