@@ -10,11 +10,11 @@
 
 const path = require('path');
 const readline = require('readline');
-const MonitoringDashboard = require('../lib/MonitoringDashboard');
-const CommandHandlers = require('../lib/CommandHandlers');
-const ActivityLogCoordinator = require('../../rome-core/lib/ActivityLogCoordinator');
+const MonitoringDashboard = require('./MonitoringDashboard');
+const CommandHandlers = require('./CommandHandlers');
+const ActivityLogCoordinator = require('../../lib/ActivityLogCoordinator');
 
-const PROJECT_ROOT = path.resolve(__dirname, '../../..');
+const PROJECT_ROOT = path.resolve(__dirname, '../../../..');
 const ROBOT_PLUGINS = path.join(PROJECT_ROOT, 'ROME/robot-plugins');
 const ARTIFACTS = path.join(PROJECT_ROOT, 'ARTIFACTS');
 

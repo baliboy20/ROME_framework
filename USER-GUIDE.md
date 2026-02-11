@@ -198,10 +198,13 @@ cd ROME/rome-p4-config
 **New in PROP-022:** Single-terminal monitoring with autonomous background agents
 
 ```bash
-cd ROME/rome-p5-generation
+cd ROME_tools
 
 # Launch Roma Command Center
-node commands/rome-p5-parallel-generate-hybrid.js
+node orchestrators/p5-hybrid/index.js
+
+# Or via npm script:
+npm run p5-hybrid
 ```
 
 **What happens:**

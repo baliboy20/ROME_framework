@@ -1,0 +1,27 @@
+{
+  "name": "rome-tools",
+  "version": "1.0.0",
+  "description": "Node.js tooling for ROME Framework execution - orchestration, monitoring, and coordination",
+  "main": "lib/SkillInvoker.js",
+  "scripts": {
+    "test": "node tests/test-dashboard-simple.js",
+    "p5-hybrid": "node orchestrators/p5-hybrid/index.js"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "orchestration",
+    "aordl",
+    "requirements",
+    "activity-logging"
+  ],
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

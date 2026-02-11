@@ -5,7 +5,7 @@
  * Part of ROME-PROP-022: Agentic Loop Optimization
  */
 
-const ActivityLogCoordinator = require('../../rome-core/lib/ActivityLogCoordinator');
+const ActivityLogCoordinator = require('../../lib/ActivityLogCoordinator');
 
 class AlertSystem {
   constructor(robots = ['ashok', 'reena', 'charlie'], phase = 'P5-generation') {

@@ -5,7 +5,7 @@
  * Usage: node test-dashboard-simple.js
  */
 
-const MonitoringDashboard = require('./lib/MonitoringDashboard');
+const MonitoringDashboard = require('../orchestrators/p5-hybrid/MonitoringDashboard');
 
 async function testDashboard() {
   console.log('╔════════════════════════════════════════════════════════╗');
