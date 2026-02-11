@@ -9,8 +9,8 @@
 ### 1. Verify Node.js & Dependencies
 
 ```bash
-cd /Users/will/flutterProjects/Exercises/Jan/ROME_AORDL_V3/ROME/rome-p5-generation
-node --version  # Should be v14+
+cd /Users/will/flutterProjects/Exercises/Jan/ROME_AORDL_V3/ROME_tools
+node --version  # Should be v18+
 npm --version
 ```
 
@@ -43,10 +43,13 @@ touch ../../../ARTIFACTS/_activity/activity-log.txt
 ### Goal: Verify the script executes without immediate crashes
 
 ```bash
-cd /Users/will/flutterProjects/Exercises/Jan/ROME_AORDL_V3/ROME/rome-p5-generation
+cd /Users/will/flutterProjects/Exercises/Jan/ROME_AORDL_V3/ROME_tools
 
 # Run with Node.js (not as background task yet)
-node commands/rome-p5-parallel-generate-hybrid.js
+node orchestrators/p5-hybrid/index.js
+
+# Or via npm script:
+npm run p5-hybrid
 ```
 
 ### Expected Output
@@ -95,11 +98,11 @@ Solution: Verify you're in correct directory, check file exists
 
 ### Test ActivityLogCoordinator
 
-Create test file: `test-coordinator.js`
+Create test file: `test-coordinator.js` in ROME_tools/tests/
 
 ```javascript
 #!/usr/bin/env node
-const ActivityLogCoordinator = require('../rome-core/lib/ActivityLogCoordinator');
+const ActivityLogCoordinator = require('../lib/ActivityLogCoordinator');
 
 async function testCoordinator() {
   console.log('Testing ActivityLogCoordinator...\n');
@@ -131,11 +134,11 @@ node test-coordinator.js
 
 ### Test AlertSystem
 
-Create test file: `test-alerts.js`
+Create test file: `test-alerts.js` in ROME_tools/tests/
 
 ```javascript
 #!/usr/bin/env node
-const AlertSystem = require('./lib/AlertSystem');
+const AlertSystem = require('../orchestrators/p5-hybrid/AlertSystem');
 
 async function testAlerts() {
   console.log('Testing AlertSystem...\n');
@@ -181,11 +184,11 @@ EOF
 
 #### Step 2: Test Dashboard Rendering (Mock Mode)
 
-Create `test-dashboard.js`:
+Create `test-dashboard.js` in ROME_tools/tests/:
 
 ```javascript
 #!/usr/bin/env node
-const MonitoringDashboard = require('./lib/MonitoringDashboard');
+const MonitoringDashboard = require('../orchestrators/p5-hybrid/MonitoringDashboard');
 
 async function testDashboard() {
   console.log('Testing MonitoringDashboard...\n');
@@ -361,12 +364,12 @@ node simulate-agents.js
 
 ### Test Command Handlers
 
-Create `test-commands.js`:
+Create `test-commands.js` in ROME_tools/tests/:
 
 ```javascript
 #!/usr/bin/env node
-const CommandHandlers = require('./lib/CommandHandlers');
-const MonitoringDashboard = require('./lib/MonitoringDashboard');
+const CommandHandlers = require('../orchestrators/p5-hybrid/CommandHandlers');
+const MonitoringDashboard = require('../orchestrators/p5-hybrid/MonitoringDashboard');
 
 async function testCommands() {
   const agents = {
@@ -409,7 +412,7 @@ testCommands().catch(console.error);
 ## Test Level 6: Real Claude Code Session Test
 
 ### Prerequisites
-1. Open Claude Code in the `rome-p5-generation` directory
+1. Open Claude Code in the `ROME_tools` directory
 2. Ensure MCP servers are configured
 3. Ensure you have Task tool access
 
@@ -417,7 +420,7 @@ testCommands().catch(console.error);
 
 **Step 1: Open Claude Code**
 ```bash
-cd /Users/will/flutterProjects/Exercises/Jan/ROME_AORDL_V3/ROME/rome-p5-generation
+cd /Users/will/flutterProjects/Exercises/Jan/ROME_AORDL_V3/ROME_tools
 claude
 ```
 
@@ -428,7 +431,12 @@ Run the hybrid mode orchestrator
 
 Or directly:
 ```
-node commands/rome-p5-parallel-generate-hybrid.js
+npm run p5-hybrid
+```
+
+Or:
+```
+node orchestrators/p5-hybrid/index.js
 ```
 
 **Step 3: Observe**

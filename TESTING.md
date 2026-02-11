@@ -9,6 +9,8 @@ Date: 2026-01-07
 
 This document provides comprehensive testing and validation procedures for the ROME Framework phase-based plugin architecture. It covers plugin installation verification, functional testing, integration testing, and end-to-end workflow validation.
 
+> **Note on Restructuring (2026-02-11):** Node.js implementation tooling has been moved to `ROME_tools/` directory to separate implementation from framework. For P5 hybrid mode (Roma Command Center) testing, see `ROME/rome-p5-generation/TESTING-GUIDE.md` and `ROME_tools/QUICKSTART.md`.
+
 ## Testing Levels
 
 ### 1. Plugin Installation Verification
