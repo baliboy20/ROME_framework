@@ -363,9 +363,11 @@ async createUser(req, res) {
 - [ ] No hardcoded secrets
 - [ ] API documentation complete
 
-### Step 15: Create Feature Traceability
+### Step 15: Create Feature Traceability (MANDATORY)
 
 **Output:** `SOURCE/[backend]/features/[feature]/TRACEABILITY.md`
+
+**⚠️ CRITICAL:** Sarah will BLOCK at GATE-P5 if TRACEABILITY.md files are missing.
 
 **Required by ROME-PROP-016:**
 ```markdown

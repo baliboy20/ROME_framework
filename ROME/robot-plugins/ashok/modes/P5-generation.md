@@ -295,9 +295,11 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - [ ] Database tests pass
 - [ ] Setup scripts work
 
-### Step 14: Create Feature Traceability
+### Step 14: Create Feature Traceability (MANDATORY)
 
 **Output:** `SOURCE/[data-workspace]/features/[feature]/TRACEABILITY.md`
+
+**⚠️ CRITICAL:** Sarah will BLOCK at GATE-P5 if TRACEABILITY.md files are missing.
 
 **Required by ROME-PROP-016:**
 ```markdown

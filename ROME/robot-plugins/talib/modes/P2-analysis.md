@@ -112,16 +112,23 @@ Check:
 1. **Read AORDL Requirements** - Use Read tool on all REQ-*.yaml files
 2. **Map to Epics** - Group related AORDL intents by business domain
 3. **Create Features** - Each AORDL requirement → Feature (FUNC-###)
-4. **Generate User Stories** - Transform AORDL Actor+Intent into story format:
+4. **UPDATE DOWNSTREAM LINKS (CRITICAL)** - After creating each feature:
+   - Read parent REQ-*.yaml file
+   - Update `traceability.downstream` array with new FUNC-### ID
+   - Example: `downstream: [FUNC-TODO-001, US-TODO-001]`
+   - Use Edit tool to update the parent requirement file
+   - **Sarah will BLOCK at GATE-P2 if downstream links are empty**
+5. **Generate User Stories** - Transform AORDL Actor+Intent into story format:
    - "As a [AORDL.Actor], I want to [AORDL.Intent], So that [derived from Outcomes]"
-5. **Extract Acceptance Criteria** - Use AORDL Outcomes, Postconditions, NonFunctional
-6. **Map to 8 Dimensions** - Extract from AORDL fields:
+   - Update parent REQ and FUNC downstream links with new US-### IDs
+6. **Extract Acceptance Criteria** - Use AORDL Outcomes, Postconditions, NonFunctional
+7. **Map to 8 Dimensions** - Extract from AORDL fields:
    - Functional: Intent, Outcomes
    - Data Model: Invariants, Postconditions
    - Security: NonFunctional.Security
    - Performance: NonFunctional.Performance
    - Quality: Errors, Conditions
-7. **Identify Vertical Slices** - Group features by dependencies in AORDL
+8. **Identify Vertical Slices** - Group features by dependencies in AORDL
 
 **Skills for decomposition:**
 

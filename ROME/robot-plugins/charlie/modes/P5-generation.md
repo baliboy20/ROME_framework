@@ -411,9 +411,11 @@ class UserService {
 - [ ] No hardcoded API URLs (use environment config)
 - [ ] Application builds without errors
 
-### Step 17: Create Feature Traceability
+### Step 17: Create Feature Traceability (MANDATORY)
 
 **Output:** `SOURCE/lib/features/[feature]/TRACEABILITY.md`
+
+**⚠️ CRITICAL:** Sarah will BLOCK at GATE-P5 if TRACEABILITY.md files are missing.
 
 **Required by ROME-PROP-016:**
 ```markdown

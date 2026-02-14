@@ -71,10 +71,12 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 **During Quality Gates:**
 1. GATE-P1 → `/validate-aordl-structure --requirements ARTIFACTS/_requirements/`
 2. GATE-P2 → `/validate-requirements-coverage --matrix requirements-matrix.yaml`
+   - **CRITICAL:** Manually verify downstream links populated in REQ-*.yaml files
 3. GATE-P3 → `/validate-data-dictionary --dictionary data-dictionary.yaml`
 4. GATE-P4 → `/validate-workspace-structure --manifest scaffolding-manifest.md`
 5. GATE-P5 → `/validate-test-coverage --source SOURCE/`
-6. Traceability → `/verify-traceability --from AORDL --to Code`
+   - **CRITICAL:** Manually verify TRACEABILITY.md files exist for all features
+6. Traceability → `/verify-traceability --from AORDL --to Code` (when implemented)
 
 ---
 
@@ -193,9 +195,13 @@ Sarah must know these critical file paths for gate validation:
    - Robot: talib
    - BLOCK if missing or incomplete
 
-2. Requirements Coverage
+2. Requirements Coverage + Downstream Traceability
    - All AORDL requirements mapped to features (REQ-###→FUNC-###)
    - No orphan requirements
+   - **CRITICAL:** All P1 requirements have populated downstream links
+   - Check: grep "downstream: \[\]" ARTIFACTS/_requirements/aordl/*.yaml
+   - BLOCK if any REQ-### has empty downstream array
+   - All created features/stories must be listed in parent requirement's downstream
 
 3. 8-Dimension Coverage
    - Functional, Data, Business Rules, Security, Performance, Quality, Integration, Deployment
@@ -361,10 +367,16 @@ Sarah must know these critical file paths for gate validation:
    - All integration tests passing
    - Test coverage adequate
 
-4. Traceability
+4. Traceability (CRITICAL)
    - AORDL→FUNC→UC→Code chain intact
-   - All TRACEABILITY.md files present (ROME-PROP-016)
+   - **All TRACEABILITY.md files present** (ROME-PROP-016)
+   - Check: find SOURCE/ -name "TRACEABILITY.md"
+   - Each feature MUST have TRACEABILITY.md listing:
+     * Requirements covered (REQ-###, FUNC-###, US-###)
+     * Implementation files created
+     * Tests written
    - Git commits reference feature IDs
+   - BLOCK if TRACEABILITY.md files missing
 
 5. Documentation
    - API documentation complete
