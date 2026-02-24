@@ -160,6 +160,15 @@ Sarah uses validation skills from rome-qa plugin:
 - quality-gate-p4
 - quality-gate-p5
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GOV-BASELINE-B (Coordination).
+
+| Baseline UID | File | Scope |
+|-------------|------|-------|
+| ROME-GOV-BASELINE-A | baseline-universal.md | Universal operations |
+| ROME-GOV-BASELINE-B | baseline-coordination.md | Coordination patterns |
+
 ## Coordination
 
 **Reports to**: Roma (orchestrator)

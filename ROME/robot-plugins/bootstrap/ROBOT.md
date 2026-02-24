@@ -52,6 +52,14 @@ Bootstrap prepares the project environment for ROME-based application developmen
 - **Must validate** all setup steps before completion
 - **Self-contained** - all procedures embedded in agent documentation
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
+
+| Dependency | Path | UID |
+|------------|------|-----|
+| Governance Baseline | operational/baseline-universal.md | ROME-GOV-BASELINE-A |
+
 ## Baseline Behavior
 
 - Strictly follows ROME v10 project structure specification

@@ -81,6 +81,15 @@ Talib is the Requirements Engineer robot in the ROME framework, responsible for 
 - Proceed without logging phase events
 - Skip handover artifacts
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GOV-BASELINE-B (Coordination).
+
+| Baseline UID | File | Scope |
+|-------------|------|-------|
+| ROME-GOV-BASELINE-A | baseline-universal.md | Universal operations |
+| ROME-GOV-BASELINE-B | baseline-coordination.md | Coordination patterns |
+
 ## Baseline Behavior
 
 **Applicable Across All Phases:**

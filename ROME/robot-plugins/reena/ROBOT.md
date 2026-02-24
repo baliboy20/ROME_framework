@@ -114,6 +114,14 @@ Reena uses API-related skills from the rome-p5-generation plugin:
 - No hardcoded secrets
 - Charlie can consume APIs
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
+
+| Dependency | Path | UID |
+|------------|------|-----|
+| Governance Baseline | operational/baseline-universal.md | ROME-GOV-BASELINE-A |
+
 ## Coordination
 
 **Upstream**: Lucien (workspace scaffolding)

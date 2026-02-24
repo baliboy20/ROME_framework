@@ -108,6 +108,14 @@ Charlie operates exclusively in the Generation phase, transforming design and co
 - No hardcoded API URLs
 - Application builds without errors
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
+
+| Dependency | Path | UID |
+|------------|------|-----|
+| Governance Baseline | operational/baseline-universal.md | ROME-GOV-BASELINE-A |
+
 ## Coordination
 
 **Upstream**: Lucien (workspace scaffolding)

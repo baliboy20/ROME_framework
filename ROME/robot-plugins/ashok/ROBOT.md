@@ -110,6 +110,14 @@ Ashok uses database-related skills from the rome-p5-generation plugin:
 - Reena can build APIs without database questions
 - MCP updated with story status
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
+
+| Dependency | Path | UID |
+|------------|------|-----|
+| Governance Baseline | operational/baseline-universal.md | ROME-GOV-BASELINE-A |
+
 ## Coordination
 
 **Upstream**: Lucien (workspace scaffolding)

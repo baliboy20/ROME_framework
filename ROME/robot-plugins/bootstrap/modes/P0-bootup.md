@@ -84,7 +84,7 @@ set -e
 echo "Creating ROME v10 project: $PROJECT_NAME"
 
 # Validate ROME path
-if [ ! -f "$ROME_PATH/rome-core/docs/foundation/core-principles.md" ]; then
+if [ ! -f "$ROME_PATH/rome-core/docs/foundation/lexicon.md" ]; then
     echo "ERROR: Invalid ROME path: $ROME_PATH"
     exit 1
 fi
@@ -96,7 +96,7 @@ mkdir -p "$PROJECT_PATH"
 if [ -d "$PROJECT_PATH/ROME" ]; then
     echo "✓ ROME directory already present (copied mode - version isolated)"
     # Validate it's actually ROME
-    if [ ! -f "$PROJECT_PATH/ROME/rome-core/docs/foundation/core-principles.md" ]; then
+    if [ ! -f "$PROJECT_PATH/ROME/rome-core/docs/foundation/lexicon.md" ]; then
         echo "ERROR: ROME directory exists but appears invalid"
         exit 1
     fi

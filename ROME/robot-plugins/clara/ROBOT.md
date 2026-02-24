@@ -97,6 +97,14 @@ If not activated: Clara does not participate. PMA documents UI requirements dire
 
 ---
 
+## Governance Baseline
+
+This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
+
+| Dependency | Path | UID |
+|------------|------|-----|
+| Governance Baseline | operational/baseline-universal.md | ROME-GOV-BASELINE-A |
+
 ## Dependencies
 
 **Required Plugins:**

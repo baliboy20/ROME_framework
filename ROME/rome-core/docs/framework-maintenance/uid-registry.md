@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 2.6 |
-| **Date** | 2026-01-07T00:00:00Z |
+| **Document UID** | ROME-GOV-002 || **Version** | 2.7 |
+| **Date** | 2026-02-24T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -58,23 +58,27 @@ ROME-[TYPE]-[NUMBER]
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-PRIN-001 | Core Principles | `/ROME/foundation/core-principles.md` | Draft |
-| ROME-IMPL-001 | Core Principles Policy | `/ROME/foundation/core-principles-policy.md` | Draft |
-| ROME-LEX-001 | Lexicon | `/ROME/foundation/lexicon.md` | Draft |
+| ROME-PRIN-001 | Core Principles | `/ROME/rome-core/docs/framework-maintenance/core-principles.md` | Draft |
+| ROME-IMPL-001 | Core Principles Policy | `/ROME/rome-core/docs/framework-maintenance/core-principles-policy.md` | Draft |
+| ROME-LEX-001 | Lexicon | `/ROME/rome-core/docs/foundation/lexicon.md` | Draft |
 
 ### Governance Documents
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-GOV-001 | Document Standards | `/ROME/framework-governance/document-standards.md` | Draft |
-| ROME-GOV-002 | UID Registry | `/ROME/framework-governance/uid-registry.md` | Draft |
-| ROME-GOV-003 | Amendment Procedures | `/ROME/framework-governance/amendment-procedures.md` | Draft |
-| ROME-GOV-004 | Terminology Management | `/ROME/framework-governance/terminology-management.md` | Draft |
-| ROME-GOV-005 | Document Architecture | `/ROME/framework-governance/document-architecture.md` | Draft |
-| ROME-GOV-006 | Sponsor Interaction | `/ROME/rome-core/docs/governance/sponsor-interaction.md` | Active |
-| ROME-GOV-007 | Framework Fidelity | `/ROME/framework-governance/framework-fidelity.md` | Draft |
-| ROME-GOV-008 | Activity Log Format | `/ROME/framework-governance/activity-log-format.md` | Draft |
-| ROME-GOV-009 | MCP Server Dependencies | `/ROME/rome-core/docs/governance/mcp-server-dependencies.md` | Draft |
+| ROME-GOV-001 | Document Standards | `/ROME/rome-core/docs/framework-maintenance/document-standards.md` | Draft |
+| ROME-GOV-002 | UID Registry | `/ROME/rome-core/docs/framework-maintenance/uid-registry.md` | Draft |
+| ROME-GOV-003 | Amendment Procedures | `/ROME/rome-core/docs/framework-maintenance/amendment-procedures.md` | Draft |
+| ROME-GOV-004 | Terminology Management | `/ROME/rome-core/docs/framework-maintenance/terminology-management.md` | Draft |
+| ROME-GOV-005 | Document Architecture | `/ROME/rome-core/docs/framework-maintenance/document-architecture.md` | Draft |
+| ROME-GOV-006 | Sponsor Interaction | `/ROME/rome-core/docs/operational/sponsor-interaction.md` | Active |
+| ROME-GOV-007 | Framework Fidelity | `/ROME/rome-core/docs/framework-maintenance/framework-fidelity.md` | Draft |
+| ROME-GOV-008 | Activity Log Format | `/ROME/rome-core/docs/operational/activity-log-format.md` | Draft |
+| ROME-GOV-009 | MCP Server Dependencies | `/ROME/rome-core/docs/operational/mcp-server-dependencies.md` | Draft |
+| ROME-GOV-BASELINE | Robot Baseline (Monolithic) | `/ROME/rome-core/docs/governance/robot-baseline.md` | Deprecated |
+| ROME-GOV-BASELINE-A | Baseline: Universal | `/ROME/rome-core/docs/operational/baseline-universal.md` | Draft |
+| ROME-GOV-BASELINE-B | Baseline: Coordination | `/ROME/rome-core/docs/operational/baseline-coordination.md` | Draft |
+| ROME-GOV-BASELINE-C | Baseline: Governance | `/ROME/rome-core/docs/framework-maintenance/baseline-governance.md` | Draft |
 
 ### Configuration Documents
 
@@ -134,6 +138,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-006 | Integration Testing Framework | `/ROME_framework_maintenance/proposals/ROME-PROP-006-integration-testing-framework.md` | Proposal |
 | ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
 | ROME-PROP-008 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-008-phase-based-plugin-architecture.md` | Proposal |
+| ROME-PROP-023 | Operational/Governance Separation | `/ROME_framework_maintenance/proposals/ROME-PROP-023-operational-governance-separation.md` | Draft |
 
 ### Migration Documents
 
@@ -213,3 +218,4 @@ This registry MUST be updated when:
 | 2.4 | 2025-12-18T00:00:00Z | Registered ROME-GOV-008 (Activity Log Format) |
 | 2.5 | 2025-12-18T00:00:00Z | Added MIG type code, registered ROME-MIG-001 (Migration Guide), updated ROME-PROP-007 status to "In Progress (40%)" |
 | 2.6 | 2026-01-07T00:00:00Z | Registered ROME-PROP-008 (Phase-Based Plugin Architecture) |
+| 2.7 | 2026-02-24T00:00:00Z | Updated locations for ROME-PROP-023 operational/governance separation. Added ROME-GOV-BASELINE-A/B/C tiered baselines. Deprecated ROME-GOV-BASELINE. |
