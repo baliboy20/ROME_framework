@@ -45,7 +45,7 @@ cd /path/to/ROME/rome-p0-bootup
 - No manual file opening required
 - Robot context = ROBOT.md + phase-specific mode file
 
----[USER-GUIDE.md](USER-GUIDE.md)
+---
 
 ## Phase Workflow
 
@@ -61,8 +61,6 @@ cd ROME/rome-p0-bootup
 # SessionStart hook auto-loads Roma in P0-bootup mode
 ```
 
-**When:** Start of every new project
-
 **What Roma does:**
 - Creates ARTIFACTS/ directory structure
 - Initializes activity log
@@ -72,7 +70,7 @@ cd ROME/rome-p0-bootup
 ---
 
 ### P1: AORDL Requirements
-**Robot:** Talib (Requirements Analyst)
+**Robot:** Talib (Requirements Engineer)
 **Purpose:** Capture structured requirements in AORDL format
 **How to start:** Navigate to `ROME/rome-p1-aordl/`
 
@@ -86,29 +84,49 @@ cd ROME/rome-p1-aordl
 **Skills available** (from `robot-plugins/talib/skills/`):
 - `/log-phase-start` - Log phase start (MANDATORY)
 - `/create-aordl-requirement` - Create new AORDL requirement
-- `/validate-aordl` - Validate AORDL syntax
+- `/validate-aordl` - Validate AORDL structure
 - `/transform-aordl-to-bdd` - Convert to BDD format
 - `/log-phase-complete` - Log phase completion (MANDATORY before GATE-P1)
 
 **Input:** User needs, PRD, BRD
-**Output:** `ARTIFACTS/_requirements/aordl/*.yaml` (AORDL files)
+**Output:** `ARTIFACTS/_requirements/REQ-###.yaml` (AORDL files)
 
-**Example AORDL:**
+**AORDL Required Fields (13):**
+
 ```yaml
-REQ-001:
-  title: User Login
-  actor: User
-  action: Login
-  object: System
-  context: Web application
-  ...13 required fields total
+ID: REQ-001
+Actor: ProjectManager              # Specific role (not "User")
+Intent: create project              # Single atomic verb + object
+Preconditions:                      # Required state before action
+  - Actor is authenticated
+Conditions:                         # Constraints during action
+  - Project name must be unique
+Postconditions:                     # Guaranteed state after
+  - Project record exists
+Outcomes:                           # Observable results
+  - Project visible in project list
+Invariants:                         # Domain truths that never change
+  - Project names are globally unique
+NonFunctional:
+  Performance: [Response <500ms]
+  Security: [Role-based access]
+  Usability: []
+Errors:                             # Error scenarios
+  - condition: "Project name exists"
+    message: "A project with this name already exists"
+    code: DUPLICATE_NAME
+ScopeBoundary:
+  InScope: [Create project, assign owner]
+  OutOfScope: [Invite members, billing]
+OpenQuestions: []                    # Must be RESOLVED before GATE-P1
+CopilotMode: STRICT                 # STRICT | GUIDED | PERMISSIVE
 ```
 
 ---
 
 ### P2: Analysis
-**Robot:** Talib (Requirements Analyst)
-**Purpose:** Decompose requirements, extract entities, identify dependencies
+**Robot:** Talib (Requirements Engineer)
+**Purpose:** Decompose requirements into features, user stories, acceptance criteria
 **How to start:** Navigate to `ROME/rome-p2-analysis/`
 
 ```bash
@@ -116,23 +134,21 @@ cd ROME/rome-p2-analysis
 # SessionStart hook auto-loads Talib in P2-analysis mode
 ```
 
-**MANDATORY FIRST ACTION:** Log phase start with `/log-phase-start --phase P2 --robot talib`
-
 **Skills available** (from `robot-plugins/talib/skills/`):
-- `/log-phase-start` - Log phase start (MANDATORY)
-- `/analyze-requirement` - Analyze single requirement
+- `/analyze-requirement` - Analyze single requirement (8-dimension)
 - `/batch-analyze-requirements` - Analyze all requirements
-- `/generate-user-stories` - Generate user stories
-- `/log-phase-complete` - Log phase completion (MANDATORY before GATE-P2)
+- `/generate-user-stories` - Generate user stories from AORDL
 
 **Input:** AORDL requirements from P1
-**Output:** Analysis artifacts, entity models, user stories
+**Output:** Features (FUNC-###), user stories (US-###), acceptance criteria, requirements matrix
+
+**Traceability established:** `REQ-### → FUNC-### → US-###`
 
 ---
 
 ### P3: Design
-**Robot:** PMA (Principal Metadata Architect)
-**Purpose:** Design system architecture, technical specs, data models
+**Robot:** PMA (Project Manager / Architect) + Clara (UX Designer, optional)
+**Purpose:** Design system architecture, create feature specifications
 **How to start:** Navigate to `ROME/rome-p3-design/`
 
 ```bash
@@ -140,27 +156,62 @@ cd ROME/rome-p3-design
 # SessionStart hook auto-loads PMA in P3-design mode
 ```
 
-**Skills available** (from `robot-plugins/pma/skills/`):
-- `/design-api-controllers`, `/design-dto-models`
-- `/design-authentication`, `/design-component-structure`
-- `/generate-architecture-diagram`
-- `/generate-work-breakdown` - Creates actionlist.md for P5
-
-**Input:** Analysis from P2
-**Output:** Architecture docs, API specs, data dictionary, **actionlist.md**
-
-**Key artifacts:**
-- `data-dictionary.yaml` - All entities, fields, relationships
+**PMA creates:**
+- `tech-stack.yaml` - Technology decisions + capability declarations (ROME-PROP-025)
+- `data-dictionary.yaml` - All entities, fields, relationships (single source of truth)
 - `api-design.md` - API contracts (endpoints, requests, responses)
-- `tech-stack.yaml` - Technology decisions
-- `actionlist.md` - Work breakdown by robot for P5
-- Architecture diagrams
+- Use cases (UC-###) - Step-by-step interaction flows
+- `system-architecture.md` - Layer diagram, component boundaries
+- **Feature specifications** (SPEC-###) - Per-feature consolidated design contract (ROME-PROP-024)
+- `actionlist.md` - Work breakdown by capability and robot for P5
+
+**Feature Specifications (PROP-024):**
+
+PMA creates one SPEC-### per FUNC-###, consolidating all design context for that feature:
+
+```
+SPEC-002: Organisation Management
+  ├── Requirements Summary (REQ-003, REQ-004, REQ-005)
+  ├── Use Cases (UC-003, UC-004, UC-005)
+  ├── Data Schema (Organisation entity)
+  ├── API Contracts (POST/PUT/GET /organisations)
+  ├── UI Wireframes (Clara's layouts)
+  ├── Implementation (empty — P5 robots complete)
+  └── Change Register (v1.0)
+```
+
+**Capability Declarations (PROP-025):**
+
+PMA defines system capabilities in `tech-stack.yaml`:
+
+```yaml
+capabilities:
+  - id: database
+    technology: PostgreSQL
+    robot: ashok
+    workspace: database
+  - id: api
+    technology: Hono (Bun)
+    robot: reena
+    workspace: backend-api
+  - id: ui-app
+    technology: Flutter
+    robot: charlie
+    workspace: frontend-app
+dependencies:
+  api: [database]
+  ui-app: [api]
+```
+
+Capabilities replace the fixed db/api/ui model. Any number of capabilities can be declared.
+
+**Traceability extended:** `REQ-### → FUNC-### → US-### → SPEC-### (v1.0)`
 
 ---
 
 ### P4: Configuration
-**Robot:** Lucien (DevOps & Environment Specialist)
-**Purpose:** Configure workspace, build system, CI/CD
+**Robot:** Lucien (Configuration Specialist / DevOps)
+**Purpose:** Scaffold workspaces per capability, configure build system, CI/CD
 **How to start:** Navigate to `ROME/rome-p4-config/`
 
 ```bash
@@ -168,207 +219,77 @@ cd ROME/rome-p4-config
 # SessionStart hook auto-loads Lucien in P4-config mode
 ```
 
-**Skills available** (from `robot-plugins/lucien/skills/`):
-- `/scaffold-workspace` - Create project scaffolding
-- `/configure-build-system` - Configure environment
-- `/setup-cicd-pipeline` - Setup CI/CD
-
-**Input:** Designs from P3
-**Output:** Configured workspace, build config, test framework
-
 **Lucien creates:**
-- `SOURCE/` directory structure
-- Package files (package.json, requirements.txt, etc.)
-- Build configuration
+- One workspace per capability in `SOURCE/`
+- Package files, build configuration
 - Test framework setup
-- Environment configs (dev, staging, prod)
+- Environment configs (dev, test, staging, prod)
 - CI/CD pipelines
+
+**Input:** P3 designs, tech-stack.yaml (capabilities), actionlist.md
+**Output:** Configured `SOURCE/` workspace roots, scaffolding manifest
 
 ---
 
 ### P5: Code Generation (Parallel Execution)
-**Robots:** Ashok (Database), Reena (Backend API), Charlie (Frontend UI)
-**Purpose:** Generate production code in parallel with automatic dependency coordination
+**Robots:** Per capability configuration (default: Ashok, Reena, Charlie)
+**Purpose:** Generate production code with automatic dependency coordination
 **How to start:** Navigate to `ROME/rome-p5-generation/`
+
+**P5 robots read feature specifications (SPEC-###) as their primary input** — one document per feature with all design context consolidated.
+
+Each P5 robot:
+1. Reads assigned feature specs
+2. Implements their capability's code
+3. Completes the Implementation section of the spec with files created and rationale
+4. Creates TRACEABILITY.md per feature referencing the spec
+5. Bumps spec version in Change Register
+
+**Default capabilities:**
+
+| Capability | Robot | What They Build |
+|------------|-------|----------------|
+| database | Ashok | Schema, migrations, ORM models, seed data |
+| api | Reena | Endpoints, services, middleware, DTOs |
+| ui-app | Charlie | Screens, widgets, state management, navigation |
+
+**Dependency coordination:** Roma reads `dependencies` from tech-stack.yaml and coordinates automatically. Capabilities with no dependencies start immediately. Dependencies are declared, not hardcoded.
+
+**Feature-based code organisation:**
+
+```
+SOURCE/[workspace]/
+└── features/
+    ├── [feature_name]/
+    │   ├── TRACEABILITY.md    → references SPEC-###
+    │   ├── models/
+    │   ├── services/
+    │   ├── controllers/ or widgets/
+    │   └── tests/
+```
 
 ---
 
-#### 🆕 **Recommended: Roma Command Center (Hybrid Mode)**
+#### Recommended: Roma Command Center (Hybrid Mode)
 
-**New in PROP-022:** Single-terminal monitoring with autonomous background agents
+Single-terminal monitoring with autonomous background agents:
 
 ```bash
 cd ROME_tools
-
-# Launch Roma Command Center
 node orchestrators/p5-hybrid/index.js
-
-# Or via npm script:
-npm run p5-hybrid
 ```
 
 **What happens:**
-1. **Agents spawn automatically** in background (Ashok, Reena, Charlie)
-2. **Live monitoring dashboard** appears in your terminal
-3. **Auto-refresh every 10 seconds** showing real-time progress
-4. **Automatic dependency coordination** (Ashok → Reena → Charlie)
-5. **Interactive commands** available for manual intervention
-
-**Dashboard shows:**
-- 🤖 Robot status (ACTIVE, WAITING, COMPLETE, DEAD)
-- 📊 Story progress (completed, in progress, pending)
-- 💓 Heartbeat monitoring (agent health checks)
-- 🚨 Real-time alerts (dead agents, stuck agents, long blockers)
-- 📈 Overall progress bar
-- 🎮 Available commands
-
-**Interactive commands:**
-```bash
-> /details ashok       # View detailed robot status
-> /tail reena          # See agent output log
-> /force-continue      # Override dependency blocker
-> /pause               # Pause monitoring (agents continue)
-> /resume              # Resume monitoring
-> /stop                # Stop monitoring and exit
-> /help                # Show all commands
-```
-
-**How it works:**
-- Ashok starts immediately (no dependencies)
-- Reena waits for Ashok completion via activity log, then auto-starts
-- Charlie waits for Reena completion via activity log, then auto-starts
-- You monitor progress in real-time from one terminal
-- Manual intervention only if alerts appear
-
-**Advantages:**
-- ✅ Single terminal (vs 3 separate sessions)
-- ✅ Zero manual coordination required
-- ✅ Fast failure detection (90s for dead, 10min for stuck)
-- ✅ 2.4x speedup vs sequential execution
-- ✅ Professional monitoring interface
-- ✅ Easy debugging with interactive commands
-
-**When to use:**
-- Production runs (hands-off execution)
-- Large projects (many stories to generate)
-- When you want real-time visibility
-- When you need automatic coordination
-
----
-
-#### Alternative: Manual Multi-Robot Execution
-
-**For learning, debugging, or manual control:**
-
-```bash
-cd ROME/rome-p5-generation
-# SessionStart hook auto-loads Ashok (primary robot)
-# Displays available robots and commands
-```
-
-**Traditional Parallel Execution:** All three robots start simultaneously
-
-**Database Layer (Ashok):**
-- **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot ashok`
-- Database schema (DDL)
-- Migrations (version-controlled)
-- ORM models
-- Seed data
-- Reads: `data-dictionary.yaml`
-- **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot ashok`
-
-**Backend API Layer (Reena):**
-- **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot reena`
-- API endpoints (RESTful)
-- Business logic / service layer
-- Authentication middleware
-- Validation middleware
-- Reads: `api-design.md`, `data-dictionary.yaml`, `use-cases.md`
-- **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot reena`
-
-**Frontend UI Layer (Charlie):**
-- **MANDATORY:** Log phase start with `/log-phase-start --phase P5 --robot charlie`
-- Screens/pages
-- UI components
-- State management
-- API integration
-- Reads: `use-cases.md`, `api-design.md`, `data-dictionary.yaml`
-- **MANDATORY:** Log phase completion with `/log-phase-complete --phase P5 --robot charlie`
-
-**Note:** All robots read from design artifacts, not from each other's generated code. They can run truly in parallel.
-
-**Input:** Configuration from P4, actionlist.md from P3
-**Output:** Working application code across all three layers
-
-#### Working with Multiple Robots in P5
-
-**Option 1: Sequential (Single Terminal)**
-
-Switch between robots as you complete each layer:
-
-```bash
-cd ROME/rome-p5-generation
-# Ashok auto-loads (database layer)
-# ... work with Ashok to complete database layer ...
-
-# Switch to Reena after Ashok completes
-bash commands/switch-robot.sh reena
-# ... work with Reena to complete backend API ...
-
-# Switch to Charlie after Reena completes
-bash commands/switch-robot.sh charlie
-# ... work with Charlie to complete frontend UI ...
-```
-
-**Option 2: Parallel (Multiple Terminals)**
-
-Run all three robots simultaneously - all start immediately:
-
-```bash
-# Terminal 1: Ashok (Database)
-cd ROME/rome-p5-generation
-bash commands/switch-robot.sh ashok
-# Starts immediately, generates database layer
-
-# Terminal 2: Reena (Backend API)
-cd ROME/rome-p5-generation
-bash commands/switch-robot.sh reena
-# Starts immediately, generates backend API
-
-# Terminal 3: Charlie (Frontend UI)
-cd ROME/rome-p5-generation
-bash commands/switch-robot.sh charlie
-# Starts immediately, generates frontend UI
-```
-
-**True Parallel Execution:**
-
-All robots start immediately and work in parallel:
-- All read from design artifacts (data-dictionary.yaml, api-design.md, use-cases.md)
-- No waiting for other robots to complete
-- Maximum parallelism - 3x speedup potential
-- Code may have import errors until all three finish (expected)
-- Final validation at GATE-P5 after all complete
-
-**Monitor Progress:**
-
-```bash
-bash commands/rome-p5-status.sh
-# Shows completion status for all three robots
-```
-
-**Launch All Robots:**
-
-```bash
-bash commands/rome-p5-parallel-generate.sh
-# Provides instructions for multi-terminal setup
-```
+1. Agents spawn automatically in background per capability configuration
+2. Live monitoring dashboard with real-time progress
+3. Automatic dependency coordination per tech-stack.yaml
+4. Interactive commands for manual intervention
 
 ---
 
 ### QA: Quality Assurance
 **Robot:** Sarah (QA Validator & Quality Gatekeeper)
-**Purpose:** Validate deliverables, enforce quality gates, **validate activity log**
+**Purpose:** Validate deliverables, enforce quality gates
 **How to start:** Navigate to `ROME/rome-qa/`
 **Authority:** APPROVE or BLOCK phase transitions
 
@@ -377,56 +298,52 @@ cd ROME/rome-qa
 # SessionStart hook auto-loads Sarah in QA-validator mode
 ```
 
-**Sarah validates (MANDATORY activity log check at every gate):**
-- GATE-P1: Activity log + AORDL structure validation
-- GATE-P2: Activity log + Analysis → Design (8-dimension coverage)
-- GATE-P3: Activity log + Design → Config (100% requirements coverage)
-- GATE-P4: Activity log + Config → Generation (configuration completeness)
-- GATE-P5: Activity log + Generation → Delivery (implementation completeness)
+**Quality Gates:**
 
-**Skills available** (from `robot-plugins/sarah/skills/`):
-- `/quality-gate-p2`, `/quality-gate-p3`
-- `/validate-aordl-structure`, `/validate-data-dictionary`
-- `/validate-requirements-coverage`, `/verify-traceability`
+| Gate | Validates |
+|------|-----------|
+| GATE-P1 | AORDL structure (13 fields), no anti-patterns, OpenQuestions resolved |
+| GATE-P2 | 8-dimension coverage, user stories, acceptance criteria |
+| GATE-P3 | 100% requirements coverage, feature specs created for all FUNC-### |
+| GATE-P4 | Workspace configured per capabilities, dependencies installed |
+| GATE-P5 | All capabilities COMPLETED, feature specs have Implementation sections, no unresolved invalidations in Change Registers, TRACEABILITY.md present per feature |
 
-**Quality Gates:** Sarah must APPROVE before moving to next phase
-
-**Sarah's Authority:** Phase transitions BLOCK without Sarah APPROVAL
-
-**Activity Log Enforcement:** Sarah BLOCKS if activity log incomplete:
-- Missing phase start (IN_PROGRESS) entry
-- Missing phase completion (COMPLETED) entry
-- Robots must use `/log-phase-start` and `/log-phase-complete` skills
+**Sarah BLOCKS if:** Missing requirements, security gaps, broken traceability, incomplete feature specs, unresolved Change Register invalidations, activity log incomplete.
 
 ---
 
-## Common Patterns
+## Traceability Chain
 
-### Pattern 1: New Feature
-```bash
-1. Create AORDL requirement (Talib P1)
-2. Analyze requirement (Talib P2)
-3. Design feature (PMA + Clara)
-4. Generate code (Ashok/Reena/Charlie)
-5. Sarah validates at each gate
+```
+REQ-### (P1)  →  FUNC-### (P2)  →  US-### (P2)  →  SPEC-### (P3, v1.x)  →  Code (P5)
+                                                         │
+                                                         ├── Use Cases (UC-###)
+                                                         ├── Data Schema
+                                                         ├── API Contracts
+                                                         ├── UI Wireframes
+                                                         ├── Implementation (P5 robots)
+                                                         └── Change Register
 ```
 
-### Pattern 2: Multiple Requirements
-```bash
-1. Create all AORDL files (Talib P1)
-2. Batch analyze (Talib P2 with batch-analyze skill)
-3. Design system (PMA)
-4. Clara validates designs
-5. Lucien configures workspace
-6. Parallel generation (all P5 agents)
-```
+TRACEABILITY.md in each feature folder references the SPEC-### as the authoritative design reference.
 
-### Pattern 3: Iterative Development
-```bash
-1. Start with core requirements
-2. Complete P0→P5 for MVP
-3. Add new requirements (back to P1)
-4. Incremental P2→P5 for additions
+---
+
+## Change Propagation
+
+When requirements or designs change after initial implementation:
+
+1. **PMA** updates affected feature spec sections (requirements, use cases, schema, API)
+2. **PMA** bumps spec version and marks which Implementation sections are **invalidated**
+3. **P5 robots** review invalidated sections and update or confirm
+4. **Sarah** at GATE-P5 blocks if any invalidations are unresolved
+
+```
+| Ver | Date       | Section     | Changed By | Trigger        | Invalidates          |
+|-----|------------|-------------|------------|----------------|----------------------|
+| 1.2 | 2026-04-01 | Use Cases   | PMA        | REQ-003 updated| Backend, Frontend    |
+| 1.3 | 2026-04-02 | Backend impl| Reena      | Spec v1.2      | —                    |
+| 1.4 | 2026-04-02 | Frontend    | Charlie    | Spec v1.2      | —                    |
 ```
 
 ---
@@ -435,218 +352,15 @@ cd ROME/rome-qa
 
 | Robot | Phase | Use For | Navigate To |
 |-------|-------|---------|-------------|
-| Roma | P0 | Project initialization & orchestration | `rome-p0-bootup/` |
-| Talib | P1 | AORDL requirements capture | `rome-p1-aordl/` |
-| Talib | P2 | Requirements analysis | `rome-p2-analysis/` |
-| PMA | P3 | Architecture & design | `rome-p3-design/` |
-| Lucien | P4 | Workspace configuration | `rome-p4-config/` |
-| Ashok | P5 | **Database layer** code generation | `rome-p5-generation/` |
-| Reena | P5 | **Backend API** code generation | `rome-p5-generation/` |
-| Charlie | P5 | **Frontend UI** code generation | `rome-p5-generation/` |
+| Roma | P0 + All | Project initialization & orchestration | `rome-p0-bootup/` |
+| Talib | P1, P2 | AORDL requirements & analysis | `rome-p1-aordl/`, `rome-p2-analysis/` |
+| PMA | P3 | Architecture, design, feature specs | `rome-p3-design/` |
+| Clara | P3 | UX design, wireframes (optional) | `rome-p3-design/` (activated by PMA) |
+| Lucien | P4 | Workspace configuration per capability | `rome-p4-config/` |
+| Ashok | P5 | Database capability (default) | `rome-p5-generation/` |
+| Reena | P5 | API/backend capability (default) | `rome-p5-generation/` |
+| Charlie | P5 | Frontend/UI capability (default) | `rome-p5-generation/` |
 | Sarah | QA | Quality gates & validation | `rome-qa/` |
-
-**Note:** Navigate to phase directory → SessionStart hook auto-loads robot
-
----
-
-## Essential Skills (ROME-PROP-020)
-
-**Skills live in robot-plugins/** - Each robot owns their capabilities
-
-**Talib Skills** (`robot-plugins/talib/skills/`):
-- `/create-aordl-requirement` - Author new requirement (P1)
-- `/validate-aordl` - Check AORDL syntax (P1)
-- `/transform-aordl-to-bdd` - Convert to BDD (P1)
-- `/analyze-requirement` - Decompose requirement (P2)
-- `/batch-analyze-requirements` - Analyze multiple (P2)
-- `/generate-user-stories` - Create user stories (P2)
-- `/log-phase-start` - Log phase start with verification (All phases)
-- `/log-phase-complete` - Log phase completion with verification (All phases)
-
-**PMA Skills** (`robot-plugins/pma/skills/`):
-- `/design-dto-models` - Design data models
-- `/design-api-controllers` - Design APIs
-- `/design-authentication` - Design auth system
-- `/generate-work-breakdown` - Create actionlist.md
-- `/generate-architecture-diagram` - Create architecture docs
-
-**Lucien Skills** (`robot-plugins/lucien/skills/`):
-- `/scaffold-workspace` - Create project structure
-- `/configure-build-system` - Setup build tools
-- `/setup-test-framework` - Configure testing
-- `/setup-cicd-pipeline` - Configure CI/CD
-
-**Ashok Skills** (`robot-plugins/ashok/skills/`):
-- `/generate-database-schema` - Generate DB schema
-- `/generate-migrations` - Generate migrations
-- `/generate-orm-models` - Generate ORM models
-- `/generate-seed-data` - Generate seed data
-
-**Reena Skills** (`robot-plugins/reena/skills/`):
-- `/generate-api-endpoints` - Generate backend APIs
-- `/generate-authentication-middleware` - Generate auth
-
-**Charlie Skills** (`robot-plugins/charlie/skills/`):
-- `/generate-ui-screens` - Generate UI screens
-- `/generate-ui-components` - Generate UI components
-
-**Sarah Skills** (`robot-plugins/sarah/skills/`):
-- `/quality-gate-p2` - Validate P1→P2 transition
-- `/quality-gate-p3` - Validate P2→P3 transition
-- `/verify-traceability` - Check requirement traceability
-- `/validate-aordl-structure` - Validate AORDL format
-- `/validate-data-dictionary` - Validate data dictionary
-
----
-
-## Typical Session Flow (ROME-PROP-019)
-
-**Day 1: Project Setup & Requirements**
-```bash
-# Launch Claude Code in your project directory
-
-# P0: Navigate to bootup phase
-cd ROME/rome-p0-bootup
-# SessionStart hook auto-loads Roma
-# Roma creates initial project structure
-
-# P1: Navigate to AORDL phase
-cd ../rome-p1-aordl
-# SessionStart hook auto-loads Talib in P1-aordl mode
-# Work with Talib to create AORDL files in ARTIFACTS/_requirements/
-# Talib validates AORDL as you create them
-
-# Request Sarah validation
-cd ../rome-qa
-# SessionStart hook auto-loads Sarah
-# Sarah validates GATE-P1, approves P1→P2 transition
-```
-
-**Day 2: Analysis & Design**
-```bash
-# P2: Navigate to analysis phase
-cd ROME/rome-p2-analysis
-# SessionStart hook auto-loads Talib in P2-analysis mode
-# Talib analyzes requirements, generates user stories
-
-# Request Sarah validation
-cd ../rome-qa
-# Sarah validates GATE-P2, approves P2→P3 transition
-
-# P3: Navigate to design phase
-cd ../rome-p3-design
-# SessionStart hook auto-loads PMA in P3-design mode
-# PMA creates architecture, data dictionary, API design, actionlist.md
-
-# Request Sarah validation
-cd ../rome-qa
-# Sarah validates GATE-P3, approves P3→P4 transition
-```
-
-**Day 3: Configuration**
-```bash
-# P4: Navigate to config phase
-cd ROME/rome-p4-config
-# SessionStart hook auto-loads Lucien in P4-config mode
-# Lucien scaffolds workspace, configures build system
-
-# Request Sarah validation
-cd ../rome-qa
-# Sarah validates GATE-P4, approves P4→P5 transition
-```
-
-**Day 4-5: Code Generation (Parallel)**
-```bash
-# P5: Navigate to generation phase
-cd ROME/rome-p5-generation
-# SessionStart hook auto-loads Ashok (database layer)
-
-# Option 1: Sequential - switch robots as you complete layers
-# ... work with Ashok to complete database ...
-bash commands/switch-robot.sh reena
-# ... work with Reena to complete backend API ...
-bash commands/switch-robot.sh charlie
-# ... work with Charlie to complete frontend UI ...
-
-# Option 2: Parallel - use multiple terminals
-# Terminal 1: Ashok (database) - starts immediately
-# Terminal 2: Reena (backend) - waits for Ashok via activity log
-# Terminal 3: Charlie (frontend) - waits for Reena via activity log
-
-# Monitor progress
-bash commands/rome-p5-status.sh
-
-# Request final validation
-cd ../rome-qa
-# Sarah validates GATE-P5, approves project delivery
-```
-
----
-
-## P5 Phase Commands (ROME-PROP-021)
-
-When working in `rome-p5-generation/`, you have access to multi-robot orchestration commands:
-
-### Switch Between Robots
-
-```bash
-bash commands/switch-robot.sh <robot-name>
-
-# Examples:
-bash commands/switch-robot.sh ashok    # Database Layer
-bash commands/switch-robot.sh reena    # Backend API
-bash commands/switch-robot.sh charlie  # Frontend UI
-```
-
-**What it does:**
-- Unloads current robot context
-- Loads specified robot's ROBOT.md + P5-generation.md
-- Shows robot layer (Database/API/UI)
-
-### Launch Parallel Generation
-
-```bash
-bash commands/rome-p5-parallel-generate.sh
-```
-
-**What it does:**
-- Provides instructions for multi-terminal setup
-- Explains true parallel execution (all robots start simultaneously)
-- Shows how to monitor progress
-
-### Check Progress
-
-```bash
-bash commands/rome-p5-status.sh
-```
-
-**What it does:**
-- Shows completion status for all three robots
-- Queries activity log for each robot's work items
-- Displays overall progress percentage
-
-### Why True Parallel Works
-
-**All information comes from design artifacts:**
-
-All three robots read from the same P3 design artifacts:
-- **data-dictionary.yaml**: Entities, fields, types, relationships
-- **api-design.md**: API contracts (endpoints, requests, responses)
-- **use-cases.md**: User workflows, business logic
-- **tech-stack.yaml**: Technology choices
-
-**Design artifacts are the contract:**
-- Ashok generates schema based on data-dictionary.yaml
-- Reena generates API endpoints based on api-design.md
-- Charlie generates UI based on use-cases.md and api-design.md
-- No robot reads another robot's generated code
-- All robots have complete information to work independently
-
-**Expected behavior:**
-- Code may show import errors during generation (Reena imports Ashok's models that don't exist yet)
-- Application won't compile until all three finish
-- Testing happens after GATE-P5 when all layers complete
-- 3x speedup from true parallelism
 
 ---
 
@@ -654,295 +368,85 @@ All three robots read from the same P3 design artifacts:
 
 ```
 my-app/
-├── _user_input/            # User-provided materials
+├── _user_input/                   # User-provided materials
 │   └── raw-requirements/
 ├── ARTIFACTS/
-│   ├── _requirements/      # P1: AORDL requirements
+│   ├── _requirements/             # P1-P2: Requirements & analysis
 │   │   ├── REQ-001.yaml
-│   │   └── REQ-002.yaml
-│   ├── _analysis/          # P2: Analysis artifacts
-│   │   └── entities.md
-│   ├── _design/            # P3: Design docs
-│   │   ├── architecture.md
-│   │   ├── api-spec.yaml
-│   │   └── data-dictionary.md
-│   └── _config/            # P4: Configuration
-│       └── workspace-config.yaml
-└── SOURCE/
-    ├── src/                # P5: Generated code
-    │   ├── backend/
-    │   ├── frontend/
-    │   └── integration/
-    └── tests/              # P5: Generated tests
+│   │   ├── REQ-002.yaml
+│   │   ├── requirements-catalog.md
+│   │   ├── requirements-matrix.yaml
+│   │   ├── user-stories.md
+│   │   └── acceptance-criteria.md
+│   ├── _design/                   # P3: Design artifacts
+│   │   ├── design-decisions/
+│   │   │   ├── tech-stack.yaml        # Capabilities + dependencies
+│   │   │   ├── actionlist.md          # Work breakdown
+│   │   │   └── phase3-handover.md
+│   │   ├── data-models/
+│   │   │   └── data-dictionary.yaml   # Master data definitions
+│   │   ├── api-contracts/
+│   │   │   └── api-design.md          # Master API definitions
+│   │   ├── specs/                     # Feature specifications (PROP-024)
+│   │   │   ├── SPEC-001-user-auth.md
+│   │   │   ├── SPEC-002-org-mgmt.md
+│   │   │   └── SPEC-003-members.md
+│   │   ├── architecture/
+│   │   │   └── system-architecture.md
+│   │   └── design-assets/             # Clara's output
+│   │       ├── wireframes/
+│   │       └── design-system.md
+│   └── _config/                   # P4: Configuration
+│       ├── technical-specs/
+│       ├── environment-config/
+│       └── scaffolding-plans/
+└── SOURCE/                        # P5: Generated code (per capability workspace)
+    ├── backend-api/
+    │   └── features/
+    │       └── org-management/
+    │           ├── TRACEABILITY.md
+    │           ├── controllers/
+    │           ├── services/
+    │           └── tests/
+    ├── frontend-app/
+    │   └── lib/features/
+    │       └── org-management/
+    │           ├── TRACEABILITY.md
+    │           ├── screens/
+    │           ├── widgets/
+    │           └── tests/
+    └── database/
+        ├── migrations/
+        ├── models/
+        └── seeds/
 ```
 
 ---
 
-## Project Tracking & Governance
+## Project Tracking
 
 ### Activity Logging
 
-All robot work is **MANDATORY** tracked with enforcement at quality gates:
+All robot work is tracked via the activity log MCP server:
 
-**Activity Log:**
-- Location: `ARTIFACTS/activity-log.txt`
-- Format: Event stream (TIMESTAMP | TYPE | ID | ATTRIBUTES)
-- Tracks: Phase transitions, work items, blockers, amendments
-- **Required:** Every phase must log start (IN_PROGRESS) and completion (COMPLETED)
+- **Log file:** `ARTIFACTS/activity-log.txt` (append-only event stream)
+- **Format:** `TIMESTAMP | TYPE | ID | ATTRIBUTES`
+- **State:** `ARTIFACTS/activity-state.yaml` (rebuilt from log)
+- **STORY ID pattern:** `STORY-[EPIC]-[FEAT]-[SEQ]-[CAP]` where CAP = capability from tech-stack.yaml
 
-**Activity State:**
-- Location: `ARTIFACTS/activity-state.yaml`
-- Purpose: Current state snapshot (rebuilt from log)
-- Queries: by_status, by_robot, by_phase
-
-**How it works:**
-- Robots use MCP server (`activity-log-file`) to append events
-- State file auto-rebuilds on each append
-- No manual editing required
-- **Enforcement:** Sarah validates activity log at every quality gate
-
-**Mandatory Logging:**
-- **Phase Start:** Every robot MUST log phase start before work begins
-- **Phase Complete:** Every robot MUST log phase completion before gate validation
-- **Verification:** Sarah BLOCKS phase transitions if activity log incomplete
-- **Skills:** `/log-phase-start` and `/log-phase-complete` for easy logging
-
-### Robot Workspaces
-
-Each robot has an isolated workspace for working documents:
-
-```
-robots/<robot_name>/
-  ├── CLAUDE.md           # Role definition (loaded by Claude Code)
-  ├── .claude/            # Claude Code settings
-  └── notes/              # Working documents (ephemeral)
-      ├── current_work.md # Active work tracking
-      ├── completed.md    # Session notes
-      └── blockers.md     # Issues encountered
-```
-
-**Working Documents vs Formal Artifacts:**
-- **Working docs** (`robots/*/notes/`): Scratch analysis, drafts, personal notes (not version controlled)
-- **Formal artifacts** (`ARTIFACTS/`): Phase deliverables, validated outputs (version controlled)
-
-**Rule:** Draft in `notes/`, promote to `ARTIFACTS/` when validated and ready for downstream phases.
-
-**Reference:** ROME-GOV-BASELINE (robot-baseline.md) - Working Documents vs Formal Artifacts section
-
-### Project Configuration
-
-Bootstrap creates project metadata:
-
-**`.rome-project.json`:**
-```json
-{
-  "projectName": "my-app",
-  "createdAt": "2026-01-08T00:00:00Z",
-  "romeVersion": "10",
-  "currentPhase": "P01-ingest",
-  "phaseStatus": {
-    "P00-bootup": "COMPLETED",
-    "P01-ingest": "IN_PROGRESS",
-    "P02-analysis": "NOT_STARTED",
-    "P03-design": "NOT_STARTED",
-    "P04-config": "NOT_STARTED",
-    "P05-generation": "NOT_STARTED"
-  }
-}
-```
-
-**Purpose:**
-- Project identification
-- Phase status tracking
-- ROME version compatibility
+**Mandatory:** Every phase must log start (IN_PROGRESS) and completion (COMPLETED). Sarah BLOCKS if missing.
 
 ### Governance Documents
 
-Key framework documents for understanding robot behavior:
+**Operational** (robot-facing, `ROME/rome-core/docs/operational/`):
+- `baseline-universal.md` (ROME-GOV-BASELINE-A) - Universal operations for all robots
+- `baseline-coordination.md` (ROME-GOV-BASELINE-B) - Coordination patterns for leads
+- `activity-log-format.md` - Event log structure
+- `sponsor-interaction.md` - Sponsor communication protocol
+- `mcp-server-dependencies.md` - MCP server requirements
 
-- **ROME-GOV-BASELINE** (`robot-baseline.md`): Common rules all robots follow
-- **ROME-GOV-006** (`sponsor-interaction.md`): When/how robots ask questions
-- **ROME-PROC-005** (`activity-logging-protocol.md`): Activity tracking requirements
-- **ROME-PRIN-001** (`core-principles.md`): Framework principles
-
-**Location:** `ROME/rome-core/docs/governance/` and `ROME/rome-core/docs/foundation/`
-
----
-
-## AORDL Quick Reference
-
-**Required Fields (13):**
-1. `title` - Requirement name
-2. `actor` - Who performs action
-3. `action` - What they do
-4. `object` - What's acted upon
-5. `context` - Where/when
-6. `rationale` - Why needed
-7. `outcome` - Expected result
-8. `constraints` - Limitations
-9. `dependencies` - Related requirements
-10. `priority` - Importance (P0-P3)
-11. `acceptance-criteria` - Success conditions
-12. `test-scenarios` - How to test
-13. `metadata` - UID, version, status
-
-**Validation:** Use Talib P1's `validate-aordl` skill before moving to P2
-
----
-
-## Quality Gates
-
-Sarah enforces these gates with **MANDATORY activity log validation**:
-
-**GATE-P1 (P1→P2):**
-- Activity log: PHASE-1 IN_PROGRESS and COMPLETED logged
-- AORDL structure valid (13 fields, no anti-patterns)
-- All OpenQuestions resolved
-
-**GATE-P2 (P2→P3):**
-- Activity log: PHASE-2 IN_PROGRESS and COMPLETED logged
-- Requirements analyzed, 8-dimension coverage
-- User stories and acceptance criteria complete
-
-**GATE-P3 (P3→P4):**
-- Activity log: PHASE-3 IN_PROGRESS and COMPLETED logged
-- Design complete, 100% requirements coverage
-- Data dictionary, API design, tech stack documented
-
-**GATE-P4 (P4→P5):**
-- Activity log: PHASE-4 IN_PROGRESS and COMPLETED logged
-- Workspace configured, build system ready
-- Environment configs, dependencies installed
-
-**GATE-P5 (P5→Done):**
-- Activity log: P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED
-- Code generated, all tests pass
-- Traceability verified (AORDL→Code chain intact)
-
-**Sarah's authority:** APPROVE or BLOCK (no bypass)
-
-**Activity Log Enforcement:** Sarah BLOCKS phase transitions if activity log entries missing or incomplete. Robots must use `/log-phase-start` and `/log-phase-complete` skills.
-
----
-
-## Troubleshooting
-
-**Sarah blocks phase transition (activity log missing)**
-→ Check activity log: `ARTIFACTS/activity-log.txt`
-→ Verify phase start logged: use `/log-phase-start --phase PX --robot robotname`
-→ Verify phase completion logged: use `/log-phase-complete --phase PX --robot robotname`
-→ Query activity log: `mcp__activity_log__query({id: "PHASE-X"})`
-→ Re-invoke Sarah for approval after logging
-
-**AORDL validation fails**
-→ Check all 13 required fields present
-→ Use Talib P1's `validate-aordl` skill on the file
-
-**Sarah blocks phase transition (artifact issues)**
-→ Read Sarah's feedback (specific issues)
-→ Fix identified gaps
-→ Re-invoke Sarah for approval
-
-**Missing design artifacts**
-→ Run Clara validation
-→ PMA creates missing docs
-→ Clara re-validates
-
-**Code generation incomplete**
-→ Check P4 configuration complete
-→ Verify Lucien created scaffolding manifest
-→ Re-run P5 agents with manifest
-
-**P5 robot waiting for dependency**
-→ Check activity log for upstream robot completion
-→ Ashok must complete before Reena starts
-→ Reena must complete before Charlie starts
-→ Use `bash commands/rome-p5-status.sh` to check progress
-
----
-
-## Advanced: Roma Orchestrator
-
-**Roma:** Project Manager & Master Orchestrator
-**Purpose:** Complex workflow coordination, phase management
-**How to start:** Navigate to `ROME/rome-p0-bootup/` or `ROME/rome-core/`
-
-```bash
-cd ROME/rome-p0-bootup
-# SessionStart hook auto-loads Roma in P0-bootup mode
-```
-
-**Use Roma for:**
-- Project initialization (P0)
-- Multi-requirement projects
-- Complex phase coordination
-- Custom workflow automation
-- Cross-phase orchestration
-
-Roma coordinates all robots and manages phase transitions automatically.
-
-**Roma's authority:**
-- Creates work breakdown (actionlist.md) in P3
-- Assigns features to robots
-- Monitors overall project progress
-- Coordinates phase transitions
-
----
-
-## Setup Options
-
-**Recommended: Copy Entire ROME Framework**
-
-```bash
-# Copy complete framework into project
-mkdir my-project
-cp -r /path/to/ROME my-project/
-cd my-project
-
-# Start with P0 bootup
-cd ROME/rome-p0-bootup
-# SessionStart hook auto-loads Roma
-```
-
-**Benefits:**
-- Self-contained, portable project
-- Framework version locked (stable)
-- No external dependencies
-- Production-ready
-
-**Alternative: Symlink Mode**
-
-```bash
-# Use shared ROME installation
-mkdir my-project
-cd my-project
-
-# Navigate to shared ROME
-cd /path/to/ROME/rome-p0-bootup
-# SessionStart hook auto-loads Roma
-# Roma can create symlink if needed
-```
-
-**Benefits:**
-- Single ROME installation
-- Automatic framework updates
-- Useful for framework development
-
-**How SessionStart Hooks Work:**
-- Navigate to phase directory (e.g., `cd rome-p1-aordl`)
-- `.claude/settings.json` defines SessionStart hook
-- Hook executes: `cat robot-plugins/{robot}/ROBOT.md && cat robot-plugins/{robot}/modes/{mode}.md`
-- Robot context auto-loads (no manual file opening)
-
----
-
-## Documentation
-
-- `INSTALLATION-GUIDE.md` (ROME-INSTALL-001) - Future installation system (aspirational)
-- `PLUGIN-MANIFEST.md` (ROME-MANIFEST-001) - Complete plugin/agent/skill catalog
-- `TESTING.md` - Testing procedures
-- `ROME/rome-core/docs/` - Framework internals (for developers)
-- `ROME_framework_maintenance/archive/GETTING-STARTED-GUIDE.md` (ROME-GUIDE-001) - Legacy guide
+**Framework maintenance** (Archie-only, `ROME/rome-core/docs/framework-maintenance/`):
+- Core principles, document standards, amendment procedures, UID registry, terminology management
 
 ---
 
@@ -951,20 +455,21 @@ cd /path/to/ROME/rome-p0-bootup
 ```
 1. Bootup (P0)         → Project structure (Roma)
 2. AORDL (P1)          → Structured requirements (Talib)
-3. Analysis (P2)       → User stories & entities (Talib)
-4. Design (P3)         → Architecture, API, data models, actionlist (PMA)
-5. Configuration (P4)  → Workspace setup (Lucien)
-6. Generation (P5)     → Working code (Ashok + Reena + Charlie in parallel)
+3. Analysis (P2)       → Features, user stories, acceptance criteria (Talib)
+4. Design (P3)         → Architecture, feature specs, capability config (PMA)
+5. Configuration (P4)  → Workspace setup per capability (Lucien)
+6. Generation (P5)     → Working code per capability (robots from tech-stack.yaml)
 7. QA (Sarah)          → Quality gates at each transition
 ```
 
 **Key principles:**
 - **Phase navigation** → SessionStart hook auto-loads robot
-- **Skills in robots** → Capabilities live in robot-plugins/*/skills/
-- **Phase plugins orchestrate** → Declare robots, dependencies, workflows
-- **Parallel execution** → P5 robots coordinate via activity log
+- **Feature specs** → One SPEC-### per feature consolidates all design context (PROP-024)
+- **Capabilities** → System services declared in tech-stack.yaml, not hardcoded (PROP-025)
+- **Change tracking** → Feature spec Change Register prevents silent drift
+- **Parallel execution** → P5 robots coordinate via activity log per declared dependencies
 - **Quality gates** → Sarah must approve each phase transition
-- **Each phase builds on previous** → Outputs become inputs
+- **Traceability** → REQ → FUNC → US → SPEC → Code, verified at every gate
 
 ---
 
