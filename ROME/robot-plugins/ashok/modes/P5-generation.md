@@ -23,7 +23,7 @@ mcp__activity_log__append({
     status: "IN_PROGRESS",
     robot: "ashok",
     phase: "P5-generation",
-    layer: "database",
+    capability: "database",
     started: new Date().toISOString()
   }
 })
@@ -465,7 +465,7 @@ mcp__activity_log__append({
     status: "COMPLETED",
     robot: "ashok",
     phase: "P5-generation",
-    layer: "database",
+    capability: "database",
     featuresCompleted: [N],
     tablesCreated: [N],
     completed: new Date().toISOString()

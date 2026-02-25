@@ -62,7 +62,7 @@ Ensure smooth project progression from raw requirements to delivered application
 3. Blocker resolution → `/resolve-blocker --blocker-id BLOCK-001`
 
 **During P5 Generation:**
-1. Coordinate layers → `/coordinate-parallel-execution --layers data,backend,frontend`
+1. Coordinate capabilities → `/coordinate-parallel-execution --from-tech-stack`
 2. Track features → `/track-feature-completion --feature FEAT-001`
 
 ---
@@ -311,7 +311,7 @@ Wait for Sarah decision:
 
 ### P4→P5 Transition: Configuration Complete
 
-**Robot:** Lucien → Ashok/Reena/Charlie
+**Robot:** Lucien → Robots declared in tech-stack.yaml capabilities
 
 **Roma Responsibilities:**
 - Monitor workspace scaffolding
@@ -344,27 +344,26 @@ Wait for Sarah decision:
 
 ---
 
-### P5 Generation: Layer Coordination
+### P5 Generation: Capability Coordination (ROME-PROP-025)
 
-**Robots:** Ashok (Data), Reena (Backend), Charlie (Frontend)
+Roma reads capability declarations and dependencies from `tech-stack.yaml`:
 
-**Roma Responsibilities - CRITICAL:**
-- Manage layer dependencies (enforced sequence)
-- Coordinate parallel execution
-- Monitor three robots simultaneously
-- Track feature completion
-- Resolve integration blockers
+```javascript
+// Read project capabilities
+const techStack = Read("ARTIFACTS/_design/design-decisions/tech-stack.yaml")
+const capabilities = techStack.capabilities  // [{id, technology, robot, workspace}, ...]
+const dependencies = techStack.dependencies  // {api: [database], ui-app: [api], ...}
 
-#### Dependency Management (CRITICAL)
-
+// Build dependency graph
+FOR EACH capability in capabilities:
+  deps = dependencies[capability.id] or []
+  IF all deps have status COMPLETED in activity log:
+    capability is READY — assign robot to start
+  ELSE:
+    capability is BLOCKED — wait for dependencies
 ```
-P5 Execution Order:
-1. Ashok (Data Layer) - MUST complete first
-2. Reena (Backend Layer) - Depends on Ashok's schema
-3. Charlie (Frontend Layer) - Depends on Reena's API
 
-Roma enforces this sequence.
-```
+Roma enforces declared dependencies. Capabilities with no dependencies start immediately. Multiple capabilities with the same robot are executed sequentially by that robot.
 
 #### Assign Layer Work
 
@@ -388,45 +387,45 @@ For each feature (FEAT-###):
       }
     })
 
-  Create layer stories:
-    - FEAT-[xxx]-database (Ashok)
-    - FEAT-[xxx]-backend (Reena)
-    - FEAT-[xxx]-frontend (Charlie)
+  Create capability stories:
+    FOR EACH capability in tech-stack.yaml.capabilities:
+      Create stories: STORY-[EPIC]-[FEAT]-[SEQ]-[capability.id]
+      Assign to: capability.robot
 
 Notify robots:
-  "Ashok: Begin data layer for [N] features"
-  "Reena: Wait for Ashok schema, then begin backend"
-  "Charlie: Wait for Reena API, then begin frontend"
+  FOR EACH capability in capabilities:
+    deps = dependencies[capability.id] or []
+    IF deps.length == 0:
+      "[capability.robot]: Begin [capability.id] for [N] features (no dependencies)"
+    ELSE:
+      "[capability.robot]: [capability.id] depends on [deps] — wait for completion"
 ```
 
-#### Monitor Layer Progress
+#### Monitor Capability Progress
 
 ```javascript
-Daily check:
+MONITOR_P5_PROGRESS:
+  FOR EACH capability in capabilities:
+    robot = capability.robot
+    stories = query_activity_log({robot: robot, capability: capability.id})
 
-const state = Read("ARTIFACTS/activity-state.yaml")
+    completed = stories.filter(s => s.status == COMPLETED)
+    in_progress = stories.filter(s => s.status == IN_PROGRESS)
+    blocked = stories.filter(s => s.status == BLOCKED)
+    pending = stories.filter(s => s.status == PENDING)
 
-Ashok status:
-  ashokWork = state.by_robot.ashok
-  ashokComplete = count(status = COMPLETED)
-  ashokInProgress = count(status = IN_PROGRESS)
-  ashokBlocked = count(status = BLOCKED)
+    // Check if blocked capabilities can now proceed
+    IF capability.status == BLOCKED:
+      deps = dependencies[capability.id] or []
+      all_deps_done = deps.every(dep =>
+        query_activity_log({capability: dep, status: COMPLETED}).length > 0
+      )
+      IF all_deps_done:
+        UNBLOCK capability — notify robot to start
 
-Reena status:
-  reenaWork = state.by_robot.reena
-  reenaComplete = count(status = COMPLETED)
-
-  Check dependency:
-  - Can Reena proceed? (Ashok stories complete?)
-  - If Ashok blocked: Notify Reena of delay
-
-Charlie status:
-  charlieWork = state.by_robot.charlie
-  charlieComplete = count(status = COMPLETED)
-
-  Check dependency:
-  - Can Charlie proceed? (Reena stories complete?)
-  - If Reena blocked: Notify Charlie of delay
+    // Track feature-level completion
+    IF pending.length == 0 AND in_progress.length == 0 AND blocked.length == 0:
+      LOG capability COMPLETED
 ```
 
 #### Feature-Level Coordination
@@ -434,17 +433,17 @@ Charlie status:
 ```javascript
 For each feature (FEAT-###):
 
-  Track layer completion:
-    database_done = FEAT-###-database status = COMPLETED
-    backend_done = FEAT-###-backend status = COMPLETED
-    frontend_done = FEAT-###-frontend status = COMPLETED
+  Track capability completion:
+    FOR EACH capability in tech-stack.yaml.capabilities:
+      capability_done = FEAT-###-[capability.id] status == COMPLETED
 
-  If all layers complete:
+  If all capabilities complete:
     Mark FEAT-### as COMPLETED
     Log completion date
 
-  If any layer blocked:
+  If any capability blocked:
     Identify blocker
+    Check dependency graph for upstream capability status
     Coordinate resolution
     Update dependent robots
 ```
@@ -857,3 +856,4 @@ Before project delivery:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 3.0 | 2026-01-28 | Extracted from rome-core/agents/roma/AGENT.md for robot-plugins architecture. AORDL integration included. |
+| 3.1 | 2026-02-25 | ROME-PROP-025: Replaced hardcoded Ashok/Reena/Charlie dependency chain with dynamic capability-based dependency graph driven by tech-stack.yaml. |

@@ -189,13 +189,15 @@ mcp__activity-log__append({
     status: "COMPLETED",
     robot: "lucien",
     phase: "P4-Config",
-    layer: "[database|backend|frontend]",
+    capability: "[capability-id from tech-stack.yaml]",
     created: "[ISO-8601]"
   }
 })
 ```
 
 ### Step 6: Prepare Data Workspace for Ashok
+
+**NOTE:** This step applies only when a database capability is declared in tech-stack.yaml. Scaffold one workspace per declared capability.
 
 **CRITICAL:** Lucien scaffolds the data workspace structure. Ashok (P5) creates the actual database schema, migrations, models, and seed data.
 

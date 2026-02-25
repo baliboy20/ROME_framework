@@ -105,9 +105,7 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 - PMA (via phase3-handover.md)
 
 **Downstream Agents:**
-- Ashok (Data)
-- Reena (Backend)
-- Charlie (Frontend)
+- All P5 robots per capability configuration in tech-stack.yaml
 
 **Orchestrator:**
 - Roma

@@ -23,7 +23,7 @@ mcp__activity_log__append({
     status: "IN_PROGRESS",
     robot: "reena",
     phase: "P5-generation",
-    layer: "backend-api",
+    capability: "api",
     started: new Date().toISOString()
   }
 })
@@ -151,7 +151,7 @@ mcp__activity-log__append({
     status: "IN_PROGRESS",
     robot: "reena",
     phase: "P5-Generation",
-    layer: "backend",
+    capability: "api",
     started: "[ISO-8601]"
   }
 })
@@ -412,7 +412,7 @@ mcp__activity-log__append({
     status: "COMPLETED",
     robot: "reena",
     phase: "P5-Generation",
-    layer: "backend",
+    capability: "api",
     completed: "[ISO-8601]",
     notes: "API endpoints, business logic, auth, validation, tests complete"
   }
@@ -513,7 +513,7 @@ mcp__activity_log__append({
     status: "COMPLETED",
     robot: "reena",
     phase: "P5-generation",
-    layer: "backend-api",
+    capability: "api",
     featuresCompleted: [N],
     endpointsCreated: [N],
     completed: new Date().toISOString()

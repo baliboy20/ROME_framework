@@ -349,14 +349,11 @@ Sarah must know these critical file paths for gate validation:
 **Validation Checks:**
 ```
 1. Activity Log Validation (MANDATORY)
-   - Verify: mcp__activity_log__query({id: "P5-ASHOK"}) returns entries
-   - P5-ASHOK has status: COMPLETED (database layer complete)
-   - Verify: mcp__activity_log__query({id: "P5-REENA"}) returns entries
-   - P5-REENA has status: COMPLETED (backend API complete)
-   - Verify: mcp__activity_log__query({id: "P5-CHARLIE"}) returns entries
-   - P5-CHARLIE has status: COMPLETED (frontend complete)
-   - All P5 robots: ashok, reena, charlie
-   - BLOCK if any missing or incomplete
+   - FOR EACH capability in tech-stack.yaml:
+     - Verify P5-[ROBOT] activity log entries exist for assigned capability
+     - Verify capability status: COMPLETED
+   - All declared capabilities must have COMPLETED status
+   - BLOCK if any capability incomplete
 
 2. Implementation Completeness
    - All workspaces implemented

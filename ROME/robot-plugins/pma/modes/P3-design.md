@@ -164,6 +164,8 @@ mcp__Seez__ask_questions({
 
 **Output:** `ARTIFACTS/_design/design-decisions/tech-stack.yaml`
 
+5. Define capabilities in tech-stack.yaml: for each system service, specify id, technology, robot assignment, and workspace. Declare dependencies between capabilities.
+
 ### Stage 2: Core Design (Iterative)
 
 #### Step 6: Data Dictionary Creation
@@ -211,7 +213,7 @@ mcp__Seez__ask_questions({
 
 #### Step 10: System Architecture
 
-1. Define layers (frontend, API, data)
+1. Define capabilities (per tech-stack.yaml)
 2. Document component interactions
 3. Address NFRs (performance, security, scalability)
 4. Create architecture diagrams (Mermaid)
@@ -264,7 +266,7 @@ Verify:
 1. Identify epics (business capability clusters)
 2. Define workspaces
 3. Map features to workspaces
-4. Assign to robots (Ashok/Reena/Charlie)
+4. Assign stories to capabilities per tech-stack.yaml configuration. Each capability maps to a robot.
 
 **Output:** `ARTIFACTS/_design/design-decisions/actionlist.md`
 

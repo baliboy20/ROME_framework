@@ -81,24 +81,24 @@ Centralized definition of all framework-specific terms to ensure terminological 
 |------|------------|-----------|----------|--------|-------|
 | **Epic** | Highest-level work grouping containing multiple related features; delivers coherent business capability | EPIC-### (e.g., EPIC-001) | Weeks to months | - | Business capability cluster |
 | **Feature** | User-facing functionality implementing one or more requirements across system layers; vertical slice spanning database, backend, frontend | FEAT-### (e.g., FEAT-001) | Days to weeks | Epic | Single coherent user-facing capability |
-| **Story** | Atomic implementable work unit within specific layer with clear acceptance criteria | STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] (e.g., STORY-001-003-02-api) | 1-4 hours | Feature | Minimum granularity implementable unit |
+| **Story** | Atomic implementable work unit within specific capability with clear acceptance criteria | STORY-[EPIC]-[FEAT]-[SEQ]-[CAP] (e.g., STORY-001-003-02-api) | 1-4 hours | Feature | Minimum granularity implementable unit |
 
 **Story ID Components:**
 - EPIC: Epic number (001-999, zero-padded)
 - FEAT: Feature number within project (001-999, zero-padded)
-- SEQ: Story sequence within feature-layer combination (01-99, zero-padded)
-- LAYER: database \| backend \| frontend (Story IDs use: db \| api \| ui)
+- SEQ: Story sequence within feature-capability combination (01-99, zero-padded)
+- CAP: Capability identifier from tech-stack.yaml (e.g., database, api, ui-app, notifications)
 
 **Hierarchy Example:**
 ```
 EPIC-001: User Management
   ├── FEAT-001: User Authentication
-  │   ├── STORY-001-001-01-db: User table
-  │   ├── STORY-001-001-02-db: Session table
+  │   ├── STORY-001-001-01-database: User table
+  │   ├── STORY-001-001-02-database: Session table
   │   ├── STORY-001-001-01-api: Login endpoint
-  │   └── STORY-001-001-01-ui: Login form
+  │   └── STORY-001-001-01-ui-app: Login form
   └── FEAT-003: Password Reset
-      ├── STORY-001-003-01-db: Reset tokens table
+      ├── STORY-001-003-01-database: Reset tokens table
       └── STORY-001-003-01-api: Request reset endpoint
 ```
 
@@ -110,15 +110,28 @@ EPIC-001: User Management
 |------|------------|-----------|-----------------|---------------|-------|
 | **Activity Log** | Append-only event log recording work item status, blockers, amendments, phase progress | - | timestamp, type, id, attributes | - | Project activity state management |
 | **Feature Entry** | Activity log entry tracking feature-level work | FEAT-### | id, type, title, priority, status, robot, phase, created | PENDING, IN_PROGRESS, COMPLETED, BLOCKED | Feature-level work tracking |
-| **Story Entry** | Activity log entry tracking user story implementation within a feature | STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER] | id, type, feature, title, status, robot, created | PENDING, IN_PROGRESS, COMPLETED, BLOCKED | Story-level work tracking |
+| **Story Entry** | Activity log entry tracking user story implementation within a feature | STORY-[EPIC]-[FEAT]-[SEQ]-[CAP] | id, type, feature, title, status, robot, created | PENDING, IN_PROGRESS, COMPLETED, BLOCKED | Story-level work tracking |
 | **Blocker Entry** | Activity log entry documenting an impediment preventing work progress | BLOCK-### | id, type, severity, description, status, robot, created | OPEN, ESCALATED, RESOLVED | Impediment tracking and resolution |
 | **Amendment Entry** | Activity log entry documenting a change request to prior phase work | AMD-### | id, type, description, requestedBy, targetPhase, status, created | PENDING_REVIEW, APPROVED, REJECTED | Change control and impact tracking |
 | **Phase Entry** | Activity log entry tracking phase-level status and gate decisions | PHASE-# | id, type, status, robot, created | NOT_STARTED, IN_PROGRESS, COMPLETED | Phase progression tracking |
 
-**Layer:** Implementation dimension categorizing work by technical tier
-- Values: database, backend, frontend
-- Story ID abbreviations: database → db, backend → api, frontend → ui
-- Scope: Technical tier classification
+### Layer (Deprecated)
+- **Status:** Deprecated by ROME-PROP-025. See Capability.
+- **Previous values:** database, backend, frontend (fixed)
+- **Replacement:** Capability — project-specific, unbounded
+
+### Capability
+- **Definition:** A system service that features consume. Declared per project in tech-stack.yaml by PMA in P3.
+- **Properties:** id (unique identifier), technology (framework/platform), robot (assigned P5 robot), workspace (SOURCE/ directory)
+- **Examples:** database, api, ui-app, ui-static, notifications, cdn, ml-pipeline
+- **STORY ID usage:** Capability ID is used as the [CAP] suffix in STORY-[EPIC]-[FEAT]-[SEQ]-[CAP]
+- **Contrast:** Unlike the deprecated "Layer" (fixed to database/backend/frontend), capabilities are project-specific and unbounded in number.
+
+### Capability Dependency
+- **Definition:** A declared relationship where one capability requires another to complete before it can start.
+- **Declaration:** `dependencies` section in tech-stack.yaml
+- **Enforcement:** Roma reads declarations and coordinates P5 execution order.
+- **Example:** `api: [database]` means API capability cannot start until database capability completes.
 
 **Logging Trigger:** Event requiring mandatory activity log update (work start, work completion, blocker encountered, amendment requested). Defined in ROME-PROC-005.
 

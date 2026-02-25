@@ -78,10 +78,10 @@ Framework Proposals Location
 ROME framework proposals (ROME-PROP-###) are maintained in two locations:
 
 Draft Proposals:
-/Users/will/flutterProjects/Exercises/nov/romev10/ROME_framework_maintenance/proposals
+../ROME_framework_maintenance/proposals
 
 Implemented Proposals:
-/Users/will/flutterProjects/Exercises/nov/romev10/ROME_framework_maintenance/implemented-proposals
+../ROME_framework_maintenance/implemented-proposals
 
 When a proposal moves from Draft to Implemented status, move it from proposals/ to implemented-proposals/.
-Do not create proposals in ROME_architect/proposals - they belong in ROME_framework_maintenance/proposals.
+Do not create proposals in ROME_architect/proposals - they belong in ../ROME_framework_maintenance/proposals.

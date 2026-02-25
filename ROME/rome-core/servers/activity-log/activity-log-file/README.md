@@ -49,7 +49,7 @@ Append event to activity log.
 ```javascript
 {
   type: "STORY",           // PHASE, FEATURE, STORY, BLOCKER, AMENDMENT
-  id: "STORY-001-001-1-db",
+  id: "STORY-001-001-1-database",
   attributes: {
     status: "IN_PROGRESS", // Required
     robot: "ashok",        // Required
@@ -63,7 +63,7 @@ Append event to activity log.
 ```javascript
 {
   success: true,
-  event: "2025-12-03T10:00:00Z | STORY | STORY-001-001-1-db | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z",
+  event: "2025-12-03T10:00:00Z | STORY | STORY-001-001-1-database | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z",
   timestamp: "2025-12-03T10:00:00Z"
 }
 ```
@@ -72,7 +72,7 @@ Append event to activity log.
 ```javascript
 mcp__activity-log__append({
   type: "STORY",
-  id: "STORY-001-001-1-db",
+  id: "STORY-001-001-1-database",
   attributes: {
     status: "IN_PROGRESS",
     robot: "ashok",
@@ -113,7 +113,7 @@ Query current activity state.
 ```javascript
 {
   // Optional filters (use one or combine)
-  id: "STORY-001-001-1-db",  // Find specific entry
+  id: "STORY-001-001-1-database",  // Find specific entry
   status: "BLOCKED",          // Find by status
   robot: "ashok",             // Find by robot
   phase: 2                    // Find by phase number
@@ -125,7 +125,7 @@ Query current activity state.
 {
   results: [
     {
-      id: "STORY-001-001-1-db",
+      id: "STORY-001-001-1-database",
       status: "COMPLETED",
       robot: "ashok",
       feature: "FEAT-001",
@@ -150,7 +150,7 @@ mcp__activity-log__query({ status: "BLOCKED" })
 mcp__activity-log__query({ robot: "ashok" })
 
 // Find specific entry
-mcp__activity-log__query({ id: "STORY-001-001-1-db" })
+mcp__activity-log__query({ id: "STORY-001-001-1-database" })
 
 // Find all Phase 2 entries
 mcp__activity-log__query({ phase: 2 })
@@ -165,14 +165,14 @@ Get complete event history for an entry.
 **Parameters:**
 ```javascript
 {
-  id: "STORY-001-001-1-db"
+  id: "STORY-001-001-1-database"
 }
 ```
 
 **Returns:**
 ```javascript
 {
-  id: "STORY-001-001-1-db",
+  id: "STORY-001-001-1-database",
   events: [
     {
       timestamp: "2025-12-02T14:05:00Z",
@@ -263,8 +263,8 @@ mcp__activity-log__get_statistics()
 # Created: 2025-12-01T10:00:00Z
 # Format: TIMESTAMP | TYPE | ID | ATTRIBUTES
 
-2025-12-03T10:00:00Z | STORY | STORY-001-001-1-db | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
-2025-12-03T12:00:00Z | STORY | STORY-001-001-1-db | status:COMPLETED | robot:ashok | completed:2025-12-03T12:00:00Z
+2025-12-03T10:00:00Z | STORY | STORY-001-001-1-database | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
+2025-12-03T12:00:00Z | STORY | STORY-001-001-1-database | status:COMPLETED | robot:ashok | completed:2025-12-03T12:00:00Z
 ```
 
 **Rules:**

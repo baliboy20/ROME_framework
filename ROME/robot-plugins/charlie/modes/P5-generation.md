@@ -23,7 +23,7 @@ mcp__activity_log__append({
     status: "IN_PROGRESS",
     robot: "charlie",
     phase: "P5-generation",
-    layer: "frontend",
+    capability: "ui-app",
     started: new Date().toISOString()
   }
 })
@@ -161,7 +161,7 @@ mcp__activity-log__append({
     status: "IN_PROGRESS",
     robot: "charlie",
     phase: "P5-Generation",
-    layer: "frontend",
+    capability: "ui-app",
     started: "[ISO-8601]"
   }
 })
@@ -460,7 +460,7 @@ mcp__activity-log__append({
     status: "COMPLETED",
     robot: "charlie",
     phase: "P5-Generation",
-    layer: "frontend",
+    capability: "ui-app",
     completed: "[ISO-8601]",
     notes: "Screens, components, API integration, state management, tests complete"
   }
@@ -584,7 +584,7 @@ mcp__activity_log__append({
     status: "COMPLETED",
     robot: "charlie",
     phase: "P5-generation",
-    layer: "frontend",
+    capability: "ui-app",
     featuresCompleted: [N],
     screensCreated: [N],
     completed: new Date().toISOString()

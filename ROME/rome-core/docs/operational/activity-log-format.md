@@ -79,7 +79,7 @@ TIMESTAMP | TYPE | ID | ATTR1:VALUE1 | ATTR2:VALUE2 | ...
 
 **Example:**
 ```
-2025-12-03T10:00:00Z | STORY | STORY-001-001-1-db | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
+2025-12-03T10:00:00Z | STORY | STORY-001-001-1-database | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
 ```
 
 ### Field Definitions
@@ -153,7 +153,7 @@ TASK       # Not a defined type
 |------|-----------|---------|
 | PHASE | `PHASE-#` | `PHASE-2` |
 | FEATURE | `FEAT-###` | `FEAT-001` |
-| STORY | `STORY-[EPIC]-[FEAT]-[SEQ]-[LAYER]` | `STORY-001-001-1-db` |
+| STORY | `STORY-[EPIC]-[FEAT]-[SEQ]-[CAP]` | `STORY-001-001-1-database` |
 | BLOCKER | `BLOCK-###` | `BLOCK-001` |
 | AMENDMENT | `AMD-###` | `AMD-001` |
 
@@ -167,7 +167,7 @@ TASK       # Not a defined type
 ```
 PHASE-2
 FEAT-001
-STORY-001-001-1-db
+STORY-001-001-1-database
 BLOCK-001
 ```
 
@@ -267,7 +267,7 @@ started:"2025-12-03"    # Timestamp should not be quoted
 | `phase` | Number | `phase:2` | Phase number |
 | `title` | String | `title:"User Authentication"` | Feature title |
 | `priority` | Enum | `priority:HIGH` | Priority (HIGH/MEDIUM/LOW) |
-| `layer` | Enum | `layer:database` | Layer (database/backend/frontend) |
+| `layer` | String | `layer:database` | Capability identifier from tech-stack.yaml |
 
 **STORY:**
 | Attribute | Type | Example | Description |
@@ -284,7 +284,7 @@ started:"2025-12-03"    # Timestamp should not be quoted
 |-----------|------|---------|-------------|
 | `severity` | Enum | `severity:HIGH` | Severity (CRITICAL/HIGH/MEDIUM/LOW) |
 | `feature` | ID | `feature:FEAT-001` | Affected feature |
-| `story` | ID | `story:STORY-001-001-1-db` | Affected story |
+| `story` | ID | `story:STORY-001-001-1-database` | Affected story |
 | `title` | String | `title:"Missing API spec"` | Blocker description |
 | `resolution` | String | `resolution:"Spec provided"` | Resolution description |
 | `created` | Timestamp | `created:2025-12-02T14:00:00Z` | Creation timestamp |
@@ -343,9 +343,9 @@ started:"2025-12-03"    # Timestamp should not be quoted
 
 **Example:**
 ```
-2025-12-02T14:05:00Z | STORY | STORY-001-001-1-db | status:PENDING | robot:talib | feature:FEAT-001 | title:"User table" | estimate:2h
-2025-12-03T10:00:00Z | STORY | STORY-001-001-1-db | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
-2025-12-03T12:00:00Z | STORY | STORY-001-001-1-db | status:COMPLETED | robot:ashok | completed:2025-12-03T12:00:00Z
+2025-12-02T14:05:00Z | STORY | STORY-001-001-1-database | status:PENDING | robot:talib | feature:FEAT-001 | title:"User table" | estimate:2h
+2025-12-03T10:00:00Z | STORY | STORY-001-001-1-database | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
+2025-12-03T12:00:00Z | STORY | STORY-001-001-1-database | status:COMPLETED | robot:ashok | completed:2025-12-03T12:00:00Z
 ```
 
 **State Transition:**
@@ -557,7 +557,7 @@ stories:
 
 **Valid Event Line:**
 ```
-2025-12-03T10:00:00Z | STORY | STORY-001-001-1-db | status:IN_PROGRESS | robot:ashok
+2025-12-03T10:00:00Z | STORY | STORY-001-001-1-database | status:IN_PROGRESS | robot:ashok
 ```
 
 **Validation Checks:**
@@ -665,15 +665,15 @@ stories:
 2025-12-02T14:00:00Z | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:talib | epic:EPIC-001 | phase:2 | title:"User Authentication" | priority:HIGH
 
 # Stories created
-2025-12-02T14:05:00Z | STORY | STORY-001-001-1-db | status:PENDING | robot:talib | feature:FEAT-001 | title:"User table" | estimate:2h
+2025-12-02T14:05:00Z | STORY | STORY-001-001-1-database | status:PENDING | robot:talib | feature:FEAT-001 | title:"User table" | estimate:2h
 2025-12-02T14:06:00Z | STORY | STORY-001-001-1-api | status:PENDING | robot:talib | feature:FEAT-001 | title:"Login endpoint" | estimate:3h
-2025-12-02T14:07:00Z | STORY | STORY-001-001-1-ui | status:PENDING | robot:talib | feature:FEAT-001 | title:"Login screen" | estimate:4h
+2025-12-02T14:07:00Z | STORY | STORY-001-001-1-ui-app | status:PENDING | robot:talib | feature:FEAT-001 | title:"Login screen" | estimate:4h
 
 # Ashok starts database story
-2025-12-03T10:00:00Z | STORY | STORY-001-001-1-db | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
+2025-12-03T10:00:00Z | STORY | STORY-001-001-1-database | status:IN_PROGRESS | robot:ashok | started:2025-12-03T10:00:00Z
 
 # Ashok completes database story
-2025-12-03T12:00:00Z | STORY | STORY-001-001-1-db | status:COMPLETED | robot:ashok | completed:2025-12-03T12:00:00Z
+2025-12-03T12:00:00Z | STORY | STORY-001-001-1-database | status:COMPLETED | robot:ashok | completed:2025-12-03T12:00:00Z
 
 # Reena starts API story
 2025-12-03T13:00:00Z | STORY | STORY-001-001-1-api | status:IN_PROGRESS | robot:reena | started:2025-12-03T13:00:00Z
@@ -692,8 +692,8 @@ stories:
 2025-12-03T17:00:00Z | STORY | STORY-001-001-1-api | status:COMPLETED | robot:reena | completed:2025-12-03T17:00:00Z
 
 # Charlie completes UI story
-2025-12-03T20:00:00Z | STORY | STORY-001-001-1-ui | status:IN_PROGRESS | robot:charlie | started:2025-12-03T16:00:00Z
-2025-12-03T21:00:00Z | STORY | STORY-001-001-1-ui | status:COMPLETED | robot:charlie | completed:2025-12-03T21:00:00Z
+2025-12-03T20:00:00Z | STORY | STORY-001-001-1-ui-app | status:IN_PROGRESS | robot:charlie | started:2025-12-03T16:00:00Z
+2025-12-03T21:00:00Z | STORY | STORY-001-001-1-ui-app | status:COMPLETED | robot:charlie | completed:2025-12-03T21:00:00Z
 
 # Feature completed
 2025-12-03T21:05:00Z | FEATURE | FEAT-001 | status:COMPLETED | robot:talib

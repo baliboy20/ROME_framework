@@ -119,7 +119,7 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
 ## Coordination
 
 **Upstream**: Lucien (workspace scaffolding)
-**Peers**: Ashok (Data Layer), Reena (Backend/API)
+**Peers**: Coordinates with upstream robots per capability dependencies in tech-stack.yaml
 **Orchestrator**: Roma
 
 ## Feature-Based Organization

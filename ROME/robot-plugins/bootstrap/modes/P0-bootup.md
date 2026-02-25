@@ -153,7 +153,7 @@ Agents live in robot-plugins, referenced by phase plugins:
 - **P2:** `ROME/robot-plugins/talib/` (P2 mode)
 - **P3:** `ROME/robot-plugins/pma/`, `ROME/robot-plugins/clara/`
 - **P4:** `ROME/robot-plugins/lucien/`
-- **P5:** `ROME/robot-plugins/ashok/`, `reena/`, `charlie/`
+- **P5:** P5 robots per project capability configuration (default: `ROME/robot-plugins/ashok/`, `reena/`, `charlie/`)
 - **QA:** `ROME/robot-plugins/sarah/`
 - **Core:** `ROME/robot-plugins/roma/`
 
