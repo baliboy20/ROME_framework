@@ -181,22 +181,16 @@ echo "✓ Created _user_input/"
 
 # Create ARTIFACTS/ directory structure
 ARTIFACT_DIRS=(
-    "00-bootup/project-initialization"
-    "02-analysis/requirements"
-    "02-analysis/data-dictionary"
-    "03-design/architecture"
-    "03-design/design-assets"
-    "03-design/data-models"
-    "03-design/api-contracts"
-    "03-design/design-decisions"
-    "04-config/technical-specs"
-    "04-config/environment-config"
-    "04-config/scaffolding-plans"
-    "05-generation/generation-logs"
-    "05-generation/validation-reports"
-    "reference/research"
-    "reference/meetings"
-    "reference/templates"
+    "_requirements"
+    "_design/architecture"
+    "_design/design-assets"
+    "_design/data-models"
+    "_design/api-contracts"
+    "_design/design-decisions"
+    "_design/specs"
+    "_config/technical-specs"
+    "_config/environment-config"
+    "_config/scaffolding-plans"
 )
 
 for dir in "${ARTIFACT_DIRS[@]}"; do
