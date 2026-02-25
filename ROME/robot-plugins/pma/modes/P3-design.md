@@ -157,14 +157,47 @@ mcp__Seez__ask_questions({
 
 #### Step 5: Technology Stack Selection
 
-1. Review technical requests from phase2-handover.md Section 3
-2. Validate each technology against requirements
-3. Document in `tech-stack.yaml`
-4. Confirm with sponsor via Seez
+##### 5a: Load Technical Brief (if present)
+
+If `_user_input/technical-brief.yaml` exists:
+
+For each **MANDATE** entry:
+  - Adopt into tech-stack.yaml as-is
+  - Set `mandate: true`, `source: "technical-brief.yaml"`
+  - Validate feasibility against requirements
+  - If mandate conflicts with requirements → log BLOCKER, escalate to Roma
+
+For each **PREFERENCE** entry:
+  - Evaluate against requirements
+  - If adopting: set `mandate: false`, note "adopted sponsor preference"
+  - If proposing alternative: document justification in tech-stack.yaml
+
+For each **CONSTRAINT** entry:
+  - Document impact on architecture decisions
+  - Design around constraint
+  - If constraint blocks requirement → log BLOCKER with mitigation proposal
+
+If `_user_input/technical-brief.yaml` does not exist:
+  - PMA has full technology selection authority
+  - All selections set `mandate: false`, `source: "pma-selection"`
+
+##### 5b: Select Remaining Technologies
+
+For any system concern NOT covered by technical brief:
+  - Select based on requirements analysis
+  - Set `mandate: false`, `source: "pma-selection"`
+  - Document selection rationale
+
+##### 5c: Confirm with Sponsor
+
+Present complete tech-stack.yaml via Seez:
+  - Highlight mandated items (confirmed)
+  - Highlight preferences adopted or overridden (with justification)
+  - Highlight open selections for approval
 
 **Output:** `ARTIFACTS/_design/design-decisions/tech-stack.yaml`
 
-5. Define capabilities in tech-stack.yaml: for each system service, specify id, technology, robot assignment, and workspace. Declare dependencies between capabilities.
+Define capabilities: for each system service, specify id, technology, robot assignment, workspace, `mandate` (true/false), and `source`. Declare dependencies between capabilities.
 
 ### Stage 2: Core Design (Iterative)
 
@@ -242,7 +275,7 @@ For each FUNC-### identified in P2:
    - **Data Schema** — extract relevant entities from data-dictionary.yaml
    - **API Contracts** — extract relevant endpoints from api-design.md
    - **UI Wireframes** — Clara's output or placeholder
-   - **Implementation** — empty section with layer headings (Database/Backend/Frontend)
+   - **Implementation** — empty section with one heading per capability declared in tech-stack.yaml for this feature (e.g., Database, Backend API, UI App, Notifications). P5 robots complete their capability's section.
    - **Change Register** — initialized at v1.0
 
 2. SPEC-### number matches FUNC-### number (SPEC-002 for FUNC-002)
@@ -324,6 +357,7 @@ Complete `phase3-handover.md` with:
 - Architecture summary
 - Data dictionary summary
 - API contracts summary
+- Feature specifications index (list all SPEC-### files created with feature names)
 - Technical risks and mitigations
 - Notes for P4 (Config) and P5 (Generation)
 
@@ -447,11 +481,38 @@ PMA logs using `pma` as robot identifier.
 
 ## Clara Coordination (Optional)
 
-For projects requiring UX design:
-1. Identify UX needs from requirements
-2. Request Clara assignment via Roma
-3. Provide Clara: user stories, UI requirements, data dictionary
-4. Integrate Clara deliverables into use-cases.md and handover
+For projects requiring UX design, spawn Clara as a subagent:
+
+```javascript
+// Read Clara's identity and mode
+const claraRobot = Read("ROME/robot-plugins/clara/ROBOT.md")
+const claraMode = Read("ROME/robot-plugins/clara/modes/P3-design.md")
+
+// Spawn Clara as subagent
+Task({
+  subagent_type: "general-purpose",
+  prompt: `${claraRobot}\n---\n${claraMode}\n---\n
+    You are Clara (UX Designer). Create design assets for this project.
+
+    Read these inputs:
+    - ARTIFACTS/_requirements/user-stories.md
+    - ARTIFACTS/_design/data-models/data-dictionary.yaml
+    - ARTIFACTS/_design/design-decisions/use-cases.md
+
+    Produce these outputs:
+    - ARTIFACTS/_design/design-assets/design-system.md
+    - ARTIFACTS/_design/design-assets/wireframes/ (one per screen)
+    - ARTIFACTS/_design/design-assets/user-flows.md
+    - ARTIFACTS/_design/design-assets/accessibility.md
+
+    Follow your ROBOT.md and P3-design.md instructions exactly.`
+})
+```
+
+After Clara completes:
+1. Review Clara's design assets
+2. Integrate wireframe references into feature specs (SPEC-###)
+3. Update use cases with UI-specific flows if needed
 
 ---
 
