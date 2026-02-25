@@ -150,7 +150,9 @@ mcp__activity-log__append({
 
 ### Step 4: Read Design Artifacts
 
-**Critical:** Read data-dictionary.yaml as single source of truth:
+Read the feature specification (`ARTIFACTS/_design/specs/SPEC-###-[feature-name].md`) as the primary design reference. The spec consolidates use cases, data schema, API contracts, and wireframes for this feature. Master documents (data-dictionary.yaml, api-design.md) remain authoritative for cross-feature consistency.
+
+**Supporting artifacts:**
 ```
 ARTIFACTS/_design/data-models/data-dictionary.yaml
 ARTIFACTS/_design/design-decisions/test-data-specification.md
@@ -301,9 +303,19 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 
 **⚠️ CRITICAL:** Sarah will BLOCK at GATE-P5 if TRACEABILITY.md files are missing.
 
+Complete the Implementation section of SPEC-### for your layer:
+- List files created with purpose
+- Document rationale for non-obvious choices (one line per decision)
+- Bump spec version and add entry to Change Register
+
+Update TRACEABILITY.md to reference the feature spec:
+
 **Required by ROME-PROP-016:**
 ```markdown
 # Feature: [Feature Name]
+
+## Design Reference
+- SPEC-### (v1.x): [Feature Name]
 
 ## AORDL Traceability
 - REQ-### (AORDL requirement)

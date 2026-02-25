@@ -53,6 +53,16 @@ Centralized definition of all framework-specific terms to ensure terminological 
 
 ---
 
+### Feature Specification (SPEC-###)
+- **Definition:** Per-feature versioned document consolidating all design context (use cases, data schema, API contracts, wireframes) with implementation decisions recorded by P5 robots. Bridges P3 design and P5 code.
+- **ID Pattern:** SPEC-### (number matches FUNC-### number)
+- **Location:** `ARTIFACTS/_design/specs/SPEC-###-[feature-name].md`
+- **Author:** PMA creates in P3; P5 robots complete Implementation section
+- **Scope:** One per feature. The authoritative design reference for implementation.
+- **Contrast:** Unlike TRACEABILITY.md (maps requirements to files), the feature spec captures the design contract and implementation rationale.
+
+---
+
 ## Core Concepts
 
 | Term | Definition | Implementation | Scope |

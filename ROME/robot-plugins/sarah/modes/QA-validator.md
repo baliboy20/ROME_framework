@@ -377,6 +377,12 @@ Sarah must know these critical file paths for gate validation:
      * Tests written
    - Git commits reference feature IDs
    - BLOCK if TRACEABILITY.md files missing
+   - Feature spec presence: Each FUNC-### has a corresponding SPEC-### in ARTIFACTS/_design/specs/
+   - Implementation sections complete: Each P5 robot's layer subsection is filled in the spec
+   - No unresolved invalidations: Change Register has no Invalidates entries without subsequent confirmation/update
+   - BLOCK if feature specs missing for any FUNC-###
+   - BLOCK if unresolved invalidations exist in any spec's Change Register
+   - WARN if Implementation sections lack rationale for non-obvious choices
 
 5. Documentation
    - API documentation complete

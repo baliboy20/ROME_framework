@@ -84,14 +84,14 @@ STAGE 1: FOUNDATION (Steps 1-5)
   Entry verification → P2 inputs → Sponsor kickoff → Tech stack
   [Iterate until sponsor alignment achieved]
 
-STAGE 2: CORE DESIGN (Steps 6-10)
-  Data Dictionary ←→ API Design ←→ Use Cases → System Architecture
+STAGE 2: CORE DESIGN (Steps 6-11)
+  Data Dictionary ←→ API Design ←→ Use Cases → Feature Specs → System Architecture
   [Iterate until artifacts internally consistent]
   [Clara UX loop if assigned]
   [Sponsor design review]
 
-STAGE 3: FINALIZATION (Steps 11-20)
-  Work breakdown → Test data spec → Handover → Gate review
+STAGE 3: FINALIZATION (Steps 12-21)
+  Consistency check → Work breakdown → Test data spec → Handover → Gate review
   [No iteration expected]
 ```
 
@@ -228,7 +228,28 @@ mcp__Seez__ask_questions({
 
 **Output:** `ARTIFACTS/_design/design-decisions/test-architecture.md`
 
-#### Step 11: Consistency Check
+#### Step 11: Create Feature Technical Specifications (ROME-PROP-024)
+
+**Output:** `ARTIFACTS/_design/specs/SPEC-###-[feature-name].md` (one per FUNC-###)
+
+For each FUNC-### identified in P2:
+
+1. Create `SPEC-###-[feature-name].md` with:
+   - **Requirements Summary** — table of traced REQ-### (Actor + Intent)
+   - **Use Cases** — move UC-### for this feature here (authoritative location)
+   - **Data Schema** — extract relevant entities from data-dictionary.yaml
+   - **API Contracts** — extract relevant endpoints from api-design.md
+   - **UI Wireframes** — Clara's output or placeholder
+   - **Implementation** — empty section with layer headings (Database/Backend/Frontend)
+   - **Change Register** — initialized at v1.0
+
+2. SPEC-### number matches FUNC-### number (SPEC-002 for FUNC-002)
+
+3. Feature specs become P3 deliverables — list in phase3-handover.md
+
+4. use-cases.md becomes optional summary index — authoritative UCs live in specs
+
+#### Step 12: Consistency Check
 
 Verify:
 - [ ] All data dictionary fields have api_type
@@ -238,7 +259,7 @@ Verify:
 
 ### Stage 3: Finalization
 
-#### Step 12: Work Breakdown (Actionlist)
+#### Step 13: Work Breakdown (Actionlist)
 
 1. Identify epics (business capability clusters)
 2. Define workspaces
@@ -247,7 +268,7 @@ Verify:
 
 **Output:** `ARTIFACTS/_design/design-decisions/actionlist.md`
 
-#### Step 13: Test Data Specification
+#### Step 14: Test Data Specification
 
 1. Specify test data needs per entity
 2. Document scenarios, edge cases
@@ -255,7 +276,7 @@ Verify:
 
 **Output:** `ARTIFACTS/_design/design-decisions/test-data-specification.md`
 
-#### Step 14: Validate Requirements Coverage
+#### Step 15: Validate Requirements Coverage
 
 Ensure:
 - [ ] Every functional requirement → use case
@@ -263,7 +284,7 @@ Ensure:
 - [ ] Every NFR → architecture decision
 - [ ] Every technical request → tech stack
 
-#### Step 15: Sponsor Design Review
+#### Step 16: Sponsor Design Review
 
 ```javascript
 mcp__Seez__show_doc({
@@ -294,7 +315,7 @@ mcp__Seez__ask_questions({
 })
 ```
 
-#### Step 16: Prepare Handover
+#### Step 17: Prepare Handover
 
 Complete `phase3-handover.md` with:
 - Design decisions log
@@ -306,7 +327,7 @@ Complete `phase3-handover.md` with:
 
 **Output:** `ARTIFACTS/_design/design-decisions/phase3-handover.md`
 
-#### Step 17: Create Feature Entries
+#### Step 18: Create Feature Entries
 
 Log features to activity log:
 ```javascript
@@ -322,7 +343,7 @@ mcp__activity-log__append({
 })
 ```
 
-#### Step 18: Log Phase Completion
+#### Step 19: Log Phase Completion
 
 ```javascript
 mcp__activity-log__append({
@@ -337,13 +358,13 @@ mcp__activity-log__append({
 })
 ```
 
-#### Step 19: Notify Sponsor
+#### Step 20: Notify Sponsor
 
 ```bash
 terminal-notifier -title "ROME: P3 Design Complete" -message "System design complete. Ready for gate review." -sound Ping
 ```
 
-#### Step 20: Request Gate Review
+#### Step 21: Request Gate Review
 
 Notify user to request GATE-P3 validation from Sarah:
 
@@ -396,6 +417,7 @@ Sarah will APPROVE or BLOCK the P3→P4 transition.
 | data-dictionary.yaml | ARTIFACTS/_design/data-models/ | Ashok, Reena, Charlie |
 | api-design.md | ARTIFACTS/_design/api-contracts/ | Reena (API implementation) |
 | use-cases.md | ARTIFACTS/_design/design-decisions/ | Charlie (UI), Reena (logic) |
+| SPEC-###-[feature].md | ARTIFACTS/_design/specs/ | All P5 robots (authoritative feature reference) |
 | system-architecture.md | ARTIFACTS/_design/architecture/ | Lucien, all P5 robots |
 | actionlist.md | ARTIFACTS/_design/design-decisions/ | Roma, all P5 robots |
 | test-architecture.md | ARTIFACTS/_design/design-decisions/ | Charlie, all P5 robots |
@@ -442,6 +464,7 @@ Before marking P3 complete:
 - [ ] ER diagram created
 - [ ] API design complete with endpoint specifications
 - [ ] Use cases elaborated from user stories
+- [ ] Feature specifications created for all FUNC-###
 - [ ] System architecture documented
 - [ ] Test architecture designed
 - [ ] NFRs addressed in architecture
