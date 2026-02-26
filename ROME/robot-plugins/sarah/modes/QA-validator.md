@@ -85,8 +85,7 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 Sarah must know these critical file paths for gate validation:
 
 **Activity Tracking:**
-- `ARTIFACTS/activity-log.txt` - Append-only event log
-- `ARTIFACTS/activity-state.yaml` - Current state index (auto-generated)
+- `ARTIFACTS/activity-log.txt` - Append-only event log (query via `mcp__activity-log-file__query({})`)
 
 **Phase 1 Outputs (AORDL):**
 - `ARTIFACTS/_requirements/REQ-*.yaml` - Individual AORDL requirements
@@ -268,6 +267,13 @@ Sarah must know these critical file paths for gate validation:
    - Technology selections justified
    - Appropriate for requirements
    - Dependencies identified
+   - Capabilities declared in tech-stack.yaml with id, technology, robot, workspace
+   - Capability dependencies form valid DAG (no circular dependencies)
+   - Each capability has assigned robot
+   - If _user_input/technical-brief.yaml exists:
+     - All MANDATE entries present in tech-stack.yaml with mandate: true
+     - All PREFERENCE overrides have documented justification
+     - All CONSTRAINT entries addressed in system-architecture.md
 
 6. System Architecture
    - Architecture meets NFRs

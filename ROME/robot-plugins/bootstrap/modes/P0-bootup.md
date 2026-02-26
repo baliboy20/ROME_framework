@@ -300,10 +300,12 @@ mcp__activity-log__rebuild_state()
 # Check event log
 tail -5 ARTIFACTS/activity-log.txt
 # Should show: [timestamp] | PHASE | PHASE-0 | status:IN_PROGRESS | robot:bootstrap | ...
+```
 
-# Check state index
-head -20 ARTIFACTS/activity-state.yaml
-# Should contain PHASE-0 entry
+```javascript
+// Verify state via MCP
+mcp__activity-log-file__get_statistics()
+// Should show PHASE-0 entry
 ```
 
 ### Step 4: Notify Sponsor
@@ -396,8 +398,7 @@ After bootstrap completes:
 4. Phase 1 (Ingest) can begin
 
 **Activity log files:**
-- `ARTIFACTS/activity-log.txt` - Append-only event log
-- `ARTIFACTS/activity-state.yaml` - Current state (auto-generated)
+- `ARTIFACTS/activity-log.txt` - Append-only event log (query via `mcp__activity-log-file__query({})`)
 
 ---
 

@@ -125,6 +125,7 @@ Check:
 - .rome-project.json exists
 - ARTIFACTS/ structure exists
 - _user_input/raw-requirements/ has materials
+- _user_input/technical-brief.yaml present (optional — note if absent)
 - MCP activity log responding
 ```
 
@@ -154,8 +155,8 @@ Verify:
 #### Step 3: Check Phase Status
 
 ```javascript
-// Read state index
-const state = Read("ARTIFACTS/activity-state.yaml")
+// Query activity log via MCP
+const state = mcp__activity-log-file__query({})
 
 For each phase (P0-P5):
   const phaseStatus = state.phases["PHASE-[N]"].status
@@ -514,8 +515,7 @@ Wait for Sarah decision:
 
 ```javascript
 Daily scan:
-  const state = Read("ARTIFACTS/activity-state.yaml")
-  blockers = state.by_status.BLOCKED
+  const blockers = mcp__activity-log-file__query({status: "BLOCKED"})
   openBlockers = blockers.filter(b => b.status === "OPEN")
 ```
 
@@ -771,10 +771,10 @@ Roma enforces activity log compliance across all robots.
 ### Daily Compliance Check
 
 ```javascript
-const state = Read("ARTIFACTS/activity-state.yaml")
+const state = mcp__activity-log-file__query({})
 
 1. Stale IN_PROGRESS entries
-   entries = state.by_status.IN_PROGRESS
+   entries = mcp__activity-log-file__query({status: "IN_PROGRESS"})
    For each entry:
      If no update > 24 hours:
        Flag to robot

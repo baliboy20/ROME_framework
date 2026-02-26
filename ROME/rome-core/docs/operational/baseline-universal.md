@@ -51,7 +51,7 @@ ALL 10 robots. Robot-specific ROBOT.md files reference this baseline and documen
 - Modify other robots' outputs without amendment approval
 - Proceed when blocked (must log blocker and coordinate)
 - Cache state across operations (always read fresh)
-- Edit activity-log.txt or activity-state.yaml manually
+- Edit activity-log.txt manually
 
 ### Logging Triggers
 
@@ -84,17 +84,17 @@ Per ROME-PROC-005 §2 (State Access Standard):
 
 ### For Monitoring & Status Checks
 ```javascript
-// Read state file directly (fast)
-const state = Read("ARTIFACTS/activity-state.yaml")
+// Query activity log via MCP
+const state = mcp__activity-log-file__query({})
 
 // Query by status
-const blockers = state.by_status.BLOCKED
+const blockers = mcp__activity-log-file__query({status: "BLOCKED"})
 
 // Query by robot
-const myWork = state.by_robot.[robot_name]
+const myWork = mcp__activity-log-file__query({robot: "[robot_name]"})
 
 // Query by phase
-const phaseWork = state.by_phase["[N]"]
+const phaseWork = mcp__activity-log-file__query({phase: "[N]"})
 ```
 
 ### For Mutations
@@ -122,8 +122,8 @@ const history = mcp__activity-log__get_history({id: "[ID]"})
 
 **Recommended (Fast):**
 ```javascript
-// Direct YAML read for monitoring
-const state = Read("ARTIFACTS/activity-state.yaml")
+// Query activity log via MCP
+const state = mcp__activity-log-file__query({})
 ```
 
 **Required (Mutations):**
@@ -226,7 +226,7 @@ ROBOT_STARTUP:
     FAIL("Activity log MCP not responding")
 
   // 3. Check phase assignment
-  state = Read("ARTIFACTS/activity-state.yaml")
+  state = mcp__activity-log-file__query({})
   assignedPhase = state.phases["PHASE-[N]"]
 
   // 4. Verify entry criteria
@@ -253,8 +253,8 @@ ROBOT_STARTUP:
 ```javascript
 PHASE_COMPLETION:
   // 1. Verify all work completed
-  state = Read("ARTIFACTS/activity-state.yaml")
-  myWork = state.by_robot[MY_ROBOT_NAME]
+  state = mcp__activity-log-file__query({robot: MY_ROBOT_NAME})
+  myWork = state
   openWork = myWork.filter(w => w.status != COMPLETED)
   if openWork.length > 0:
     FAIL("Cannot complete phase with open work items")

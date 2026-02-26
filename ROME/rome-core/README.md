@@ -31,7 +31,7 @@ Status: Complete
 - **activity-log/activity-log-file/** - Activity logging MCP server
   - Event-based file system for activity tracking
   - Append-only event log (`activity-log.txt`)
-  - Auto-generated state index (`activity-state.yaml`)
+  - Live state queries via `mcp__activity-log-file__query({})`
   - Tools: `append()`, `query()`, `get_history()`, `get_statistics()`
 
 ### Templates (`templates/`)

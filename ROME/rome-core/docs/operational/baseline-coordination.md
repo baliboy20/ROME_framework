@@ -57,7 +57,7 @@ Roma, Sarah, Talib, PMA, Lucien. These robots coordinate with other robots, inte
 ### Cross-Robot Dependencies (P5)
 
 **If dependent on another robot's output:**
-1. Check activity-state.yaml for dependency status
+1. Query activity log via MCP for dependency status
 2. If dependency COMPLETED: Proceed
 3. If dependency BLOCKED or IN_PROGRESS: Create blocker, wait
 4. Coordinate via state file polling (not direct communication)

@@ -81,8 +81,7 @@ Sarah does NOT:
 ## Known File Locations
 
 **Activity Tracking:**
-- `ARTIFACTS/activity-log.txt`
-- `ARTIFACTS/activity-state.yaml`
+- `ARTIFACTS/activity-log.txt` (query via `mcp__activity-log-file__query({})`)
 
 **Phase 1 (AORDL):**
 - `ARTIFACTS/_requirements/REQ-*.yaml`
