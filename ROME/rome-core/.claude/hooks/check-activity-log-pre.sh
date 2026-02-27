@@ -39,11 +39,9 @@ if [ -z "$ACTIVITY_LOG" ] || [ ! -f "$ACTIVITY_LOG" ]; then
   exit 0
 fi
 
-# Check for IN_PROGRESS entries
-HAS_IN_PROGRESS=$(grep -c "status:IN_PROGRESS" "$ACTIVITY_LOG" 2>/dev/null || echo "0")
-
-if [ "$HAS_IN_PROGRESS" -gt 0 ]; then
-  # Activity logged — output a brief reminder as context
+# Check for IN_PROGRESS entries (use grep -q for boolean check)
+if grep -q "status:IN_PROGRESS" "$ACTIVITY_LOG" 2>/dev/null; then
+  # Activity logged — proceed silently
   exit 0
 fi
 

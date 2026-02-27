@@ -42,17 +42,13 @@ if [ -z "$ACTIVITY_LOG" ] || [ ! -f "$ACTIVITY_LOG" ]; then
 fi
 
 # Check for any IN_PROGRESS entries (STORY or PHASE level)
-HAS_IN_PROGRESS=$(grep -c "status:IN_PROGRESS" "$ACTIVITY_LOG" 2>/dev/null || echo "0")
-
-if [ "$HAS_IN_PROGRESS" -gt 0 ]; then
+if grep -q "status:IN_PROGRESS" "$ACTIVITY_LOG" 2>/dev/null; then
   # Robot has logged something as IN_PROGRESS — all good
   exit 0
 fi
 
 # Check if there's at least a PHASE entry
-HAS_PHASE=$(grep -c "| PHASE |" "$ACTIVITY_LOG" 2>/dev/null || echo "0")
-
-if [ "$HAS_PHASE" -eq 0 ]; then
+if ! grep -q "| PHASE |" "$ACTIVITY_LOG" 2>/dev/null; then
   # No phase logged at all
   cat <<'WARN'
 ACTIVITY LOG WARNING: You are writing to project files but have NOT logged any phase or story as IN_PROGRESS in the activity log. You MUST log activity before writing code or artifacts.
@@ -66,9 +62,8 @@ WARN
   exit 0
 fi
 
-# Phase exists but no current IN_PROGRESS work items
-# Check if the last phase entry is COMPLETED (meaning robot hasn't started new work)
-LAST_PHASE_STATUS=$(grep "| PHASE |" "$ACTIVITY_LOG" | tail -1 | grep -o "status:[A-Z_]*" | cut -d: -f2)
+# Phase entry exists but no IN_PROGRESS work — check if phase is completed
+LAST_PHASE_STATUS=$(grep "| PHASE |" "$ACTIVITY_LOG" 2>/dev/null | tail -1 | grep -o "status:[A-Z_]*" | cut -d: -f2 || true)
 
 if [ "$LAST_PHASE_STATUS" = "COMPLETED" ]; then
   cat <<'WARN'

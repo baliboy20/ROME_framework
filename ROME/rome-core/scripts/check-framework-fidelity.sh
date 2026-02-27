@@ -11,7 +11,8 @@
 #   Exits 0 if all checks pass.
 #   Exits 1 if any check fails.
 
-set -euo pipefail
+# Note: NOT using set -euo pipefail — many subcommands (grep, find+exec) legitimately
+# return non-zero when nothing matches. Errors handled explicitly per check.
 
 QUICK=false
 if [[ "${1:-}" == "--quick" ]]; then
@@ -37,8 +38,8 @@ green()  { printf "\033[0;32m%s\033[0m\n" "$*"; }
 yellow() { printf "\033[0;33m%s\033[0m\n" "$*"; }
 bold()   { printf "\033[1m%s\033[0m\n" "$*"; }
 
-fail() { red "  FAIL: $*"; ((FAIL_COUNT++)) || true; }
-warn() { yellow "  WARN: $*"; ((WARN_COUNT++)) || true; }
+fail() { red "  FAIL: $*"; FAIL_COUNT=$((FAIL_COUNT + 1)); }
+warn() { yellow "  WARN: $*"; WARN_COUNT=$((WARN_COUNT + 1)); }
 pass() { green "  PASS: $*"; }
 
 echo ""
@@ -66,30 +67,31 @@ else
   WRONG_PATH=0
 
   while IFS= read -r -d '' FILE; do
-    DOC_UID=$(grep -m1 "Document UID.*ROME-" "$FILE" 2>/dev/null | grep -o "ROME-[A-Z]*-[A-Z0-9]*" | head -1)
+    # Use extended regex to capture full multi-segment UIDs (e.g. ROME-SPEC-SKILL-FRAMEWORK)
+    DOC_UID=$(grep -m1 "Document UID.*ROME-" "$FILE" 2>/dev/null | grep -oE "ROME-[A-Z]+-[A-Z0-9][A-Z0-9-]*" | head -1)
     if [ -z "$DOC_UID" ]; then
       continue
     fi
     # Check UID is in registry
     if ! grep -q "$DOC_UID" "$UID_REGISTRY" 2>/dev/null; then
       fail "$DOC_UID found in $FILE but NOT in uid-registry.md"
-      ((MISSING_FROM_REGISTRY++)) || true
+      MISSING_FROM_REGISTRY=$((MISSING_FROM_REGISTRY + 1))
     fi
   done < <(find "$DOCS_DIR" -name "*.md" -print0 2>/dev/null)
 
   # Check registry entries point to existing files
   while IFS= read -r LINE; do
-    REG_PATH=$(echo "$LINE" | grep -o '`/[^`]*`' | tr -d '`' | head -1)
+    REG_PATH=$(echo "$LINE" | grep -oE '`/[^`]+`' | tr -d '`' | head -1 || true)
     if [ -z "$REG_PATH" ]; then continue; fi
     FULL_PATH="$ROME_ROOT$REG_PATH"
     if [[ "$REG_PATH" == *"/"* ]] && [ ! -f "$FULL_PATH" ]; then
       # Only warn for non-deprecated entries
-      if ! echo "$LINE" | grep -qi "deprecated\|superseded"; then
+      if ! echo "$LINE" | grep -qi "deprecated\|superseded\|reserved"; then
         warn "Registry path does not exist: $REG_PATH"
-        ((WRONG_PATH++)) || true
+        WRONG_PATH=$((WRONG_PATH + 1))
       fi
     fi
-  done < <(grep "| ROME-" "$UID_REGISTRY" 2>/dev/null)
+  done < <(grep "| ROME-" "$UID_REGISTRY" 2>/dev/null || true)
 
   if [ "$MISSING_FROM_REGISTRY" -eq 0 ] && [ "$WRONG_PATH" -eq 0 ]; then
     pass "All document UIDs registered; checked file paths"
@@ -108,7 +110,7 @@ if [ ! -f "$UID_REGISTRY" ]; then
 else
   BROKEN_REFS=0
   # Extract all UID references from all docs (excluding registry itself)
-  REFS=$(find "$DOCS_DIR" -name "*.md" ! -path "*uid-registry*" -exec grep -oh "ROME-[A-Z]*-[0-9A-Z]*" {} \; 2>/dev/null | sort -u)
+  REFS=$(find "$DOCS_DIR" -name "*.md" ! -path "*uid-registry*" -exec grep -ohE "ROME-[A-Z]+-[A-Z0-9][A-Z0-9-]*" {} \; 2>/dev/null | sort -u || true)
 
   while IFS= read -r REF; do
     if [ -z "$REF" ]; then continue; fi
@@ -116,7 +118,7 @@ else
     if [[ "$REF" == *"###"* ]]; then continue; fi
     if ! grep -q "$REF" "$UID_REGISTRY" 2>/dev/null; then
       warn "Referenced UID $REF not found in uid-registry.md"
-      ((BROKEN_REFS++)) || true
+      BROKEN_REFS=$((BROKEN_REFS + 1))
     fi
   done <<< "$REFS"
 

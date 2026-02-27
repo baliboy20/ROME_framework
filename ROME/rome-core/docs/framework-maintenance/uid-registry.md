@@ -49,10 +49,18 @@ ROME-[TYPE]-[NUMBER]
 | PROP | Proposal | 001-099 | Framework modification proposals |
 | MIG | Migration | 001-099 | Migration guides and procedures |
 | REV | Review | 001-999 | Temporary review documents |
+| SPEC | Technical Specification | 001-099 | Internal framework technical specifications (non-standard: uses word suffix instead of number) |
 
 ---
 
 ## Allocated UIDs
+
+### Technical Specification Documents
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-SPEC-SKILL-FRAMEWORK | Skill Framework Technical Specification | `/ROME/rome-core/docs/framework-maintenance/specs/skill-framework-specification.md` | Specification |
+| ROME-SPEC-SUBAGENT-FRAMEWORK | Subagent Framework Technical Specification | `/ROME/rome-core/docs/framework-maintenance/specs/subagent-framework-specification.md` | Specification |
 
 ### Foundation Documents
 
@@ -227,3 +235,4 @@ This registry MUST be updated when:
 | 2.9 | 2026-02-27T00:00:00Z | Registered ROME-PROP-026 (Change Management & Compliance Completeness). Reserved ROME-GOV-011 (Git Conventions) per PROP-026 Phase B. |
 | 3.0 | 2026-02-27T00:00:00Z | ROME-PROP-026 Phase A: Registered ROME-PROP-015 (moved from implemented-proposals/ to proposals/, status corrected to Proposal). |
 | 3.1 | 2026-02-27T00:00:00Z | ROME-PROP-026 implemented: updated PROP-026 status to Implemented, updated location to implemented-proposals/. Updated ROME-GOV-011 status from Reserved to Draft. |
+| 3.2 | 2026-02-27T00:00:00Z | Added SPEC type code. Registered ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (found unregistered during fidelity check). |
