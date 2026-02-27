@@ -150,6 +150,84 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Verify Reena's backend API dependencies completed
 - Check dependencies on other features
 
+### Step 2b: Publish Implementation Proposal (MANDATORY — ROME-PROP-028)
+
+**Before logging any FEATURE IN_PROGRESS or writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
+
+Publish via Seez:
+
+```javascript
+mcp__Seez__show_doc({
+  label: "Charlie: Implementation Proposal — [Project Name]",
+  content: `# Implementation Proposal
+
+**Robot:** charlie
+**IMPL-PROP-ID:** IMPL-PROP-CHARLIE
+**Phase:** P5
+**Date:** [ISO-8601]
+
+## 1. Spec Interpretation
+| FEAT-# | SPEC-# | What I will build | Inputs | Outputs |
+|--------|--------|-------------------|--------|---------|
+| ... | ... | ... | ... | ... |
+
+## 2. Tech Choices
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| State management | ... | ... |
+| Routing | ... | ... |
+| Error handling | ... | ... |
+
+## 3. Assumptions
+| # | Ambiguity in Spec | My Resolution |
+|---|-------------------|---------------|
+| A1 | ... | ... |
+
+## 4. Implementation Schedule
+| Feature | Start condition | Estimated order |
+|---------|----------------|-----------------|
+| FEAT-001 | Immediate | 1st |
+| FEAT-002 | Requires Reena API contract | 2nd |
+
+## 5. Dependency Risks
+| Risk | Blocked feature | Mitigation |
+|------|----------------|------------|
+| Reena API not ready | Screen implementation | Scaffold shell; integrate when API ready |
+
+---
+_Awaiting sponsor approval. No source files will be written until IMPL-PROP-CHARLIE is logged APPROVED._`
+})
+```
+
+**Then pause. Do not write any file until sponsor/PMA approves.**
+
+**Note:** While awaiting Reena's APIs, Charlie may scaffold the project structure, navigation shell, and design system components — but not implement feature screens.
+
+**On approval:**
+
+```javascript
+mcp__activity_log_file__append({
+  type: "STORY",
+  id: "IMPL-PROP-CHARLIE",
+  attributes: {
+    status: "APPROVED",
+    robot: "charlie",
+    phase: "P5",
+    reviewer: "sponsor",
+    notes: "[any sponsor comments incorporated]"
+  }
+})
+```
+
+**Approval outcomes:**
+
+| Response | Action |
+|----------|--------|
+| Approved | Log APPROVED; proceed to Step 3 |
+| Approved with comments | Incorporate comments; log APPROVED; proceed |
+| Revision requested | Update proposal; republish; await re-approval |
+| Rejected | Escalate to Roma; do not proceed |
+
 ### Step 3: Log Feature Start
 
 For each feature assigned:

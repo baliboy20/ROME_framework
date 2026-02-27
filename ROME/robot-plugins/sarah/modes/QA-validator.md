@@ -355,6 +355,11 @@ Sarah must know these critical file paths for gate validation:
 **Validation Checks:**
 ```
 1. Activity Log Validation (MANDATORY)
+   - Implementation Proposal approval (ROME-PROP-028):
+     - Verify IMPL-PROP-ASHOK logged APPROVED — BLOCK if missing
+     - Verify IMPL-PROP-REENA logged APPROVED — BLOCK if missing
+     - Verify IMPL-PROP-CHARLIE logged APPROVED — BLOCK if missing
+     - Query: mcp__activity_log_file__query({id: "IMPL-PROP-ASHOK"})
    - FOR EACH capability in tech-stack.yaml:
      - Verify P5-[ROBOT] activity log entries exist for assigned capability
      - Verify capability status: COMPLETED

@@ -152,6 +152,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-023 | Operational/Governance Separation | `/ROME_framework_maintenance/proposals/ROME-PROP-023-operational-governance-separation.md` | Draft |
 | ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-026-change-compliance-completeness.md` | Implemented |
 | ROME-PROP-027 | Framework Versioning | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-027-framework-versioning.md` | Implemented |
+| ROME-PROP-028 | P5 Implementation Proposal Gate | `/ROME_framework_maintenance/proposals/ROME-PROP-028-p5-implementation-proposal.md` | Draft |
 
 ### Migration Documents
 
@@ -240,3 +241,4 @@ This registry MUST be updated when:
 | 3.3 | 2026-02-27T00:00:00Z | Registered ROME-PROP-027 (Framework Versioning). |
 | 3.4 | 2026-02-27T00:00:00Z | ROME-PROP-027 implemented: updated status to Implemented, path updated to implemented-proposals/. |
 | 3.5 | 2026-02-27T00:00:00Z | Housekeeping: deleted ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (Node.js-era specs, superseded by PROP-011/019/020/021). Marked Deprecated. |
+| 3.6 | 2026-02-27T00:00:00Z | Registered ROME-PROP-028 (P5 Implementation Proposal Gate). |
