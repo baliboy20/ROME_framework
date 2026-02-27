@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 3.0 |
+| **Document UID** | ROME-GOV-002 || **Version** | 3.3 |
 | **Date** | 2026-02-27T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -151,6 +151,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-008 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-008-phase-based-plugin-architecture.md` | Proposal |
 | ROME-PROP-023 | Operational/Governance Separation | `/ROME_framework_maintenance/proposals/ROME-PROP-023-operational-governance-separation.md` | Draft |
 | ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-026-change-compliance-completeness.md` | Implemented |
+| ROME-PROP-027 | Framework Versioning | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-027-framework-versioning.md` | Implemented |
 
 ### Migration Documents
 
@@ -236,3 +237,5 @@ This registry MUST be updated when:
 | 3.0 | 2026-02-27T00:00:00Z | ROME-PROP-026 Phase A: Registered ROME-PROP-015 (moved from implemented-proposals/ to proposals/, status corrected to Proposal). |
 | 3.1 | 2026-02-27T00:00:00Z | ROME-PROP-026 implemented: updated PROP-026 status to Implemented, updated location to implemented-proposals/. Updated ROME-GOV-011 status from Reserved to Draft. |
 | 3.2 | 2026-02-27T00:00:00Z | Added SPEC type code. Registered ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (found unregistered during fidelity check). |
+| 3.3 | 2026-02-27T00:00:00Z | Registered ROME-PROP-027 (Framework Versioning). |
+| 3.4 | 2026-02-27T00:00:00Z | ROME-PROP-027 implemented: updated status to Implemented, path updated to implemented-proposals/. |

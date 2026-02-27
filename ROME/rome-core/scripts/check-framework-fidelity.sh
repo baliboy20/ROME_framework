@@ -29,6 +29,7 @@ DOCS_DIR="$ROME_CORE/docs"
 PROPOSALS_DIR="$ROME_ROOT/ROME_framework_maintenance/proposals"
 IMPL_PROPOSALS_DIR="$ROME_ROOT/ROME_framework_maintenance/implemented-proposals"
 ACTIVITY_LOG_FORMAT="$ROME_CORE/docs/operational/activity-log-format.md"
+VERSION_FILE="$ROME_CORE/VERSION"
 
 FAIL_COUNT=0
 WARN_COUNT=0
@@ -132,7 +133,7 @@ echo ""
 
 if $QUICK; then
   echo ""
-  bold "Quick mode complete. Skipping checks 3 and 4."
+  bold "Quick mode: skipping checks 3 and 4. Running check 5."
   echo ""
 else
 
@@ -196,6 +197,39 @@ fi
 echo ""
 
 fi  # end of non-quick checks
+
+# ─────────────────────────────────────────────────────────
+# CHECK 5: Framework Version File (ROME-PROP-027)
+# Runs in both quick and full mode — fast structural check
+# ─────────────────────────────────────────────────────────
+bold "Check 5: Framework Version File"
+
+if [ ! -f "$VERSION_FILE" ]; then
+  fail "rome-core/VERSION not found — framework version undeclared (see ROME-PROP-027)"
+else
+  # Check required fields present
+  for FIELD in ROME_FRAMEWORK_VERSION ROME_FRAMEWORK_DATE ROME_FRAMEWORK_STATUS; do
+    if ! grep -q "^${FIELD}=" "$VERSION_FILE" 2>/dev/null; then
+      fail "VERSION file missing required field: $FIELD"
+    fi
+  done
+
+  # Validate SemVer format
+  VER=$(grep "^ROME_FRAMEWORK_VERSION=" "$VERSION_FILE" | cut -d= -f2 | tr -d '[:space:]')
+  if [[ ! "$VER" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    fail "ROME_FRAMEWORK_VERSION '$VER' is not valid SemVer (expected MAJOR.MINOR.PATCH)"
+  else
+    pass "Framework version: $VER"
+  fi
+
+  # Validate STATUS value
+  STATUS=$(grep "^ROME_FRAMEWORK_STATUS=" "$VERSION_FILE" | cut -d= -f2 | tr -d '[:space:]')
+  case "$STATUS" in
+    stable|rc|dev) pass "Framework status: $STATUS" ;;
+    *) fail "ROME_FRAMEWORK_STATUS '$STATUS' must be one of: stable, rc, dev" ;;
+  esac
+fi
+echo ""
 
 # ─────────────────────────────────────────────────────────
 # Summary
