@@ -59,8 +59,8 @@ ROME-[TYPE]-[NUMBER]
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-SPEC-SKILL-FRAMEWORK | Skill Framework Technical Specification | `/ROME/rome-core/docs/framework-maintenance/specs/skill-framework-specification.md` | Specification |
-| ROME-SPEC-SUBAGENT-FRAMEWORK | Subagent Framework Technical Specification | `/ROME/rome-core/docs/framework-maintenance/specs/subagent-framework-specification.md` | Specification |
+| ROME-SPEC-SKILL-FRAMEWORK | Skill Framework Technical Specification | ~~Deleted~~ — superseded by SKILL.md-based implementation (PROP-019/020) | Deprecated |
+| ROME-SPEC-SUBAGENT-FRAMEWORK | Subagent Framework Technical Specification | ~~Deleted~~ — superseded by Claude Code Task tool (PROP-011/021) | Deprecated |
 
 ### Foundation Documents
 
@@ -239,3 +239,4 @@ This registry MUST be updated when:
 | 3.2 | 2026-02-27T00:00:00Z | Added SPEC type code. Registered ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (found unregistered during fidelity check). |
 | 3.3 | 2026-02-27T00:00:00Z | Registered ROME-PROP-027 (Framework Versioning). |
 | 3.4 | 2026-02-27T00:00:00Z | ROME-PROP-027 implemented: updated status to Implemented, path updated to implemented-proposals/. |
+| 3.5 | 2026-02-27T00:00:00Z | Housekeeping: deleted ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (Node.js-era specs, superseded by PROP-011/019/020/021). Marked Deprecated. |
