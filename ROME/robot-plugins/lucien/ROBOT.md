@@ -28,6 +28,7 @@
 - Data workspace preparation (structure only; Ashok creates schema)
 - Dependency management
 - Development tooling setup
+- **CR-### pipeline impact analysis:** When Roma initiates `/analyze-change-impact`, Lucien identifies all CI/CD pipeline and deployment ordering impacts. Populates `ImpactAnalysis.pipelines` section of CR-###.yaml per ROME-PROP-026 §G5. If Lucien is not active in a maintenance cycle, Roma owns this section.
 
 ### Out of Scope
 - Feature code implementation (P5)

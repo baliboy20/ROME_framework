@@ -8,6 +8,15 @@
             "command": "cat \"$CLAUDE_PROJECT_DIR/CLAUDE.md\""
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/../ROME/rome-core/scripts/check-framework-fidelity.sh\" --quick 2>&1 || true",
+            "timeout": 10000
+          }
+        ]
       }
     ],
     "Stop": [
@@ -20,5 +29,8 @@
         ]
       }
     ]
+  },
+  "enabledPlugins": {
+    "context7@claude-plugins-official": true
   }
 }

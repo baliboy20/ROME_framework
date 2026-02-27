@@ -62,8 +62,9 @@
       "enabled": true,
       "required": false,
       "description": "Terminal management for server tasks"
-    }
+    },
   },
+  "plugins": ["Context7"],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
     "modes/P5-generation.md": "P5 backend API implementation mode",

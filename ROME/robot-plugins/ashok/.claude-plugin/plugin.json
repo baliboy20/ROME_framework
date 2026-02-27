@@ -28,6 +28,7 @@
     "database-testing",
     "setup-documentation"
   ],
+  "plugins": ["Context7"],
   "mcps": [],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",

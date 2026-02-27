@@ -131,6 +131,82 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Identify database entities from data-dictionary.yaml
 - Check dependencies on other features
 
+### Step 2b: Publish Implementation Proposal (MANDATORY — ROME-PROP-028)
+
+**Before logging any FEATURE IN_PROGRESS or writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
+
+Publish via Seez:
+
+```javascript
+mcp__Seez__show_doc({
+  label: "Ashok: Implementation Proposal — [Project Name]",
+  content: `# Implementation Proposal
+
+**Robot:** ashok
+**IMPL-PROP-ID:** IMPL-PROP-ASHOK
+**Phase:** P5
+**Date:** [ISO-8601]
+
+## 1. Spec Interpretation
+| FEAT-# | SPEC-# | What I will build | Inputs | Outputs |
+|--------|--------|-------------------|--------|---------|
+| ... | ... | ... | ... | ... |
+
+## 2. Tech Choices
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Migration strategy | Sequential numbered files | Per wrangler D1 convention |
+| Index strategy | ... | ... |
+| Cascade behaviour | ... | ... |
+
+## 3. Assumptions
+| # | Ambiguity in Spec | My Resolution |
+|---|-------------------|---------------|
+| A1 | ... | ... |
+
+## 4. Implementation Schedule
+| Feature | Start condition | Estimated order |
+|---------|----------------|-----------------|
+| FEAT-001 | Immediate (no upstream) | 1st |
+| FEAT-002 | Requires FEAT-001 tables | 2nd |
+
+## 5. Dependency Risks
+| Risk | Blocked feature | Mitigation |
+|------|----------------|------------|
+| Schema ambiguity | All downstream robots | Raise to sponsor before proceeding |
+
+---
+_Awaiting sponsor approval. No source files will be written until IMPL-PROP-ASHOK is logged APPROVED._`
+})
+```
+
+**Then pause. Do not write any file until sponsor/PMA approves.**
+
+**On approval:**
+
+```javascript
+mcp__activity_log_file__append({
+  type: "STORY",
+  id: "IMPL-PROP-ASHOK",
+  attributes: {
+    status: "APPROVED",
+    robot: "ashok",
+    phase: "P5",
+    reviewer: "sponsor",
+    notes: "[any sponsor comments incorporated]"
+  }
+})
+```
+
+**Approval outcomes:**
+
+| Response | Action |
+|----------|--------|
+| Approved | Log APPROVED; proceed to Step 3 |
+| Approved with comments | Incorporate comments; log APPROVED; proceed |
+| Revision requested | Update proposal; republish; await re-approval |
+| Rejected | Escalate to Roma; do not proceed |
+
 ### Step 3: Log Feature Start
 
 For each feature assigned:

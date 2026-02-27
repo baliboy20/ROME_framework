@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-008 |
+| **Document UID** | ROME-GOV-010 |
 | **Version** | 1.0 |
 | **Date** | 2025-11-24T00:00:00Z |
 | **Status** | Draft |
@@ -137,13 +137,13 @@ All documents created within ROME projects. Used for sponsor interaction, robot 
 ---
 
 ### 9. Runtime Logs
-**Location:** Activity-log database, `/logs/`
+**Location:** `ARTIFACTS/activity-log.txt`, `/logs/`
 **Audience:** Project management, debugging
 **Purpose:** Activity tracking, execution logs, metrics
 
 | Type | Storage |
 |------|---------|
-| Activity log | MongoDB (`rome_[project]` database) |
+| Activity log | Append-only text file (`ARTIFACTS/activity-log.txt`), queried via `activity-log-file` MCP server |
 | Execution logs | Console output, log files |
 | Metrics | Performance data, usage analytics |
 
@@ -192,3 +192,4 @@ All documents created within ROME projects. Used for sponsor interaction, robot 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-11-24T00:00:00Z | Initial taxonomy definition for sponsor communication clarity |
+| 1.1 | 2026-02-27T00:00:00Z | Updated Runtime Logs storage from MongoDB to activity-log-file MCP server (ROME-PROP-007) |

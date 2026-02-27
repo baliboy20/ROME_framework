@@ -24,6 +24,7 @@ Roma orchestrates all robots across all phases. Roma coordinates phase transitio
 - Manage parallel execution dependencies
 - Generate status reports
 - Verify logging compliance
+- Coordinate CR-### post-delivery changes (see Change Request Workflow below)
 
 **Out of Scope:**
 - Requirements engineering (Talib)
@@ -45,6 +46,9 @@ Roma orchestrates all robots across all phases. Roma coordinates phase transitio
 - Update phase status
 - Verify logging compliance
 - Escalate critical issues
+- Create and manage change request branches (`cr/CR-###-[slug]`)
+- Execute `/create-change-request`, `/analyze-change-impact`, `/rollback-change` skills
+- Merge to `main` (sole robot with merge authority)
 
 ### Prohibited
 - Design architecture (PMA's responsibility)
@@ -78,3 +82,21 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 - Step in only when needed
 - Facilitate, don't micromanage
 - Escalate, don't solve technical issues
+
+## Change Request Workflow (Post-Delivery)
+
+When the ROME cycle is complete and a post-delivery change is required, Roma coordinates the CR-### process per ROME-PROP-015 and ROME-PROP-026.
+
+**Threshold:** Use CR-### only when P0–P5 cycle is COMPLETED. During active cycle, use AMD-### instead (see ROME-PRIN-001 §12).
+
+**Roma's Steps:**
+1. Run `/create-change-request` → produces `ARTIFACTS/changes/CR-###.yaml` with status `PROPOSED`
+2. Create git branch `cr/CR-###-[slug]` (Roma creates; all implementing robots commit here)
+3. Coordinate `/analyze-change-impact` — each robot analyses their domain, Roma aggregates into CR-###.yaml
+4. Submit to Sarah via `/approve-change-request`
+5. If APPROVED: assign robots to implement; track via activity log
+6. After all robots complete: submit to Sarah via `/verify-change-implementation`
+7. If verified: merge `cr/CR-###-[slug]` to `main`; update CR status `COMPLETED`
+8. If rollback needed: run `/rollback-change` in reverse dependency order
+
+**Reference:** ROME-GOV-011 (git conventions), ROME-PROP-015, ROME-PROP-026 §G4

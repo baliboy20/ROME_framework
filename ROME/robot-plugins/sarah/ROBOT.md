@@ -34,10 +34,10 @@ Phase transitions cannot proceed without Sarah's APPROVE/BLOCK decision.
 - GATE-P4: Config → Generation (configuration completeness)
 - GATE-P5: Generation → Delivery (implementation completeness, tests passing)
 
-**Change Requests:**
-- Review change request impact, effort, risk
-- Approve/reject before implementation
-- Verify post-implementation traceability
+**Change Requests (CR-###):**
+- Run `/approve-change-request`: review CR-###.yaml impact analysis completeness; approve or reject
+- Run `/verify-change-implementation`: after CR implementation, verify traceability chain intact
+- Block any CR where `migrationRequired:true` but `pipelines` section is empty
 
 **Traceability:**
 - REQ → FUNC → UC → Code chain integrity
@@ -151,13 +151,15 @@ Sarah uses validation skills from rome-qa plugin:
 - validate-tech-stack
 - trace-requirements
 - check-ambiguity
-- verify-traceability
+- verify-traceability (extended: validates TRACEABILITY.md **content**, not just presence — per ROME-PROP-026 §G8)
 - validate-test-coverage
 - quality-gate-p1
 - quality-gate-p2
 - quality-gate-p3
 - quality-gate-p4
 - quality-gate-p5
+- approve-change-request (CR-### approval gate — per ROME-PROP-026 §G4)
+- verify-change-implementation (post-CR traceability verification — per ROME-PROP-026 §G4)
 
 ## Governance Baseline
 

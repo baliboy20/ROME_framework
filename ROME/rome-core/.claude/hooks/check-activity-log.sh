@@ -42,17 +42,13 @@ if [ -z "$ACTIVITY_LOG" ] || [ ! -f "$ACTIVITY_LOG" ]; then
 fi
 
 # Check for any IN_PROGRESS entries (STORY or PHASE level)
-HAS_IN_PROGRESS=$(grep -c "status:IN_PROGRESS" "$ACTIVITY_LOG" 2>/dev/null || echo "0")
-
-if [ "$HAS_IN_PROGRESS" -gt 0 ]; then
+if grep -q "status:IN_PROGRESS" "$ACTIVITY_LOG" 2>/dev/null; then
   # Robot has logged something as IN_PROGRESS — all good
   exit 0
 fi
 
 # Check if there's at least a PHASE entry
-HAS_PHASE=$(grep -c "| PHASE |" "$ACTIVITY_LOG" 2>/dev/null || echo "0")
-
-if [ "$HAS_PHASE" -eq 0 ]; then
+if ! grep -q "| PHASE |" "$ACTIVITY_LOG" 2>/dev/null; then
   # No phase logged at all
   cat <<'WARN'
 ACTIVITY LOG WARNING: You are writing to project files but have NOT logged any phase or story as IN_PROGRESS in the activity log. You MUST log activity before writing code or artifacts.
@@ -66,15 +62,32 @@ WARN
   exit 0
 fi
 
-# Phase exists but no current IN_PROGRESS work items
-# Check if the last phase entry is COMPLETED (meaning robot hasn't started new work)
-LAST_PHASE_STATUS=$(grep "| PHASE |" "$ACTIVITY_LOG" | tail -1 | grep -o "status:[A-Z_]*" | cut -d: -f2)
+# Phase entry exists but no IN_PROGRESS work — check if phase is completed
+LAST_PHASE_STATUS=$(grep "| PHASE |" "$ACTIVITY_LOG" 2>/dev/null | tail -1 | grep -o "status:[A-Z_]*" | cut -d: -f2 || true)
 
 if [ "$LAST_PHASE_STATUS" = "COMPLETED" ]; then
   cat <<'WARN'
 ACTIVITY LOG WARNING: The current phase is marked COMPLETED but you are still writing files. If you are doing additional work, log a new phase or story as IN_PROGRESS first.
 WARN
   exit 0
+fi
+
+# Timestamp ordering check (ROME-PROP-026 §G9)
+# Detect retroactive logging: file modified before the most recent IN_PROGRESS entry
+if command -v stat &>/dev/null && [ -f "$FILE_PATH" ]; then
+  LAST_IP_LINE=$(grep "status:IN_PROGRESS" "$ACTIVITY_LOG" | tail -1)
+  if [ -n "$LAST_IP_LINE" ]; then
+    LAST_IP_TIME=$(echo "$LAST_IP_LINE" | cut -d'|' -f1 | tr -d ' ')
+    # Get file modification time in ISO-like format (macOS stat)
+    FILE_MTIME=$(stat -f "%Sm" -t "%Y-%m-%dT%H:%M:%SZ" "$FILE_PATH" 2>/dev/null)
+    if [ -n "$FILE_MTIME" ] && [ -n "$LAST_IP_TIME" ]; then
+      if [[ "$FILE_MTIME" < "$LAST_IP_TIME" ]]; then
+        cat <<'WARN'
+ACTIVITY LOG WARNING: This file was last modified BEFORE the most recent IN_PROGRESS log entry. Activity may have been logged retroactively. Verify that activity was logged before work began.
+WARN
+      fi
+    fi
+  fi
 fi
 
 exit 0

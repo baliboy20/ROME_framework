@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Known MCP servers in ROME framework
-const KNOWN_SERVERS = ['activity-log-file', 'Seez', 'rome-terminal'];
+const KNOWN_SERVERS = ['activity-log-file', 'Seez', 'rome-terminal', 'iterm2-terminal'];
 
 // Configuration
 const ROME_ROOT = path.resolve(__dirname, '../..');

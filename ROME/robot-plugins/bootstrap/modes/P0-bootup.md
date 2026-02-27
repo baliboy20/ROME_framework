@@ -213,6 +213,17 @@ Thumbs.db
 GITIGNORE
 echo "✓ Created .gitignore"
 
+# Write rome-config.yaml (ROME-PROP-027: framework version declaration)
+ROME_FW_VERSION=$(grep "^ROME_FRAMEWORK_VERSION=" "$ROME_PATH/rome-core/VERSION" 2>/dev/null | cut -d= -f2 || echo "unknown")
+ROME_FW_DATE=$(grep "^ROME_FRAMEWORK_DATE=" "$ROME_PATH/rome-core/VERSION" 2>/dev/null | cut -d= -f2 || echo "")
+cat > "$PROJECT_PATH/ARTIFACTS/rome-config.yaml" << EOF
+rome_framework_version: "$ROME_FW_VERSION"
+rome_framework_date: "$ROME_FW_DATE"
+project_name: "$PROJECT_NAME"
+created_at: "$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+EOF
+echo "✓ Created ARTIFACTS/rome-config.yaml (framework v$ROME_FW_VERSION)"
+
 echo ""
 echo "=========================================="
 echo "Project '$PROJECT_NAME' created at: $PROJECT_PATH"
@@ -364,6 +375,7 @@ Before marking bootup complete:
 - [ ] robots/ directory created with README.md
 - [ ] ROME framework present (copied or symlinked)
 - [ ] .rome-project.json created with correct metadata
+- [ ] ARTIFACTS/rome-config.yaml written with framework version
 - [ ] MCP server requirements validated
 - [ ] Activity log initialized with header
 - [ ] PHASE-0 events logged (IN_PROGRESS → COMPLETED)
@@ -407,3 +419,4 @@ After bootstrap completes:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p0-bootup/agents/bootstrap/AGENT.md for robot-plugins architecture |
+| 1.1.0 | 2026-02-27 | ROME-PROP-027: add rome-config.yaml write step to capture framework version at project creation |

@@ -50,6 +50,7 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **Technical Specification** | Centralized doc defining technical constraints, platform requirements, implementation parameters | Markdown | Technical constraints authority |
 | **Action List** | Centralized task inventory used for robot task assignment | Markdown | Task management and coordination |
 | **Glossary** | Mapping between framework-specific terms and standard software engineering terminology | - | External terminology alignment |
+| **Technical Brief** | Structured sponsor input declaring platform mandates, preferences, and constraints. Optional. | YAML (`_user_input/technical-brief.yaml`) | Project input document |
 
 ---
 
@@ -60,6 +61,16 @@ Centralized definition of all framework-specific terms to ensure terminological 
 - **Author:** PMA creates in P3; P5 robots complete Implementation section
 - **Scope:** One per feature. The authoritative design reference for implementation.
 - **Contrast:** Unlike TRACEABILITY.md (maps requirements to files), the feature spec captures the design contract and implementation rationale.
+
+---
+
+### Technical Brief Classifications
+
+| Term | Definition | PMA Authority | Scope |
+|------|-----------|--------------|-------|
+| **Mandate** | Non-negotiable technical requirement from sponsor. Only changeable via AMD-### with sponsor approval. | Validate feasibility only. Cannot override. | Technical Brief classification |
+| **Preference** | Sponsor-preferred technology. PMA may propose alternatives with documented justification. | May override with justification. | Technical Brief classification |
+| **Constraint** | External limitation (existing infrastructure, compliance, integration dependency). | Must respect. Can propose workarounds. | Technical Brief classification |
 
 ---
 
@@ -112,7 +123,8 @@ EPIC-001: User Management
 | **Feature Entry** | Activity log entry tracking feature-level work | FEAT-### | id, type, title, priority, status, robot, phase, created | PENDING, IN_PROGRESS, COMPLETED, BLOCKED | Feature-level work tracking |
 | **Story Entry** | Activity log entry tracking user story implementation within a feature | STORY-[EPIC]-[FEAT]-[SEQ]-[CAP] | id, type, feature, title, status, robot, created | PENDING, IN_PROGRESS, COMPLETED, BLOCKED | Story-level work tracking |
 | **Blocker Entry** | Activity log entry documenting an impediment preventing work progress | BLOCK-### | id, type, severity, description, status, robot, created | OPEN, ESCALATED, RESOLVED | Impediment tracking and resolution |
-| **Amendment Entry** | Activity log entry documenting a change request to prior phase work | AMD-### | id, type, description, requestedBy, targetPhase, status, created | PENDING_REVIEW, APPROVED, REJECTED | Change control and impact tracking |
+| **Amendment Entry** | Activity log entry documenting an in-flight change request during an active ROME cycle | AMD-### | id, type, description, requestedBy, targetPhase, status, created | PENDING_REVIEW, APPROVED, REJECTED | In-cycle change tracking (use CR-### for post-delivery) |
+| **Change Request Entry** | Activity log entry tracking a post-delivery Change Request lifecycle | CR-### | id, type, title, requestedBy, status, robot | PROPOSED, ANALYZED, APPROVED, IN_PROGRESS, COMPLETED, REJECTED, ROLLED_BACK | Post-delivery change tracking (use AMD-### during active cycle) |
 | **Phase Entry** | Activity log entry tracking phase-level status and gate decisions | PHASE-# | id, type, status, robot, created | NOT_STARTED, IN_PROGRESS, COMPLETED | Phase progression tracking |
 
 ### Layer (Deprecated)
@@ -134,6 +146,39 @@ EPIC-001: User Management
 - **Example:** `api: [database]` means API capability cannot start until database capability completes.
 
 **Logging Trigger:** Event requiring mandatory activity log update (work start, work completion, blocker encountered, amendment requested). Defined in ROME-PROC-005.
+
+---
+
+## Git Conventions
+
+Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME-managed applications follow these definitions.
+
+### Branch Types
+
+| Term | Pattern | Definition |
+|------|---------|-----------|
+| **Feature Branch** | `feat/FEAT-###-[slug]` | Isolated branch for P5 implementation of one feature. One branch per FEAT-###. |
+| **Change Request Branch** | `cr/CR-###-[slug]` | Branch for post-delivery CR-### implementation. All implementing robots commit here. |
+| **Refactor Branch** | `refactor/[description]` | Branch for refactoring work with no requirement or design changes. |
+| **Hotfix Branch** | `hotfix/[description]` | Emergency production fix; merges to both `main` and `develop`. |
+
+### Commit Types (Conventional Commits)
+
+| Type | Use For |
+|------|---------|
+| `feat` | New functionality |
+| `fix` | Bug fix |
+| `refactor` | Code restructuring with no behaviour change |
+| `docs` | Documentation only |
+| `test` | Test additions or changes |
+| `chore` | Build, config, dependency updates |
+| `schema` | Database schema changes |
+
+**Commit format:** `type(scope): description ([FEAT-###]|[CR-###]|[AMD-###])`
+
+### Refactoring (ROME-defined)
+
+**Refactoring** qualifies when ALL of: no REQ-### files modified; no design artifact changes; no observable behaviour change; no library version changes. Any violation means the change requires a CR-###. Procedure: log STORY with `refactor:true`, create `refactor/[description]` branch, no CR or Sarah gate required (but GATE-P5 code quality checks still apply if within P5 context).
 
 ---
 
