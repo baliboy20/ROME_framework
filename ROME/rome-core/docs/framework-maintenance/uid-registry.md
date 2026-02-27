@@ -75,10 +75,12 @@ ROME-[TYPE]-[NUMBER]
 | ROME-GOV-007 | Framework Fidelity | `/ROME/rome-core/docs/framework-maintenance/framework-fidelity.md` | Draft |
 | ROME-GOV-008 | Activity Log Format | `/ROME/rome-core/docs/operational/activity-log-format.md` | Draft |
 | ROME-GOV-009 | MCP Server Dependencies | `/ROME/rome-core/docs/operational/mcp-server-dependencies.md` | Draft |
+| ROME-GOV-010 | Document Taxonomy | `/ROME/rome-core/docs/framework-maintenance/document-taxonomy.md` | Draft |
 | ROME-GOV-BASELINE | Robot Baseline (Monolithic) | `/ROME/rome-core/docs/governance/robot-baseline.md` | Deprecated |
 | ROME-GOV-BASELINE-A | Baseline: Universal | `/ROME/rome-core/docs/operational/baseline-universal.md` | Draft |
 | ROME-GOV-BASELINE-B | Baseline: Coordination | `/ROME/rome-core/docs/operational/baseline-coordination.md` | Draft |
 | ROME-GOV-BASELINE-C | Baseline: Governance | `/ROME/rome-core/docs/framework-maintenance/baseline-governance.md` | Draft |
+| ROME-GOV-011 | Git Conventions | `/ROME/rome-core/docs/operational/git-conventions.md` | Reserved — ROME-PROP-026 Phase B |
 
 ### Configuration Documents
 
@@ -139,6 +141,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
 | ROME-PROP-008 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-008-phase-based-plugin-architecture.md` | Proposal |
 | ROME-PROP-023 | Operational/Governance Separation | `/ROME_framework_maintenance/proposals/ROME-PROP-023-operational-governance-separation.md` | Draft |
+| ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/proposals/ROME-PROP-026-change-compliance-completeness.md` | Draft |
 
 ### Migration Documents
 
@@ -219,3 +222,5 @@ This registry MUST be updated when:
 | 2.5 | 2025-12-18T00:00:00Z | Added MIG type code, registered ROME-MIG-001 (Migration Guide), updated ROME-PROP-007 status to "In Progress (40%)" |
 | 2.6 | 2026-01-07T00:00:00Z | Registered ROME-PROP-008 (Phase-Based Plugin Architecture) |
 | 2.7 | 2026-02-24T00:00:00Z | Updated locations for ROME-PROP-023 operational/governance separation. Added ROME-GOV-BASELINE-A/B/C tiered baselines. Deprecated ROME-GOV-BASELINE. |
+| 2.8 | 2026-02-25T00:00:00Z | Registered ROME-GOV-010 (Document Taxonomy). Resolved UID conflict: document-taxonomy.md reassigned from ROME-GOV-008 to ROME-GOV-010. |
+| 2.9 | 2026-02-27T00:00:00Z | Registered ROME-PROP-026 (Change Management & Compliance Completeness). Reserved ROME-GOV-011 (Git Conventions) per PROP-026 Phase B. |

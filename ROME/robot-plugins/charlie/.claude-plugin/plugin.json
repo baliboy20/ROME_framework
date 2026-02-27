@@ -66,8 +66,9 @@
       "enabled": true,
       "required": false,
       "description": "Terminal management for build/test tasks"
-    }
+    },
   },
+  "plugins": ["Context7"],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
     "modes/P5-generation.md": "P5 frontend/application implementation mode",

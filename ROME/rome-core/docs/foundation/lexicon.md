@@ -50,6 +50,7 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **Technical Specification** | Centralized doc defining technical constraints, platform requirements, implementation parameters | Markdown | Technical constraints authority |
 | **Action List** | Centralized task inventory used for robot task assignment | Markdown | Task management and coordination |
 | **Glossary** | Mapping between framework-specific terms and standard software engineering terminology | - | External terminology alignment |
+| **Technical Brief** | Structured sponsor input declaring platform mandates, preferences, and constraints. Optional. | YAML (`_user_input/technical-brief.yaml`) | Project input document |
 
 ---
 
@@ -60,6 +61,16 @@ Centralized definition of all framework-specific terms to ensure terminological 
 - **Author:** PMA creates in P3; P5 robots complete Implementation section
 - **Scope:** One per feature. The authoritative design reference for implementation.
 - **Contrast:** Unlike TRACEABILITY.md (maps requirements to files), the feature spec captures the design contract and implementation rationale.
+
+---
+
+### Technical Brief Classifications
+
+| Term | Definition | PMA Authority | Scope |
+|------|-----------|--------------|-------|
+| **Mandate** | Non-negotiable technical requirement from sponsor. Only changeable via AMD-### with sponsor approval. | Validate feasibility only. Cannot override. | Technical Brief classification |
+| **Preference** | Sponsor-preferred technology. PMA may propose alternatives with documented justification. | May override with justification. | Technical Brief classification |
+| **Constraint** | External limitation (existing infrastructure, compliance, integration dependency). | Must respect. Can propose workarounds. | Technical Brief classification |
 
 ---
 

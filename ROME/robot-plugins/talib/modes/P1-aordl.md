@@ -103,6 +103,92 @@ Use Read tool on every file in `_user_input/raw-requirements/`. Extract:
 - Non-functional requirements
 - Technical preferences
 
+### Step 2a: Check for Technical Brief
+
+```
+If _user_input/technical-brief.yaml exists:
+  - Read and parse all entries
+  - Note MANDATE entries — these constrain P3 design decisions
+  - Reference in NonFunctional fields where requirements touch mandated systems
+    (e.g., "Authentication per technical-brief.yaml: Auth0 OAuth2")
+  - DO NOT duplicate platform mandates into every REQ-###.yaml
+  - Include summary in phase1-handover.md Section 3: Technical Context
+
+If not present:
+  - Note in phase1-handover.md Section 3:
+    "No technical brief provided. PMA has full technology selection authority in P3."
+```
+
+**Technical Brief Schema:**
+
+Each section is optional. Entries carry a classification: `MANDATE`, `PREFERENCE`, or `CONSTRAINT`.
+
+```yaml
+# _user_input/technical-brief.yaml
+# Provided by: [sponsor]
+# Date: [ISO-8601]
+
+platform:
+  type: MANDATE | PREFERENCE | CONSTRAINT
+  value:
+    mobile: [framework]       # e.g., flutter, react-native
+    web: [framework]          # e.g., next.js, angular
+    desktop: [framework]      # e.g., electron
+  notes: "[optional]"
+
+backend:
+  type: MANDATE | PREFERENCE | CONSTRAINT
+  value:
+    framework: [name]         # e.g., parse-server, express
+    language: [name]          # e.g., javascript, python
+    runtime: [name]           # e.g., node-20
+  notes: "[optional]"
+
+database:
+  type: MANDATE | PREFERENCE | CONSTRAINT
+  value:
+    engine: [name]            # e.g., postgresql, mongodb
+    version: "[constraint]"   # e.g., ">=15"
+    hosting: [target]         # e.g., aws-rds, self-hosted
+    existing: true | false    # true = existing infrastructure
+  notes: "[optional]"
+
+hosting:
+  type: MANDATE | PREFERENCE | CONSTRAINT
+  value:
+    provider: [name]          # e.g., aws, azure, gcp
+    region: [region]          # e.g., eu-west-1
+    account: client-managed | project-managed
+  notes: "[optional]"
+
+authentication:
+  type: MANDATE | PREFERENCE | CONSTRAINT
+  value:
+    method: [method]          # e.g., oauth2, jwt
+    provider: [name]          # e.g., auth0, firebase-auth
+    sso: required | optional | not-required
+  notes: "[optional]"
+
+ci_cd:
+  type: MANDATE | PREFERENCE | CONSTRAINT
+  value:
+    platform: [name]          # e.g., github-actions, gitlab-ci
+  notes: "[optional]"
+
+integrations:
+  - name: "[system name]"
+    type: MANDATE | PREFERENCE | CONSTRAINT
+    protocol: [protocol]      # e.g., REST, GraphQL, gRPC
+    auth: [method]            # e.g., oauth2, api-key
+    notes: "[details]"
+
+compliance:
+  - [standard]                # e.g., GDPR, SOC2, HIPAA
+
+budget_constraints:
+  notes: "[e.g., No per-seat licensed services.]"
+```
+
 ### Step 3: Transform to AORDL Requirements
 
 For each identified intent, create `REQ-###.yaml` with **all 13 fields**:

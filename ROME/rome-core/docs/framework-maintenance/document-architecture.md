@@ -52,59 +52,51 @@ Tier 0: Foundation (highest authority)
 | Tier | Folder(s) | Purpose | Authority |
 |------|-----------|---------|-----------|
 | 0 | `/foundation/` | Core principles, lexicon, policies | Highest - defines framework identity |
-| 1 | `/framework-governance/` | Document management, standards, procedures | Governs how framework operates |
+| 1 | `/framework-maintenance/` | Document management, standards, governance (Archie only) | Governs how framework operates |
+| 1 | `/operational/` | Robot execution baselines, activity log format, sponsor interaction | Runtime execution context |
 | 2 | `/life-cycle/P**/` | Phase specifications, operations guidelines | Defines application development process |
 | 3 | `/robot-templates/` | Robot definitions, operational procedures | Implements framework through agents |
 
 ### Folder Structure
 
 ```
-/ROME/
-├── foundation/
-│   ├── core-principles.md
-│   ├── core-principles-policy.md
+/ROME/rome-core/docs/
+├── foundation/                       # Tier 0 — framework identity
 │   └── lexicon.md
 │
-├── framework-governance/
+├── operational/                      # Tier 1 — robot execution context
+│   ├── baseline-universal.md             # Tier A: all robots
+│   ├── baseline-coordination.md          # Tier B: orchestrator + coordinators
+│   ├── activity-log-format.md
+│   ├── sponsor-interaction.md
+│   └── mcp-server-dependencies.md
+│
+├── framework-maintenance/            # Tier 1 — Archie only
+│   ├── baseline-governance.md            # Tier C: framework maintenance
 │   ├── document-standards.md
 │   ├── document-architecture.md
+│   ├── document-taxonomy.md
 │   ├── uid-registry.md
 │   ├── amendment-procedures.md
-│   └── terminology-management.md
-│
-├── life-cycle/
-│   ├── P00-bootup/
-│   │   └── operations-guidelines.md
-│   ├── P01-ingest/
-│   │   └── operations-guidelines.md
-│   ├── P02-analysis/
-│   │   └── operations-guidelines.md
-│   ├── P03-design/
-│   │   └── operations-guidelines.md
-│   ├── P04-config/
-│   │   └── operations-guidelines.md
-│   └── P05-generation/
-│       └── operations-guidelines.md
-│
-└── robot-templates/
-    ├── robot-operations-protocols/
-    │   └── activity-logging-protocol.md
-    ├── bootstrap/
-    │   └── CLAUDE.md
-    ├── roma/
-    │   └── CLAUDE.md
-    ├── talib/
-    │   └── CLAUDE.md
-    ├── pma/
-    │   └── CLAUDE.md
-    ├── clara/
-    │   └── CLAUDE.md
-    ├── sarah/
-    │   └── CLAUDE.md
-    ├── charlie/
-    │   └── CLAUDE.md
-    └── reena/
-        └── CLAUDE.md
+│   ├── terminology-management.md
+│   ├── framework-fidelity.md
+│   ├── core-principles.md
+│   ├── core-principles-policy.md
+│   └── specs/
+│       ├── skill-framework-specification.md
+│       └── subagent-framework-specification.md
+
+/ROME/robot-plugins/                  # Tier 3 — robot definitions
+├── bootstrap/
+├── roma/
+├── talib/
+├── pma/
+├── clara/
+├── sarah/
+├── charlie/
+├── reena/
+├── ashok/
+└── lucien/
 ```
 
 ---
@@ -176,7 +168,7 @@ If a downward reference is unavoidable:
 
 | Pattern | Usage | Example |
 |---------|-------|---------|
-| `lowercase-hyphenated/` | Standard folders | `framework-governance/` |
+| `lowercase-hyphenated/` | Standard folders | `framework-maintenance/` |
 | `P##-name/` | Phase folders | `P01-ingest/` |
 | `lowercase/` | Robot folders | `roma/`, `talib/` |
 
@@ -246,11 +238,11 @@ For any given topic, there is one authoritative source:
 |-------|-----------|----------|
 | Principles | ROME-PRIN-001 | `/foundation/core-principles.md` |
 | Terminology | ROME-LEX-001 | `/foundation/lexicon.md` |
-| Document format | ROME-GOV-001 | `/framework-governance/document-standards.md` |
-| Document structure | ROME-GOV-005 | `/framework-governance/document-architecture.md` |
-| UIDs | ROME-GOV-002 | `/framework-governance/uid-registry.md` |
-| Phase operations | ROME-PHASE-### | `/life-cycle/P##-name/operations-guidelines.md` |
-| Robot behavior | ROME-ROBOT-### | `/robot-templates/[name]/CLAUDE.md` |
+| Document format | ROME-GOV-001 | `/framework-maintenance/document-standards.md` |
+| Document structure | ROME-GOV-005 | `/framework-maintenance/document-architecture.md` |
+| UIDs | ROME-GOV-002 | `/framework-maintenance/uid-registry.md` |
+| Robot behavior | ROME-ROBOT-### | `/robot-plugins/[name]/ROBOT.md` |
+| Activity logging | ROME-GOV-008 | `/operational/activity-log-format.md` |
 
 ---
 

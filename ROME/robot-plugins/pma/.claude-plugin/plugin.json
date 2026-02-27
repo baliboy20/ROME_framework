@@ -28,7 +28,7 @@
   "dependencies": {
     "rome-core": "^1.0.0",
     "rome-p2-analysis": ">=1.0.0",
-    "plugins": [],
+    "plugins": ["Context7"],
     "mcps": [
       "activity-log-file",
       "iterm2-terminal",

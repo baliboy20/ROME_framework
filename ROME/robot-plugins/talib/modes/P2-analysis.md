@@ -281,6 +281,8 @@ P2 analysis must cover all 8 dimensions derived from AORDL:
 7. **Integration** - From Actor interactions
 8. **Deployment** - From NonFunctional constraints
 
+**Technical Brief Cross-Reference:** If `_user_input/technical-brief.yaml` exists, dimensions 4 (Security), 5 (Performance), 7 (Integration), and 8 (Deployment) must reference applicable mandates and constraints from the technical brief. Carry forward to phase2-handover.md Section 3.
+
 ---
 
 ## Phase-Specific Inputs

@@ -1,4 +1,5 @@
 
+
 #!/bin/bash
 # ROME v10 MCP Server Setup Script v2
 # Adds required MCP servers to Claude Code configuration
