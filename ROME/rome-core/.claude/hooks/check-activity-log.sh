@@ -77,4 +77,22 @@ WARN
   exit 0
 fi
 
+# Timestamp ordering check (ROME-PROP-026 §G9)
+# Detect retroactive logging: file modified before the most recent IN_PROGRESS entry
+if command -v stat &>/dev/null && [ -f "$FILE_PATH" ]; then
+  LAST_IP_LINE=$(grep "status:IN_PROGRESS" "$ACTIVITY_LOG" | tail -1)
+  if [ -n "$LAST_IP_LINE" ]; then
+    LAST_IP_TIME=$(echo "$LAST_IP_LINE" | cut -d'|' -f1 | tr -d ' ')
+    # Get file modification time in ISO-like format (macOS stat)
+    FILE_MTIME=$(stat -f "%Sm" -t "%Y-%m-%dT%H:%M:%SZ" "$FILE_PATH" 2>/dev/null)
+    if [ -n "$FILE_MTIME" ] && [ -n "$LAST_IP_TIME" ]; then
+      if [[ "$FILE_MTIME" < "$LAST_IP_TIME" ]]; then
+        cat <<'WARN'
+ACTIVITY LOG WARNING: This file was last modified BEFORE the most recent IN_PROGRESS log entry. Activity may have been logged retroactively. Verify that activity was logged before work began.
+WARN
+      fi
+    fi
+  fi
+fi
+
 exit 0

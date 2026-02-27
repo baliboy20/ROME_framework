@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 2.7 |
-| **Date** | 2026-02-24T00:00:00Z |
+| **Document UID** | ROME-GOV-002 || **Version** | 3.0 |
+| **Date** | 2026-02-27T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -80,7 +80,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-GOV-BASELINE-A | Baseline: Universal | `/ROME/rome-core/docs/operational/baseline-universal.md` | Draft |
 | ROME-GOV-BASELINE-B | Baseline: Coordination | `/ROME/rome-core/docs/operational/baseline-coordination.md` | Draft |
 | ROME-GOV-BASELINE-C | Baseline: Governance | `/ROME/rome-core/docs/framework-maintenance/baseline-governance.md` | Draft |
-| ROME-GOV-011 | Git Conventions | `/ROME/rome-core/docs/operational/git-conventions.md` | Reserved — ROME-PROP-026 Phase B |
+| ROME-GOV-011 | Git Conventions | `/ROME/rome-core/docs/operational/git-conventions.md` | Draft |
 
 ### Configuration Documents
 
@@ -133,6 +133,7 @@ ROME-[TYPE]-[NUMBER]
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
 | ROME-PROP-001 | Parallel Development | `/ROME_framework_maintenance/proposals/ROME-PROP-001-parallel-development.md` | Proposal |
+| ROME-PROP-015 | Change Management Protocol | `/ROME_framework_maintenance/proposals/ROME-PROP-015-change-management.md` | Proposal |
 | ROME-PROP-002 | Code Traceability Protocol | `/ROME_framework_maintenance/proposals/ROME-PROP-002-code-traceability.md` | Proposal |
 | ROME-PROP-003 | Multi-Agent Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-003-multi-agent-optimization.md` | Proposal |
 | ROME-PROP-004 | Design Artifact Conciseness | `/ROME_framework_maintenance/proposals/ROME-PROP-004-design-artifact-conciseness.md` | Implemented |
@@ -141,7 +142,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
 | ROME-PROP-008 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-008-phase-based-plugin-architecture.md` | Proposal |
 | ROME-PROP-023 | Operational/Governance Separation | `/ROME_framework_maintenance/proposals/ROME-PROP-023-operational-governance-separation.md` | Draft |
-| ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/proposals/ROME-PROP-026-change-compliance-completeness.md` | Draft |
+| ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-026-change-compliance-completeness.md` | Implemented |
 
 ### Migration Documents
 
@@ -224,3 +225,5 @@ This registry MUST be updated when:
 | 2.7 | 2026-02-24T00:00:00Z | Updated locations for ROME-PROP-023 operational/governance separation. Added ROME-GOV-BASELINE-A/B/C tiered baselines. Deprecated ROME-GOV-BASELINE. |
 | 2.8 | 2026-02-25T00:00:00Z | Registered ROME-GOV-010 (Document Taxonomy). Resolved UID conflict: document-taxonomy.md reassigned from ROME-GOV-008 to ROME-GOV-010. |
 | 2.9 | 2026-02-27T00:00:00Z | Registered ROME-PROP-026 (Change Management & Compliance Completeness). Reserved ROME-GOV-011 (Git Conventions) per PROP-026 Phase B. |
+| 3.0 | 2026-02-27T00:00:00Z | ROME-PROP-026 Phase A: Registered ROME-PROP-015 (moved from implemented-proposals/ to proposals/, status corrected to Proposal). |
+| 3.1 | 2026-02-27T00:00:00Z | ROME-PROP-026 implemented: updated PROP-026 status to Implemented, updated location to implemented-proposals/. Updated ROME-GOV-011 status from Reserved to Draft. |

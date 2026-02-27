@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-003 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2026-02-27T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -13,15 +13,22 @@
 ---
 
 ## Purpose
-//TODO:Archie in  Human speak pls, the purose should defines the approach to take to the various types of 
-// changes
-Defines procedures for modifying ROME framework documents. Ensures controlled evolution while maintaining framework integrity and consistency.
+
+This document governs two distinct types of change, which must not be confused:
+
+**1. Framework Document Amendments** — changes to ROME methodology documents within `/ROME/`. This is what this document primarily describes: how Archie and robots modify the framework itself (fixing a document, adding a principle, deprecating a procedure).
+
+**2. Project Artifact Amendments** — changes to artifacts produced during an active ROME application development cycle (REQ-### files, design documents, source code). These are governed by:
+- `AMD-###` (Amendment): use while the ROME cycle (P0–P5) is still running — see ROME-PROC-005 and ROME-GOV-BASELINE-B
+- `CR-###` (Change Request): use after the ROME cycle is complete and the application is deployed — see ROME-PROP-015 and ROME-PROP-026
+
+**In short:** this document = how the framework evolves. For in-flight artifact changes, use AMD-###. For post-delivery changes, use CR-###.
 
 ## Scope
 
 Applies to all modifications to documents within `/ROME/` directory. Does not apply to:
 - Working drafts in `/ROME_architect/`
-- Project-specific artifacts created during application development
+- Project-specific artifacts created during application development (use AMD-### or CR-### for those)
 
 ---
 
@@ -221,3 +228,4 @@ Changes required urgently to unblock framework operation.
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-11-21T00:00:00Z | Initial document creation |
+| 1.1 | 2026-02-27T00:00:00Z | Rewrote Purpose section to distinguish framework document amendments from project artifact AMD-### and CR-### per ROME-PROP-026 G1 |

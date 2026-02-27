@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-008 |
-| **Version** | 2.0 |
-| **Date** | 2026-01-09T00:00:00Z |
+| **Version** | 2.1 |
+| **Date** | 2026-02-27T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -120,7 +120,8 @@ TIMESTAMP | TYPE | ID | ATTR1:VALUE1 | ATTR2:VALUE2 | ...
 - `FEATURE` - Feature-level work
 - `STORY` - User story implementation
 - `BLOCKER` - Impediments blocking progress
-- `AMENDMENT` - Change requests to prior phase work
+- `AMENDMENT` - In-flight amendments during an active ROME cycle (AMD-###)
+- `CHANGE_REQUEST` - Post-delivery change requests after cycle completion (CR-###)
 
 **Rules:**
 - MUST be uppercase
@@ -156,6 +157,7 @@ TASK       # Not a defined type
 | STORY | `STORY-[EPIC]-[FEAT]-[SEQ]-[CAP]` | `STORY-001-001-1-database` |
 | BLOCKER | `BLOCK-###` | `BLOCK-001` |
 | AMENDMENT | `AMD-###` | `AMD-001` |
+| CHANGE_REQUEST | `CR-###` | `CR-001` |
 
 **Rules:**
 - MUST be unique within project
@@ -248,6 +250,15 @@ started:"2025-12-03"    # Timestamp should not be quoted
 - `APPROVED` - Approved for implementation
 - `REJECTED` - Rejected
 
+**CHANGE_REQUEST:**
+- `PROPOSED` - CR submitted, awaiting analysis
+- `ANALYZED` - Impact analysis complete
+- `APPROVED` - Sarah approved, implementation may begin
+- `IN_PROGRESS` - Implementation underway
+- `COMPLETED` - Implementation verified, deployed
+- `REJECTED` - CR rejected with documented reason
+- `ROLLED_BACK` - Implementation reversed
+
 ---
 
 #### Type-Specific Attributes
@@ -299,6 +310,19 @@ started:"2025-12-03"    # Timestamp should not be quoted
 | `title` | String | `title:"Update API design"` | Amendment description |
 | `requestedBy` | String | `requestedBy:reena` | Requesting robot |
 | `approvedBy` | String | `approvedBy:roma` | Approving robot |
+
+**CHANGE_REQUEST:**
+| Attribute | Type | Example | Description |
+|-----------|------|---------|-------------|
+| `type` | Enum | `type:TERMINOLOGY_CHANGE` | Change category (TERMINOLOGY_CHANGE \| LOGIC_CHANGE \| SCHEMA_CHANGE \| API_CHANGE \| UI_CHANGE \| REQUIREMENT_CHANGE \| REFACTOR) |
+| `title` | String | `title:"Rename Company to Organisation"` | Human-readable summary |
+| `requestedBy` | String | `requestedBy:roma` | Initiating robot or sponsor |
+| `approvedBy` | String | `approvedBy:sarah` | Approving robot |
+| `targetPhase` | Number | `targetPhase:3` | Phase whose artifacts are affected |
+| `breaking` | Boolean | `breaking:true` | Whether change breaks existing consumers |
+| `requirementsAffected` | Number | `requirementsAffected:3` | Count of affected REQ-### files |
+| `codeFilesAffected` | Number | `codeFilesAffected:12` | Count of affected source files |
+| `traceabilityVerified` | Boolean | `traceabilityVerified:true` | Traceability chain intact after change |
 
 ---
 
@@ -375,7 +399,7 @@ started:"2025-12-03"    # Timestamp should not be quoted
 
 ### AMENDMENT Events
 
-**Purpose:** Track change requests
+**Purpose:** Track in-flight amendments during an active ROME cycle (P0–P5 still running). Use AMD-### only while the cycle is active. For post-delivery changes, use CHANGE_REQUEST.
 
 **Example:**
 ```
@@ -387,6 +411,31 @@ started:"2025-12-03"    # Timestamp should not be quoted
 - Amendment created: `status:PENDING_REVIEW` with `requestedBy`
 - Amendment approved: `status:APPROVED` with `approvedBy`
 - Amendment rejected: `status:REJECTED` with rejection reason
+
+---
+
+### CHANGE_REQUEST Events
+
+**Purpose:** Track post-delivery Change Request lifecycle. Use CR-### only after the ROME cycle (P0–P5) is complete and the application is deployed. For in-flight changes, use AMENDMENT.
+
+**Example:**
+```
+2026-03-01T09:00:00Z | CHANGE_REQUEST | CR-001 | status:PROPOSED | robot:roma | type:TERMINOLOGY_CHANGE | title:"Rename Company to Organisation" | requestedBy:sponsor
+2026-03-01T11:00:00Z | CHANGE_REQUEST | CR-001 | status:ANALYZED | robot:roma | breaking:true | requirementsAffected:3 | codeFilesAffected:12
+2026-03-01T13:00:00Z | CHANGE_REQUEST | CR-001 | status:APPROVED | robot:sarah | approvedBy:sarah
+2026-03-02T17:00:00Z | CHANGE_REQUEST | CR-001 | status:COMPLETED | robot:roma | traceabilityVerified:true
+```
+
+**State Transition:**
+- CR created: `status:PROPOSED`
+- Impact analysis done: `status:ANALYZED` with counts
+- Sarah approves: `status:APPROVED` with `approvedBy`
+- Implementation starts: `status:IN_PROGRESS`
+- Implementation verified: `status:COMPLETED` with `traceabilityVerified:true`
+- If rejected: `status:REJECTED`
+- If reversed: `status:ROLLED_BACK`
+
+**Document:** `ARTIFACTS/changes/CR-###.yaml` — full CR schema defined in ROME-PROP-015 and ROME-PROP-026 §G4.
 
 ---
 
@@ -707,3 +756,4 @@ stories:
 |---------|------|-------------------|
 | 1.0 | 2025-12-18T00:00:00Z | Initial format specification for ROME-PROP-007 |
 | 2.0 | 2026-01-09T00:00:00Z | Eliminated state file - queries now parse log directly (Solution C) |
+| 2.1 | 2026-02-27T00:00:00Z | Added CHANGE_REQUEST type (CR-###) per ROME-PROP-026 G2. Clarified AMENDMENT scope (intra-cycle only). Added CR status values and type-specific attributes. |

@@ -150,3 +150,46 @@ validation_status: PASS
 - Ensures no requirements are lost or orphaned
 - Validates design and implementation completeness
 - Supports impact analysis for changes
+
+---
+
+## TRACEABILITY.md Content Validation (GATE-P5)
+
+Per ROME-PROP-026 §G8: at GATE-P5, Sarah validates TRACEABILITY.md **content**, not just presence. A file that exists but contains no REQ-### references FAILS this check.
+
+### Minimum Valid TRACEABILITY.md Structure
+
+```markdown
+# Traceability: [Feature Name]
+
+## Specification Reference
+- SPEC-###: [spec title] (version [N.N])
+
+## Requirements Covered
+- REQ-### — [intent summary]
+- FUNC-### — [feature name]
+- US-### — [story title]
+
+## Implementation Files
+| File | Purpose |
+|------|---------|
+| path/to/file.ts | [what it does] |
+
+## Tests Written
+| Test File | Coverage |
+|-----------|----------|
+| path/to/test.ts | [what scenarios] |
+```
+
+### Content Validation Rules
+
+| Check | Rule | Severity |
+|-------|------|----------|
+| SPEC reference present | File contains `SPEC-###` pattern | CRITICAL |
+| SPEC version current | Referenced spec version matches SPEC-### current version in ARTIFACTS | HIGH |
+| REQ-### listed | File contains at least one `REQ-###` pattern | CRITICAL |
+| Implementation files listed | Implementation Files table not empty | HIGH |
+| Implementation files exist | Listed paths resolve in SOURCE/ | HIGH |
+| Tests listed | Tests Written table not empty | MEDIUM |
+
+**CRITICAL failures block GATE-P5.** HIGH failures block unless Roma documents a justification in the activity log.

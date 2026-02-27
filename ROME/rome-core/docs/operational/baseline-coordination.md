@@ -121,7 +121,9 @@ mcp__activity-log__append({
 
 ## Amendment Handling
 
-When robot needs to amend prior phase output:
+**Scope: AMD-### is for in-flight amendments only.** Use AMD-### when the ROME cycle (P0–P5) is still active. If the cycle is complete and the application is deployed, use CR-### (Change Request) per ROME-PROP-015 and ROME-PRIN-001 §12b.
+
+When robot needs to amend prior phase output during an active cycle:
 
 ```javascript
 REQUEST_AMENDMENT:

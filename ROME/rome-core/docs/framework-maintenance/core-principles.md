@@ -2,9 +2,9 @@
 
 **Document UID:** ROME-PRIN-001  
 
-**Version:** 1.0  
+**Version:** 1.1
 
-**Date:** 2025-11-20T00:00:00Z
+**Date:** 2026-02-27T00:00:00Z
 
 **Status:** Draft
 
@@ -208,38 +208,45 @@ Maintains integrity and consistency through inter-document references within the
 - **Reference:** ROME-GOV-006 (Sponsor Interaction)
 
 ### 12. Iterative Refinement
-**Definition:** The framework accommodates product evolution through controlled refinement mechanisms, both within a single ROME cycle and across multiple cycles.
+**Definition:** The framework accommodates product evolution through three controlled refinement mechanisms, scoped by cycle status and change magnitude.
 
-**Refinement Modes:**
-
-**12a. Intra-Process Refinement (Amendments)**
-Modifications during an active ROME cycle.
+**12a. Intra-Process Refinement (AMD-###)**
+Modifications during an active ROME cycle (P0–P5 not yet completed).
 
 - Triggered by: clarifications, discovered conflicts, sponsor feedback
-- Mechanism: Amendment entries in activity log
-- Requires: Approval before implementation
+- Mechanism: Amendment entries (`AMD-###`) in activity log
+- Requires: Roma approval before implementation
 - Scope: Changes propagate forward through remaining phases
 - Impact analysis mandatory before approval
 
-**12b. Inter-Process Refinement (New Cycle)**
-Major modifications requiring a fresh ROME cycle.
+**12b. Post-Delivery Change Request (CR-###)**
+Contained changes after the ROME cycle is complete and the application is deployed.
 
-- Triggered by: significant scope changes, post-deployment enhancements, new feature requests
+- Triggered by: post-delivery requirement changes, terminology corrections, schema additions, logic fixes
+- Mechanism: Change Request documents (`CR-###.yaml`) in `ARTIFACTS/changes/`; `CHANGE_REQUEST` entries in activity log
+- Requires: Sarah approval; full impact analysis including library and pipeline sections; rollback plan
+- Scope: Traceability chain must be preserved; `ChangeHistory` entries added to all modified artifacts
+- Reference: ROME-PROP-015, ROME-PROP-026
+
+**12c. Inter-Process Refinement (New Cycle)**
+Major modifications requiring a full ROME cycle replay.
+
+- Triggered by: significant scope changes, new feature sets, re-architecture
 - Mechanism: New ROME process initiated with modified inputs
 - Relationship: New cycle references prior cycle artifacts as baseline
 - Versioning: Application version incremented (v1.0 → v2.0)
 
-**Threshold Criteria:**
-| Use Amendment (Intra) | Use New Cycle (Inter) |
-|-----------------------|-----------------------|
-| Clarification of existing requirement | New functional requirements |
-| Bug fix to specification | Architectural changes |
-| Minor scope adjustment | Technology stack changes |
-| Single-phase impact | Multi-phase cascade required |
+**Threshold Decision:**
+```
+Is the ROME cycle (P0–P5) still active?
+  YES → Use AMD-### (12a: Intra-Process Amendment)
+  NO: Is the change contained (no full re-architecture required)?
+    YES → Use CR-### (12b: Post-Delivery Change Request)
+    NO  → Use New Cycle (12c: Inter-Process Refinement)
+```
 
 **Implementation:**
-- Amendment workflow defined in ROME-PROC-005
-- Impact analysis procedures in phase operations-guidelines
-- Version control maintains relationship between cycles
-- Traceability links refinements to source decisions
+- AMD-### workflow: ROME-GOV-BASELINE-B, ROME-PROC-005
+- CR-### workflow: ROME-PROP-015, ROME-GOV-003
+- New Cycle: version control maintains relationship between cycles; traceability links refinements to source decisions
 

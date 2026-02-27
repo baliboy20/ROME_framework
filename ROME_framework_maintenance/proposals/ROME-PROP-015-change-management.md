@@ -4,13 +4,14 @@
 |-------|-------|
 | **Proposal ID** | ROME-PROP-015 |
 | **Title** | Change Management Protocol with Traceability Preservation |
-| **Status** | Draft |
+| **Status** | Proposal |
 | **Created** | 2025-12-24 |
 | **Author** | Framework Analyst & Architect |
 | **Priority** | HIGH |
 | **Complexity** | High |
 | **Dependencies** | ROME-PROP-007 (Activity Logging), ROME-PROP-013 (AORDL Integration) |
 | **Scope** | Systematic process for managing changes to requirements, design, and code while preserving traceability |
+| **Implementation** | ROME-PROP-026 (G1, G2, G4) delivers the implementation of this proposal |
 
 ---
 
