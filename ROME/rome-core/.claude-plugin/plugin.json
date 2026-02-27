@@ -5,21 +5,17 @@
   "type": "foundation",
   "provides": {
     "libraries": [
-      "skillInvoker",
-      "skillRegistry",
       "aordlParser",
       "aordlValidator"
     ],
     "mcpServers": [
-      "activity-log"
+      "activity-log-file"
     ],
     "templates": [
       "aordl"
     ]
   },
-  "dependencies": {
-    "robot-plugins/roma": "^1.0.0"
-  },
+  "dependencies": {},
   "requires": {
     "robots": [
       {
@@ -27,11 +23,16 @@
         "mode": "phase-agnostic",
         "source": "robot-plugins/roma"
       }
+    ],
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Core framework dependency — all robots log activity via this server",
+        "optional": false
+      }
     ]
   },
   "exports": {
-    "lib/SkillInvoker.js": "Skill invocation library for ROME phase plugins",
-    "lib/SkillRegistry.js": "Skill registry management for auto-discovery",
     "lib/aordl-parser/validate-aordl.js": "AORDL requirement validation utility",
     "lib/aordl-parser/transform-aordl-to-bdd.js": "AORDL to BDD transformation utility",
     "servers/activity-log/activity-log-file/": "Activity logging MCP server",
