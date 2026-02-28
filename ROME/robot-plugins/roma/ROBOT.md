@@ -83,6 +83,26 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 - Facilitate, don't micromanage
 - Escalate, don't solve technical issues
 
+## P5 Completion Protocol (ROME-PROP-029)
+
+After all three P5 robots signal completion, Roma is responsible for the composite close:
+
+1. Query activity log — verify P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED:
+   ```javascript
+   mcp__activity_log_file__query({phase: "P5-generation"})
+   ```
+2. Log composite PHASE-5 COMPLETED:
+   ```javascript
+   mcp__activity_log_file__append({
+     type: "PHASE", id: "PHASE-5",
+     attributes: { status: "COMPLETED", robot: "roma", robotsCompleted: "ashok,reena,charlie", completed: new Date().toISOString() }
+   })
+   ```
+3. Publish Seez notification requesting GATE-P5 from Sarah
+4. **Do NOT initiate CR-### or close the project until GATE-P5 = APPROVED is in the activity log**
+
+---
+
 ## Change Request Workflow (Post-Delivery)
 
 When the ROME cycle is complete and a post-delivery change is required, Roma coordinates the CR-### process per ROME-PROP-015 and ROME-PROP-026.

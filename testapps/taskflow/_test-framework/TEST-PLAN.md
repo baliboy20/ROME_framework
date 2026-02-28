@@ -1,8 +1,8 @@
 # TaskFlow — ROME Framework Test Plan
 
 **Project:** TaskFlow (Task Management API)
-**Framework Version:** rome-v1.0.0
-**Date:** 2026-02-27
+**Framework Version:** rome-v1.1.1
+**Date:** 2026-02-28
 **Purpose:** End-to-end validation of ROME framework mechanics using a real project
 
 ---
@@ -22,38 +22,40 @@
 
 These conditions are introduced deliberately during the run to test specific framework responses. The observer introduces each at the specified trigger point.
 
-### TC-01 — Quality Gate Block (P2 exit)
-**When:** Roma submits ARCHITECTURE.md for P2 quality gate
-**Inject:** Omit explicit justification for Cloudflare D1 migration strategy in ARCHITECTURE.md
-**Expected:** Sarah BLOCKS phase exit; outputs specific finding referencing missing migration strategy; Roma must update and resubmit
-**Pass if:** Gate blocks with actionable text; second submission passes
+> **Observer discipline:** Each TC has an ⛽ INJECT NOW marker. When you reach that point in the session, send the injection message to the active robot before it proceeds. TC injection is the observer's primary responsibility — missing a TC invalidates that test condition.
+
+### TC-01 — Quality Gate Block (P3 exit) _(was P2 — corrected Run 1)_
+**When:** PMA submits `system-architecture.md` for P3 quality gate
+⛽ **INJECT NOW:** Before PMA requests gate review, manually remove the D1 migration strategy section from `system-architecture.md`
+**Expected:** Sarah BLOCKS phase exit; outputs specific finding referencing missing migration strategy; PMA must update and resubmit
+**Pass if:** Gate blocks with actionable text naming the missing section; second submission passes
 
 ### TC-02 — Hook Enforcement (P5)
-**When:** Charlie begins writing to SOURCE/
-**Inject:** Observe whether pre-hook fires before first write
-**Expected:** If no activity logged yet, pre-hook warning appears in Claude context before write proceeds
+**When:** First P5 robot (Ashok) begins writing to SOURCE/
+⛽ **INJECT NOW:** Observe passively — do not send any message. Watch for pre-hook advisory in Claude context before first Write tool call
+**Expected:** If no PHASE IN_PROGRESS logged, pre-hook warning appears before write proceeds
 **Pass if:** Warning text includes MCP tool call example; write is not blocked (hook is advisory)
 
 ### TC-03 — Traceability Gap (P3 exit)
-**When:** Roma submits TRACEABILITY.md for P3 quality gate
-**Inject:** Omit SPEC reference for F5 (Notifications) in TRACEABILITY.md
+**When:** PMA submits TRACEABILITY.md for P3 quality gate
+⛽ **INJECT NOW:** Before PMA requests gate review, manually remove the SPEC reference row for F5 (Notifications) from TRACEABILITY.md
 **Expected:** Sarah FAILS with CRITICAL severity citing missing SPEC ref for F5
 **Pass if:** Finding is specific (names F5), severity is CRITICAL, gate blocks
 
 ### TC-04 — AMD-001: Add Task Comments (mid-P3)
-**When:** Phase 3 Design is IN_PROGRESS (after ARCHITECTURE.md approved)
-**Inject:** Sponsor requests: "Add the ability to comment on tasks — team members can leave comments on any task they can view"
+**When:** Phase 3 Design is IN_PROGRESS (after system-architecture.md approved, before GATE-P3 requested)
+⛽ **INJECT NOW:** Send to PMA: _"Sponsor change request: add the ability to comment on tasks — team members can leave comments on any task they can view."_
 **Expected:**
-- Talib creates AMD-001 entry in activity log
+- Roma/PMA creates AMD-001 entry in activity log
 - AMD-001 scoped: affects F3 (Task Management), requires new COMMENT entity in data model
-- Roma updates DESIGN.md and DATA-MODEL.md with AMD-001 reference
+- Design artifacts updated with AMD-001 reference
 - Sarah re-runs quality gate on updated artifacts
 - AMD-001 logged COMPLETED before phase exits
 **Pass if:** Full AMD-001 lifecycle in activity log; design artifacts reference AMD-001
 
 ### TC-05 — CR-001: Add Recurring Tasks (post-delivery)
-**When:** PHASE-5 COMPLETED in activity log
-**Inject:** Sponsor requests: "Add recurring task support — daily, weekly, monthly recurrence with auto-spawn"
+**When:** GATE-P5 = APPROVED in activity log
+⛽ **INJECT NOW:** Send to Roma: _"Sponsor post-delivery request: add recurring task support — daily, weekly, monthly recurrence with auto-spawn."_
 **Expected:**
 - Roma creates CR-001.yaml via create-change-request skill
 - Impact analysis covers: API (new endpoints), D1 schema (recurrence config), Flutter UI (recurrence picker)
@@ -62,11 +64,23 @@ These conditions are introduced deliberately during the run to test specific fra
 - CR-001 full lifecycle logged: PROPOSED → ANALYZED → APPROVED → IN_PROGRESS → COMPLETED
 **Pass if:** CR-### path used (not AMD-###); migrationRequired:true triggers pipeline field requirement
 
-### TC-06 — Retroactive Logging Detection
-**When:** Any phase
-**Inject:** Robot logs IN_PROGRESS AFTER writing a file (reversed order)
-**Expected:** PostToolUse hook timestamp check warns that file mtime precedes IN_PROGRESS log entry
-**Pass if:** Warning text references retroactive logging; includes guidance
+### TC-06 — Zero-Timestamp Rejection (any phase)
+**When:** Any robot is about to log an activity entry
+⛽ **INJECT NOW:** Ask the robot to log a test entry with `started: "2026-01-01T00:00:00Z"` as a placeholder
+**Expected:** PreToolUse hook blocks the append; error message references ROME-PROP-029; robot corrects to real timestamp
+**Pass if:** Block fires before entry reaches the log; corrected entry uses real wall-clock time
+
+### TC-09 — GATE-P5 Enforcement (ROME-PROP-029)
+**When:** P5-CHARLIE COMPLETED is logged
+⛽ **INJECT NOW:** Observe passively — watch whether Roma queries all P5 robots, logs composite PHASE-5 COMPLETED, and publishes Seez GATE-P5 request without being prompted
+**Expected:** Roma logs `PHASE | PHASE-5 | status:COMPLETED | robot:roma`; Seez tab appears requesting Sarah GATE-P5; project does not close until GATE-P5 APPROVED
+**Pass if:** Composite PHASE-5 entry present before any post-delivery activity; Sarah GATE-P5 APPROVED before project close
+
+### TC-10 — GATE-P2 Content Sampling
+**When:** Sarah runs GATE-P2
+⛽ **INJECT NOW:** Observe passively — confirm Sarah explicitly reads and samples at least 3 REQ-###→FUNC-### pairs by content (not just count)
+**Expected:** Sarah's gate output names the 3 sampled entries and confirms semantic alignment; gate takes >60 seconds
+**Pass if:** Gate output lists sampled REQ-### IDs; semantic correctness confirmed per entry; gate does not rubber-stamp on count alone
 
 ### TC-07 — Parallel Implementation Proposal Publication (P5 entry)
 **When:** P5 begins; all three robots (Ashok, Reena, Charlie) start simultaneously
@@ -133,7 +147,9 @@ These conditions are introduced deliberately during the run to test specific fra
 - [ ] SOURCE/tests/: API integration tests, widget tests
 - [ ] Parallel STORY entries visible in activity log (both robots active concurrently)
 - [ ] TC-02 hook enforcement observed
-- [ ] PHASE-5 IN_PROGRESS → COMPLETED in activity log
+- [ ] P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED in activity log
+- [ ] Composite PHASE-5 COMPLETED logged by Roma (TC-09)
+- [ ] GATE-P5 APPROVED in activity log before any post-delivery activity
 
 ### Post-Delivery
 - [ ] TC-05 CR-001 (recurring tasks) processed via CR-### path

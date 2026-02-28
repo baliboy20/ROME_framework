@@ -201,6 +201,12 @@ Sarah must know these critical file paths for gate validation:
    - Check: grep "downstream: \[\]" ARTIFACTS/_requirements/aordl/*.yaml
    - BLOCK if any REQ-### has empty downstream array
    - All created features/stories must be listed in parent requirement's downstream
+   - **Content sampling (MANDATORY — not count-only):**
+     - Select at least 3 REQ-### entries at random
+     - Read each REQ-### YAML and its corresponding FUNC-### entry
+     - Verify the downstream link is semantically correct (FUNC title matches REQ intent)
+     - BLOCK if sampled entries show mechanical linking without semantic alignment
+     - Record which entries were sampled in gate output
 
 3. 8-Dimension Coverage
    - Functional, Data, Business Rules, Security, Performance, Quality, Integration, Deployment
@@ -348,6 +354,8 @@ Sarah must know these critical file paths for gate validation:
 ### GATE-P5: Generation Validation
 
 **Entry Criteria:**
+- PHASE-5 composite entry (logged by Roma) status = COMPLETED — BLOCK if missing
+- Individual robot phases all COMPLETED: P5-ASHOK, P5-REENA, P5-CHARLIE
 - All P5 features status = COMPLETED
 - All tests passing
 - GATE-P4 = APPROVED

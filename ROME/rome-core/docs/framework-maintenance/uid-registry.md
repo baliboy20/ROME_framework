@@ -153,6 +153,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-026-change-compliance-completeness.md` | Implemented |
 | ROME-PROP-027 | Framework Versioning | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-027-framework-versioning.md` | Implemented |
 | ROME-PROP-028 | P5 Implementation Proposal Gate | `/ROME_framework_maintenance/proposals/ROME-PROP-028-p5-implementation-proposal.md` | Draft |
+| ROME-PROP-029 | P5 Completion Enforcement | `/ROME_framework_maintenance/proposals/ROME-PROP-029-p5-completion-enforcement.md` | Draft |
 
 ### Migration Documents
 
@@ -242,3 +243,4 @@ This registry MUST be updated when:
 | 3.4 | 2026-02-27T00:00:00Z | ROME-PROP-027 implemented: updated status to Implemented, path updated to implemented-proposals/. |
 | 3.5 | 2026-02-27T00:00:00Z | Housekeeping: deleted ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (Node.js-era specs, superseded by PROP-011/019/020/021). Marked Deprecated. |
 | 3.6 | 2026-02-27T00:00:00Z | Registered ROME-PROP-028 (P5 Implementation Proposal Gate). |
+| 3.7 | 2026-02-28T00:00:00Z | Registered ROME-PROP-029 (P5 Completion Enforcement — composite PHASE-5 event, GATE-P5 mandate, zero-timestamp rejection). |
