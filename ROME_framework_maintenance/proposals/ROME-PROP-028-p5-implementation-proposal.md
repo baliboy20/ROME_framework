@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PROP-028 |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Date** | 2026-02-27T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Proposal |
@@ -72,6 +72,8 @@ Charlie may begin UI scaffolding (project structure, navigation shell, design sy
 
 Each robot produces one Implementation Proposal per session using the following fixed-field form. The structured format enables consistent sponsor review and automated Sarah gate validation.
 
+**Ashok and Reena use sections 1–5. Charlie uses sections 1–6.**
+
 ```markdown
 # Implementation Proposal
 
@@ -124,6 +126,27 @@ Each robot produces one Implementation Proposal per session using the following 
 | Risk | Blocked feature | Mitigation |
 |------|----------------|------------|
 | Reena's /tasks API not ready | Charlie FEAT-003 screens | Charlie scaffolds screen shell; integrates API when ready |
+
+---
+
+## 6. Widget & Screen Design Plan (Charlie only)
+
+Widget-level design per screen. No code — widget names and layout intent only.
+
+| Screen | Layout widgets | Key child widgets | Custom widgets to create | State connection |
+|--------|---------------|-------------------|--------------------------|-----------------|
+| LoginScreen | Scaffold, Column, SingleChildScrollView | TextFormField ×2, ElevatedButton, CircularProgressIndicator | — | AuthBloc → BlocBuilder |
+| TaskListScreen | Scaffold, RefreshIndicator | ListView.builder, TaskCard (custom), FloatingActionButton | TaskCard | TaskBloc → BlocConsumer |
+
+**Reused widgets across screens:**
+- [e.g. ErrorBanner, LoadingOverlay]
+
+**Design system mapping** (if Clara provided):
+- [e.g. PrimaryButton → ElevatedButton with theme primaryColor]
+
+**Notes on non-obvious widget choices:**
+- [e.g. "ListView.builder not GridView — single column; performance for 100+ tasks"]
+- [e.g. "BottomSheet not AlertDialog for delete confirmation — less disruptive on mobile"]
 
 ---
 
@@ -263,3 +286,4 @@ Two new test conditions should be added:
 |---------|------|---------|
 | 1.0 | 2026-02-27T00:00:00Z | Initial draft |
 | 1.1 | 2026-02-27T00:00:00Z | Added parallel proposal model, structured form template, implementation schedule section, dependency sequencing (Ashok→Reena→Charlie), TC-07/TC-08 test conditions |
+| 1.2 | 2026-02-28T00:00:00Z | Added Section 6 (Widget & Screen Design Plan) to Charlie's proposal form — per-screen widget table, custom widget list, design system mapping, non-obvious choice rationale |

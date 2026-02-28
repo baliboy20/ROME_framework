@@ -194,6 +194,25 @@ mcp__Seez__show_doc({
 |------|----------------|------------|
 | Reena API not ready | Screen implementation | Scaffold shell; integrate when API ready |
 
+## 6. Widget & Screen Design Plan
+
+For each screen in the assigned features, document the widget structure and state hookup **before writing any code**. No code — widget names and layout intent only.
+
+| Screen | Layout widgets | Key child widgets | Custom widgets to create | State connection |
+|--------|---------------|-------------------|--------------------------|-----------------|
+| [ScreenName] | [Scaffold, Column, SingleChildScrollView, etc.] | [TextFormField, ElevatedButton, ListView.builder, etc.] | [e.g. TaskCard, StatusBadge] | [e.g. AuthBloc → BlocBuilder] |
+
+**Reused widgets across screens:**
+- [List any widget used in 2+ screens]
+
+**Design system mapping** (if Clara provided design system):
+- [PrimaryButton → ElevatedButton with theme X]
+- [InputField → TextFormField with OutlineInputBorder]
+
+**Notes on non-obvious widget choices** (one line each):
+- [e.g. "ListView.builder not GridView — single column, performance for 100+ tasks"]
+- [e.g. "BottomSheet not AlertDialog for delete confirmation — less disruptive"]
+
 ---
 _Awaiting sponsor approval. No source files will be written until IMPL-PROP-CHARLIE is logged APPROVED._`
 })
