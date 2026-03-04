@@ -128,7 +128,7 @@ EPIC-001: User Management
 | **Phase Entry** | Activity log entry tracking phase-level status and gate decisions | PHASE-# | id, type, status, robot, created | NOT_STARTED, IN_PROGRESS, COMPLETED | Phase progression tracking |
 
 ### Layer (Deprecated)
-- **Status:** Deprecated by ROME-PROP-025. See Capability.
+- **Status:** Deprecated. See Capability.
 - **Previous values:** database, backend, frontend (fixed)
 - **Replacement:** Capability — project-specific, unbounded
 

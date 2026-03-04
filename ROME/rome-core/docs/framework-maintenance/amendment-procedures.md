@@ -20,7 +20,7 @@ This document governs two distinct types of change, which must not be confused:
 
 **2. Project Artifact Amendments** — changes to artifacts produced during an active ROME application development cycle (REQ-### files, design documents, source code). These are governed by:
 - `AMD-###` (Amendment): use while the ROME cycle (P0–P5) is still running — see ROME-PROC-005 and ROME-GOV-BASELINE-B
-- `CR-###` (Change Request): use after the ROME cycle is complete and the application is deployed — see ROME-PROP-015 and ROME-PROP-026
+- `CR-###` (Change Request): use after the ROME cycle is complete and the application is deployed — see the Change Request Protocol
 
 **In short:** this document = how the framework evolves. For in-flight artifact changes, use AMD-###. For post-delivery changes, use CR-###.
 

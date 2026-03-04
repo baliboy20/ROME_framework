@@ -8,7 +8,7 @@
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
-| **Implements** | ROME-PROP-026 §G6 |
+| **Implements** | ROME-GOV-011 |
 
 ---
 
@@ -32,7 +32,7 @@ All robots writing to `SOURCE/` or `ARTIFACTS/`. Roma is the sole robot that mer
 | Development | `develop` | Roma | Integration branch; P5 work merges here |
 | Feature (P5) | `feat/FEAT-###-[slug]` | Assigned P5 robot | One branch per feature; merged to `develop` on GATE-P5 pass |
 | Change Request | `cr/CR-###-[slug]` | Roma (assigns) | Post-delivery change; all implementing robots commit here; merged to `main` on GATE-CR pass |
-| Refactor | `refactor/[description]` | Assigned robot | Refactoring work per ROME-PROP-026 §G7; merged to `develop` |
+| Refactor | `refactor/[description]` | Assigned robot | Refactoring work; merged to `develop` |
 | Phase | `phase/P[N]-[robot]` | Phase robot | Optional; for isolated phase work requiring review before merge |
 | Hotfix | `hotfix/[description]` | Roma | Emergency production fix; merged to both `main` and `develop` |
 
@@ -123,8 +123,7 @@ docs(traceability): add TRACEABILITY.md for FEAT-002 (FEAT-002)
 
 ## References
 
-- **ROME-PROP-015:** Change Management Protocol (CR-### process)
-- **ROME-PROP-026 §G6:** Proposal that introduced this document
+- **Change Request Protocol:** CR-### process for post-delivery changes
 - **ROME-PRIN-001 §12:** Iterative refinement threshold decision (AMD vs CR vs New Cycle)
 
 ---

@@ -4,11 +4,10 @@
 **Category**: Change Management
 **Phase**: Post-Delivery
 **Robot**: Roma (coordinates); each implementing robot reverses their changes
-**Reference**: ROME-PROP-015, ROME-PROP-026 §G4
 
 ## Purpose
 
-Coordinate reversal of a completed CR in dependency-reversed order. Ensures database migrations roll back before API, API before UI.
+Coordinate reversal of a completed CR in dependency-reversed order. Rollback sequence is derived from `tech-stack.yaml` capability dependencies — capabilities with dependents roll back before their dependencies.
 
 ## When to Use
 
@@ -29,23 +28,32 @@ When a deployed CR causes production issues, test failures, or UAT rejection.
 
 ## Rollback Order
 
-Reverse dependency order (opposite of implementation order):
+Derived from `tech-stack.yaml` dependency graph, reversed:
 
 ```
-1. Charlie  — revert UI components
-2. Reena    — revert API changes (restore previous version if versioned)
-3. Ashok    — run migrationRollback script (if migrationRequired was true)
-4. PMA      — revert design documents
-5. Talib    — revert requirement files
+1. Read tech-stack.yaml capabilities and dependencies
+2. Build dependency graph (same as implementation order)
+3. Rollback order = reverse of implementation order
+   (capabilities with no dependents roll back first)
+4. For each capability in rollback order:
+   capability.robot reverts their workspace
+5. Lucien reverses any CI/CD changes last
+```
+
+Example for a typical database→api→ui stack:
+```
+Implementation order: database → api → ui-app
+Rollback order:       ui-app → api → database
 ```
 
 ## Procedure
 
 ```
 1. Read CR-###.yaml — note ImpactAnalysis and Rollback sections
-2. Log: CHANGE_REQUEST | CR-### | status:ROLLED_BACK | robot:roma | reason:"[reason]"
-3. For each robot in reverse order:
-   a. Robot reverts their files (git revert or manual restore)
+2. Read tech-stack.yaml — derive rollback order from reversed dependency graph
+3. Log: CHANGE_REQUEST | CR-### | status:ROLLED_BACK | robot:roma | reason:"[reason]"
+4. For each capability in rollback order:
+   a. Robot reverts their files (git revert preferred over hard reset)
    b. Robot appends CR-###-ROLLBACK ChangeHistory entry to each modified artifact:
       changeHistory:
         - changeRequest: CR-###-ROLLBACK
@@ -54,13 +62,14 @@ Reverse dependency order (opposite of implementation order):
           implementedBy: [robot]
           changes: [list of reverted fields]
    c. Robot logs STORY COMPLETED in activity log
-4. If Rollback.migrationRollback is set: Ashok executes rollback script
-5. Roma verifies with Sarah via /verify-change-implementation --cr CR-### --mode rollback
-6. Update CR-###.yaml: Status: ROLLED_BACK, RollbackDate, RollbackReason
+5. If Rollback.migrationRollback is set: database robot executes rollback script
+6. Lucien reverses any CI/CD changes (re-deploys previous pipeline config)
+7. Roma verifies with Sarah via /verify-change-implementation --cr CR-### --mode rollback
+8. Update CR-###.yaml: Status: ROLLED_BACK, RollbackDate, RollbackReason
 ```
 
 ## Notes
 
 - Git revert preferred over hard reset to preserve history
 - If partial implementation: only reverse what was completed
-- Lucien reverses any CI/CD changes (re-deploys previous pipeline config)
+- Rollback order must always be re-derived from tech-stack.yaml — never hardcoded

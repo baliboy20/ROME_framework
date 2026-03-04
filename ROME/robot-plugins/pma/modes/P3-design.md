@@ -263,7 +263,7 @@ Define capabilities: for each system service, specify id, technology, robot assi
 
 **Output:** `ARTIFACTS/_design/design-decisions/test-architecture.md`
 
-#### Step 11: Create Feature Technical Specifications (ROME-PROP-024)
+#### Step 11: Create Feature Technical Specifications
 
 **Output:** `ARTIFACTS/_design/specs/SPEC-###-[feature-name].md` (one per FUNC-###)
 

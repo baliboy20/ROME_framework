@@ -4,7 +4,6 @@
 **Category**: Change Management
 **Phase**: Post-Delivery (cycle complete)
 **Robot**: Roma
-**Reference**: ROME-PROP-015, ROME-PROP-026 §G4
 
 ## Purpose
 
@@ -12,7 +11,7 @@ Scaffold a new `CR-###.yaml` in `ARTIFACTS/changes/` with all required sections,
 
 ## When to Use
 
-Only when the ROME cycle (P0–P5) is COMPLETED and the application is deployed. If the cycle is still active, use AMD-### instead (ROME-PRIN-001 §12).
+Only when the ROME cycle (P0–P5) is COMPLETED and the application is deployed. If the cycle is still active, use AMD-### instead (see ROME-PRIN-001 §12).
 
 ## Inputs
 

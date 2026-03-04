@@ -124,7 +124,7 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
 **Downstream**: Downstream robots: per capability dependencies declared in tech-stack.yaml
 **Orchestrator**: Roma
 
-## Feature-Based Organization (ROME-PROP-016)
+## Feature-Based Organization
 
 All data layer code must be organized by business features:
 

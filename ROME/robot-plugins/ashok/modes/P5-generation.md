@@ -131,7 +131,7 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Identify database entities from data-dictionary.yaml
 - Check dependencies on other features
 
-### Step 2b: Publish Implementation Proposal (MANDATORY — ROME-PROP-028)
+### Step 2b: Publish Implementation Proposal (MANDATORY)
 
 **Before logging any FEATURE IN_PROGRESS or writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
 
@@ -386,7 +386,7 @@ Complete the Implementation section of SPEC-### for your layer:
 
 Update TRACEABILITY.md to reference the feature spec:
 
-**Required by ROME-PROP-016:**
+**Required:**
 ```markdown
 # Feature: [Feature Name]
 
@@ -446,7 +446,7 @@ Ready for API implementation.`
 
 ---
 
-## Feature-Based Organization (ROME-PROP-016)
+## Feature-Based Organization
 
 All data layer code must be organized by business features:
 
@@ -493,7 +493,7 @@ SOURCE/[backend_root]/
 | Database Tests | SOURCE/[data-workspace]/tests/ | Constraint and validation tests |
 | Setup Scripts | SOURCE/[data-workspace]/scripts/ | Local DB initialization |
 | README.md | SOURCE/[data-workspace]/ | Complete setup documentation |
-| TRACEABILITY.md | SOURCE/[data-workspace]/features/[feature]/ | Feature traceability (ROME-PROP-016) |
+| TRACEABILITY.md | SOURCE/[data-workspace]/features/[feature]/ | Feature traceability |
 
 ## Activity Logging (P5)
 

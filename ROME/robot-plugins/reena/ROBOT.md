@@ -128,7 +128,7 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
 **Peers**: Coordinates with upstream/downstream robots per capability dependencies in tech-stack.yaml
 **Orchestrator**: Roma
 
-## Feature-Based Organization (ROME-PROP-016)
+## Feature-Based Organization
 
 All API code must be organized by business features:
 

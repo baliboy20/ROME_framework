@@ -226,7 +226,7 @@ Contained changes after the ROME cycle is complete and the application is deploy
 - Mechanism: Change Request documents (`CR-###.yaml`) in `ARTIFACTS/changes/`; `CHANGE_REQUEST` entries in activity log
 - Requires: Sarah approval; full impact analysis including library and pipeline sections; rollback plan
 - Scope: Traceability chain must be preserved; `ChangeHistory` entries added to all modified artifacts
-- Reference: ROME-PROP-015, ROME-PROP-026
+- Reference: Change Request Protocol, ROME-GOV-011
 
 **12c. Inter-Process Refinement (New Cycle)**
 Major modifications requiring a full ROME cycle replay.
@@ -247,6 +247,6 @@ Is the ROME cycle (P0–P5) still active?
 
 **Implementation:**
 - AMD-### workflow: ROME-GOV-BASELINE-B, ROME-PROC-005
-- CR-### workflow: ROME-PROP-015, ROME-GOV-003
+- CR-### workflow: Change Request Protocol, ROME-GOV-003
 - New Cycle: version control maintains relationship between cycles; traceability links refinements to source decisions
 

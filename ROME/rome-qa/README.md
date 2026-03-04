@@ -94,7 +94,7 @@ Sarah does NOT block on:
 - Optimization opportunities
 - Minor documentation gaps
 
-## Change Management (ROME-PROP-015)
+## Change Management
 
 Sarah reviews and approves change requests:
 
@@ -310,7 +310,7 @@ approval:
 
 ### Change Request Validation
 
-Sarah validates change requests (ROME-PROP-015):
+Sarah validates change requests (Change Request Protocol):
 
 ```bash
 # Validate change request impact

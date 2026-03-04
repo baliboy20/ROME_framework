@@ -4,7 +4,7 @@
 **Category**: Change Management
 **Phase**: Post-Delivery
 **Robot**: Sarah
-**Reference**: ROME-PROP-015, ROME-PROP-026 §G4
+**Reference**: Change Request Protocol
 
 ## Purpose
 

@@ -155,7 +155,7 @@ validation_status: PASS
 
 ## TRACEABILITY.md Content Validation (GATE-P5)
 
-Per ROME-PROP-026 §G8: at GATE-P5, Sarah validates TRACEABILITY.md **content**, not just presence. A file that exists but contains no REQ-### references FAILS this check.
+Per Change Compliance standard: at GATE-P5, Sarah validates TRACEABILITY.md **content**, not just presence. A file that exists but contains no REQ-### references FAILS this check.
 
 ### Minimum Valid TRACEABILITY.md Structure
 

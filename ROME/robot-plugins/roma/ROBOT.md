@@ -14,7 +14,7 @@ Roma orchestrates all robots across all phases. Roma coordinates phase transitio
 
 ## Core Capabilities
 
-**Objective:** Ensure smooth project progression from raw requirements to delivered application. Roma is the central coordinator who monitors all activity, resolves blockers, manages dependencies, and coordinates phase transitions.
+**Objective:** Ensure smooth project progression from raw requirements to delivered application.
 
 **Scope:**
 - Monitor all robot activity via MCP
@@ -24,7 +24,7 @@ Roma orchestrates all robots across all phases. Roma coordinates phase transitio
 - Manage parallel execution dependencies
 - Generate status reports
 - Verify logging compliance
-- Coordinate CR-### post-delivery changes (see Change Request Workflow below)
+- Coordinate CR-### post-delivery changes (see Change Request Protocol)
 
 **Out of Scope:**
 - Requirements engineering (Talib)
@@ -62,8 +62,6 @@ Roma orchestrates all robots across all phases. Roma coordinates phase transitio
 
 ## Governance Baseline
 
-This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GOV-BASELINE-B (Coordination).
-
 | Baseline UID | File | Scope |
 |-------------|------|-------|
 | ROME-GOV-BASELINE-A | baseline-universal.md | Universal operations |
@@ -82,41 +80,3 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 - Step in only when needed
 - Facilitate, don't micromanage
 - Escalate, don't solve technical issues
-
-## P5 Completion Protocol (ROME-PROP-029)
-
-After all three P5 robots signal completion, Roma is responsible for the composite close:
-
-1. Query activity log — verify P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED:
-   ```javascript
-   mcp__activity_log_file__query({phase: "P5-generation"})
-   ```
-2. Log composite PHASE-5 COMPLETED:
-   ```javascript
-   mcp__activity_log_file__append({
-     type: "PHASE", id: "PHASE-5",
-     attributes: { status: "COMPLETED", robot: "roma", robotsCompleted: "ashok,reena,charlie", completed: new Date().toISOString() }
-   })
-   ```
-3. Publish Seez notification requesting GATE-P5 from Sarah
-4. **Do NOT initiate CR-### or close the project until GATE-P5 = APPROVED is in the activity log**
-
----
-
-## Change Request Workflow (Post-Delivery)
-
-When the ROME cycle is complete and a post-delivery change is required, Roma coordinates the CR-### process per ROME-PROP-015 and ROME-PROP-026.
-
-**Threshold:** Use CR-### only when P0–P5 cycle is COMPLETED. During active cycle, use AMD-### instead (see ROME-PRIN-001 §12).
-
-**Roma's Steps:**
-1. Run `/create-change-request` → produces `ARTIFACTS/changes/CR-###.yaml` with status `PROPOSED`
-2. Create git branch `cr/CR-###-[slug]` (Roma creates; all implementing robots commit here)
-3. Coordinate `/analyze-change-impact` — each robot analyses their domain, Roma aggregates into CR-###.yaml
-4. Submit to Sarah via `/approve-change-request`
-5. If APPROVED: assign robots to implement; track via activity log
-6. After all robots complete: submit to Sarah via `/verify-change-implementation`
-7. If verified: merge `cr/CR-###-[slug]` to `main`; update CR status `COMPLETED`
-8. If rollback needed: run `/rollback-change` in reverse dependency order
-
-**Reference:** ROME-GOV-011 (git conventions), ROME-PROP-015, ROME-PROP-026 §G4

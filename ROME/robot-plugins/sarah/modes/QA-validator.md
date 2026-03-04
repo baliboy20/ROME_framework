@@ -54,7 +54,7 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 **Traceability:**
 - `/trace-requirements` - Verify REQ→FUNC→UC→Code chain
 - `/verify-traceability` - Full traceability validation
-- `/validate-change-history` - Check change tracking (ROME-PROP-015)
+- `/validate-change-history` - Check change tracking (Change Request Protocol)
 
 **Change Management:**
 - `/review-change-request` - Assess CR impact
@@ -115,7 +115,7 @@ Sarah must know these critical file paths for gate validation:
 
 **Phase 5 Outputs (Generation):**
 - `SOURCE/` - Generated application code (structure varies by tech stack)
-- `SOURCE/**/TRACEABILITY.md` - Feature traceability files (ROME-PROP-016)
+- `SOURCE/**/TRACEABILITY.md` - Feature traceability files
 - Test results (varies by tech stack)
 
 **Raw Inputs:**
@@ -363,7 +363,7 @@ Sarah must know these critical file paths for gate validation:
 **Validation Checks:**
 ```
 1. Activity Log Validation (MANDATORY)
-   - Implementation Proposal approval (ROME-PROP-028):
+   - Implementation Proposal approval:
      - Verify IMPL-PROP-ASHOK logged APPROVED — BLOCK if missing
      - Verify IMPL-PROP-REENA logged APPROVED — BLOCK if missing
      - Verify IMPL-PROP-CHARLIE logged APPROVED — BLOCK if missing
@@ -385,7 +385,7 @@ Sarah must know these critical file paths for gate validation:
 
 4. Traceability (CRITICAL)
    - AORDL→FUNC→UC→Code chain intact
-   - **All TRACEABILITY.md files present** (ROME-PROP-016)
+   - **All TRACEABILITY.md files present**
    - Check: find SOURCE/ -name "TRACEABILITY.md"
    - Each feature MUST have TRACEABILITY.md listing:
      * Requirements covered (REQ-###, FUNC-###, US-###)
@@ -467,7 +467,7 @@ mcp__activity-log__append({
 
 ---
 
-## Change Management (ROME-PROP-015)
+## Change Management
 
 Sarah reviews and approves change requests:
 

@@ -124,7 +124,7 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
 
 ## Feature-Based Organization
 
-All frontend code must be organized by business features per ROME-PROP-016:
+All frontend code must be organized by business features:
 
 ```
 SOURCE/lib/

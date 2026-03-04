@@ -73,7 +73,7 @@ Implements the user-facing application:
 - generate-ui-screens
 - generate-ui-components
 
-## Parallel Execution (ROME-PROP-021)
+## Parallel Execution
 
 The three robots work in parallel with automatic dependency coordination:
 
@@ -145,7 +145,7 @@ const reenaStatus = await mcp__activity_log__query({
 // Proceeds when Reena completes API layer
 ```
 
-## Feature-Based Organization (ROME-PROP-016)
+## Feature-Based Organization
 
 All generated code follows feature-based organization:
 
@@ -259,7 +259,7 @@ Step 4: Integration & Testing
 
 ### Feature-Based Generation
 
-Each agent generates code organized by feature (ROME-PROP-016):
+Each agent generates code organized by feature:
 
 ```
 SOURCE/workspace/

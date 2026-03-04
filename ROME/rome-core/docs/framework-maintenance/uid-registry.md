@@ -154,6 +154,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-027 | Framework Versioning | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-027-framework-versioning.md` | Implemented |
 | ROME-PROP-028 | P5 Implementation Proposal Gate | `/ROME_framework_maintenance/proposals/ROME-PROP-028-p5-implementation-proposal.md` | Draft |
 | ROME-PROP-029 | P5 Completion Enforcement | `/ROME_framework_maintenance/proposals/ROME-PROP-029-p5-completion-enforcement.md` | Draft |
+| ROME-PROP-030 | Roma Robot Documentation Restructure | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-030-roma-doc-restructure.md` | Implemented |
 
 ### Migration Documents
 
@@ -244,3 +245,5 @@ This registry MUST be updated when:
 | 3.5 | 2026-02-27T00:00:00Z | Housekeeping: deleted ROME-SPEC-SKILL-FRAMEWORK and ROME-SPEC-SUBAGENT-FRAMEWORK (Node.js-era specs, superseded by PROP-011/019/020/021). Marked Deprecated. |
 | 3.6 | 2026-02-27T00:00:00Z | Registered ROME-PROP-028 (P5 Implementation Proposal Gate). |
 | 3.7 | 2026-02-28T00:00:00Z | Registered ROME-PROP-029 (P5 Completion Enforcement — composite PHASE-5 event, GATE-P5 mandate, zero-timestamp rejection). |
+| 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
+| 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |

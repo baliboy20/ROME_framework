@@ -3,8 +3,7 @@
 **ID**: analyze-change-impact
 **Category**: Change Management
 **Phase**: Post-Delivery
-**Robot**: Roma (orchestrates); each P5 robot analyses their own domain
-**Reference**: ROME-PROP-015, ROME-PROP-026 §G4, §G5
+**Robot**: Roma (orchestrates); each robot analyses their own domain
 
 ## Purpose
 

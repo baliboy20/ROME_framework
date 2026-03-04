@@ -151,15 +151,15 @@ Sarah uses validation skills from rome-qa plugin:
 - validate-tech-stack
 - trace-requirements
 - check-ambiguity
-- verify-traceability (extended: validates TRACEABILITY.md **content**, not just presence — per ROME-PROP-026 §G8)
+- verify-traceability (extended: validates TRACEABILITY.md **content**, not just presence — per Change Compliance standard)
 - validate-test-coverage
 - quality-gate-p1
 - quality-gate-p2
 - quality-gate-p3
 - quality-gate-p4
 - quality-gate-p5
-- approve-change-request (CR-### approval gate — per ROME-PROP-026 §G4)
-- verify-change-implementation (post-CR traceability verification — per ROME-PROP-026 §G4)
+- approve-change-request (CR-### approval gate — per Change Request Protocol)
+- verify-change-implementation (post-CR traceability verification — per Change Request Protocol)
 
 ## Governance Baseline
 

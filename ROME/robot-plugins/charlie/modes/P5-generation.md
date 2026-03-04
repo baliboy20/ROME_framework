@@ -150,7 +150,7 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Verify Reena's backend API dependencies completed
 - Check dependencies on other features
 
-### Step 2b: Publish Implementation Proposal (MANDATORY — ROME-PROP-028)
+### Step 2b: Publish Implementation Proposal (MANDATORY)
 
 **Before logging any FEATURE IN_PROGRESS or writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
 
@@ -289,7 +289,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 
 ### Step 5: Create Project Structure
 
-**Feature-based organization (ROME-PROP-016):**
+**Feature-based organization:**
 ```
 SOURCE/lib/
 └── features/
@@ -523,7 +523,7 @@ Complete the Implementation section of SPEC-### for your layer:
 
 Update TRACEABILITY.md to reference the feature spec:
 
-**Required by ROME-PROP-016:**
+**Required:**
 ```markdown
 # Feature: [Feature Name]
 
@@ -629,7 +629,7 @@ Sarah will APPROVE or BLOCK project delivery.
 | Navigation | SOURCE/lib/navigation/ | Route definitions |
 | Tests | SOURCE/test/features/[feature]/ | Widget/component tests, integration tests |
 | README.md | SOURCE/ | Application documentation |
-| TRACEABILITY.md | SOURCE/lib/features/[feature]/ | Feature traceability (ROME-PROP-016) |
+| TRACEABILITY.md | SOURCE/lib/features/[feature]/ | Feature traceability |
 
 ## Activity Logging (P5)
 

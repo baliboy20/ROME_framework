@@ -18,7 +18,7 @@ Defines the canonical format for ROME activity log files and state indexes. Ensu
 
 ## Scope
 
-Applies to ALL robots logging activity in ROME v10+ projects using the event log system (ROME-PROP-007).
+Applies to ALL robots logging activity in ROME v10+ projects using the Event Log Protocol.
 
 ## Dependencies
 
@@ -435,7 +435,7 @@ started:"2025-12-03"    # Timestamp should not be quoted
 - If rejected: `status:REJECTED`
 - If reversed: `status:ROLLED_BACK`
 
-**Document:** `ARTIFACTS/changes/CR-###.yaml` — full CR schema defined in ROME-PROP-015 and ROME-PROP-026 §G4.
+**Document:** `ARTIFACTS/changes/CR-###.yaml` — full CR schema defined in the Change Request Protocol.
 
 ---
 

@@ -213,7 +213,7 @@ Thumbs.db
 GITIGNORE
 echo "✓ Created .gitignore"
 
-# Write rome-config.yaml (ROME-PROP-027: framework version declaration)
+# Write rome-config.yaml (framework version declaration)
 ROME_FW_VERSION=$(grep "^ROME_FRAMEWORK_VERSION=" "$ROME_PATH/rome-core/VERSION" 2>/dev/null | cut -d= -f2 || echo "unknown")
 ROME_FW_DATE=$(grep "^ROME_FRAMEWORK_DATE=" "$ROME_PATH/rome-core/VERSION" 2>/dev/null | cut -d= -f2 || echo "")
 cat > "$PROJECT_PATH/ARTIFACTS/rome-config.yaml" << EOF
