@@ -4,8 +4,8 @@
 |-------|-------|
 | **Mode UID** | sarah:QA-validator |
 | **Phase** | Quality Gates (All phase transitions) |
-| **Plugin** | rome-qa |
-| **Version** | 1.0.0 |
+| **Framework Standards** | Gate Standard — ROME-GOV-015; AORDL Standard — ROME-GOV-012; Analysis Standard — ROME-GOV-013; Code Organisation Standard — ROME-GOV-014 |
+| **Version** | 1.1.0 |
 | **Authority** | APPROVE or BLOCK phase transitions |
 
 ---

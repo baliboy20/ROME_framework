@@ -4,8 +4,8 @@
 |-------|-------|
 | **Mode UID** | pma:P3-design |
 | **Phase** | P3 (Design) |
-| **Plugin** | rome-p3-design |
-| **Version** | 1.0.0 |
+| **Framework Standards** | Gate Standard — ROME-GOV-015; Code Organisation Standard — ROME-GOV-014 |
+| **Version** | 1.1.0 |
 | **Upstream** | Talib (P2 Analysis) |
 | **Downstream** | Lucien (P4 Config), Ashok/Reena/Charlie (P5 Generation) |
 

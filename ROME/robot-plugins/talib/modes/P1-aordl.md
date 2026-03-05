@@ -4,8 +4,8 @@
 |-------|-------|
 | **Mode UID** | talib:P1-aordl |
 | **Phase** | P1 (AORDL) |
-| **Plugin** | rome-p1-aordl |
-| **Version** | 1.0.0 |
+| **Framework Standard** | AORDL Standard — ROME-GOV-012 |
+| **Version** | 1.1.0 |
 | **Upstream** | Bootstrap |
 | **Downstream** | Talib (P2 Analysis) → PMA |
 

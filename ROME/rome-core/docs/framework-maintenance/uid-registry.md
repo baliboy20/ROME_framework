@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.0 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.1 |
 | **Date** | 2026-03-05T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -89,6 +89,10 @@ ROME-[TYPE]-[NUMBER]
 | ROME-GOV-BASELINE-B | Baseline: Coordination | `/ROME/rome-core/docs/operational/baseline-coordination.md` | Draft |
 | ROME-GOV-BASELINE-C | Baseline: Governance | `/ROME/rome-core/docs/framework-maintenance/baseline-governance.md` | Draft |
 | ROME-GOV-011 | Git Conventions | `/ROME/rome-core/docs/operational/git-conventions.md` | Draft |
+| ROME-GOV-012 | AORDL Standard | `/ROME/rome-core/docs/standards/aordl-standard.md` | Active |
+| ROME-GOV-013 | Analysis Standard | `/ROME/rome-core/docs/standards/analysis-standard.md` | Active |
+| ROME-GOV-014 | Code Organisation Standard | `/ROME/rome-core/docs/standards/code-organisation-standard.md` | Active |
+| ROME-GOV-015 | Gate Standard | `/ROME/rome-core/docs/standards/gate-standard.md` | Active |
 
 ### Configuration Documents
 
@@ -155,7 +159,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-028 | P5 Implementation Proposal Gate | `/ROME_framework_maintenance/proposals/ROME-PROP-028-p5-implementation-proposal.md` | Draft |
 | ROME-PROP-029 | P5 Completion Enforcement | `/ROME_framework_maintenance/proposals/ROME-PROP-029-p5-completion-enforcement.md` | Draft |
 | ROME-PROP-030 | Roma Robot Documentation Restructure | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-030-roma-doc-restructure.md` | Implemented |
-| ROME-PROP-034 | Phase Plugin Consolidation | `/ROME_framework_maintenance/proposals/ROME-PROP-034-phase-plugin-consolidation.md` | Draft |
+| ROME-PROP-034 | Phase Plugin Consolidation | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-034-phase-plugin-consolidation.md` | Implemented |
 
 ### Migration Documents
 
@@ -250,3 +254,4 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.1 | 2026-03-05T00:00:00Z | ROME-PROP-034 implemented: registered ROME-GOV-012/013/014/015 (framework standard docs). Phase plugins retired to _archive/phase-plugins/. Robot mode headers updated v1.0.0→v1.1.0. PMA clara-activation.md procedure created. Framework bumped to v1.3.0 (MINOR — new standards layer). |

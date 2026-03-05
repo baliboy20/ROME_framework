@@ -4,9 +4,10 @@
 |-------|-------|
 | **UID** | ROME-PROP-034 |
 | **Title** | Phase Plugin Consolidation — Retire Phase Plugins, Elevate Content to Robot Plugins and Framework Standards |
-| **Status** | Draft |
+| **Status** | Implemented |
 | **Author** | Archie |
 | **Created** | 2026-03-05T00:00:00Z |
+| **Implemented** | 2026-03-05T00:00:00Z |
 | **Targets** | `ROME/rome-core/lib/`, `ROME/robot-plugins/`, `ROME/rome-core/docs/` |
 
 ---

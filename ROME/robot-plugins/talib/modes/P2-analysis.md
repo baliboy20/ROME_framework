@@ -4,8 +4,8 @@
 |-------|-------|
 | **Mode UID** | talib:P2-analysis |
 | **Phase** | P2 (Analysis) |
-| **Plugin** | rome-p2-analysis |
-| **Version** | 1.0.0 |
+| **Framework Standard** | Analysis Standard — ROME-GOV-013 |
+| **Version** | 1.1.0 |
 | **Upstream** | Talib (P1 AORDL) |
 | **Downstream** | PMA |
 

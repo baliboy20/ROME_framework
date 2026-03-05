@@ -4,8 +4,8 @@
 |-------|-------|
 | **Mode UID** | lucien:P4-config |
 | **Phase** | P4 (Config) |
-| **Plugin** | rome-p4-config |
-| **Version** | 1.0.0 |
+| **Framework Standard** | Gate Standard — ROME-GOV-015 |
+| **Version** | 1.1.0 |
 | **Upstream** | PMA (P3 Design) |
 | **Downstream** | Ashok/Reena/Charlie (P5 Generation) |
 

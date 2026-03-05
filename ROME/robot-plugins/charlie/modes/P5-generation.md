@@ -4,9 +4,9 @@
 |-------|-------|
 | **Mode UID** | charlie:P5-generation |
 | **Phase** | P5 (Generation - Frontend/Application Layer) |
-| **Plugin** | rome-p5-generation |
-| **Version** | 1.0.0 |
-| **Upstream** | Lucien (P4 Config), Reena (Backend API) |
+| **Framework Standard** | Code Organisation Standard — ROME-GOV-014 |
+| **Version** | 1.1.0 |
+| **Upstream** | Lucien (P4 Config); Reena (Backend API) — conditional; see ROME-GOV-014 § P5 Execution Mode |
 | **Downstream** | End Users |
 
 ---

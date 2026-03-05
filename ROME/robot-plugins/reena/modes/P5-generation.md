@@ -4,9 +4,9 @@
 |-------|-------|
 | **Mode UID** | reena:P5-generation |
 | **Phase** | P5 (Generation - Backend/API Layer) |
-| **Plugin** | rome-p5-generation |
-| **Version** | 1.0.0 |
-| **Upstream** | Lucien (P4 Config), Ashok (Data Layer) |
+| **Framework Standard** | Code Organisation Standard — ROME-GOV-014 |
+| **Version** | 1.1.0 |
+| **Upstream** | Lucien (P4 Config); Ashok (Data Layer) — conditional; see ROME-GOV-014 § P5 Execution Mode |
 | **Downstream** | Charlie (Frontend - API consumer) |
 
 ---
