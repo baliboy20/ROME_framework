@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 3.3 |
-| **Date** | 2026-02-27T00:00:00Z |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.0 |
+| **Date** | 2026-03-05T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -155,6 +155,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-028 | P5 Implementation Proposal Gate | `/ROME_framework_maintenance/proposals/ROME-PROP-028-p5-implementation-proposal.md` | Draft |
 | ROME-PROP-029 | P5 Completion Enforcement | `/ROME_framework_maintenance/proposals/ROME-PROP-029-p5-completion-enforcement.md` | Draft |
 | ROME-PROP-030 | Roma Robot Documentation Restructure | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-030-roma-doc-restructure.md` | Implemented |
+| ROME-PROP-034 | Phase Plugin Consolidation | `/ROME_framework_maintenance/proposals/ROME-PROP-034-phase-plugin-consolidation.md` | Draft |
 
 ### Migration Documents
 
@@ -169,6 +170,7 @@ ROME-[TYPE]-[NUMBER]
 | ROME-REV-002 | Git Activity Tracking Review | `/ROME_architect/git-activity-tracking-review.md` | Complete |
 | ROME-REV-003 | Activity Log Compliance Review | `/ROME_architect/activity-log-compliance-review.md` | Complete |
 | ROME-REV-004 | Activity Log MCP Source Review | `/ROME_architect/activity-log-mcp-source-review.md` | Complete |
+| ROME-REV-005 | AORDL Ingest Pipeline Gap Review | `/ROME_framework_maintenance/reviews/aordl-ingest-pipeline-gap-review.md` | Review |
 
 ---
 
@@ -247,3 +249,4 @@ This registry MUST be updated when:
 | 3.7 | 2026-02-28T00:00:00Z | Registered ROME-PROP-029 (P5 Completion Enforcement — composite PHASE-5 event, GATE-P5 mandate, zero-timestamp rejection). |
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
+| 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
