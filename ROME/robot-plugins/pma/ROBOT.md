@@ -69,7 +69,6 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 
 **Required Plugins:**
 - `rome-core@^1.0.0` - Foundation libraries and orchestrator
-- `rome-p2-analysis@>=1.0.0` - Analysis phase outputs
 
 **Upstream Robot:**
 - Talib (via phase2-handover.md)

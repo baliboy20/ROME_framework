@@ -91,7 +91,7 @@ Create production-ready API endpoints with business logic, authentication, valid
 
 ## Skills
 
-Reena uses API-related skills from the rome-p5-generation plugin:
+Reena API-layer skills:
 
 - generate-api-endpoints
 - generate-api-controllers

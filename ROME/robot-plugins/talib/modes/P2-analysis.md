@@ -252,8 +252,8 @@ All analysis artifacts created:
 Next step: Request GATE-P2 validation from Sarah
 
 To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
+  cd ROME/robot-plugins/sarah
+  # Sarah will validate per ROME-GOV-015 GATE-P2 checklist:
   #   - Activity log (PHASE-2 IN_PROGRESS and COMPLETED)
   #   - Requirements coverage (REQ→FUNC mapping)
   #   - 8-dimension coverage

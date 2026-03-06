@@ -7,8 +7,7 @@
   "phases": ["P4-config"],
   "modes": ["P4-config"],
   "requires": [
-    "rome-core@^1.0.0",
-    "rome-p3-design@>=1.0.0"
+    "rome-core@^1.0.0"
   ],
   "provides": {
     "robot": "lucien",

@@ -109,7 +109,6 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations).
 
 **Required Plugins:**
 - `rome-core@^1.0.0` - Foundation libraries and orchestrator
-- `rome-p2-analysis@>=1.0.0` - Analysis phase outputs
 
 **Reports To:**
 - PMA

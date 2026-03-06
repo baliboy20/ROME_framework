@@ -143,7 +143,7 @@ mcp__activity-log__append({
 
 ## Skills
 
-Sarah uses validation skills from rome-qa plugin:
+Sarah validation skills (see ROME-GOV-015):
 - validate-aordl-structure
 - validate-requirements-completeness
 - validate-requirements-coverage

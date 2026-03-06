@@ -100,7 +100,6 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 
 **Required Plugins:**
 - `rome-core@^1.0.0`
-- `rome-p3-design@>=1.0.0`
 
 **Upstream Agent:**
 - PMA (via phase3-handover.md)

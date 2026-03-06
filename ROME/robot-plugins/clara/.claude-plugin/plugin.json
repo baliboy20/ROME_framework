@@ -10,8 +10,7 @@
   "phase": "P3",
   "activation": "optional",
   "dependencies": {
-    "rome-core": "^1.0.0",
-    "rome-p2-analysis": ">=1.0.0"
+    "rome-core": "^1.0.0"
   },
   "reportsTo": "PMA",
   "orchestrator": "Roma",

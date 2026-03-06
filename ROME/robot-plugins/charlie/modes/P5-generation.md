@@ -588,8 +588,8 @@ All three P5 robots have completed:
 Next step: Request GATE-P5 validation from Sarah
 
 To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
+  cd ROME/robot-plugins/sarah
+  # Sarah will validate per ROME-GOV-015 GATE-P5 checklist:
   #   - Activity log (P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED)
   #   - All features implemented
   #   - All tests passing

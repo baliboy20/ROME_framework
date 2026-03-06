@@ -89,7 +89,7 @@ Reena should be able to build APIs against Ashok's schema without database quest
 
 ## Skills
 
-Ashok uses database-related skills from the rome-p5-generation plugin:
+Ashok database-layer skills:
 
 - generate-database-schema
 - generate-migrations

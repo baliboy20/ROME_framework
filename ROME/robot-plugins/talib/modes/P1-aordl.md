@@ -393,8 +393,8 @@ All P1 exit criteria met. Ready for GATE-P1 validation.
 Next step: Request GATE-P1 validation from Sarah
 
 To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
+  cd ROME/robot-plugins/sarah
+  # Sarah will validate per ROME-GOV-015 GATE-P1 checklist:
   #   - Activity log (PHASE-1 IN_PROGRESS and COMPLETED)
   #   - AORDL structure (13 fields, no anti-patterns)
   #   - All OpenQuestions resolved

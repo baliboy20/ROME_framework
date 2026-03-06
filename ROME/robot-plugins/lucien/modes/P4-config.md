@@ -351,8 +351,8 @@ All configuration artifacts created:
 Next step: Request GATE-P4 validation from Sarah
 
 To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
+  cd ROME/robot-plugins/sarah
+  # Sarah will validate per ROME-GOV-015 GATE-P4 checklist:
   #   - Activity log (PHASE-4 IN_PROGRESS and COMPLETED)
   #   - Workspace structure completeness
   #   - Environment configuration

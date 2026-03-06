@@ -4,8 +4,7 @@
 |-------|-------|
 | **Mode UID** | bootstrap:P0-bootup |
 | **Phase** | P0 (Bootup) |
-| **Plugin** | rome-p0-bootup |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 
 ---
 
@@ -133,7 +132,7 @@ cat > "$PROJECT_PATH/robots/README.md" << 'ROBOTS_README'
 
 ## Usage
 
-When you open an agent from a plugin (e.g., `ROME/rome-p1-aordl/agents/talib/AGENT.md`), the robot creates its workspace folder automatically:
+When you open an agent from a robot plugin (e.g., `ROME/robot-plugins/talib/ROBOT.md`), the robot creates its workspace folder automatically:
 
 ```
 robots/<robot_name>/
@@ -234,7 +233,7 @@ echo "=========================================="
 
 **Read plugin requirements:**
 
-Check `ROME/rome-p0-bootup/.claude-plugin/plugin.json` for required MCP servers.
+Check `ROME/robot-plugins/bootstrap/.claude-plugin/plugin.json` for required MCP servers.
 
 **Test each required server:**
 

@@ -419,8 +419,8 @@ All design artifacts created:
 Next step: Request GATE-P3 validation from Sarah
 
 To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
+  cd ROME/robot-plugins/sarah
+  # Sarah will validate per ROME-GOV-015 GATE-P3 checklist:
   #   - Activity log (PHASE-3 IN_PROGRESS and COMPLETED)
   #   - 100% requirements coverage
   #   - Data dictionary completeness

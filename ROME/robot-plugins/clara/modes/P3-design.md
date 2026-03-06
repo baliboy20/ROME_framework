@@ -4,10 +4,10 @@
 |-------|-------|
 | **Mode UID** | clara:P3-design |
 | **Phase** | P3 (Design) - Support Role |
-| **Plugin** | rome-p3-design |
-| **Version** | 1.0.0 |
+| **Framework Standards** | Gate Standard — ROME-GOV-015; Code Organisation Standard — ROME-GOV-014 |
+| **Version** | 1.1.0 |
 | **Reports To** | PMA |
-| **Activation** | Optional - on PMA request via Roma |
+| **Activation** | Optional - on PMA request via Roma (see pma/procedures/clara-activation.md) |
 
 ---
 
