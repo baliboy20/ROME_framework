@@ -1,26 +1,16 @@
 {
   "name": "rome-tools",
-  "version": "1.0.0",
-  "description": "Node.js tooling for ROME Framework execution - orchestration, monitoring, and coordination",
-  "main": "lib/SkillInvoker.js",
-  "scripts": {
-    "test": "node tests/test-dashboard-simple.js",
-    "p5-hybrid": "node orchestrators/p5-hybrid/index.js"
-  },
+  "version": "2.0.0",
+  "description": "DEPRECATED. ROME execution tooling moved to ROME/rome-core/orchestrator/ (PROP-035). The legacy custom skill runtime (SkillInvoker/SkillRegistry), the p5-hybrid orchestrator, and ActivityLogCoordinator were removed in the PROP-035 cutover. Only historical docs remain here.",
+  "private": true,
+  "scripts": {},
   "keywords": [
     "rome",
     "framework",
-    "orchestration",
-    "aordl",
-    "requirements",
-    "activity-logging"
+    "deprecated"
   ],
   "author": "ROME Framework Team",
   "license": "MIT",
-  "dependencies": {
-    "js-yaml": "^4.1.0"
-  },
-  "devDependencies": {},
   "engines": {
     "node": ">=18.0.0"
   }
