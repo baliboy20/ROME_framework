@@ -26,11 +26,11 @@
 
 **Objective:** unblock everything; do the reversible groundwork.
 
-**0.1 Confirm the four DECIDE points (REV-006 §5)** — recommended defaults:
-- **D1** native skills, retire custom `SkillInvoker`/`SkillRegistry` (verify no live dependency first).
-- **D2** `state.json` = source of truth; activity-log = audit copy.
-- **D3** one consolidated MCP set for the orchestrator session.
-- **D4** land PROP-034 before removing phase-plugin shells.
+**0.1 DECIDE points (REV-006 §5) — CONFIRMED 2026-06-18 by sponsor:**
+- **D1 — CONFIRMED:** migrate to **native skills**; retire custom `SkillInvoker`/`SkillRegistry` (verify no live dependency via grep before deletion).
+- **D2 — CONFIRMED:** **`state.json` = source of truth**; activity-log = immutable audit copy; `state-builder.js` → audit verifier.
+- **D3 — CONFIRMED:** one **consolidated (union) MCP set** for the orchestrator session, validated by `validate-mcp-dependencies.cjs`.
+- **D4 — CONFIRMED:** **land PROP-034 first**, then remove phase-plugin shells.
 
 **0.2 Safe removals (independent of migration):**
 - Remove the broken `ROME_architect/addmcp.sh` symlink.
