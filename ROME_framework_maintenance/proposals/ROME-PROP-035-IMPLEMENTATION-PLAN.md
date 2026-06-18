@@ -130,6 +130,8 @@
 
 **Exit:** every phase and every proposal capability live and validated.
 
+**✅ deterministic cores DONE (2026-06-18).** `routing.js` (036 intent routing — greenfield/brownfield, optional phases, refuses INSUFFICIENT input), `contracts.js` (039 C drift detection + GATE-P5 helper), `budget.js` (040 D degrade-before-abort). Orchestrator suite **85**. *Remaining for full Stage 5: LLM-facing Roma mode rewrite that composes all cores; live brownfield run (036); visualization via Mermaid MCP (037); expert-pack injection + incremental re-gen wiring (040 E/F).*
+
 ---
 
 ## Stage 6 (M4) — Cutover & cleanup
