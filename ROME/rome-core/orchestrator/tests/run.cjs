@@ -2,7 +2,7 @@
 /** Run all orchestrator-core tests. Exit non-zero on any failure. */
 const { execFileSync } = require('child_process');
 const path = require('path');
-const tests = ['guard.test.cjs', 'subagent.test.cjs'];
+const tests = ['guard.test.cjs', 'subagent.test.cjs', 'topology.test.cjs', 'executability.test.cjs'];
 let failed = false;
 for (const t of tests) {
   try { execFileSync('node', [path.join(__dirname, t)], { stdio: 'inherit' }); }

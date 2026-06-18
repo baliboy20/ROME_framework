@@ -113,6 +113,8 @@
 
 **Exit:** P5 produces verified, integrated, running code in parallel; the P5 emulation machinery is gone.
 
+**✅ core + live proof DONE — GO (2026-06-18).** `topology.js` (DAG fan-out, 16 tests) + `executability.js` (build/verify/self-heal with real execution + escalation, 8 tests); orchestrator suite now 61. Live: 2 concurrent `generate-shared-lib` sub-agents on a DAG batch produced real runnable code, both passed the **real executability gate** (`node test.cjs` → VERIFIED), returns recorded, coverage 2/2. Evidence: `m3-proof/taskflow/` + `ROME-PLAN-035-M3-result.md`. *Remaining for full M4: remove P5 emulation machinery (switch-robot, p5-hybrid, etc. per REV-006); contract-drift (PROP-039 C) on a multi-component-with-shared-contract case.*
+
 ---
 
 ## Stage 5 — Convert remaining phases + layer optional features
