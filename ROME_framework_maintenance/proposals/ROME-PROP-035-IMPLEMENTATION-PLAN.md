@@ -64,9 +64,9 @@
 
 **Objective:** build the spine of the new model. No phase converted yet.
 
-**2.1 `state.json`** schema + read/write lib (035 §6a): phase status, dispatch records, gate ledger, blockers, traceability index pointer, budget counters (040 D).
+**2.1 `state.json`** schema + read/write lib (035 §6a): phase status, dispatch records, gate ledger, blockers, traceability index pointer, budget counters (040 D). **✅ DONE** — `rome-core/orchestrator/state.js` + `lifecycle.js` (canonical phase catalog, gate ownership, routing resolver). Pure Node, no deps.
 
-**2.2 Deterministic guard** (035 §3.5) — the single most important new code: a hook/script over `state.json` writes that refuses phase-advance without a matching APPROVE record from the designated gate role; refuses entry when entry criteria unmet; rejects gate-skipping. *Build and unit-test in isolation.*
+**2.2 Deterministic guard** (035 §3.5) — the single most important new code: a hook/script over `state.json` writes that refuses phase-advance without a matching APPROVE record from the designated gate role; refuses entry when entry criteria unmet; rejects gate-skipping. *Build and unit-test in isolation.* **✅ DONE** — `rome-core/orchestrator/guard.js` (pure functions) + `guard-cli.cjs` (enforcement entry point, non-zero exit = BLOCK). Enforces: only-current-phase advance, APPROVE-required, correct-gate-role (self-approval impossible), latest-verdict-wins, open-blocker block, no ungated verdicts. **20/20 unit tests pass**; CLI smoke test confirms producer (talib) is blocked and only sarah can approve.
 
 **2.3 Orchestrator (Roma) skeleton** — EDIT `roma/ROBOT.md` + `modes/orchestrator.md` into the active driver: phase state machine, sub-agent dispatch, fan-out/join, gate invocation. Drives only; the guard enforces.
 
