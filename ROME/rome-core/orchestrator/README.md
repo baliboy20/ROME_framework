@@ -3,9 +3,9 @@
 | Field | Value |
 |-------|-------|
 | **UID** | ROME-ORCH-CORE |
-| **Implements** | ROME-PROP-035 §3.1, §3.2, §3.5, §6a, §6b (ROME-PLAN-035 Stage 2) |
-| **Deps** | none (pure Node + fs) |
-| **Tests** | `node tests/run.cjs` (37: 20 guard + 17 subagent) |
+| **Implements** | PROP-035 (§3.1/3.2/3.5/6a/6b), PROP-036, PROP-038, PROP-039, PROP-040 (ROME-PLAN-035 Stages 2–5) |
+| **Deps** | none (pure Node + fs/child_process) |
+| **Tests** | `node tests/run.cjs` (85: 20 guard + 17 subagent + 16 topology + 8 executability + 10 contracts + 14 routing/budget) |
 
 The deterministic substrate beneath the Roma orchestrator. The orchestrator (an
 LLM session) **drives**; this code **enforces and records**. Quality guarantees
@@ -20,6 +20,11 @@ hold even if the orchestrator model errs.
 | `guard.js` | Pure enforcement: only-current advance, APPROVE-by-correct-role required, latest-verdict-wins, open-blocker block, ungated-verdict rejection. **Self-approval is structurally impossible.** |
 | `guard-cli.cjs` | Enforcement entry point; non-zero exit = BLOCK (hook-ready). |
 | `subagent.js` | Role→sub-agent spec loader (ROBOT.md+mode+skills) and the **structured-return contract** (`validateReturn`, `recordDispatch`, `processReturn`, `coverage`). |
+| `topology.js` | Component-graph validation + DAG → concurrent fan-out batches (PROP-038). |
+| `executability.js` | Build/verify by real execution + self-heal loop + escalation (PROP-039 A/B). |
+| `contracts.js` | Inter-component contract conformance + drift detection at GATE-P5 (PROP-039 C). |
+| `routing.js` | Intent-driven routing from an ICR — greenfield/brownfield, optional phases (PROP-036). |
+| `budget.js` | Budget tracking + degrade-before-abort policy (PROP-040 D). |
 
 ## Operating contract (how Roma uses this)
 
