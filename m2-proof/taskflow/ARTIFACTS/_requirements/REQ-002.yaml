@@ -1,0 +1,39 @@
+ID: REQ-002
+Actor: TeamMember
+Intent: create task
+Preconditions:
+  - TeamMember authenticated
+  - TeamMember is a member of the target project
+Conditions:
+  - Project is not archived
+Postconditions:
+  - Task recorded with a unique identifier
+  - Task assigned an initial status of Backlog
+Outcomes:
+  - Task appears in the project task list
+  - TeamMember can assign the task to a member
+Invariants:
+  - A task always belongs to exactly one project
+  - Task status is one of the defined workflow values
+NonFunctional:
+  Performance:
+    - Task creation completes within two seconds
+  Security:
+    - Only project members may create tasks
+Errors:
+  - error: If the project is archived
+    message: Cannot add tasks to an archived project
+  - error: If the title is empty
+    message: Task title is required
+ScopeBoundary:
+  InScope:
+    - Create a task with a title and description
+    - Set an initial status
+  OutOfScope:
+    - Task assignment flow
+    - Due date reminders
+OpenQuestions:
+  - question: Can a task be created without a description?
+    status: RESOLVED
+    resolution: Description is optional
+CopilotMode: STRICT

@@ -91,6 +91,8 @@
 
 **Exit:** one phase fully on the new model; EP-1/EP-3/EP-5 demonstrated mechanically. This is the go/no-go checkpoint for the whole re-architecture.
 
+**✅ DONE — GO (2026-06-18).** P0→P3 run on the taskflow fixture with **live sub-agents**: PMA (produce) → Clara (validate) → Sarah (gate) — three distinct agents (EP-5). Real `validate-aordl` gated P1 mechanically; the guard blocked advance-without-verdict and blocked talib self-approval; advance allowed only on Sarah's APPROVE. Final: all phases COMPLETE, 3 Sarah gate verdicts, 2 requirements traced. Evidence: `m2-proof/taskflow/` + `ROME_framework_maintenance/reviews/ROME-PLAN-035-M2-result.md`.
+
 ---
 
 ## Stage 4 (M3) — Parallel P5: topology, executability, resilience
