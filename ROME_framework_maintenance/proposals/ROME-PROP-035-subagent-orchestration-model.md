@@ -92,7 +92,43 @@ The orchestrator invokes them as Task/Agent calls. Each gets an **isolated conte
 
 ### 3.4 Real parallelism, finally
 
-P5 is expressed as: Roma spawns Ashok, Reena, Charlie as concurrent sub-agents, honoring the `dependsOn` graph already declared in `plugin.json`, joining before the Sarah gate. This is exactly ROME-PROP-021's intent, now trivially expressible.
+P5 is expressed as: Roma spawns Ashok, Reena, Charlie as concurrent sub-agents, honoring the `dependsOn` graph already declared in `plugin.json`, joining before the Sarah gate. This is exactly ROME-PROP-021's intent — though realized speedup scales with the *width* of the dependency graph, not its size (see §3.5.1).
+
+---
+
+## 3.5 Deterministic Enforcement (the orchestrator drives; code enforces)
+
+**Critical design constraint.** The orchestrator (Roma) is itself an LLM session. An LLM does not *deterministically execute* a state machine — left to discretion it can skip a gate, advance on a soft BLOCK, mis-sequence a fan-out, or fail to persist state. If gate enforcement depends on the orchestrator model *choosing* to honor it, this re-creates the original "robot forgets to log" weakness one level up — at the most damaging point. §6b's "completion = return = record" guarantees *sub-agent* reporting; it does **not** cover the orchestrator's own control decisions.
+
+**Rule:** the phase state machine and gate enforcement are **deterministic code, not model discretion.**
+
+- The LLM orchestrator *drives* (decides what to do next, dispatches sub-agents, interprets results).
+- A deterministic **guard** *enforces* (a script/hook that refuses to mark a phase `COMPLETE` or advance the phase pointer unless `state.json` holds a matching `APPROVE` record from the designated gate role; refuses to start a phase whose entry criteria are unmet; rejects a phase pointer that skips a gate).
+- Gate verdicts are written by the **gate role's** return, not by the producer or the orchestrator's narration; the guard checks the record exists and matches before allowing advance.
+
+This makes the quality guarantees structural (they hold even if the orchestrator model errs), not aspirational. Implementation: a `phase-advance` guard hook over writes to `state.json`, mirroring how the legacy framework already uses PreToolUse/PostToolUse hooks for log enforcement — repurposed from "did the robot log?" to "is this transition authorized?".
+
+### 3.5.1 Speed expectations (honest scoping)
+
+Parallel speedup is **topology-dependent**: it scales with the *width* (independent branches) of the dependency graph, not its total size. A wide graph (many independent components/sub-tasks) parallelizes well; a deep/linear chain (UI→BFF→service→lib→DB) is critical-path-bound and degenerates toward sequential regardless of fan-out. The framework should be benchmarked against critical-path length, not component count. Inherited PROP-003/011 figures (e.g. "60% faster") apply to wide, independent workloads (notably P2 analysis sub-tasks); they are not a universal guarantee.
+
+### 3.5.2 Orchestrator as bottleneck and single point of failure
+
+Because every sub-agent return funnels through one session, the orchestrator's per-return work must be **minimal and append-only** (record the delta; do not recompute the index) — otherwise central work serializes the fan-out (Amdahl's law) and caps the achievable speedup. Heavy aggregation (full traceability reconciliation, coverage computation) runs lazily at gates, not per return. The orchestrator holds only a **bounded working set** in context and externalizes aggressively to `state.json`, re-reading on demand; this must be a tested requirement against a defined largest-supported topology, not an aspiration. Resume (§6d) must survive a *mid-fan-out* crash, not only clean phase boundaries.
+
+### 3.5.3 Where accuracy is mechanical vs. LLM-judged
+
+Accuracy guarantees are strongest where checks are **mechanical** and weakest where they are **LLM-judged** — and early-phase errors propagate downstream at full cost:
+
+| Phase | Strongest available check | Nature |
+|-------|---------------------------|--------|
+| P1 Requirements | AORDL STRICT validation | **Mechanical** (deterministic) |
+| P2 Analysis | traceability coverage check | semi-mechanical |
+| P3 Design | Clara/Sarah review; optional prototype gate (PROP-037) | LLM + optional human |
+| P4 Config | build-config validity | semi-mechanical |
+| P5 Generation | build + test execution (PROP-039) | **Mechanical** |
+
+Implication: contracts and traceability are themselves LLM-generated, so a confidently-wrong contract can pass its own drift check. The framework must therefore lean on the cheapest *mechanical* checks upstream (AORDL STRICT at P1, build-config validity at P4) and on **human backstops** where machines cannot verify (sponsor confirmation of intent/contracts per PROP-036/039; the optional prototype gate per PROP-037). These human/mechanical accuracy checkpoints are **recommended-on for accuracy-critical projects**, not merely optional. "Structured returns + Sarah verification" (§6b) is LLM-verifying-LLM — a real but *bounded* mitigation, not a hard check.
 
 ---
 
@@ -116,13 +152,51 @@ Named specializations still earn their place because they encode five things a s
 
 ---
 
+## 4a. Shared Glossary & Responsibility Matrix (binding across PROP-035..040)
+
+All proposals in this set resolve these terms identically. This is the authoritative glossary.
+
+| Term | Definition |
+|------|------------|
+| **Role** (= capability) | A named, specialized agent definition (system prompt + scoped skills). The *kind* of work. E.g. Talib, PMA, Sarah; or in PROP-038 capability form, `generate-ui`. Role and capability are the same concept; PROP-038 uses "capability" when emphasizing per-component instancing. |
+| **Instance** | One concrete sub-agent the orchestrator spawns from a role/capability for a specific unit of work. Three UIs → three instances of `generate-ui`. |
+| **Persona name** | A human-readable alias for a role (Ashok, Reena, Charlie…), retained for doc continuity. Not an instance limit. |
+| **Orchestrator** | The single long-lived Roma session that drives the lifecycle. |
+| **Guard** | Deterministic code (hook/script) that enforces transitions (§3.5). Distinct from the orchestrator, which only drives. |
+| **Gate** | A phase-transition checkpoint owned by a gate role; produces an APPROVE/BLOCK verdict the guard enforces. |
+| **Component graph** | Machine-readable topology (PROP-038): nodes (components) + `dependsOn` edges. |
+| **Contract** | An interface definition between components (PROP-039): API spec, shared types, event schema. |
+
+**Phase model:** the fractional phases (P0.5 intake — PROP-036; P3.5 prototype — PROP-037) are not special cases. They are **optional phases in one routing model** the orchestrator reads from config + the Input Characterization Record. The orchestrator runs whatever phase sequence the routing resolves; "optional" means "may be absent from the resolved sequence," not "handled by bespoke logic."
+
+### Responsibility Matrix (who owns what)
+
+| Concern | Owner | Notes |
+|---------|-------|-------|
+| Lifecycle sequencing, dispatch, fan-out/join | Roma (orchestrator) | drives only |
+| Transition enforcement (advance/block) | Guard (deterministic code) | §3.5 |
+| Requirements (P1) | Talib | AORDL STRICT validation is mechanical |
+| Analysis (P2) | Talib | parallel sub-tasks |
+| Input characterization (P0.5) | Surveyor | PROP-036 |
+| Design production (P3) | PMA | architecture, API, data dictionary, contracts |
+| **Design-domain validation** (in-phase) | **Clara** | validates design artifacts, component graph, UX checklist *content* — domain correctness, not gate authority |
+| **Gate authority** (phase transitions) | **Sarah** | issues APPROVE/BLOCK verdicts for every gate, including security and executability criteria |
+| Configuration (P4) | Lucien | scaffolding, secrets-as-config |
+| Generation (P5) | Ashok/Reena/Charlie (capability instances) | per-component |
+| Prototyping (P3.5, optional) | Reena/Charlie (or Visualizer) | producer; Sarah+sponsor approve |
+| Security review (optional) | dedicated security pass | producer-independent (EP-5); Sarah gates |
+
+**Clara vs. Sarah, resolved:** Clara performs *domain validation within a phase* (is this design/graph/UX internally correct and complete?); Sarah holds *gate authority at phase transitions* (is this phase authorized to advance?). Clara advises; Sarah decides; the guard enforces.
+
+---
+
 ## 5. How Each Enduring Principle Is Preserved or Enhanced
 
 | Principle | Before | After |
 |-----------|--------|-------|
 | EP-1 Traceability | Log-pull, voluntary | Each sub-agent returns traceability deltas to the orchestrator, which maintains the index; log is the immutable audit copy. **Enhanced.** |
-| EP-2 Structured phases | Human-sequenced | Orchestrator executes the phase state machine; entry/exit criteria are code-checked. **Enhanced.** |
-| EP-3 Quality control | Gate inferred from log | Quality sub-agent returns BLOCK/APPROVE; orchestrator enforces. **Enhanced.** |
+| EP-2 Structured phases | Human-sequenced | Orchestrator drives the phase sequence; a deterministic guard code-checks entry/exit criteria (§3.5). **Enhanced.** |
+| EP-3 Quality control | Gate inferred from log | Gate role returns BLOCK/APPROVE; the guard enforces advance (not model discretion — §3.5). **Enhanced.** |
 | EP-4 Progress monitoring | activity-log only | Orchestrator holds live state; activity-log retained as audit trail. **Preserved.** |
 | EP-5 Quality assessment | Sarah session, separate | Sarah sub-agent, structurally separate from producers; cannot self-approve. **Preserved.** |
 | EP-6 Specialization | 10 robot sessions | 10 sub-agent types, isolated contexts, scoped skills. **Preserved.** |
@@ -140,7 +214,7 @@ How each ROME phase benefits from — or is affected by — the orchestrator + s
 |-------|---------------|----------------------------------|
 | **P0 — Bootstrap** | Bootstrap | Becomes a single orchestrator-invoked setup call instead of a bootable session. The orchestrator creates structure once and holds it in state; no per-robot SessionStart hook needed. Low-risk first conversion. |
 | **P1 — AORDL Requirements** | Talib | Sub-agent receives the AORDL standard (post-PROP-034) as scoped reference and returns validated `REQ-*.yaml` + traceability seeds directly to the orchestrator. STRICT-validation results return as values, so the orchestrator can BLOCK before P2 instead of relying on a separate Sarah log read. Independent BDD-transformation work can fan out per requirement. |
-| **P2 — Analysis** | Talib | Largest parallelism win in the early phases: entity extraction, dependency mapping, and user-story decomposition are independent sub-tasks the orchestrator can spawn concurrently (PROP-003's projected 60% speed-up becomes real). Each returns a traceability delta (REQ-###→FUNC-###) the orchestrator merges into one index. |
+| **P2 — Analysis** | Talib | Largest parallelism win in the early phases: entity extraction, dependency mapping, and user-story decomposition are independent sub-tasks the orchestrator can spawn concurrently — a genuinely *wide* workload, so PROP-003's projected speed-ups are realistic here (unlike deep, critical-path-bound phases; see §3.5.1). Each returns a traceability delta (REQ-###→FUNC-###) the orchestrator merges into one index. |
 | **P3 — Design** | PMA (produce), Clara (validate) | Cleanest demonstration of separation of duties: orchestrator calls PMA to produce architecture/API/data-dictionary, then Clara as a *distinct* sub-agent to validate — producer cannot self-approve. Recommended M2 proof phase. Clara's findings return as a structured pass/fail the orchestrator acts on before the Sarah gate. |
 | **P4 — Configuration** | Lucien | Scaffolding driven directly from the data-dictionary/tech-stack the orchestrator already holds in state — less re-reading from disk. Independent workspace/build/test-framework setup steps parallelize. Output manifest returns to orchestrator state, feeding P5 fan-out cleanly. |
 | **P5 — Generation** | Ashok, Reena, Charlie | Biggest single beneficiary. Today's *declared-but-unimplemented* parallelism (PROP-021) becomes real: orchestrator fans out the three roles as concurrent sub-agents honoring the `dependsOn` graph and joins before the gate. Isolated contexts prevent backend/frontend skill bleed. Per-feature work can parallelize within each role. |
@@ -292,3 +366,4 @@ End-user flow. Key change from today: one orchestrator session runs the lifecycl
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial draft — transfer ROME principles to single-session orchestrator + native sub-agent model; resolves named-robot question; subsumes PROP-011/021 intent. |
 | 1.1 | 2026-06-18 | Added §5a per-phase impact, §6a progress recording/tracking, §6b reporting reliability, §6c git-worktree isolation, §6d new-development initiation; added PROP-036 companion reference. |
+| 1.2 | 2026-06-18 | Pre-implementation critical review: added §3.5 deterministic enforcement (guard vs. orchestrator), §3.5.1 honest speed scoping (width not size), §3.5.2 bottleneck/SPOF constraints, §3.5.3 mechanical-vs-LLM accuracy map; added §4a shared glossary + responsibility matrix (resolves robot/role/capability and Clara/Sarah); unified fractional phases into one routing model; tempered speed claims. |
