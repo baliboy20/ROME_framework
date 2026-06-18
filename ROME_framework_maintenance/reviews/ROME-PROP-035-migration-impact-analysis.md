@@ -38,7 +38,7 @@ These exist only to simulate multi-agent execution across separate human-driven 
 | `ROME_tools/orchestrators/p5-hybrid/` (index.js, CommandHandlers.js, MonitoringDashboard.js, AlertSystem.js) | PROP-022 "Roma Command Center": iTerm agents + activity-log polling + a terminal dashboard. Superseded by the single-session orchestrator; monitoring becomes `/status` from `state.json` (035 §6a). |
 | `ROME_tools/lib/ActivityLogCoordinator.js` | Heartbeat/liveness/dependency-timeout **polling** protocol — coordination-by-side-effect. Replaced by call/return + the failure policy (039 Part B). Its concerns survive as design; the code does not. |
 | `ROME/robot-plugins/*/add-mcps-v4.sh` (×10) + `ROME/rome-core/scripts/add-mcps-v4.sh` | Per-robot/per-session MCP setup. One session needs one consolidated MCP set → collapse to a single setup (see §5 DECIDE). |
-| `ROME_architect/addmcp.sh` (symlink) | **Already broken** — points to `/Users/will/flutterProjects/Exercises/nov/romev10/...`, a path that no longer matches this repo. Remove. |
+| `ROME_architect/addmcp.sh` (symlink) | Stale **cross-repo** symlink to `/Users/will/flutterProjects/Exercises/nov/romev10/...` (an older romev10 framework — target exists on disk but is external to this repo). Not part of this repo's runtime; adds `iterm2-terminal` (dropped under D3). Remove. *(Correction: REV-006 v1.0 wrongly stated the target was missing/broken; the target exists — it is stale/external, not broken. Confirmed Stage 0, 2026-06-18.)* |
 | `ROME/robot-plugins/talib/skills/log-phase-start`, `log-phase-complete` | Manual "remember to log" skills. Under call/return the orchestrator records phase events; voluntary logging skills are the old weakness (035 §6b). |
 
 ---
