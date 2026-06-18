@@ -35,5 +35,25 @@ Every robot `add-mcps-v4.sh` (10) + `rome-core/scripts/add-mcps-v4.sh` add the *
 ## 0.2 — Symlink
 `ROME_architect/addmcp.sh` → external `nov/romev10/.../setup-mcp-servers-v3.sh`. **Correction:** target *exists* (not broken, as REV-006 v1.0 claimed) — it is a stale **cross-repo** link to an older framework, outside this repo's runtime, and installs `iterm2-terminal` (dropped). **Removed in Stage 0.**
 
+## 0.4 — Baseline run / environment calibration (2026-06-18)
+
+**Environment:** node v24.4.1, npm 11.4.2. Node tooling runs fine.
+
+**Deterministic KEEP-utilities — baseline status:**
+
+| Utility | Result | Note |
+|---------|--------|------|
+| `rome-core/lib/annotate-artifact.cjs` (traceability) | ✅ 36/36 tests pass | regression oracle for EP-1 annotation |
+| `rome-core/servers/activity-log/**` (audit trail) | ✅ all tests pass (format/validate/buildState/history/query/E2E) | regression oracle for the audit server |
+| `rome-core/lib/aordl-parser/validate-aordl.js` (the designated **mechanical P1 check**, 035 §3.5.3) | ❌ **NOT runnable** | two defects below |
+
+**⚠ Critical finding — the AORDL validator is currently broken in-repo:**
+1. **Missing manifest:** it loads validation rules from `../registry/validate-aordl.yaml` — that file (and the whole `lib/registry/` dir) **does not exist** anywhere in the repo. The required-fields / anti-pattern / approved-verb data the validator reads is absent.
+2. **Missing dependency:** `js-yaml` is not installed at its location (only under `ROME_tools/node_modules`); no `package.json` near `aordl-parser/`.
+
+**Impact on the plan:** PROP-035 §3.5.3 leans on this validator as the deterministic accuracy backbone at P1. It must be **repaired early** — author/restore the rules manifest (naturally as part of the PROP-034 *AORDL standard* doc, with the validator reading from it) and give `aordl-parser/` a proper `package.json`/dep. Added to Stage 1 scope.
+
+**Full-pipeline baseline not capturable headless:** the legacy framework runs as live Claude Code sessions + MCP servers; it cannot be executed in this bash environment. The test fixtures (`testapps/*`, `test-project-*`) contain only raw `_user_input` (PRD/BRD) — **no generated AORDL/analysis/design artifacts exist** to diff against. Therefore the regression oracle for the migration is the **deterministic utility tests above + per-stage fixture dry-runs I perform**, not a recorded run of the old pipeline.
+
 ## Status
-Stage 0 reference audits complete; all removals validated as dependency-safe. Ready for Stage 1 (PROP-034). No baseline fixture run captured yet (Stage 0.4 still pending — requires a working current framework run).
+Stage 0 complete: decisions confirmed, reference audits done (all removals dependency-safe), MCP union set determined, stale symlink removed, environment calibrated, KEEP-utility baseline captured. **One defect surfaced (AORDL validator) folded into Stage 1.** Ready for Stage 1 (PROP-034).

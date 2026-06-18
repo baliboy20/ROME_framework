@@ -52,7 +52,9 @@
 
 **Tasks:** execute PROP-034 — create `rome-core/docs/standards/` (AORDL standard, traceability format, gate-decision format, contract/security stubs); migrate operational content from phase plugins into owning robots' `modes/`/`procedures/`.
 
-**Validate:** existing flow still runs against fixtures (no regression); standards docs resolve.
+**1.x — Repair the AORDL validator (from Stage 0.4 baseline; blocks 035 §3.5.3).** The deterministic P1 validator `aordl-parser/validate-aordl.js` is currently non-runnable: its rules manifest `lib/registry/validate-aordl.yaml` is missing entirely, and `js-yaml` is not installed at its location. Fix: author the rules manifest **as data emitted from the new AORDL standard doc** (single source of truth — the validator reads the standard's rules), add a `package.json`/dependency for `aordl-parser/`, and add a unit test that validates the `REQ-TEMPLATE.yaml` and rejects a known-bad sample. This restores the mechanical accuracy backbone before any phase conversion relies on it.
+
+**Validate:** existing flow still runs against fixtures (no regression); standards docs resolve; **AORDL validator runs green** on a good and a bad sample.
 
 **Exit:** phase-plugin *content* lives in standards + robot modes; phase-plugin shells remain only as removable hooks.
 
