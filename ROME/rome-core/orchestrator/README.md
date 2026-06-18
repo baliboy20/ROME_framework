@@ -25,6 +25,7 @@ hold even if the orchestrator model errs.
 | `contracts.js` | Inter-component contract conformance + drift detection at GATE-P5 (PROP-039 C). |
 | `routing.js` | Intent-driven routing from an ICR — greenfield/brownfield, optional phases (PROP-036). |
 | `budget.js` | Budget tracking + degrade-before-abort policy (PROP-040 D). |
+| `visualize.js` | Mermaid diagrams from state/topology/traceability (PROP-037). |
 
 ## Operating contract (how Roma uses this)
 
