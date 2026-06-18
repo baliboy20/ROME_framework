@@ -26,6 +26,11 @@ hold even if the orchestrator model errs.
 | `routing.js` | Intent-driven routing from an ICR — greenfield/brownfield, optional phases (PROP-036). |
 | `budget.js` | Budget tracking + degrade-before-abort policy (PROP-040 D). |
 | `visualize.js` | Mermaid diagrams from state/topology/traceability (PROP-037). |
+| `impact.js` | Incremental re-gen: affected-component set from graph+contracts+traceability (PROP-040 E). |
+| `experts.js` | Expert-pack selection/injection by capability/stack (PROP-040 F). |
+| `security.js` | No-secrets-in-source gate + scanner (PROP-040 G). |
+| `driver.js` | nextAction(state) — deterministic DISPATCH/REQUEST_GATE/ADVANCE. |
+| `rome-start.cjs` | Project init entry point (PLAN §6d). |
 
 ## Operating contract (how Roma uses this)
 
