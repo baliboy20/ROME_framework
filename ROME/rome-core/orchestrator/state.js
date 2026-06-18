@@ -36,7 +36,8 @@ function createState({ project, frameworkVersion = 'unknown', routing, timestamp
     blockers: [],       // { id, phase, description, owner, status }
     dispatch: [],       // { agent, role, phase, status, timestamp }
     budget: { tokens: 0, ceiling: null },
-    traceabilityIndexPath: null,
+    traceability: { deltas: [] }, // { requirement, produces, component?, phase, role, agent }
+    audit: [],          // append-only audit entries mirrored to activity-log MCP
   };
 }
 
