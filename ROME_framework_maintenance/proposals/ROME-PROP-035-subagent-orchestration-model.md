@@ -10,7 +10,7 @@
 | **Targets** | `ROME/robot-plugins/`, `ROME/rome-core/`, framework execution model |
 | **Supersedes (intent of)** | ROME-PROP-011 (subagent architecture), ROME-PROP-021 (multi-robot parallel execution), parts of ROME-PROP-003 (multi-agent optimization) |
 | **Relates to** | ROME-PROP-019/020 (robot plugins own skills), ROME-PROP-034 (phase plugin consolidation) |
-| **Companion** | ROME-PROP-036 (input characterization & intent-driven routing), ROME-PROP-037 (visualization & optional prototyping), ROME-PROP-038 (topology-driven capability instancing) |
+| **Companion** | ROME-PROP-036 (input characterization & intent-driven routing), ROME-PROP-037 (visualization & optional prototyping), ROME-PROP-038 (topology-driven capability instancing), ROME-PROP-039 (executability, resilience & contracts) |
 
 ---
 
