@@ -78,6 +78,12 @@ producers on Sonnet safe — the system verifies their work rather than trusting
 - Always use the latest model in each tier (currently Opus 4.8 / Sonnet 4.6 /
   Haiku 4.5); update this table as the lineup advances.
 
+## 3b. Skills vs Expert packs (no duplication)
+
+- **Skill** = an *action* a role performs (verb): e.g. `generate-ui-screens`, `design-data-dictionary`. Lives in `agents/<role>/skills/`; invoked as the role's tool.
+- **Expert pack** = domain *knowledge/standards* (patterns, approved libraries, anti-patterns). Lives in `Experts/<pack>/`; **injected** into a sub-agent by `experts.js` (by capability/stack) and its `enforce` rules become gate criteria.
+- Rule: knowledge belongs in an expert pack, never duplicated as a skill. (E.g. Flutter patterns/standards live in `expert_flutter`, not as charlie skills; charlie keeps only the action skills `generate-ui-*` + an `expertPacks` reference.)
+
 ## 4. The structured-return contract (§6b)
 
 A sub-agent **finishes by returning** a validated result — returning IS its

@@ -39,17 +39,9 @@
     "modes": ["P5-generation"],
     "skills": [
       "generate-ui-screens",
-      "generate-ui-components",
-      "apply-flutter-standards",
-      "select-flutter-libraries",
-      "flutter-ddd-architecture",
-      "flutter-error-handling",
-      "flutter-integration-patterns",
-      "flutter-ui-ux-patterns",
-      "flutter-platform-specific",
-      "flutter-performance-optimization",
-      "flutter-deployment"
-    ]
+      "generate-ui-components"
+    ],
+    "expertPacks": ["expert_flutter"]
   },
   "mcpServers": {
     "activity-log-file": {
@@ -61,28 +53,14 @@
       "enabled": true,
       "required": false,
       "description": "Interactive UI for user feedback"
-    },
-    "iterm2-terminal": {
-      "enabled": true,
-      "required": false,
-      "description": "Terminal management for build/test tasks"
-    },
+    }
   },
   "plugins": ["Context7"],
   "exports": {
     "ROBOT.md": "Core robot identity and baseline behavior",
     "modes/P5-generation.md": "P5 frontend/application implementation mode",
     "skills/generate-ui-screens/SKILL.md": "Generate UI screens skill",
-    "skills/generate-ui-components/SKILL.md": "Generate UI components skill",
-    "skills/apply-flutter-standards/SKILL.md": "Apply Flutter coding standards skill",
-    "skills/select-flutter-libraries/SKILL.md": "Select Flutter libraries skill",
-    "skills/flutter-ddd-architecture/SKILL.md": "Flutter DDD architecture skill",
-    "skills/flutter-error-handling/SKILL.md": "Flutter error handling skill",
-    "skills/flutter-integration-patterns/SKILL.md": "Flutter integration patterns skill",
-    "skills/flutter-ui-ux-patterns/SKILL.md": "Flutter UI/UX patterns skill",
-    "skills/flutter-platform-specific/SKILL.md": "Flutter platform-specific patterns skill",
-    "skills/flutter-performance-optimization/SKILL.md": "Flutter performance optimization skill",
-    "skills/flutter-deployment/SKILL.md": "Flutter deployment skill"
+    "skills/generate-ui-components/SKILL.md": "Generate UI components skill"
   },
   "hooks": {
     "SessionStart": {
