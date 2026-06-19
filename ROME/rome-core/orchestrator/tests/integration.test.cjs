@@ -5,7 +5,7 @@
  * P5 topology fan-out → executability → contract drift → budget).
  *
  * Sub-agent "work" is simulated by structured returns (the live-agent path is
- * proven separately in m2-proof / m3-proof); executability runs for real on a
+ * proven separately in the M2/M3 live runs); executability runs for real on a
  * generated component. Run: node tests/integration.test.cjs
  */
 const os = require('os');

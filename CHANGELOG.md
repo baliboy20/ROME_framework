@@ -2,6 +2,33 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-06-19] - v2.1.0 "Augustus" — Enforcement hardening + tree cleanup
+
+Codename **Augustus** (the founder) — the foundational sub-agent architecture line.
+
+### Fixed
+- **Guard now requires mechanical evidence, not just a verdict** (PROP-035 §3.5
+  hardening). Each phase declares `requires`; the guard refuses to advance unless
+  every required fact (executability, contracts, secrets, traceability, MVP
+  test-adequacy, AORDL) is recorded AND passing in `state.verification`. An LLM
+  gate role can no longer APPROVE without the checks having run. New `verification.js`
+  + `driver` VERIFY step. Traceability is always-enforced (iterative safety);
+  test-adequacy follows the MVP rule (only declared Outcomes/Errors must be tested).
+
+### Added
+- Per-role **recommended-model** guidance in `agent-roles-standard.md` (Opus on
+  Roma/Sarah/PMA; Sonnet producers; Haiku intake/scaffold).
+
+### Removed (cleanup)
+- `ROME_tools/` (gutted in cutover), `PLUGINS/` (Flutter skills now in `Experts/`),
+  `GENERATION-PLUGINS-MANIFEST.md` + `PLUGIN-MANIFEST.md` (retired phase-plugin model),
+  and the M2/M3/037 proof scratch dirs (results preserved in
+  `ROME_framework_maintenance/reviews/`). Top-level tree is now: ROME, Experts,
+  ROME_framework_maintenance, ROME_architect, testapps, test-project + current docs.
+
+### Tests
+- 154 orchestrator + 45 lib, all green.
+
 ## [2026-06-19] - v2.0.0 — Single-Session Sub-Agent Orchestration (ROME-PROP-035..040)
 
 Major re-architecture: from human-switched multi-session "robots" to a single
