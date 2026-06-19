@@ -31,7 +31,13 @@ node ROME/rome-core/orchestrator/rome-start.cjs my-app --intent greenfield --ts 
 ```
 - `my-app` = any folder name.
 - `--intent greenfield` for a brand-new app; use `refinement` / `extension` / `migration` if changing an existing system.
-- Optional: `--prototype` (adds a UI mock-up + approval step), `--budget 400000` (token ceiling).
+- Optional flags — add them **without brackets**; type only the ones you want:
+  - `--prototype` (adds a UI mock-up + approval step)
+  - `--budget 400000` (token ceiling)
+- Example with options (note: no `[ ]` — those mean "optional" in docs, don't type them):
+  ```bash
+  node ROME/rome-core/orchestrator/rome-start.cjs my-app --intent greenfield --ts "$(date -u +%FT%TZ)" --prototype --budget 400000
+  ```
 - This creates `my-app/`, **vendors a frozen framework copy into `my-app/.rome/`** (so the project is self-contained), writes `my-app/ARTIFACTS/_orchestration/state.json`, and prints your **next action**.
 
 ## Step 2 — Add your PRD/BRD
