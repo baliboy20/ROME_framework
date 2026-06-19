@@ -27,7 +27,6 @@
   },
   "dependencies": {
     "rome-core": "^1.0.0",
-    "rome-p2-analysis": ">=1.0.0",
     "plugins": ["Context7"],
     "mcps": [
       "activity-log-file",

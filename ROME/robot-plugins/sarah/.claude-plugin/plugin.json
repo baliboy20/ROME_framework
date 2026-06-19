@@ -38,9 +38,7 @@
     ]
   },
   "dependencies": {
-    "plugins": [
-      "rome-qa"
-    ],
+    "plugins": [],
     "mcps": [
       "activity-log-file",
       "iterm2-terminal",

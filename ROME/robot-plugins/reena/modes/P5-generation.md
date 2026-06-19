@@ -1,5 +1,16 @@
 # Reena P5 Mode: Backend API Implementation
 
+> **⚠ MODE UPDATE — superseded by ROME-PROP-035 (2026-06-19).**
+> The legacy "MANDATORY FIRST ACTION: log phase start/complete" and any
+> `/log-phase-start` / `/log-phase-complete` / `mcp__activity_log__append`-as-
+> coordination instructions below are **OBSOLETE** and the referenced skills were
+> removed in the PROP-035 cutover. Under the single-session model you are a
+> **sub-agent**: you finish by returning a single structured result
+> (status, summary, artifacts, traceabilityDeltas, blockers). **Returning IS your
+> progress record** (completion = return = record) — there is no separate logging
+> step. The orchestrator writes the audit trail. See
+> `rome-core/docs/standards/agent-roles-standard.md`.
+
 | Field | Value |
 |-------|-------|
 | **Mode UID** | reena:P5-generation |
