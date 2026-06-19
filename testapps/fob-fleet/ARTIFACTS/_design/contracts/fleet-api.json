@@ -1,0 +1,1 @@
+{"id":"fleet-api","kind":"api","producer":"service","consumers":["ui"],"members":["onboardBike","transitionBike","complianceReport"]}

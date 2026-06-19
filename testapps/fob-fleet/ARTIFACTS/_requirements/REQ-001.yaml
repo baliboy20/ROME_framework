@@ -1,0 +1,36 @@
+ID: REQ-001
+Actor: FleetManager
+Intent: create bike
+Preconditions:
+  - FleetManager authenticated
+Conditions:
+  - Asset identifier is not already registered
+Postconditions:
+  - Bike recorded with a unique asset identifier
+  - Bike set to in-service state
+Outcomes:
+  - Bike appears in the fleet list
+  - FleetManager can set compliance dates for the bike
+Invariants:
+  - Every bike has a unique asset identifier
+  - A newly onboarded bike is in-service
+NonFunctional:
+  Performance:
+    - Onboarding completes within two seconds
+  Security:
+    - Only an authenticated FleetManager may onboard a bike
+Errors:
+  - error: If the asset identifier is already registered
+    message: A bike with this identifier already exists
+  - error: If make or model is missing
+    message: Make and model are required
+ScopeBoundary:
+  InScope:
+    - Register a bike with identifier, make, model and purchase date
+  OutOfScope:
+    - Equipment onboarding
+OpenQuestions:
+  - question: Is purchase date mandatory?
+    status: RESOLVED
+    resolution: Purchase date is optional
+CopilotMode: STRICT

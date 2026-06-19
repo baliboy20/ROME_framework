@@ -1,0 +1,32 @@
+ID: REQ-003
+Actor: FleetManager
+Intent: view fleet-compliance
+Preconditions:
+  - FleetManager authenticated
+Conditions:
+  - At least one bike is registered
+Postconditions:
+  - Compliance view reflects current renewal status for each bike
+Outcomes:
+  - FleetManager sees which bikes are renewal-due
+  - FleetManager can identify non-compliant bikes
+Invariants:
+  - A bike is renewal-due when insurance-expiry or service-due is within thirty days or past
+NonFunctional:
+  Performance:
+    - Compliance view loads within two seconds
+  Security:
+    - Only an authenticated FleetManager may view fleet compliance
+Errors:
+  - error: If a bike has no compliance dates set
+    message: Compliance dates are not set for this bike
+ScopeBoundary:
+  InScope:
+    - Report renewal-due and non-compliant bikes
+  OutOfScope:
+    - Sending renewal reminders
+OpenQuestions:
+  - question: Is the renewal window configurable?
+    status: RESOLVED
+    resolution: Fixed at thirty days for this release
+CopilotMode: STRICT

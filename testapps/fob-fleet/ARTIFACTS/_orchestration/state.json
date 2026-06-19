@@ -1,0 +1,533 @@
+{
+  "schemaVersion": 1,
+  "project": "fob-fleet",
+  "frameworkVersion": "rearch-dev",
+  "createdAt": "2026-06-19T08:00:00Z",
+  "updatedAt": "2026-06-19T10:03:00Z",
+  "routing": [
+    "P0",
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+  ],
+  "currentPhase": null,
+  "phases": {
+    "P0": {
+      "status": "COMPLETE"
+    },
+    "P1": {
+      "status": "COMPLETE"
+    },
+    "P2": {
+      "status": "COMPLETE"
+    },
+    "P3": {
+      "status": "COMPLETE"
+    },
+    "P4": {
+      "status": "COMPLETE"
+    },
+    "P5": {
+      "status": "COMPLETE"
+    }
+  },
+  "gateLedger": [
+    {
+      "gate": "GATE-P1",
+      "phase": "P1",
+      "verdict": "APPROVE",
+      "role": "sarah",
+      "timestamp": "2026-06-19T08:09:00Z",
+      "note": "AORDL valid, all reqs traced"
+    },
+    {
+      "gate": "GATE-P2",
+      "phase": "P2",
+      "verdict": "APPROVE",
+      "role": "sarah",
+      "timestamp": "2026-06-19T08:12:00Z"
+    },
+    {
+      "gate": "GATE-P3",
+      "phase": "P3",
+      "verdict": "APPROVE",
+      "role": "sarah",
+      "timestamp": "2026-06-19T09:02:00Z",
+      "note": "design complete, PMA+Clara, contract defined"
+    },
+    {
+      "gate": "GATE-P4",
+      "phase": "P4",
+      "verdict": "APPROVE",
+      "role": "sarah",
+      "timestamp": "2026-06-19T09:05:00Z"
+    },
+    {
+      "gate": "GATE-P5",
+      "phase": "P5",
+      "verdict": "APPROVE",
+      "role": "sarah",
+      "timestamp": "2026-06-19T10:02:00Z",
+      "note": "all mechanical gates pass"
+    }
+  ],
+  "blockers": [],
+  "dispatch": [
+    {
+      "agent": "bootstrap-1",
+      "role": "bootstrap",
+      "phase": "P0",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T08:05:00Z"
+    },
+    {
+      "agent": "talib-P1",
+      "role": "talib",
+      "phase": "P1",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T08:07:00Z"
+    },
+    {
+      "agent": "talib-P2",
+      "role": "talib",
+      "phase": "P2",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T08:11:00Z"
+    },
+    {
+      "agent": "pma-fleet",
+      "role": "pma",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T09:00:00Z"
+    },
+    {
+      "agent": "clara-fleet",
+      "role": "clara",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T09:01:00Z"
+    },
+    {
+      "agent": "lucien-P4",
+      "role": "lucien",
+      "phase": "P4",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T09:04:00Z"
+    },
+    {
+      "agent": "gen-fleet",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "timestamp": "2026-06-19T10:00:00Z"
+    }
+  ],
+  "budget": {
+    "tokens": 0,
+    "ceiling": 400000
+  },
+  "traceability": {
+    "deltas": [
+      {
+        "requirement": "REQ-001",
+        "produces": "REQ-001.yaml",
+        "phase": "P1",
+        "role": "talib",
+        "agent": "talib-P1"
+      },
+      {
+        "requirement": "REQ-002",
+        "produces": "REQ-002.yaml",
+        "phase": "P1",
+        "role": "talib",
+        "agent": "talib-P1"
+      },
+      {
+        "requirement": "REQ-003",
+        "produces": "REQ-003.yaml",
+        "phase": "P1",
+        "role": "talib",
+        "agent": "talib-P1"
+      },
+      {
+        "requirement": "REQ-001",
+        "produces": "entities.md",
+        "phase": "P2",
+        "role": "talib",
+        "agent": "talib-P2"
+      },
+      {
+        "requirement": "REQ-002",
+        "produces": "entities.md",
+        "phase": "P2",
+        "role": "talib",
+        "agent": "talib-P2"
+      },
+      {
+        "requirement": "REQ-003",
+        "produces": "entities.md",
+        "phase": "P2",
+        "role": "talib",
+        "agent": "talib-P2"
+      },
+      {
+        "requirement": "REQ-001",
+        "produces": "architecture.md",
+        "phase": "P3",
+        "role": "pma",
+        "agent": "pma-fleet"
+      },
+      {
+        "requirement": "REQ-002",
+        "produces": "architecture.md",
+        "phase": "P3",
+        "role": "pma",
+        "agent": "pma-fleet"
+      },
+      {
+        "requirement": "REQ-003",
+        "produces": "architecture.md",
+        "phase": "P3",
+        "role": "pma",
+        "agent": "pma-fleet"
+      },
+      {
+        "requirement": "REQ-001",
+        "produces": "workspace.md",
+        "phase": "P4",
+        "role": "lucien",
+        "agent": "lucien-P4"
+      },
+      {
+        "requirement": "REQ-002",
+        "produces": "workspace.md",
+        "phase": "P4",
+        "role": "lucien",
+        "agent": "lucien-P4"
+      },
+      {
+        "requirement": "REQ-003",
+        "produces": "workspace.md",
+        "phase": "P4",
+        "role": "lucien",
+        "agent": "lucien-P4"
+      },
+      {
+        "requirement": "REQ-001",
+        "produces": "service/index.js",
+        "component": "service",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "gen-fleet"
+      },
+      {
+        "requirement": "REQ-001",
+        "produces": "service/test.cjs",
+        "component": "service",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "gen-fleet"
+      },
+      {
+        "requirement": "REQ-002",
+        "produces": "service/index.js",
+        "component": "service",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "gen-fleet"
+      },
+      {
+        "requirement": "REQ-002",
+        "produces": "service/test.cjs",
+        "component": "service",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "gen-fleet"
+      },
+      {
+        "requirement": "REQ-003",
+        "produces": "service/index.js",
+        "component": "service",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "gen-fleet"
+      },
+      {
+        "requirement": "REQ-003",
+        "produces": "service/test.cjs",
+        "component": "service",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "gen-fleet"
+      }
+    ]
+  },
+  "verification": {
+    "P1": {
+      "aordl": {
+        "pass": true,
+        "detail": "3/3 PASS STRICT",
+        "timestamp": "2026-06-19T08:08:00Z"
+      },
+      "traceability": {
+        "pass": true,
+        "detail": null,
+        "timestamp": "2026-06-19T08:08:00Z"
+      }
+    },
+    "P2": {
+      "traceability": {
+        "pass": true,
+        "detail": null,
+        "timestamp": "2026-06-19T08:11:00Z"
+      }
+    },
+    "P3": {
+      "traceability": {
+        "pass": true,
+        "detail": null,
+        "timestamp": "2026-06-19T09:01:00Z"
+      }
+    },
+    "P4": {
+      "secrets": {
+        "pass": true,
+        "detail": "clean",
+        "timestamp": "2026-06-19T09:04:00Z"
+      },
+      "traceability": {
+        "pass": true,
+        "detail": null,
+        "timestamp": "2026-06-19T09:04:00Z"
+      }
+    },
+    "P5": {
+      "executability": {
+        "pass": true,
+        "detail": "schema:VERIFIED service:VERIFIED ui:VERIFIED",
+        "timestamp": "2026-06-19T10:01:00Z"
+      },
+      "secrets": {
+        "pass": true,
+        "detail": "clean",
+        "timestamp": "2026-06-19T10:01:00Z"
+      },
+      "contracts": {
+        "pass": true,
+        "detail": "no drift",
+        "timestamp": "2026-06-19T10:01:00Z"
+      },
+      "testAdequacy": {
+        "pass": true,
+        "detail": "MVP ok",
+        "timestamp": "2026-06-19T10:01:00Z"
+      },
+      "traceability": {
+        "pass": true,
+        "detail": "complete",
+        "timestamp": "2026-06-19T10:01:00Z"
+      }
+    }
+  },
+  "audit": [
+    {
+      "event": "DISPATCH",
+      "agent": "bootstrap-1",
+      "role": "bootstrap",
+      "phase": "P0",
+      "timestamp": "2026-06-19T08:05:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "bootstrap-1",
+      "role": "bootstrap",
+      "phase": "P0",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "timestamp": "2026-06-19T08:05:00Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "talib-P1",
+      "role": "talib",
+      "phase": "P1",
+      "timestamp": "2026-06-19T08:07:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "talib-P1",
+      "role": "talib",
+      "phase": "P1",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 3,
+      "timestamp": "2026-06-19T08:08:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P1",
+      "key": "aordl",
+      "pass": true,
+      "timestamp": "2026-06-19T08:08:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P1",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-06-19T08:08:00Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "talib-P2",
+      "role": "talib",
+      "phase": "P2",
+      "timestamp": "2026-06-19T08:11:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "talib-P2",
+      "role": "talib",
+      "phase": "P2",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 3,
+      "timestamp": "2026-06-19T08:11:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P2",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-06-19T08:11:00Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "pma-fleet",
+      "role": "pma",
+      "phase": "P3",
+      "timestamp": "2026-06-19T09:00:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "pma-fleet",
+      "role": "pma",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 3,
+      "timestamp": "2026-06-19T09:00:00Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "clara-fleet",
+      "role": "clara",
+      "phase": "P3",
+      "timestamp": "2026-06-19T09:01:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "clara-fleet",
+      "role": "clara",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "timestamp": "2026-06-19T09:01:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-06-19T09:01:00Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "lucien-P4",
+      "role": "lucien",
+      "phase": "P4",
+      "timestamp": "2026-06-19T09:04:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "lucien-P4",
+      "role": "lucien",
+      "phase": "P4",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 3,
+      "timestamp": "2026-06-19T09:04:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P4",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-06-19T09:04:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P4",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-06-19T09:04:00Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "gen-fleet",
+      "role": "charlie",
+      "phase": "P5",
+      "timestamp": "2026-06-19T10:00:00Z"
+    },
+    {
+      "event": "RETURN",
+      "agent": "gen-fleet",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 6,
+      "deltas": 6,
+      "timestamp": "2026-06-19T10:00:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "executability",
+      "pass": true,
+      "timestamp": "2026-06-19T10:01:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-06-19T10:01:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "contracts",
+      "pass": true,
+      "timestamp": "2026-06-19T10:01:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "testAdequacy",
+      "pass": true,
+      "timestamp": "2026-06-19T10:01:00Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-06-19T10:01:00Z"
+    }
+  ]
+}
