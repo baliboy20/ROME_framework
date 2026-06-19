@@ -5,7 +5,14 @@
  */
 
 const { PHASE_BY_ID } = require('./lifecycle');
-const { isComplete, latestVerdict } = require('./guard');
+const { isComplete, latestVerdict, canAdvance } = require('./guard');
+
+/** Mechanical facts a phase still needs (missing or failed) in state.verification. */
+function outstandingChecks(state, phase) {
+  const def = PHASE_BY_ID[phase];
+  const recs = state.verification[phase] || {};
+  return (def.requires || []).filter(k => !recs[k] || !recs[k].pass);
+}
 
 /** Has the phase owner produced (a COMPLETE return for this phase)? */
 function producedFor(state, phase) {
@@ -28,6 +35,12 @@ function nextAction(state) {
     return { phase, owner, gateRole, step: 'DISPATCH',
       instruction: `dispatch ${owner} for ${phase} (${def.name}); process its structured return` };
   }
+  // mechanical facts must be recorded+passing before requesting the gate / advancing
+  const outstanding = outstandingChecks(state, phase);
+  if (outstanding.length) {
+    return { phase, owner, gateRole, step: 'VERIFY', outstanding,
+      instruction: `run mechanical checks and record verification for ${phase}: ${outstanding.join(', ')}` };
+  }
   if (def.gate) {
     const v = latestVerdict(state, phase);
     if (!v || v.verdict !== 'APPROVE') {
@@ -35,8 +48,12 @@ function nextAction(state) {
         instruction: `request ${def.gate.id} verdict from ${gateRole}; record via guard` };
     }
   }
+  // final safety: only ADVANCE when the guard agrees
+  if (!canAdvance(state).ok) {
+    return { phase, owner, gateRole, step: 'BLOCKED', instruction: canAdvance(state).reason };
+  }
   return { phase, owner, gateRole, step: 'ADVANCE',
     instruction: `guard advance from ${phase}` };
 }
 
-module.exports = { nextAction, producedFor };
+module.exports = { nextAction, producedFor, outstandingChecks };

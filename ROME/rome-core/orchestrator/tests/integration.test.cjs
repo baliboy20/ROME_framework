@@ -19,6 +19,7 @@ const { topoBatches } = require('../topology');
 const { verifyComponent } = require('../executability');
 const { gateContracts } = require('../contracts');
 const { routeFromICR } = require('../routing');
+const { recordVerification } = require('../verification');
 const budget = require('../budget');
 
 const TS = '2026-06-18T12:00:00Z';
@@ -45,6 +46,8 @@ function produce(role, phase, deltas) {
 }
 function gateAndAdvance(phase) {
   const def = PHASE_BY_ID[phase];
+  // record the phase's required mechanical facts (the guard now demands them)
+  for (const k of def.requires || []) recordVerification(s, phase, k, true, null, TS);
   if (def.gate) guard.recordGateVerdict(s, { phase, verdict: 'APPROVE', role: 'sarah', timestamp: TS });
   guard.advance(s, TS);
 }

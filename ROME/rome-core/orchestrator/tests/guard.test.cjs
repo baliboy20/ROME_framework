@@ -5,15 +5,18 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const { STATUS, VERDICT } = require('../lifecycle');
+const { STATUS, VERDICT, PHASE_BY_ID } = require('../lifecycle');
 const { createState, save, load } = require('../state');
 const { recordGateVerdict, canAdvance, advance, isComplete, latestVerdict } = require('../guard');
+const { recordVerification } = require('../verification');
 
 const TS = '2026-06-18T00:00:00Z';
 let passed = 0, failed = 0;
 function ok(name, cond) { if (cond) { console.log(`  ✓ ${name}`); passed++; } else { console.log(`  ✗ ${name}`); failed++; } }
 function threw(fn) { try { fn(); return false; } catch { return true; } }
 function fresh() { return createState({ project: 'demo', frameworkVersion: 'test', timestamp: TS }); }
+// record the mechanical facts a phase requires (so the guard precondition passes)
+function satisfy(s, phase) { for (const k of PHASE_BY_ID[phase].requires || []) recordVerification(s, phase, k, true, null, TS); return s; }
 
 console.log('guard regression:');
 
@@ -51,6 +54,7 @@ console.log('guard regression:');
   ok('P1 BLOCKED status after BLOCK verdict', s.phases.P1.status === STATUS.BLOCKED);
   ok('cannot advance on BLOCK', canAdvance(s).ok === false);
   recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
+  satisfy(s, 'P1');
   ok('latest verdict is APPROVE', latestVerdict(s, 'P1').verdict === VERDICT.APPROVE);
   ok('can advance after corrective APPROVE', canAdvance(s).ok === true);
 })();
@@ -59,6 +63,7 @@ console.log('guard regression:');
 (() => {
   const s = fresh(); advance(s, TS); // at P1
   recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
+  satisfy(s, 'P1');
   s.blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', owner: 'talib', status: 'OPEN' });
   ok('open blocker blocks advance', canAdvance(s).ok === false);
   s.blockers[0].status = 'RESOLVED';
@@ -72,17 +77,33 @@ console.log('guard regression:');
     recordGateVerdict(s, { phase: 'P0', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS })));
 })();
 
-// 7. Full happy path P0..P5 with proper Sarah approvals → isComplete
+// 7. Full happy path P0..P5 with verdicts + mechanical facts → isComplete
 (() => {
   const s = fresh();
   for (let step = 0; step < 6; step++) {
     const p = s.currentPhase;
-    const def = require('../lifecycle').PHASE_BY_ID[p];
+    const def = PHASE_BY_ID[p];
     if (def.gate) recordGateVerdict(s, { phase: p, verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
+    satisfy(s, p); // record the phase's required mechanical facts
     advance(s, TS);
   }
-  ok('lifecycle completes after all gates approved', isComplete(s) === true);
+  ok('lifecycle completes after all gates approved + facts', isComplete(s) === true);
   ok('currentPhase null at completion', s.currentPhase === null);
+})();
+
+// 9. Mechanical precondition: APPROVE alone is NOT enough (the §3.5 hardening)
+(() => {
+  const s = fresh(); advance(s, TS); // at P1 (requires aordl + traceability)
+  recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
+  ok('APPROVE without facts is BLOCKED', canAdvance(s).ok === false);
+  ok('reason names the missing check', /mechanical check "aordl"/.test(canAdvance(s).reason));
+  recordVerification(s, 'P1', 'aordl', true, null, TS);
+  ok('still blocked with only one fact', canAdvance(s).ok === false);
+  recordVerification(s, 'P1', 'traceability', true, null, TS);
+  ok('advance allowed once verdict + all facts present', canAdvance(s).ok === true);
+  // a FAILED fact blocks even with APPROVE
+  recordVerification(s, 'P1', 'traceability', false, 'REQ-003 has no test', TS);
+  ok('a FAILED fact blocks advance', canAdvance(s).ok === false);
 })();
 
 // 8. state.json persistence round-trip

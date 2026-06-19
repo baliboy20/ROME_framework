@@ -5,7 +5,7 @@
 | **UID** | ROME-ORCH-CORE |
 | **Implements** | PROP-035 (§3.1/3.2/3.5/6a/6b), PROP-036, PROP-038, PROP-039, PROP-040 (ROME-PLAN-035 Stages 2–5) |
 | **Deps** | none (pure Node + fs/child_process) |
-| **Tests** | `node tests/run.cjs` (85: 20 guard + 17 subagent + 16 topology + 8 executability + 10 contracts + 14 routing/budget) |
+| **Tests** | `node tests/run.cjs` (154: guard, subagent, topology, executability, contracts, routing/budget, integration, impact/experts, driver, verification, visualize, security) + 45 lib |
 
 The deterministic substrate beneath the Roma orchestrator. The orchestrator (an
 LLM session) **drives**; this code **enforces and records**. Quality guarantees
@@ -58,9 +58,14 @@ The orchestrator MUST route every transition through `guard-cli.cjs` /
 - Phases cannot be skipped or reordered.
 - Open blockers halt advance.
 - Sub-agent returns must be schema-valid or they are rejected (failure policy, PROP-039 B).
+- **Mechanical preconditions:** a gated phase advances only when every fact in
+  `lifecycle PHASE.requires` is recorded+passing in `state.verification` — the gate
+  role's APPROVE is necessary but NOT sufficient (PROP-035 §3.5 hardening).
 
-## Not yet wired (later stages)
+## Status
 
-Live sub-agent invocation (Stage 3 / M2, P3 slice), topology fan-out (PROP-038),
-executability/self-heal (PROP-039), budget enforcement (PROP-040). This core is
-the deterministic foundation those build on.
+All modules built, unit-tested, and integration-tested; live-proven via M2
+(design triad), M3 (parallel build + real executability), 036 (intake), 037
+(prototype). Operation is **Path A** (a live Claude session drives the loop using
+the Agent tool; no programmatic SDK runner — by decision). The single outstanding
+validation is a full real application generated end-to-end through the live loop.

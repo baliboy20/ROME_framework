@@ -37,6 +37,7 @@ function createState({ project, frameworkVersion = 'unknown', routing, timestamp
     dispatch: [],       // { agent, role, phase, status, timestamp }
     budget: { tokens: 0, ceiling: null },
     traceability: { deltas: [] }, // { requirement, produces, component?, phase, role, agent }
+    verification: {},   // phase → { key: { pass, detail, timestamp } } — guard preconditions
     audit: [],          // append-only audit entries mirrored to activity-log MCP
   };
 }

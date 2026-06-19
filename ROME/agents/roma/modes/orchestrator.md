@@ -39,6 +39,12 @@ Location: `ROME/rome-core/orchestrator/` (pure Node, no deps). See its `README.m
 | `contracts.js` | `detectDrift`, `gateContracts` — inter-component conformance |
 | `routing.js` | `routeFromICR` — resolve the phase sequence (greenfield/brownfield, optional phases) |
 | `budget.js` | `record`, `policy` — spend tracking + degrade-before-abort |
+| `verification.js` | `recordVerification`, `checkTraceability`, `checkTestAdequacy` — write the mechanical facts the guard demands |
+| `security.js` | `gateSecurity` — no-secrets-in-source scan (record at P4/P5) |
+| `experts.js` | `selectPacks` — inject Experts/ packs into a generation sub-agent by capability/stack |
+| `impact.js` | `computeImpact` — affected-component set for incremental re-generation |
+| `visualize.js` | Mermaid from state/topology/traceability (emit each phase) |
+| `driver.js` | `nextAction(state)` — the deterministic next step |
 
 The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
 (STRICT at P1). Standards: `ROME/rome-core/docs/standards/`.
@@ -50,24 +56,31 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
 ```
 1. Intake: build/confirm the ICR → routing = routeFromICR(icr)        (PROP-036)
    createState({project, routing}) → state.json                       (source of truth)
-2. While not isComplete(state):
+2. While not isComplete(state):  (use driver.nextAction(state) for the next step)
    phase = state.currentPhase
    a. budget.policy(state) → if ESCALATE, surface to sponsor; if DEGRADE, reduce parallelism/self-heal
-   b. dispatch the phase owner role(s):
-        spec = loadRoleSpec(role, phase); recordDispatch(state, {...})
-        <invoke sub-agent with spec.systemPrompt + scoped skills>
-        processReturn(state, <structured return>)   (completion = return = record)
-      - P5 only: build component-graph → topoBatches → dispatch one sub-agent per
-        node, batch by batch (concurrent within a batch); then
-        verifyComponent/selfHeal each (executability) and gateContracts (drift).
-   c. request the gate verdict from the gate role (Sarah) as a sub-agent;
-      record it ONLY via guard verdict (the guard rejects any non-gate-role).
-   d. guard advance — *BLOCK* unless APPROVE by the correct role.
-3. isComplete(state) → deliver; generate status/transition reports from state.json.
+   b. DISPATCH the phase owner role(s):
+        spec = loadRoleSpec(role, phase)  (+ experts.selectPacks for P5 generation instances)
+        recordDispatch(state, {...}); <invoke sub-agent>; processReturn(state, <return>)
+      - P5 only: component-graph → topoBatches → one sub-agent per node, batch by batch.
+   c. VERIFY — run the phase's mechanical checks and recordVerification(...) for each
+      key in PHASE.requires (the guard demands these BEFORE the gate):
+        P1: validate-aordl STRICT → 'aordl';  checkTraceability → 'traceability'
+        P4: gateSecurity(config) → 'secrets'; checkTraceability → 'traceability'
+        P5: verifyComponent/selfHeal → 'executability'; gateContracts → 'contracts';
+            gateSecurity(source) → 'secrets'; checkTestAdequacy → 'testAdequacy';
+            checkTraceability(requireTest) → 'traceability'
+   d. REQUEST_GATE — gate role (Sarah) verdict; record ONLY via guard (rejects non-gate-role).
+   e. guard advance — BLOCKS unless APPROVE by the correct role AND all required facts pass.
+   f. emit visualize.* diagrams; mirror audit to activity-log.
+3. isComplete(state) → deliver; status/transition reports from state.json.
 ```
 
-Mechanical checks run at their phase: AORDL STRICT validate at P1; executability
-+ contract drift at P5. Lean on these over LLM judgment where they exist (§3.5.3).
+**The verdict is never sufficient.** Step (c) is mandatory: the guard refuses
+advance unless every `PHASE.requires` fact is recorded and passing — an APPROVE
+without the facts is BLOCKED (PROP-035 §3.5 hardening). Lean on these mechanical
+checks over LLM judgment where they exist (§3.5.3). Incremental change: use
+`impact.computeImpact` to re-run only affected components.
 
 ---
 

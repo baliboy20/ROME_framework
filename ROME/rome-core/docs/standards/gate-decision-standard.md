@@ -49,6 +49,25 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
 5. **Open blockers** on the phase prevent advance.
 6. Phases cannot be **skipped or reordered** (advance moves exactly one step).
 7. A verdict on an **ungated** phase is rejected.
+8. **Mechanical preconditions (the verdict is NOT sufficient).** Each phase declares
+   `requires` (lifecycle.js). The guard refuses to advance unless every required
+   fact is **recorded AND passing** in `state.verification[phase]` — so an LLM gate
+   role cannot APPROVE without the checks actually having run:
+
+   | Phase | Required mechanical facts |
+   |-------|---------------------------|
+   | P1 | `aordl` (STRICT validation), `traceability` |
+   | P2 / P3 / P3.5 | `traceability` |
+   | P4 | `secrets`, `traceability` |
+   | P5 | `executability`, `testAdequacy`, `secrets`, `contracts`, `traceability` |
+
+   - **traceability** is ALWAYS required (iterative-dev safety): every in-scope
+     requirement maps requirement→artifact; at P5 also requirement→**code** AND →**test**.
+   - **testAdequacy** is the **MVP rule** — each requirement's *declared* Outcomes +
+     Errors (from AORDL) must be tested; nothing more is demanded (`verification.js#checkTestAdequacy`).
+   - Facts are written by their modules (`executability.js`, `security.js`,
+     `contracts.js`, `validate-aordl.js`) via `verification.js#recordVerification`,
+     not asserted by the gate role.
 
 `guard-cli.cjs` exits non-zero on any blocked transition, so it is wireable as a
 hook over `state.json` mutations. The orchestrator MUST route every transition

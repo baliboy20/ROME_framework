@@ -26,15 +26,26 @@ const STATUS = Object.freeze({
 const VERDICT = Object.freeze({ APPROVE: 'APPROVE', BLOCK: 'BLOCK' });
 
 // Canonical phase catalog. `gate: null` means no transition gate (e.g. P0).
+//
+// `requires` = mechanical facts the guard demands (as recorded verification
+// evidence in state.verification[phase]) BEFORE a gated advance — not just the
+// gate role's verdict (ROME-PROP-035 §3.5 hardening). Keys:
+//   aordl        — AORDL STRICT validation passed (P1)
+//   traceability — every in-scope requirement maps requirement→artifact(s);
+//                  at P5, requirement→code AND →test (ALWAYS-ON, iterative safety)
+//   secrets      — no-secrets-in-source scan clean
+//   contracts    — inter-component contract drift = 0
+//   executability— generated code installs/builds/tests pass
+//   testAdequacy — MVP rule: each requirement's declared Outcomes + Errors are tested
 const PHASES = Object.freeze([
-  { id: 'P0',   name: 'bootstrap',    owner: 'bootstrap',            gate: null,                              optional: false },
-  { id: 'P0.5', name: 'intake',       owner: 'surveyor',             gate: { id: 'GATE-P0.5', role: 'sarah' }, optional: true },
-  { id: 'P1',   name: 'requirements', owner: 'talib',                gate: { id: 'GATE-P1',   role: 'sarah' }, optional: false },
-  { id: 'P2',   name: 'analysis',     owner: 'talib',                gate: { id: 'GATE-P2',   role: 'sarah' }, optional: false },
-  { id: 'P3',   name: 'design',       owner: 'pma',                  gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false },
-  { id: 'P3.5', name: 'prototype',    owner: 'reena',                gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true },
-  { id: 'P4',   name: 'config',       owner: 'lucien',               gate: { id: 'GATE-P4',   role: 'sarah' }, optional: false },
-  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false },
+  { id: 'P0',   name: 'bootstrap',    owner: 'bootstrap',            gate: null,                              optional: false, requires: [] },
+  { id: 'P0.5', name: 'intake',       owner: 'surveyor',             gate: { id: 'GATE-P0.5', role: 'sarah' }, optional: true,  requires: [] },
+  { id: 'P1',   name: 'requirements', owner: 'talib',                gate: { id: 'GATE-P1',   role: 'sarah' }, optional: false, requires: ['aordl', 'traceability'] },
+  { id: 'P2',   name: 'analysis',     owner: 'talib',                gate: { id: 'GATE-P2',   role: 'sarah' }, optional: false, requires: ['traceability'] },
+  { id: 'P3',   name: 'design',       owner: 'pma',                  gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability'] },
+  { id: 'P3.5', name: 'prototype',    owner: 'reena',                gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true,  requires: ['traceability'] },
+  { id: 'P4',   name: 'config',       owner: 'lucien',               gate: { id: 'GATE-P4',   role: 'sarah' }, optional: false, requires: ['secrets', 'traceability'] },
+  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'testAdequacy', 'secrets', 'contracts', 'traceability'] },
 ]);
 
 const PHASE_BY_ID = Object.freeze(

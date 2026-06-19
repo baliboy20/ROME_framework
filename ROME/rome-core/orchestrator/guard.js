@@ -82,6 +82,15 @@ function canAdvance(state) {
     return { ok: false, reason: `${openBlockers.length} open blocker(s) on ${phaseId}` };
   }
 
+  // Mechanical preconditions: the gate role's verdict is NOT sufficient — the
+  // required facts must be recorded AND passing (PROP-035 §3.5 hardening).
+  // This prevents an LLM gate role from APPROVING without the checks having run.
+  for (const key of def.requires || []) {
+    const rec = (state.verification[phaseId] || {})[key];
+    if (!rec) return { ok: false, reason: `${phaseId}: missing mechanical check "${key}" (no verification record)` };
+    if (!rec.pass) return { ok: false, reason: `${phaseId}: mechanical check "${key}" FAILED${rec.detail ? ' — ' + rec.detail : ''}` };
+  }
+
   if (def.gate) {
     const v = latestVerdict(state, phaseId);
     if (!v) return { ok: false, reason: `No ${def.gate.id} verdict recorded for ${phaseId}` };
