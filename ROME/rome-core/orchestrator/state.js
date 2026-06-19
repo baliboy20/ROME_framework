@@ -15,7 +15,7 @@ const SCHEMA_VERSION = 1;
  * Create a fresh state for a project.
  * @param {object} opts { project, frameworkVersion, routing?, timestamp }
  */
-function createState({ project, frameworkVersion = 'unknown', routing, timestamp } = {}) {
+function createState({ project, frameworkVersion = 'unknown', frameworkCommit = null, vendored = false, routing, timestamp } = {}) {
   if (!project) throw new Error('createState: project is required');
   if (!timestamp) throw new Error('createState: timestamp is required (no Date.now in lib)');
   const routed = resolveRouting(routing);
@@ -27,6 +27,8 @@ function createState({ project, frameworkVersion = 'unknown', routing, timestamp
     schemaVersion: SCHEMA_VERSION,
     project,
     frameworkVersion,
+    // provenance: exactly which framework built this project (vendored copy in .rome/)
+    framework: { version: frameworkVersion, commit: frameworkCommit, vendored },
     createdAt: timestamp,
     updatedAt: timestamp,
     routing: routed,
