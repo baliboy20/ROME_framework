@@ -2,6 +2,21 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-06-19] - v2.2.0 "Tiberius" — vendoring + skill/expert dedup
+
+### Added
+- **Per-project framework vendoring**: rome-start copies a frozen framework snapshot
+  into <projectDir>/.rome/ by default (--no-vendor to skip) and records provenance
+  {version, commit, vendored} in state.json. Each project is self-contained and
+  reproducible as the framework evolves.
+
+### Changed
+- **Skill/Expert dedup**: removed 9 Flutter knowledge-as-skills from charlie (covered
+  by Experts/expert_flutter, injected via experts.js); kept the action skills
+  generate-ui-screens/components + an expertPacks reference. agent-roles-standard §3b
+  documents the rule: knowledge → expert pack, never a skill.
+- Fixed a pre-existing JSON error in charlie plugin.json; dropped retired iterm2-terminal.
+
 ## [2026-06-19] - v2.1.0 "Augustus" — Enforcement hardening + tree cleanup
 
 Codename **Augustus** (the founder) — the foundational sub-agent architecture line.
