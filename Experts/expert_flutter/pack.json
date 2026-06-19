@@ -1,0 +1,15 @@
+{
+  "name": "expert_flutter",
+  "description": "Flutter frontend domain knowledge — architecture, patterns, UI/UX, platform specifics, deployment.",
+  "applies": {
+    "capabilities": ["generate-ui"],
+    "platforms": ["flutter", "web", "ios", "android", "macos", "windows"],
+    "stacks": ["flutter"],
+    "phases": ["P3", "P5"]
+  },
+  "enforce": [
+    "use only approved libraries (see 01_CORE/antipatterns_and_approved_libraries_expert.md)",
+    "follow bloc event naming convention (01_CORE/bloc_event_naming_convention_guide.md)",
+    "apply error-handling patterns (01_CORE/error_handling_patterns_expert.md)"
+  ]
+}

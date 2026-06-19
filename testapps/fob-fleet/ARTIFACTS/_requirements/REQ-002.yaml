@@ -1,0 +1,35 @@
+ID: REQ-002
+Actor: FleetManager
+Intent: update bike-state
+Preconditions:
+  - FleetManager authenticated
+  - Bike exists in the fleet
+Conditions:
+  - Requested transition is permitted from the current state
+Postconditions:
+  - Bike recorded in the new state
+Outcomes:
+  - Bike state reflects the requested change in the fleet list
+Invariants:
+  - A bike moves only in-service to out-of-service, out-of-service to maintenance, or maintenance to in-service
+  - A non-compliant bike cannot return to in-service
+NonFunctional:
+  Performance:
+    - State change completes within two seconds
+  Security:
+    - Only an authenticated FleetManager may change a bike state
+Errors:
+  - error: If the requested transition is not permitted from the current state
+    message: That state change is not allowed
+  - error: If returning a non-compliant bike to in-service
+    message: Bike cannot return to service while non-compliant
+ScopeBoundary:
+  InScope:
+    - The flagged-bike lifecycle transitions
+  OutOfScope:
+    - Maintenance cost tracking
+OpenQuestions:
+  - question: Can maintenance go straight to out-of-service?
+    status: RESOLVED
+    resolution: No, only the defined transitions
+CopilotMode: STRICT

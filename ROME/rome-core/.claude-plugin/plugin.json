@@ -21,7 +21,7 @@
       {
         "name": "roma",
         "mode": "phase-agnostic",
-        "source": "robot-plugins/roma"
+        "source": "agents/roma"
       }
     ],
     "mcpServers": [

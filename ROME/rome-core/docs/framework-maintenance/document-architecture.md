@@ -86,7 +86,7 @@ Tier 0: Foundation (highest authority)
 │       ├── skill-framework-specification.md
 │       └── subagent-framework-specification.md
 
-/ROME/robot-plugins/                  # Tier 3 — robot definitions
+/ROME/agents/                  # Tier 3 — robot definitions
 ├── bootstrap/
 ├── roma/
 ├── talib/
@@ -241,7 +241,7 @@ For any given topic, there is one authoritative source:
 | Document format | ROME-GOV-001 | `/framework-maintenance/document-standards.md` |
 | Document structure | ROME-GOV-005 | `/framework-maintenance/document-architecture.md` |
 | UIDs | ROME-GOV-002 | `/framework-maintenance/uid-registry.md` |
-| Robot behavior | ROME-ROBOT-### | `/robot-plugins/[name]/ROBOT.md` |
+| Robot behavior | ROME-ROBOT-### | `/agents/[name]/ROBOT.md` |
 | Activity logging | ROME-GOV-008 | `/operational/activity-log-format.md` |
 
 ---

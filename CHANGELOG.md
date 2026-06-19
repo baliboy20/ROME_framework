@@ -2,6 +2,55 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-06-19] - v2.1.0 "Augustus" — Enforcement hardening + tree cleanup
+
+Codename **Augustus** (the founder) — the foundational sub-agent architecture line.
+
+### Fixed
+- **Guard now requires mechanical evidence, not just a verdict** (PROP-035 §3.5
+  hardening). Each phase declares `requires`; the guard refuses to advance unless
+  every required fact (executability, contracts, secrets, traceability, MVP
+  test-adequacy, AORDL) is recorded AND passing in `state.verification`. An LLM
+  gate role can no longer APPROVE without the checks having run. New `verification.js`
+  + `driver` VERIFY step. Traceability is always-enforced (iterative safety);
+  test-adequacy follows the MVP rule (only declared Outcomes/Errors must be tested).
+
+### Added
+- Per-role **recommended-model** guidance in `agent-roles-standard.md` (Opus on
+  Roma/Sarah/PMA; Sonnet producers; Haiku intake/scaffold).
+
+### Removed (cleanup)
+- `ROME_tools/` (gutted in cutover), `PLUGINS/` (Flutter skills now in `Experts/`),
+  `GENERATION-PLUGINS-MANIFEST.md` + `PLUGIN-MANIFEST.md` (retired phase-plugin model),
+  and the M2/M3/037 proof scratch dirs (results preserved in
+  `ROME_framework_maintenance/reviews/`). Top-level tree is now: ROME, Experts,
+  ROME_framework_maintenance, ROME_architect, testapps, test-project + current docs.
+
+### Tests
+- 154 orchestrator + 45 lib, all green.
+
+## [2026-06-19] - v2.0.0 — Single-Session Sub-Agent Orchestration (ROME-PROP-035..040)
+
+Major re-architecture: from human-switched multi-session "robots" to a single
+**orchestrator session that drives native sub-agents**, with deterministic
+enforcement. **BREAKING.**
+
+### Added
+- **Orchestrator core** (`rome-core/orchestrator/`): `state.js` (state.json = source of truth), `guard.js`/`guard-cli.cjs` (deterministic phase-advance enforcement — self-approval structurally impossible), `subagent.js` (role→sub-agent loader + structured-return contract), `lifecycle.js`, `driver.js`, `rome-start.cjs` (project entry point).
+- `topology.js` (PROP-038 DAG fan-out), `executability.js` (PROP-039 build/verify/self-heal), `contracts.js` (PROP-039 drift), `routing.js` (PROP-036 intent routing), `budget.js`/`impact.js`/`experts.js`/`security.js` (PROP-040), `visualize.js` (PROP-037 Mermaid).
+- Framework **standards** (`rome-core/docs/standards/`): aordl, agent-roles, traceability, gate-decision, security. Repaired the AORDL validator (was non-runnable).
+- New **Surveyor** role (PROP-036 intake) and **Charlie P3.5** prototype mode (PROP-037).
+- ~190 automated tests; live end-to-end proofs (M2 design triad, M3 parallel build, 036 intake, 037 prototype).
+
+### Changed
+- `robot-plugins/` → **`agents/`**. Roma rewritten (v5.0) as the lifecycle driver. Activity-log demoted to audit-only.
+
+### Removed
+- All emulation machinery: `rome-p5-generation/`, the 6 phase-plugin shells (`rome-p0..p4`, `rome-qa`), the custom skill runtime (`SkillInvoker`/`SkillRegistry`), `p5-hybrid` orchestrator, `ActivityLogCoordinator`, per-robot `add-mcps-v4.sh`, log-enforcement hooks, stale `*-plugins-complete.json` manifests (~5,600 lines).
+
+### Decisions
+- D1 native skills · D2 state.json source of truth · D3 consolidated MCP set · D4 PROP-034 first · Path-A operation (live session, no SDK runner).
+
 ## [2026-01-28] - Robot Plugins Architecture (ROME-PROP-019)
 
 ### Implemented

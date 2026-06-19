@@ -1,0 +1,34 @@
+# Invalid AORDL requirement fixture — must FAIL in STRICT mode.
+# Intentional violations:
+#  - ID format wrong (not REQ-###)
+#  - Actor generic ("user")
+#  - Intent ambiguous verb + UI language ("manage button")
+#  - Technical jargon in Postconditions ("SQL")
+#  - Missing required field: CopilotMode
+ID: REQUIREMENT-1
+Actor: user
+Intent: manage button
+Preconditions:
+  - user logged in
+Conditions: []
+Postconditions:
+  - row written to SQL database
+Outcomes:
+  - things improved
+Invariants:
+  - data stored in table
+NonFunctional:
+  Performance:
+    - fast
+Errors:
+  - error: If something breaks
+    message: An error occurred
+ScopeBoundary:
+  InScope:
+    - stuff
+  OutOfScope:
+    - other stuff
+OpenQuestions:
+  - question: What does this do?
+    status: OPEN
+    resolution: ""

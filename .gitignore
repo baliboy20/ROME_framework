@@ -18,3 +18,7 @@
 # macOS system files
 .DS_Store
 **/.DS_Store
+
+# Node dependencies (installed locally, not committed)
+node_modules/
+**/node_modules/
