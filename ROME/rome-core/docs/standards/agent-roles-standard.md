@@ -41,20 +41,42 @@ orchestrator session holds one consolidated MCP set (D3): `activity-log-file`
 
 ## 3. Role catalog & ownership (responsibility matrix)
 
-| Role | Kind | Phase(s) | Capability (PROP-038) |
-|------|------|----------|------------------------|
-| Roma | orchestrator | ALL | drives lifecycle (does not produce/approve) |
-| Bootstrap | producer | P0 | scaffold |
-| Surveyor | producer | P0.5 | input characterization / as-is derivation (PROP-036) |
-| Talib | producer | P1, P2 | requirements, analysis |
-| PMA | producer | P3 | design, contracts |
-| Clara | validator | P3 | design-domain validation (advises; no gate authority) |
-| Lucien | producer | P4 | config, secrets-as-config |
-| Ashok / Reena / Charlie | producer (capability instances) | P5 | `generate-schema` / `generate-service` / `generate-ui` (+ shared-lib, integration) |
-| Sarah | gate authority | all gates | issues APPROVE/BLOCK; the only role the guard accepts a verdict from |
+| Role | Kind | Phase(s) | Capability (PROP-038) | Recommended model |
+|------|------|----------|------------------------|-------------------|
+| Roma | orchestrator | ALL | drives lifecycle (does not produce/approve) | **Opus 4.8 (1M ctx)** |
+| Bootstrap | producer | P0 | scaffold | Haiku 4.5 |
+| Surveyor | producer | P0.5 | input characterization / as-is derivation (PROP-036) | Haiku 4.5 / Sonnet 4.6 |
+| Talib | producer | P1, P2 | requirements, analysis | Sonnet 4.6 |
+| PMA | producer | P3 | design, contracts | **Opus 4.8** |
+| Clara | validator | P3 | design-domain validation (advises; no gate authority) | Sonnet 4.6 |
+| Lucien | producer | P4 | config, secrets-as-config | Sonnet 4.6 |
+| Ashok / Reena / Charlie | producer (capability instances) | P5 | `generate-schema` / `generate-service` / `generate-ui` (+ shared-lib, integration) | Sonnet 4.6 (Opus for gnarly components) |
+| Sarah | gate authority | all gates | issues APPROVE/BLOCK; the only role the guard accepts a verdict from | **Opus 4.8** |
 
 **Separation of duties (EP-5):** producer ≠ validator ≠ gate authority. The guard
 makes self-approval structurally impossible.
+
+### Model-selection principle
+
+Put the strongest model where **judgment is irreversible or high-leverage**
+(orchestrator, gate, architecture); use a cheaper model where output is
+**mechanically checked** (P5 codegen → caught by the executability / contracts /
+secrets gates) or **low-stakes** (intake classification, scaffolding). The
+mechanical gate-preconditions (gate-decision-standard §3) are what make running
+producers on Sonnet safe — the system verifies their work rather than trusting it.
+
+- **Never weaken Roma or Sarah** — the orchestrator and the gate are the two
+  load-bearing judgment roles. Tight-budget economy = Opus only on those two,
+  Sonnet everywhere else.
+- **Cost concentrates in P5** (many concurrent instances × self-heal retries) —
+  hence Sonnet there, bounded by `budget.js`.
+- The deterministic core (guard, state machine, validators, executability,
+  topology, etc.) uses **no model** — it is plain Node.
+- These are **starting defaults, not measured tunings**: downshift any role that
+  proves reliable, upshift any that produces weak output. Override per project /
+  per sub-agent (the Agent tool / subagent definitions support a per-agent model).
+- Always use the latest model in each tier (currently Opus 4.8 / Sonnet 4.6 /
+  Haiku 4.5); update this table as the lineup advances.
 
 ## 4. The structured-return contract (§6b)
 
@@ -87,3 +109,4 @@ this document and should be treated as historical until the Stage 7 rename pass.
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — reframes agents as sub-agent roles/capabilities under the single-session model; role catalog + responsibility matrix + return contract; retires the session/switch notion without rewriting each ROBOT.md. |
+| 1.1 | 2026-06-19 | Added recommended-model column + model-selection principle (Opus on Roma/Sarah/PMA; Sonnet producers; Haiku intake/scaffold). |
