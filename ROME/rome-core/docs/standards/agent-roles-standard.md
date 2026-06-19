@@ -3,14 +3,14 @@
 | Field | Value |
 |-------|-------|
 | **UID** | ROME-STD-AGENT-ROLES |
-| **Title** | How ROME robot-plugins are interpreted as sub-agent roles |
+| **Title** | How ROME agents are interpreted as sub-agent roles |
 | **Status** | Active |
 | **Created** | 2026-06-18T00:00:00Z |
 | **Origin** | ROME-PROP-035 (§3.2, §4a), PROP-038; ROME-PLAN-035 Stage 5 |
-| **Consumed by** | the orchestrator (`rome-core/orchestrator/subagent.js`) and every role definition under `robot-plugins/` |
+| **Consumed by** | the orchestrator (`rome-core/orchestrator/subagent.js`) and every role definition under `agents/` |
 
 Single source of truth for the agent layer under the single-session model. It
-**reframes how existing `robot-plugins/` are used** — their content (`ROBOT.md`,
+**reframes how existing `agents/` are used** — their content (`ROBOT.md`,
 `modes/`, `skills/`) is unchanged; this standard governs interpretation, so the
 per-robot docs do not each need rewriting.
 
@@ -30,7 +30,7 @@ is **retired**. A robot is now a role the orchestrator instantiates.
 
 ## 2. How a role folder becomes a sub-agent
 
-`subagent.js#loadRoleSpec(role, phase)` assembles, from `robot-plugins/<role>/`:
+`subagent.js#loadRoleSpec(role, phase)` assembles, from `agents/<role>/`:
 
 - **system prompt** = `ROBOT.md` (identity) + the matching `modes/<phase>*.md` (active mode) + the return contract (§4)
 - **scoped skills** = the subdirectories of `skills/` (native skills per D1; the custom SkillInvoker/SkillRegistry is retired)
@@ -75,7 +75,7 @@ progress record; there is no separate logging step and no silent-finish path.
 
 ## 5. Migration note for existing robot docs
 
-`robot-plugins/roma/` has been rewritten to v5.0 (orchestrator). The other role
+`agents/roma/` has been rewritten to v5.0 (orchestrator). The other role
 docs remain content-valid and are interpreted through this standard; any
 remaining "session"/"switch"/"log-coordination" wording in them is superseded by
 this document and should be treated as historical until the Stage 7 rename pass.
@@ -86,4 +86,4 @@ this document and should be treated as historical until the Stage 7 rename pass.
 
 | Version | Date | Summary |
 |---------|------|---------|
-| 1.0 | 2026-06-18 | Initial standard — reframes robot-plugins as sub-agent roles/capabilities under the single-session model; role catalog + responsibility matrix + return contract; retires the session/switch notion without rewriting each ROBOT.md. |
+| 1.0 | 2026-06-18 | Initial standard — reframes agents as sub-agent roles/capabilities under the single-session model; role catalog + responsibility matrix + return contract; retires the session/switch notion without rewriting each ROBOT.md. |

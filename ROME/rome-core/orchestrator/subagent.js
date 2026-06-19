@@ -16,7 +16,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Repo-relative default location of role definitions.
-const DEFAULT_ROLES_DIR = path.join(__dirname, '..', '..', 'robot-plugins');
+const DEFAULT_ROLES_DIR = path.join(__dirname, '..', '..', 'agents');
 
 const RETURN_STATUS = Object.freeze({ COMPLETE: 'COMPLETE', FAILED: 'FAILED', BLOCKED: 'BLOCKED' });
 

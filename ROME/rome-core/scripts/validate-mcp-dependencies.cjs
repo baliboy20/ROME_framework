@@ -260,7 +260,7 @@ function printUsage() {
   console.log('  node validate-mcp-dependencies.js --all             # Validate all plugins');
   console.log('  node validate-mcp-dependencies.js --check-runtime   # Check runtime availability');
   console.log('\nExamples:');
-  console.log('  node validate-mcp-dependencies.js robot-plugins/talib');
+  console.log('  node validate-mcp-dependencies.js agents/talib');
   console.log('  node validate-mcp-dependencies.js --all');
 }
 

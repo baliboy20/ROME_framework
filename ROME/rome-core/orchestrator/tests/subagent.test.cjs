@@ -1,6 +1,6 @@
 /**
  * Sub-agent loader + structured-return contract regression (PROP-035 §3.2/§6b).
- * Loads a REAL role (pma) from robot-plugins and exercises return processing.
+ * Loads a REAL role (pma) from agents and exercises return processing.
  * Run: node tests/subagent.test.cjs
  */
 const { createState } = require('../state');
