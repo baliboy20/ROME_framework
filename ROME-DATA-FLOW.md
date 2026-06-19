@@ -1,8 +1,29 @@
 # ROME Framework - Phase Data Flow
 
 **Document UID:** ROME-FLOW-001
-**Date:** 2026-01-07
+**Date:** 2026-01-07 (v2.0 update 2026-06-19)
 **Purpose:** Visual representation of data flow through ROME phases
+
+---
+
+## v2.0 update (ROME-PROP-035..040)
+
+The phase-by-phase data flow below remains accurate, with these changes under the
+single-session sub-agent model:
+
+- **Control is orchestrator-driven.** Roma (one session) dispatches each phase's
+  sub-agent, processes its **structured return**, requests the gate verdict, and
+  advances via the deterministic **guard** — phases cannot self-advance or self-approve.
+- **Optional phases** join the flow when routing selects them (PROP-036):
+  **P0.5 intake** (brownfield) and **P3.5 prototype** (UI mock-up + visual gate).
+- **P5 generation** fans out **per component** on a DAG (PROP-038) and is gated on
+  **executability** (code builds + tests pass, PROP-039), **contract-drift = 0**
+  (PROP-039), and **no secrets in source** (PROP-040) — in addition to traceability.
+- **state.json** is the source of truth; the activity-log is an audit copy.
+- Gates are **Sarah**'s; **Clara** validates design content but holds no gate authority.
+
+Authoritative detail: `ROME/rome-core/orchestrator/README.md` and
+`ROME/rome-core/docs/standards/` (gate-decision, traceability, aordl, security).
 
 ---
 
