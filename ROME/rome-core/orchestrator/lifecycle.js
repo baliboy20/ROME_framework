@@ -41,11 +41,11 @@ const PHASES = Object.freeze([
   { id: 'P0',   name: 'bootstrap',    owner: 'bootstrap',            gate: null,                              optional: false, requires: [] },
   { id: 'P0.5', name: 'intake',       owner: 'surveyor',             gate: { id: 'GATE-P0.5', role: 'sarah' }, optional: true,  requires: [] },
   { id: 'P1',   name: 'requirements', owner: 'talib',                gate: { id: 'GATE-P1',   role: 'sarah' }, optional: false, requires: ['aordl', 'traceability'] },
-  { id: 'P2',   name: 'analysis',     owner: 'talib',                gate: { id: 'GATE-P2',   role: 'sarah' }, optional: false, requires: ['traceability'] },
-  { id: 'P3',   name: 'design',       owner: 'pma',                  gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability'] },
-  { id: 'P3.5', name: 'prototype',    owner: 'reena',                gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true,  requires: ['traceability'] },
+  { id: 'P2',   name: 'analysis',     owner: 'talib',                gate: { id: 'GATE-P2',   role: 'sarah' }, optional: false, requires: ['traceability', 'sponsorOq'] },
+  { id: 'P3',   name: 'design',       owner: 'pma',                  gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability', 'matrix'] },
+  { id: 'P3.5', name: 'prototype',    owner: 'reena',                gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true,  requires: ['traceability', 'matrix'] },
   { id: 'P4',   name: 'config',       owner: 'lucien',               gate: { id: 'GATE-P4',   role: 'sarah' }, optional: false, requires: ['secrets', 'traceability'] },
-  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'testAdequacy', 'secrets', 'contracts', 'traceability'] },
+  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'testAdequacy', 'secrets', 'contracts', 'traceability', 'matrix'] },
 ]);
 
 const PHASE_BY_ID = Object.freeze(

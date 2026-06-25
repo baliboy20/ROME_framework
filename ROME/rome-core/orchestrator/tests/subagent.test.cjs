@@ -6,6 +6,7 @@
 const { createState } = require('../state');
 const {
   RETURN_STATUS, loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
+  canonicalId,
 } = require('../subagent');
 
 const TS = '2026-06-18T00:00:00Z';
@@ -29,11 +30,19 @@ console.log('subagent regression:');
 
 // 3. Return validation
 (() => {
-  ok('valid return passes', validateReturn({
+  ok('valid delta return passes', validateReturn({
     agent: 'pma-1', role: 'pma', phase: 'P3', status: 'COMPLETE',
     summary: 'designed architecture', artifacts: [{ path: 'architecture.md' }],
     traceabilityDeltas: [{ requirement: 'REQ-001', produces: 'architecture.md' }],
   }).length === 0);
+  ok('valid edge return passes', validateReturn({
+    agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE',
+    summary: 'generated service', artifacts: [],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'OrgService', satisfiesHow: 'implements' }],
+  }).length === 0);
+  ok('neither deltas nor edges rejected', validateReturn({
+    agent: 'x', role: 'pma', phase: 'P3', status: 'COMPLETE', summary: 's', artifacts: [],
+  }).some(e => /traceabilityDeltas or traceabilityEdges/.test(e)));
   ok('garbage return rejected', validateReturn({}).length > 0);
   ok('missing summary rejected', validateReturn({
     agent: 'x', role: 'pma', phase: 'P3', status: 'COMPLETE', artifacts: [], traceabilityDeltas: [],
@@ -42,6 +51,10 @@ console.log('subagent regression:');
     agent: 'x', role: 'pma', phase: 'P3', status: 'COMPLETE', summary: 's',
     artifacts: [], traceabilityDeltas: [{ requirement: 'REQ-001' }],
   }).some(e => /traceability/.test(e)));
+  ok('bad satisfiesHow rejected', validateReturn({
+    agent: 'x', role: 'reena', phase: 'P5', status: 'COMPLETE', summary: 's',
+    artifacts: [], traceabilityEdges: [{ req: 'REQ-001', artifactId: 'Foo', satisfiesHow: 'magic' }],
+  }).some(e => /satisfiesHow/.test(e)));
   ok('BLOCKED without blockers rejected', validateReturn({
     agent: 'x', role: 'pma', phase: 'P3', status: 'BLOCKED', summary: 's',
     artifacts: [], traceabilityDeltas: [],
@@ -77,6 +90,83 @@ console.log('subagent regression:');
     blockers: ['ambiguous requirement REQ-003'],
   }, TS);
   ok('BLOCKED return records an open blocker', s.blockers.length === 1 && s.blockers[0].status === 'OPEN');
+})();
+
+// 6. PROP-042: traceabilityEdges — artifact graph, indexes, three-level coverage
+(() => {
+  const s = createState({ project: 'graph-demo', frameworkVersion: 'test', timestamp: TS });
+  recordDispatch(s, { agent: 'reena-1', role: 'reena', phase: 'P5', timestamp: TS });
+  processReturn(s, {
+    agent: 'reena-1', role: 'reena', phase: 'P5', status: RETURN_STATUS.COMPLETE,
+    summary: 'generated service and tests',
+    artifacts: [],
+    traceabilityEdges: [
+      { req: 'REQ-012', reqField: 'Invariants[0]', artifactId: 'OrgService', artifactKind: 'class',
+        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'enforces' },
+      { req: 'REQ-012', artifactId: 'OrgService', artifactKind: 'class',
+        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'implements' },
+      { req: 'REQ-003', artifactId: 'OrgService', artifactKind: 'class',
+        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'implements' },
+      { req: 'REQ-012', artifactId: 'OrgServiceTest', artifactKind: 'test',
+        artifactPath: 'features/org/tests/org_service_test.dart', component: 'mobile', satisfiesHow: 'validates' },
+    ],
+  }, TS);
+
+  ok('canonical id uses component:name', canonicalId('OrgService', 'mobile') === 'mobile:OrgService');
+  ok('artifact node created for OrgService', !!s.traceability.artifacts['mobile:OrgService']);
+  ok('artifact kind recorded', s.traceability.artifacts['mobile:OrgService'].kind === 'class');
+  ok('byReq index built for REQ-012', (s.traceability.byReq['REQ-012'] || []).includes('mobile:OrgService'));
+  ok('byReq index built for REQ-003', (s.traceability.byReq['REQ-003'] || []).includes('mobile:OrgService'));
+  ok('byArtifact index built', (s.traceability.byArtifact['mobile:OrgService'] || []).includes('REQ-012'));
+  ok('byArtifact includes REQ-003', (s.traceability.byArtifact['mobile:OrgService'] || []).includes('REQ-003'));
+  ok('3 unique edges stored (enforces+implements+validates for REQ-012; implements for REQ-003)',
+    s.traceability.edges.length === 4);
+
+  const cov = coverage(s);
+  ok('linked = 2 (REQ-012 + REQ-003)', cov.linked === 2);
+  ok('implemented = 2 (both have implements edges)', cov.implemented === 2);
+  ok('verified = 1 (only REQ-012 has validates edge)', cov.verified === 1);
+  ok('requirementsCovered backward compat = linked', cov.requirementsCovered === 2);
+})();
+
+// 7. PROP-042: upsert — latest assertion wins on same natural key
+(() => {
+  const s = createState({ project: 'upsert-demo', frameworkVersion: 'test', timestamp: TS });
+  recordDispatch(s, { agent: 'reena-1', role: 'reena', phase: 'P5', timestamp: TS });
+  processReturn(s, {
+    agent: 'reena-1', role: 'reena', phase: 'P5', status: RETURN_STATUS.COMPLETE,
+    summary: 'first pass', artifacts: [],
+    traceabilityEdges: [
+      { req: 'REQ-001', artifactId: 'Svc', component: 'mobile', satisfiesHow: 'implements', location: 'svc.dart:10' },
+    ],
+  }, TS);
+  recordDispatch(s, { agent: 'reena-2', role: 'reena', phase: 'P5', timestamp: TS });
+  processReturn(s, {
+    agent: 'reena-2', role: 'reena', phase: 'P5', status: RETURN_STATUS.COMPLETE,
+    summary: 'self-heal retry', artifacts: [],
+    traceabilityEdges: [
+      { req: 'REQ-001', artifactId: 'Svc', component: 'mobile', satisfiesHow: 'implements', location: 'svc.dart:22' },
+    ],
+  }, TS);
+  ok('upsert: only 1 edge (not 2) for same natural key', s.traceability.edges.length === 1);
+  ok('upsert: latest location wins', s.traceability.edges[0].location === 'svc.dart:22');
+  ok('upsert: latest agent wins', s.traceability.edges[0].agent === 'reena-2');
+})();
+
+// 8. PROP-042: mixed delta + edge return (transition period)
+(() => {
+  const s = createState({ project: 'mixed', frameworkVersion: 'test', timestamp: TS });
+  recordDispatch(s, { agent: 'pma-1', role: 'pma', phase: 'P3', timestamp: TS });
+  processReturn(s, {
+    agent: 'pma-1', role: 'pma', phase: 'P3', status: RETURN_STATUS.COMPLETE,
+    summary: 'design doc', artifacts: [],
+    traceabilityDeltas: [{ requirement: 'REQ-001', produces: 'arch.md' }],
+    traceabilityEdges: [{ req: 'REQ-002', artifactId: 'ApiSpec', satisfiesHow: 'documents' }],
+  }, TS);
+  ok('mixed: delta recorded', s.traceability.deltas.length === 1);
+  ok('mixed: edge recorded', s.traceability.edges.length === 1);
+  const cov = coverage(s);
+  ok('mixed: requirementsCovered = 2 (delta + edge)', cov.requirementsCovered === 2);
 })();
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);

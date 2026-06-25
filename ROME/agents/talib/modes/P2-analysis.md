@@ -16,7 +16,7 @@
 | **Mode UID** | talib:P2-analysis |
 | **Phase** | P2 (Analysis) |
 | **Plugin** | rome-p2-analysis |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 | **Upstream** | Talib (P1 AORDL) |
 | **Downstream** | PMA |
 
@@ -392,8 +392,84 @@ console.log(`✓ Activity log entries: ${allWork.length}`);
 
 ---
 
+---
+
+## PROP-041: Open Question Classification (GATE-P2 gating)
+
+Every open question discovered during P2 must be tagged with an `owner` before returning:
+
+| Owner | Criteria | Resolution |
+|-------|----------|------------|
+| `talib` | Resolvable from PRD + framework principles + reasonable inference | Talib resolves directly |
+| `sponsor` | Business fact, real-world inventory, legal/compliance specific, or scope decision with no principled default | Must be surfaced to sponsor via Seez; Talib MUST NOT resolve unilaterally |
+
+### Sponsor-owned OQ examples
+- Actual inventory counts (fleet sizes, model lists, seat configurations)
+- Specific compliance certificates or legal obligations the sponsor holds
+- Business decisions with no default (mandatory vs optional fields, pricing rules)
+- Anything where getting it wrong requires a code change the sponsor would need to authorise
+
+### Surfacing sponsor OQs via Seez
+
+For each `owner: sponsor` OQ, emit a Seez question following ROME-PRIN-002 before returning:
+
+```javascript
+mcp__Seez__ask_questions({
+  label: "Sponsor Input Required: [OQ topic]",
+  title: "[Question]",
+  description: "[Why this matters and what happens if deferred]",
+  questions: [{
+    id: "oq_[N]",
+    type: "radio",
+    label: "[Question]",
+    required: false,  // sponsor may defer
+    options: [
+      { label: "[Option A]", description: "[Implication]" },
+      { label: "[Option B]", description: "[Implication]" },
+      { label: "Defer — proceed with provisional assumption", description: "Records assumption as provisional; may require re-generation later" }
+    ]
+  }]
+})
+```
+
+If sponsor selects "Defer", record the OQ with `provisional: true`, `sponsorAuthorized: true`, and Talib's best-effort assumption. The deferral is logged in `state.oq.deferrals`; `awaitingSponsor` is decremented to 0 for that OQ.
+
+> **⚠ Authorization is mandatory (PROP-041 B3).** A deferral is only valid when the sponsor explicitly chose "Defer" — record that as `sponsorAuthorized: true`. `checkSponsorOq` BLOCKS GATE-P2 on any deferral missing `sponsorAuthorized: true`, **even if you set `awaitingSponsor: 0`**. You cannot close a sponsor OQ by zeroing the count and recording an unauthorized deferral — that is the exact escape hatch the gate prevents. Each deferral must also list `affectedReqs` so a later sponsor answer can scope re-generation (`resolveDeferral` stales exactly those requirements).
+
+### Return contract (PROP-041 addition)
+
+Include `openQuestions` in your structured return alongside `traceabilityEdges`:
+
+```json
+{
+  "status": "COMPLETE",
+  "summary": "...",
+  "artifacts": [...],
+  "traceabilityEdges": [...],
+  "openQuestions": {
+    "resolvedByTalib": 12,
+    "awaitingSponsor": 0,
+    "deferrals": [
+      {
+        "oqId": "OQ-003",
+        "description": "Exact bike models in fleet",
+        "provisionalAssumption": "8–12 standard models (Trek, Giant)",
+        "provisional": true,
+        "sponsorAuthorized": true,
+        "affectedReqs": ["REQ-005", "REQ-009"]
+      }
+    ]
+  }
+}
+```
+
+**GATE-P2 blocks if `awaitingSponsor > 0` and no explicit deferral is recorded.** Do not return until all sponsor OQs are either answered or explicitly deferred with sponsor confirmation.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p2-analysis/agents/talib/AGENT.md for agents architecture |
+| 1.1.0 | 2026-06-19 | PROP-041: OQ classification (owner: talib vs sponsor), Seez surfacing procedure, openQuestions return contract, GATE-P2 blocking rule |

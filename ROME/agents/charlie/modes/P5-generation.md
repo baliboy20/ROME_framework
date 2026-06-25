@@ -754,8 +754,48 @@ All three robots (Ashok, Reena, Charlie) must have logged completion for P5 phas
 
 ---
 
+---
+
+## Return Contract — Traceability Edges (PROP-042)
+
+Return `traceabilityEdges` (not `traceabilityDeltas`). Each widget, screen, bloc/provider, or test you produce must have at least one edge per requirement it addresses.
+
+**P5 Charlie pattern:** screens and widgets use `satisfiesHow: implements`; tests use `satisfiesHow: validates`.
+
+```json
+"traceabilityEdges": [
+  {
+    "req": "REQ-012",
+    "artifactId": "mobile:OrganisationListScreen",
+    "artifactKind": "widget",
+    "artifactPath": "SOURCE/mobile/lib/features/org/screens/organisation_list_screen.dart",
+    "component": "mobile",
+    "satisfiesHow": "implements",
+    "location": "SOURCE/mobile/lib/features/org/screens/organisation_list_screen.dart:25"
+  },
+  {
+    "req": "REQ-012",
+    "artifactId": "mobile:OrganisationListScreenTest",
+    "artifactKind": "test",
+    "artifactPath": "SOURCE/mobile/test/features/org/organisation_list_screen_test.dart",
+    "component": "mobile",
+    "satisfiesHow": "validates",
+    "location": "SOURCE/mobile/test/features/org/organisation_list_screen_test.dart:18"
+  }
+]
+```
+
+**Rules:**
+- `artifactId` = `component:LogicalName` (e.g. `mobile:OrganisationListScreen`, `web:OrganisationListPage`).
+- `component` = the topology component from `tech-stack.yaml` (e.g. `mobile`, `web`).
+- `location` = `path:line` of the widget class declaration or the test method.
+- Every in-scope REQ-### that has a UI surface must have ≥1 `implements` edge plus ≥1 `validates` edge for GATE-P5 STRICT matrix check.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p5-generation/agents/charlie/AGENT.md for agents architecture |
+| 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. implements for screens/widgets, validates for tests. |

@@ -1,7 +1,7 @@
-/** Verification module regression (PROP-035 §3.5 hardening). Run: node tests/verification.test.cjs */
+/** Verification module regression (PROP-035 §3.5 hardening + PROP-042 edge path + PROP-041 matrix/sponsorOq). Run: node tests/verification.test.cjs */
 const { createState } = require('../state');
 const { recordDispatch, processReturn } = require('../subagent');
-const { recordVerification, checkTraceability, checkTestAdequacy } = require('../verification');
+const { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq } = require('../verification');
 
 const TS = '2026-06-19T00:00:00Z';
 let passed = 0, failed = 0;
@@ -10,6 +10,13 @@ function withDeltas(deltas) {
   const s = createState({ project: 'v', frameworkVersion: 't', timestamp: TS });
   recordDispatch(s, { agent: 'a', role: 'x', phase: 'P5', timestamp: TS });
   processReturn(s, { agent: 'a', role: 'x', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [], traceabilityDeltas: deltas }, TS);
+  return s;
+}
+
+function withEdges(edges) {
+  const s = createState({ project: 'v', frameworkVersion: 't', timestamp: TS });
+  recordDispatch(s, { agent: 'a', role: 'x', phase: 'P5', timestamp: TS });
+  processReturn(s, { agent: 'a', role: 'x', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [], traceabilityEdges: edges }, TS);
   return s;
 }
 
@@ -59,6 +66,147 @@ console.log('verification regression:');
   const minimal = checkTestAdequacy([{ requirement: 'REQ-009', outcomesTested: true, errorsTested: [] }],
     [{ ID: 'REQ-009', Outcomes: ['done'], Errors: [] }]);
   ok('MVP: no declared errors → only outcome required', minimal.pass === true);
+})();
+
+// PROP-042: edge-based checkTraceability
+(() => {
+  const s = withEdges([
+    { req: 'REQ-001', artifactId: 'Svc', satisfiesHow: 'implements' },
+    { req: 'REQ-001', artifactId: 'SvcTest', satisfiesHow: 'validates' },
+    { req: 'REQ-002', artifactId: 'Svc', satisfiesHow: 'implements' },
+    // REQ-002 has no validates edge
+  ]);
+  ok('edge path: req with any edge passes (non-test mode)', checkTraceability(s, ['REQ-001']).pass === true);
+  ok('edge path: missing req fails', checkTraceability(s, ['REQ-001', 'REQ-999']).pass === false);
+
+  const r = checkTraceability(s, ['REQ-001', 'REQ-002'], { requireTest: true });
+  ok('edge path: REQ with implements+validates passes; REQ without validates fails',
+    r.pass === false && r.missing.length === 1 && r.missing[0].requirement === 'REQ-002' && r.missing[0].missing.includes('test'));
+
+  // stale edges are excluded
+  s.traceability.edges.forEach(e => { if (e.req === 'REQ-001') e.stale = true; });
+  ok('edge path: stale edges not counted', checkTraceability(s, ['REQ-001']).pass === false);
+})();
+
+// PROP-041: buildMatrix + checkMatrix
+(() => {
+  const s = withEdges([
+    { req: 'REQ-001', artifactId: 'ApiSpec', satisfiesHow: 'documents',  location: 'api-design.md#create-org' },
+    { req: 'REQ-001', artifactId: 'OrgSvc',  satisfiesHow: 'implements', location: 'org_service.dart:42' },
+    { req: 'REQ-001', artifactId: 'OrgTest', satisfiesHow: 'validates',  location: 'org_service_test.dart:30' },
+    { req: 'REQ-002', artifactId: 'OrgSvc',  satisfiesHow: 'implements', location: 'org_service.dart:88' },
+    // REQ-002 has no test location → partial
+    { req: 'REQ-003', artifactId: 'Foo',     satisfiesHow: 'implements' },
+    // REQ-003 edge has no location field → unlinked in matrix
+  ]);
+  const reqs = ['REQ-001', 'REQ-002', 'REQ-003'];
+  const matrix = buildMatrix(s, reqs);
+
+  ok('matrix: REQ-001 status = linked', matrix['REQ-001'].status === 'linked');
+  ok('matrix: REQ-001 has design entry', matrix['REQ-001'].design.includes('api-design.md#create-org'));
+  ok('matrix: REQ-001 has code entry', matrix['REQ-001'].code.includes('org_service.dart:42'));
+  ok('matrix: REQ-001 has test entry', matrix['REQ-001'].tests.includes('org_service_test.dart:30'));
+  ok('matrix: REQ-002 status = partial (code but no test)', matrix['REQ-002'].status === 'partial');
+  ok('matrix: REQ-003 status = unlinked (no location on edge)', matrix['REQ-003'].status === 'unlinked');
+
+  // P3: warn-only — always passes; warns only on reqs lacking a design link
+  const p3 = checkMatrix(s, reqs, { phase: 'P3' });
+  ok('checkMatrix P3: always passes', p3.pass === true);
+  ok('checkMatrix P3: warns on reqs with no design link (REQ-002, REQ-003)', p3.warnings.length === 2 && p3.warnings.includes('REQ-002') && p3.warnings.includes('REQ-003'));
+  ok('checkMatrix P3: design-anchored REQ-001 not warned (covered for design even without code yet)', !p3.warnings.includes('REQ-001'));
+
+  // a req with a design anchor but no code/tests is fine at P3, not warned
+  const sDesignOnly = withEdges([
+    { req: 'REQ-010', artifactId: 'Spec', satisfiesHow: 'documents', location: 'design.md#req-010' },
+  ]);
+  const p3d = checkMatrix(sDesignOnly, ['REQ-010'], { phase: 'P3' });
+  ok('checkMatrix P3: design-only req passes with zero warnings', p3d.pass === true && p3d.warnings.length === 0);
+  ok('checkMatrix P5: same design-only req fails STRICT (no code/tests)', checkMatrix(sDesignOnly, ['REQ-010'], { phase: 'P5' }).pass === false);
+
+  // P5: strict — partial and unlinked both fail
+  const p5 = checkMatrix(s, reqs, { phase: 'P5' });
+  ok('checkMatrix P5: fails when partial/unlinked exist', p5.pass === false);
+  ok('checkMatrix P5: failures includes REQ-002 and REQ-003', p5.failures.includes('REQ-002') && p5.failures.includes('REQ-003'));
+  ok('checkMatrix P5: REQ-001 not in failures', !p5.failures.includes('REQ-001'));
+
+  // fully linked set passes P5
+  const s2 = withEdges([
+    { req: 'REQ-001', artifactId: 'S', satisfiesHow: 'implements', location: 'svc.dart:1' },
+    { req: 'REQ-001', artifactId: 'T', satisfiesHow: 'validates',  location: 'svc_test.dart:1' },
+  ]);
+  ok('checkMatrix P5: fully linked set passes', checkMatrix(s2, ['REQ-001'], { phase: 'P5' }).pass === true);
+})();
+
+// PROP-041: checkSponsorOq + openQuestions in processReturn
+(() => {
+  const s = createState({ project: 'oq-test', frameworkVersion: 't', timestamp: TS });
+  ok('initial state: awaitingSponsor = 0 → passes', checkSponsorOq(s).pass === true);
+
+  // Talib returns OQ counts
+  recordDispatch(s, { agent: 'talib-1', role: 'talib', phase: 'P2', timestamp: TS });
+  processReturn(s, {
+    agent: 'talib-1', role: 'talib', phase: 'P2', status: 'COMPLETE',
+    summary: 'analysis done', artifacts: [], traceabilityDeltas: [],
+    openQuestions: { resolvedByTalib: 10, awaitingSponsor: 3, deferrals: [] },
+  }, TS);
+  ok('oq merged into state', s.oq.awaitingSponsor === 3 && s.oq.resolvedByTalib === 10);
+  ok('checkSponsorOq fails when awaitingSponsor > 0', checkSponsorOq(s).pass === false);
+  ok('detail mentions count', /3 sponsor-owned/.test(checkSponsorOq(s).detail));
+
+  // sponsor answers → talib returns again with awaitingSponsor = 0
+  recordDispatch(s, { agent: 'talib-2', role: 'talib', phase: 'P2', timestamp: TS });
+  processReturn(s, {
+    agent: 'talib-2', role: 'talib', phase: 'P2', status: 'COMPLETE',
+    summary: 'oqs resolved', artifacts: [], traceabilityDeltas: [],
+    openQuestions: { resolvedByTalib: 3, awaitingSponsor: 0, deferrals: [] },
+  }, TS);
+  ok('awaitingSponsor reset to 0 on re-return', s.oq.awaitingSponsor === 0);
+  ok('resolvedByTalib accumulates across returns', s.oq.resolvedByTalib === 13);
+  ok('checkSponsorOq passes once awaitingSponsor = 0', checkSponsorOq(s).pass === true);
+
+  // deferral recorded
+  recordDispatch(s, { agent: 'talib-3', role: 'talib', phase: 'P2', timestamp: TS });
+  processReturn(s, {
+    agent: 'talib-3', role: 'talib', phase: 'P2', status: 'COMPLETE',
+    summary: 'deferral recorded', artifacts: [], traceabilityDeltas: [],
+    openQuestions: {
+      resolvedByTalib: 0, awaitingSponsor: 0,
+      deferrals: [{ oqId: 'OQ-003', provisional: true, provisionalAssumption: '8-12 models', affectedReqs: ['REQ-005'] }],
+    },
+  }, TS);
+  ok('deferral stored in state.oq.deferrals', s.oq.deferrals.length === 1 && s.oq.deferrals[0].oqId === 'OQ-003');
+})();
+
+// PROP-041 B3: deferral authorization enforcement (silent-escape-hatch guard)
+(() => {
+  // unauthorized deferral with awaitingSponsor zeroed → STILL BLOCKS
+  const s = createState({ project: 'oq-auth', frameworkVersion: 't', timestamp: TS });
+  recordDispatch(s, { agent: 'talib-1', role: 'talib', phase: 'P2', timestamp: TS });
+  processReturn(s, {
+    agent: 'talib-1', role: 'talib', phase: 'P2', status: 'COMPLETE', summary: 's', artifacts: [], traceabilityDeltas: [],
+    openQuestions: {
+      resolvedByTalib: 0, awaitingSponsor: 0,
+      deferrals: [{ oqId: 'OQ-007', provisional: true, affectedReqs: ['REQ-005'] }], // NO sponsorAuthorized
+    },
+  }, TS);
+  const r = checkSponsorOq(s);
+  ok('B3: unauthorized deferral blocks even when awaitingSponsor=0', r.pass === false);
+  ok('B3: detail flags missing authorization', /lack explicit sponsor authorization/.test(r.detail));
+  ok('B3: unauthorizedDeferrals count reported', r.unauthorizedDeferrals === 1);
+
+  // authorized deferral → passes
+  const s2 = createState({ project: 'oq-auth2', frameworkVersion: 't', timestamp: TS });
+  recordDispatch(s2, { agent: 'talib-1', role: 'talib', phase: 'P2', timestamp: TS });
+  processReturn(s2, {
+    agent: 'talib-1', role: 'talib', phase: 'P2', status: 'COMPLETE', summary: 's', artifacts: [], traceabilityDeltas: [],
+    openQuestions: {
+      resolvedByTalib: 0, awaitingSponsor: 0,
+      deferrals: [{ oqId: 'OQ-007', provisional: true, sponsorAuthorized: true, affectedReqs: ['REQ-005'] }],
+    },
+  }, TS);
+  const r2 = checkSponsorOq(s2);
+  ok('B3: sponsor-authorized deferral passes', r2.pass === true);
+  ok('B3: detail counts authorized deferral', /1 sponsor-authorized deferral/.test(r2.detail));
 })();
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);

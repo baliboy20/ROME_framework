@@ -9,6 +9,11 @@
  *     validated result; processReturn() records it into state. "Completion =
  *     return = record" — there is no silent-finish path (§6b).
  *
+ * PROP-042: accepts traceabilityEdges (new) alongside traceabilityDeltas (legacy).
+ * Edges use a bipartite graph model — artifact nodes keyed component:logicalName,
+ * edges upserted on natural key (req, artifactId, satisfiesHow), two derived indexes
+ * (byReq, byArtifact) rebuilt after every merge.
+ *
  * Pure + fs reads only. No external deps.
  */
 
@@ -66,6 +71,9 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
  * Validate a sub-agent's structured return. Returns an array of problems
  * (empty = valid). Used by the orchestrator to reject garbage returns
  * (failure policy, PROP-039 Part B).
+ *
+ * Accepts traceabilityEdges (PROP-042) or traceabilityDeltas (legacy) — at least
+ * one must be present as an array. Both may be present during the transition.
  */
 function validateReturn(ret) {
   const errs = [];
@@ -77,9 +85,21 @@ function validateReturn(ret) {
   }
   if (typeof ret.summary !== 'string' || !ret.summary.trim()) errs.push('missing summary');
   if (!Array.isArray(ret.artifacts)) errs.push('artifacts must be an array');
-  if (!Array.isArray(ret.traceabilityDeltas)) errs.push('traceabilityDeltas must be an array');
+
+  const hasDeltas = Array.isArray(ret.traceabilityDeltas);
+  const hasEdges = Array.isArray(ret.traceabilityEdges);
+  if (!hasDeltas && !hasEdges) errs.push('traceabilityDeltas or traceabilityEdges must be an array');
+
   for (const d of ret.traceabilityDeltas || []) {
     if (!d.requirement || !d.produces) { errs.push('traceability delta needs {requirement, produces}'); break; }
+  }
+  for (const e of ret.traceabilityEdges || []) {
+    if (!e.req || !e.artifactId || !e.satisfiesHow) {
+      errs.push('traceability edge needs {req, artifactId, satisfiesHow}'); break;
+    }
+    if (!['implements', 'enforces', 'validates', 'documents'].includes(e.satisfiesHow)) {
+      errs.push(`edge satisfiesHow "${e.satisfiesHow}" must be implements|enforces|validates|documents`); break;
+    }
   }
   if (ret.status === RETURN_STATUS.BLOCKED && !(Array.isArray(ret.blockers) && ret.blockers.length)) {
     errs.push('BLOCKED return must include blockers[]');
@@ -95,9 +115,59 @@ function recordDispatch(state, { agent, role, phase, timestamp }) {
   return state;
 }
 
+// ---------------------------------------------------------------------------
+// PROP-042: artifact graph helpers
+// ---------------------------------------------------------------------------
+
+/** Canonical artifact id: component:logicalName, or just logicalName if no component. */
+function canonicalId(logicalName, component) {
+  return component ? `${component}:${logicalName}` : logicalName;
+}
+
+/** Rebuild byReq and byArtifact indexes from the edge list. Mutates traceability. */
+function rebuildIndexes(traceability) {
+  const byReq = {};
+  const byArtifact = {};
+  for (const edge of traceability.edges) {
+    if (!byReq[edge.req]) byReq[edge.req] = [];
+    if (!byReq[edge.req].includes(edge.artifactId)) byReq[edge.req].push(edge.artifactId);
+    if (!byArtifact[edge.artifactId]) byArtifact[edge.artifactId] = [];
+    if (!byArtifact[edge.artifactId].includes(edge.req)) byArtifact[edge.artifactId].push(edge.req);
+  }
+  traceability.byReq = byReq;
+  traceability.byArtifact = byArtifact;
+}
+
+/** Upsert an artifact node. Mutates traceability.artifacts. */
+function upsertArtifact(traceability, artifactId, { logicalName, kind, path, component }) {
+  traceability.artifacts[artifactId] = {
+    logicalName: logicalName || artifactId,
+    kind: kind || 'unknown',
+    path: path || null,
+    component: component || null,
+  };
+}
+
+/**
+ * Upsert an edge on natural key (req, artifactId, satisfiesHow) — latest assertion wins.
+ * Mutates traceability.edges.
+ */
+function upsertEdge(traceability, edge) {
+  const idx = traceability.edges.findIndex(
+    e => e.req === edge.req && e.artifactId === edge.artifactId && e.satisfiesHow === edge.satisfiesHow
+  );
+  if (idx >= 0) {
+    traceability.edges[idx] = { ...traceability.edges[idx], ...edge };
+  } else {
+    traceability.edges.push(edge);
+  }
+}
+
+// ---------------------------------------------------------------------------
+
 /**
  * Process a sub-agent's structured return into state (§6b "completion = record").
- * Validates, updates the dispatch record, merges traceability deltas, records
+ * Validates, updates the dispatch record, merges traceability deltas/edges, records
  * blockers, appends an audit entry. Throws on invalid return.
  * Mutates + returns state.
  */
@@ -109,13 +179,43 @@ function processReturn(state, ret, timestamp) {
   const d = [...state.dispatch].reverse().find(x => x.agent === ret.agent && x.status === 'RUNNING');
   if (d) d.status = ret.status;
 
-  for (const delta of ret.traceabilityDeltas) {
+  // Legacy delta format (backward compat)
+  for (const delta of ret.traceabilityDeltas || []) {
     state.traceability.deltas.push({
       requirement: delta.requirement,
       produces: delta.produces,
       ...(delta.component ? { component: delta.component } : {}),
       phase: ret.phase, role: ret.role, agent: ret.agent,
     });
+  }
+
+  // PROP-042 edge format
+  for (const e of ret.traceabilityEdges || []) {
+    const aid = canonicalId(e.artifactId, e.component);
+    upsertArtifact(state.traceability, aid, {
+      logicalName: e.artifactId,
+      kind: e.artifactKind,
+      path: e.artifactPath || null,
+      component: e.component || null,
+    });
+    upsertEdge(state.traceability, {
+      req: e.req,
+      ...(e.reqField ? { reqField: e.reqField } : {}),
+      artifactId: aid,
+      satisfiesHow: e.satisfiesHow,
+      ...(e.location ? { location: e.location } : {}),
+      phase: ret.phase, role: ret.role, agent: ret.agent,
+      ...(e.reqVersion ? { reqVersion: e.reqVersion } : {}),
+      stale: false,
+    });
+  }
+  if ((ret.traceabilityEdges || []).length) rebuildIndexes(state.traceability);
+
+  // PROP-041: OQ counts from Talib P2 (latest return wins for awaitingSponsor)
+  if (ret.openQuestions && typeof ret.openQuestions === 'object') {
+    state.oq.resolvedByTalib += (ret.openQuestions.resolvedByTalib || 0);
+    state.oq.awaitingSponsor = (ret.openQuestions.awaitingSponsor || 0);
+    for (const d of ret.openQuestions.deferrals || []) state.oq.deferrals.push(d);
   }
 
   if (Array.isArray(ret.blockers)) {
@@ -126,21 +226,59 @@ function processReturn(state, ret, timestamp) {
     }));
   }
 
+  const deltaCount = (ret.traceabilityDeltas || []).length;
+  const edgeCount = (ret.traceabilityEdges || []).length;
   state.audit.push({
     event: 'RETURN', agent: ret.agent, role: ret.role, phase: ret.phase,
     status: ret.status, artifacts: ret.artifacts.length,
-    deltas: ret.traceabilityDeltas.length, timestamp,
+    deltas: deltaCount, edges: edgeCount, timestamp,
   });
   return state;
 }
 
-/** Requirement-coverage helper: distinct requirements with ≥1 traceability delta. */
+/**
+ * Three-level coverage metric (PROP-042).
+ *
+ * Linked     — req has ≥1 non-stale edge (any satisfiesHow).
+ * Implemented — req has ≥1 non-stale 'implements' edge.
+ * Verified   — req has ≥1 'implements' AND ≥1 'validates' edge, both non-stale.
+ *
+ * requirementsCovered is kept for backward compat (= linked count + legacy delta reqs).
+ */
 function coverage(state) {
-  const reqs = new Set(state.traceability.deltas.map(d => d.requirement));
-  return { requirementsCovered: reqs.size, deltas: state.traceability.deltas.length };
+  const edges = state.traceability.edges || [];
+  const deltas = state.traceability.deltas || [];
+
+  const linked = new Set();
+  const implemented = new Set();
+  const verified = new Set();
+
+  const allReqs = new Set(edges.map(e => e.req));
+  for (const req of allReqs) {
+    const active = edges.filter(e => e.req === req && !e.stale);
+    if (!active.length) continue;
+    linked.add(req);
+    if (active.some(e => e.satisfiesHow === 'implements')) implemented.add(req);
+    if (active.some(e => e.satisfiesHow === 'implements') && active.some(e => e.satisfiesHow === 'validates')) {
+      verified.add(req);
+    }
+  }
+
+  // legacy delta reqs not already in the edge store count toward requirementsCovered
+  const legacyOnly = new Set(deltas.map(d => d.requirement).filter(r => !allReqs.has(r)));
+
+  return {
+    linked: linked.size,
+    implemented: implemented.size,
+    verified: verified.size,
+    requirementsCovered: linked.size + legacyOnly.size,
+    deltas: deltas.length,
+    edges: edges.length,
+  };
 }
 
 module.exports = {
   RETURN_STATUS, DEFAULT_ROLES_DIR,
   loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
+  canonicalId, rebuildIndexes,
 };

@@ -31,6 +31,7 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 - `/validate-8-dimension-coverage` - Verify all dimensions addressed
 - `/validate-user-stories` - Check story format and completeness
 - `/validate-acceptance-criteria` - Ensure testable criteria
+- **Sponsor-OQ gate (PROP-041):** Verify `state.oq.awaitingSponsor === 0` before APPROVE. If > 0, BLOCK and assign to Talib to surface remaining OQs to sponsor.
 
 **Design Validation (GATE-P3):**
 - `/validate-data-dictionary` - Check entity completeness
@@ -38,6 +39,7 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 - `/validate-tech-stack` - Assess technology appropriateness
 - `/validate-architecture` - Verify NFR coverage
 - `/validate-requirements-coverage` - 100% P2→P3 mapping
+- **Link-level matrix (PROP-041, warn-only):** Review `state.traceability.matrix` for `unlinked`/`partial` requirements. Surface warnings to PMA — GATE-P3 does NOT block on matrix status, but document gaps in gate output.
 
 **Configuration Validation (GATE-P4):**
 - `/validate-workspace-structure` - Check scaffolding completeness
@@ -50,6 +52,7 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 - `/validate-test-coverage` - Verify tests passing
 - `/verify-traceability` - Check AORDL→Code chain
 - `/validate-documentation` - Check documentation completeness
+- **Link-level matrix (PROP-041, STRICT):** All requirements must be `linked` (code + test locations present, no stale edges). BLOCK if any requirement is `partial` or `unlinked` — assign to responsible P5 robot (Ashok/Reena/Charlie) to add missing `location` fields to their `traceabilityEdges` return.
 
 **Traceability:**
 - `/trace-requirements` - Verify REQ→FUNC→UC→Code chain

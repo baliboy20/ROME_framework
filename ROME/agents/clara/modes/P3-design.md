@@ -329,8 +329,48 @@ Before completing Clara assignment:
 
 ---
 
+---
+
+## Return Contract — Traceability Edges (PROP-042)
+
+Return `traceabilityEdges` linking each UX artifact to the requirements and use cases it covers.
+
+**P3 Clara pattern:** design artifacts use `satisfiesHow: documents` with a section anchor as `location`.
+
+```json
+"traceabilityEdges": [
+  {
+    "req": "REQ-012",
+    "artifactId": "Wireframe-UC-013",
+    "artifactKind": "document",
+    "artifactPath": "ARTIFACTS/_design/wireframes/create-organisation.md",
+    "component": "mobile",
+    "satisfiesHow": "documents",
+    "location": "ARTIFACTS/_design/wireframes/create-organisation.md#form-layout"
+  },
+  {
+    "req": "REQ-003",
+    "artifactId": "UserFlow-Organisation",
+    "artifactKind": "document",
+    "artifactPath": "ARTIFACTS/_design/flows/organisation-flow.md",
+    "component": "mobile",
+    "satisfiesHow": "documents",
+    "location": "ARTIFACTS/_design/flows/organisation-flow.md#select-organisation"
+  }
+]
+```
+
+**Rules:**
+- `artifactId` = logical name for the wireframe, flow, or design spec (e.g. `Wireframe-UC-013`, `DesignSystem`, `UserFlow-Auth`).
+- `component` = the component the UI belongs to (typically `mobile` or `web`).
+- `location` = `path#section-anchor` pointing to the specific section addressing this requirement.
+- Cover every use case and requirement that appears in your designs.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p3-design/agents/clara/AGENT.md for agents architecture |
+| 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. satisfiesHow:documents with section anchors. |

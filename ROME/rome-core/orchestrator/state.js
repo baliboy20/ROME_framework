@@ -38,7 +38,15 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
     blockers: [],       // { id, phase, description, owner, status }
     dispatch: [],       // { agent, role, phase, status, timestamp }
     budget: { tokens: 0, ceiling: null },
-    traceability: { deltas: [] }, // { requirement, produces, component?, phase, role, agent }
+    traceability: {
+      deltas: [],    // legacy flat list — retained for backward compat (PROP-042 transition)
+      artifacts: {}, // canonicalId → { logicalName, kind, path, component }
+      edges: [],     // { req, reqField?, artifactId, satisfiesHow, location?, phase, role, agent, reqVersion?, stale }
+      byReq: {},     // derived: REQ-ID → [canonicalId] — rebuilt on every edge write, never written directly
+      byArtifact: {},// derived: canonicalId → [REQ-ID]
+      matrix: {},    // derived: REQ-ID → { design:[loc], code:[loc], tests:[loc], status } — PROP-041
+    },
+    oq: { resolvedByTalib: 0, awaitingSponsor: 0, deferrals: [] }, // PROP-041 sponsor-OQ gating
     verification: {},   // phase → { key: { pass, detail, timestamp } } — guard preconditions
     audit: [],          // append-only audit entries mirrored to activity-log MCP
   };

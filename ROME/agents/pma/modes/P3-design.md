@@ -544,8 +544,49 @@ Before marking P3 complete:
 
 ---
 
+---
+
+## Return Contract — Traceability Edges (PROP-042)
+
+Return `traceabilityEdges` (not `traceabilityDeltas`). Each design artifact you produce must have at least one edge per requirement it covers.
+
+**P3 pattern:** design artifacts use `satisfiesHow: documents` with a section anchor as `location`.
+
+```json
+"traceabilityEdges": [
+  {
+    "req": "REQ-012",
+    "reqField": "Invariants[0]",
+    "artifactId": "ApiDesign",
+    "artifactKind": "document",
+    "artifactPath": "ARTIFACTS/_design/api-contracts/api-design.md",
+    "component": "backend",
+    "satisfiesHow": "documents",
+    "location": "ARTIFACTS/_design/api-contracts/api-design.md#create-organisation"
+  },
+  {
+    "req": "REQ-003",
+    "artifactId": "DataDictionary",
+    "artifactKind": "document",
+    "artifactPath": "ARTIFACTS/_design/data-models/data-dictionary.yaml",
+    "component": "backend",
+    "satisfiesHow": "documents",
+    "location": "ARTIFACTS/_design/data-models/data-dictionary.yaml#organisation-entity"
+  }
+]
+```
+
+**Rules:**
+- `artifactId` = logical document name (e.g. `ApiDesign`, `DataDictionary`, `SystemArchitecture`, `UseCase-UC-012`). One artifact node per distinct design document or section.
+- `component` = the topology component the design artifact belongs to (e.g. `backend`, `mobile`). Use the component id from `tech-stack.yaml`.
+- `location` = `path#section-anchor` pointing to the specific section covering this requirement. Use a stable heading anchor (lowercase, hyphens).
+- Every in-scope REQ-### must have ≥1 edge. The guard checks this as part of the `matrix` mechanical fact before GATE-P3.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p3-design/agents/pma/AGENT.md for agents architecture |
+| 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. P3 uses satisfiesHow:documents with section anchors. |

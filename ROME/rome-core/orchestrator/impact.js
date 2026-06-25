@@ -12,6 +12,7 @@
  */
 
 const { validateGraph } = require('./topology');
+const { rebuildIndexes } = require('./subagent');
 
 /** Map: component id → [ids that depend on it] (reverse edges). */
 function dependentsIndex(graph) {
@@ -60,10 +61,21 @@ function computeImpact(ctx, change = {}) {
     for (const consumer of c.consumers || []) add(consumer, `consumes changed contract ${cid}`);
   }
 
-  // 3. requirement change → components implementing it (from traceability)
+  // 3. requirement change → components implementing it
+  // PROP-042: prefer byArtifact reverse index; fall back to scanning legacy deltas
   for (const req of change.requirements || []) {
-    for (const d of ctx.traceabilityDeltas || []) {
-      if (d.requirement === req && d.component) add(d.component, `implements changed ${req}`);
+    const byReq = ctx.traceability && ctx.traceability.byReq;
+    if (byReq && byReq[req]) {
+      // each artifactId is component:logicalName — extract the component prefix
+      for (const aid of byReq[req]) {
+        const component = (ctx.traceability.artifacts[aid] || {}).component;
+        if (component) add(component, `implements changed ${req} (artifact ${aid})`);
+      }
+    } else {
+      // legacy delta fallback
+      for (const d of ctx.traceabilityDeltas || []) {
+        if (d.requirement === req && d.component) add(d.component, `implements changed ${req}`);
+      }
     }
   }
 
@@ -74,4 +86,69 @@ function computeImpact(ctx, change = {}) {
   return { components: [...closure].sort(), seeds: [...seeds].sort(), reasons };
 }
 
-module.exports = { dependentsIndex, downstreamClosure, computeImpact };
+/**
+ * Mark all edges for a set of changed requirements as stale (PROP-042).
+ * Stale edges are preserved but excluded from coverage until re-asserted.
+ * Mutates state.traceability and rebuilds indexes.
+ */
+function markStale(state, changedRequirements = []) {
+  if (!state.traceability || !state.traceability.edges) return state;
+  const reqSet = new Set(changedRequirements);
+  for (const edge of state.traceability.edges) {
+    if (reqSet.has(edge.req)) edge.stale = true;
+  }
+  rebuildIndexes(state.traceability);
+  return state;
+}
+
+/**
+ * Apply a change-request to state (PROP-042 AC5 + PROP-040 E). The single
+ * deterministic entry the orchestrator routes a CR through:
+ *   1. stales the edges of every changed requirement, so the gates
+ *      (checkTraceability / checkMatrix, which exclude stale edges) re-demand
+ *      fresh assertions before GATE-P5 can pass again;
+ *   2. computes the affected component set, when a topology graph is available,
+ *      so re-generation is scoped to exactly the impacted components.
+ *
+ * @param {object} state  the orchestrator state (mutated: edges staled)
+ * @param {object} change { components?:[id], contracts?:[id], requirements?:[REQ] }
+ * @param {object} opts   { graph?, contracts? } — topology + contract maps if not on state
+ * @returns { staled:[REQ], impact: {components,seeds,reasons} | null }
+ */
+function applyChange(state, change = {}, opts = {}) {
+  const staled = change.requirements || [];
+  if (staled.length) markStale(state, staled);
+
+  const graph = opts.graph || state.topology || state.graph || null;
+  if (!graph) return { staled, impact: null };
+
+  const ctx = {
+    graph,
+    contracts: opts.contracts || state.contracts,
+    traceability: state.traceability,
+    traceabilityDeltas: state.traceability && state.traceability.deltas,
+  };
+  return { staled, impact: computeImpact(ctx, change) };
+}
+
+/**
+ * Resolve a previously deferred sponsor OQ once the sponsor answers
+ * (PROP-041 B4 / A5). Marks the deferral resolved (no longer provisional) and
+ * stales the edges of its affected requirements so PROP-039 re-gen is scoped to
+ * exactly those REQ-IDs. Returns the affected requirement set for the caller to
+ * route into re-generation.
+ *
+ * @returns { resolved:boolean, affectedReqs:[REQ] }
+ */
+function resolveDeferral(state, oqId) {
+  const oq = state.oq || {};
+  const d = (oq.deferrals || []).find(x => x.oqId === oqId);
+  if (!d) return { resolved: false, affectedReqs: [] };
+  d.resolved = true;
+  d.provisional = false;
+  const affectedReqs = d.affectedReqs || [];
+  if (affectedReqs.length) markStale(state, affectedReqs);
+  return { resolved: true, affectedReqs };
+}
+
+module.exports = { dependentsIndex, downstreamClosure, computeImpact, markStale, applyChange, resolveDeferral };

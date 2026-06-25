@@ -609,8 +609,50 @@ Reena will check your completion status. Ensure your activity log shows `status:
 
 ---
 
+---
+
+## Return Contract — Traceability Edges (PROP-042)
+
+Return `traceabilityEdges` (not `traceabilityDeltas`). Each schema, model, migration, or test you produce must have at least one edge per requirement it addresses.
+
+**P5 Ashok pattern:** schemas and models use `satisfiesHow: implements`; invariant enforcement uses `satisfiesHow: enforces`; tests use `satisfiesHow: validates`.
+
+```json
+"traceabilityEdges": [
+  {
+    "req": "REQ-003",
+    "reqField": "Invariants[0]",
+    "artifactId": "backend:OrganisationSchema",
+    "artifactKind": "schema",
+    "artifactPath": "SOURCE/backend/database/schemas/organisation_schema.sql",
+    "component": "backend",
+    "satisfiesHow": "implements",
+    "location": "SOURCE/backend/database/schemas/organisation_schema.sql:14"
+  },
+  {
+    "req": "REQ-003",
+    "artifactId": "backend:OrganisationSchemaTest",
+    "artifactKind": "test",
+    "artifactPath": "SOURCE/backend/tests/database/organisation_schema_test.dart",
+    "component": "backend",
+    "satisfiesHow": "validates",
+    "location": "SOURCE/backend/tests/database/organisation_schema_test.dart:22"
+  }
+]
+```
+
+**Rules:**
+- `artifactId` = `component:LogicalName` (e.g. `backend:OrganisationSchema`, `backend:OrganisationModel`).
+- `component` = the topology component from `tech-stack.yaml` (e.g. `backend`, `mobile`).
+- `location` = `path:line` of the specific declaration/enforcement point, or the test method.
+- Include separate `validates` edges for each test suite that covers a requirement.
+- Every in-scope REQ-### must have ≥1 `implements` or `enforces` edge. GATE-P5 STRICT matrix check requires both `implements` and `validates` edges.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p5-generation/agents/ashok/AGENT.md for agents architecture |
+| 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. implements/enforces for schemas, validates for tests. |

@@ -658,8 +658,58 @@ Charlie will check your completion status. Ensure your activity log shows `statu
 
 ---
 
+---
+
+## Return Contract — Traceability Edges (PROP-042)
+
+Return `traceabilityEdges` (not `traceabilityDeltas`). Each service, route handler, middleware, or test you produce must have at least one edge per requirement it addresses.
+
+**P5 Reena pattern:** route handlers / services use `satisfiesHow: implements`; validation or auth middleware uses `satisfiesHow: enforces`; tests use `satisfiesHow: validates`.
+
+```json
+"traceabilityEdges": [
+  {
+    "req": "REQ-012",
+    "artifactId": "backend:OrganisationService",
+    "artifactKind": "class",
+    "artifactPath": "SOURCE/backend/services/organisation_service.dart",
+    "component": "backend",
+    "satisfiesHow": "implements",
+    "location": "SOURCE/backend/services/organisation_service.dart:42"
+  },
+  {
+    "req": "REQ-012",
+    "reqField": "Invariants[0]",
+    "artifactId": "backend:OrganisationValidator",
+    "artifactKind": "class",
+    "artifactPath": "SOURCE/backend/middleware/organisation_validator.dart",
+    "component": "backend",
+    "satisfiesHow": "enforces",
+    "location": "SOURCE/backend/middleware/organisation_validator.dart:18"
+  },
+  {
+    "req": "REQ-012",
+    "artifactId": "backend:OrganisationServiceTest",
+    "artifactKind": "test",
+    "artifactPath": "SOURCE/backend/tests/services/organisation_service_test.dart",
+    "component": "backend",
+    "satisfiesHow": "validates",
+    "location": "SOURCE/backend/tests/services/organisation_service_test.dart:30"
+  }
+]
+```
+
+**Rules:**
+- `artifactId` = `component:LogicalName` (e.g. `backend:OrganisationService`).
+- `component` = the topology component from `tech-stack.yaml`.
+- `location` = `path:line` of the handler method, enforcing check, or test method.
+- Every in-scope REQ-### must have ≥1 `implements` or `enforces` edge plus ≥1 `validates` edge for GATE-P5 STRICT matrix check.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p5-generation/agents/reena/AGENT.md for agents architecture |
+| 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. implements/enforces for services/middleware, validates for tests. |
