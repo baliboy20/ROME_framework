@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.0 |
-| **Date** | 2026-03-05T00:00:00Z |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.1 |
+| **Date** | 2026-07-15T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -50,6 +50,8 @@ ROME-[TYPE]-[NUMBER]
 | MIG | Migration | 001-099 | Migration guides and procedures |
 | REV | Review | 001-999 | Temporary review documents |
 | SPEC | Technical Specification | 001-099 | Internal framework technical specifications (non-standard: uses word suffix instead of number) |
+| STD | Standard | n/a | Normative cross-cutting standards (non-standard: uses word suffix instead of number) |
+| PLAN | Implementation Plan | 001-099 | Staged build plans for an accepted proposal; numbered to match the proposal |
 
 ---
 
@@ -61,6 +63,18 @@ ROME-[TYPE]-[NUMBER]
 |-----|----------|----------|--------|
 | ROME-SPEC-SKILL-FRAMEWORK | Skill Framework Technical Specification | ~~Deleted~~ — superseded by SKILL.md-based implementation (PROP-019/020) | Deprecated |
 | ROME-SPEC-SUBAGENT-FRAMEWORK | Subagent Framework Technical Specification | ~~Deleted~~ — superseded by Claude Code Task tool (PROP-011/021) | Deprecated |
+
+### Standards Documents
+
+Normative cross-cutting standards extracted per PROP-034 Track A. Enforced mechanically by the orchestrator guard.
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-STD-AGENT-ROLES | Agent Roles Standard | `/ROME/rome-core/docs/standards/agent-roles-standard.md` | Active |
+| ROME-STD-AORDL | AORDL Standard | `/ROME/rome-core/docs/standards/aordl-standard.md` | Active |
+| ROME-STD-GATE | Gate Decision Standard | `/ROME/rome-core/docs/standards/gate-decision-standard.md` | Active |
+| ROME-STD-SECURITY | Security Standard | `/ROME/rome-core/docs/standards/security-standard.md` | Active |
+| ROME-STD-TRACE | Traceability Standard | `/ROME/rome-core/docs/standards/traceability-standard.md` | Active |
 
 ### Foundation Documents
 
@@ -101,34 +115,39 @@ ROME-[TYPE]-[NUMBER]
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
 | ROME-PROC-002 | ~~Sponsor Interaction Protocol~~ | Superseded by ROME-GOV-006 | Deprecated |
-| ROME-PROC-005 | Activity Logging Protocol | `/ROME/robot-templates/robot-operations-protocols/activity-logging-protocol.md` | Draft |
-| ROME-PROC-006 | Quality Gate Protocol | `/ROME/life-cycle/cross-phase-procedures/quality-gate-protocol.md` | Draft |
+| ROME-PROC-005 | ~~Activity Logging Protocol~~ | ~~Deleted~~ — robot-templates/ retired in v2.0 (PROP-035); activity logging now via the `activity-log-file` MCP, documented in ROME-GOV-008 | Deprecated |
+| ROME-PROC-006 | ~~Quality Gate Protocol~~ | Superseded by ROME-STD-GATE; archived at `/ROME_framework_maintenance/archive/life-cycle/cross-phase-procedures/quality-gate-protocol.md` | Deprecated |
 
 ### Phase Specifications
 
+Retired in v2.0 (PROP-035): the `life-cycle/` tree was archived and phase behaviour now lives in per-agent mode files (`/ROME/agents/<agent>/modes/P<n>-<phase>.md`) driven by the orchestrator. Archived copies retained at `/ROME_framework_maintenance/archive/life-cycle/`. UIDs are not reallocated.
+
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-PHASE-001 | Phase 0 - Bootup | `/ROME/life-cycle/P00-bootup/operations-guidelines.md` | Draft |
-| ROME-PHASE-002 | Phase 1 - Ingest | `/ROME/life-cycle/P01-ingest/operations-guidelines.md` | Placeholder |
-| ROME-PHASE-003 | Phase 2 - Analysis | `/ROME/life-cycle/P02-analysis/operations-guidelines.md` | Placeholder |
-| ROME-PHASE-004 | Phase 3 - Design | `/ROME/life-cycle/P03-design/operations-guidelines.md` | Placeholder |
-| ROME-PHASE-005 | Phase 4 - Config | `/ROME/life-cycle/P04-config/operations-guidelines.md` | Draft |
-| ROME-PHASE-006 | Phase 5 - Generation | `/ROME/life-cycle/P05-generation/operations-guidelines.md` | Draft |
+| ROME-PHASE-001 | ~~Phase 0 - Bootup~~ | Archived — `/ROME_framework_maintenance/archive/life-cycle/P00-bootup/operations-guidelines.md` | Deprecated |
+| ROME-PHASE-002 | ~~Phase 1 - Ingest~~ | Archived — `/ROME_framework_maintenance/archive/life-cycle/P01-aordl/operations-guidelines.md` | Deprecated |
+| ROME-PHASE-003 | ~~Phase 2 - Analysis~~ | Archived — `/ROME_framework_maintenance/archive/life-cycle/P02-analysis/operations-guidelines.md` | Deprecated |
+| ROME-PHASE-004 | ~~Phase 3 - Design~~ | Archived — `/ROME_framework_maintenance/archive/life-cycle/P03-design/operations-guidelines.md` | Deprecated |
+| ROME-PHASE-005 | ~~Phase 4 - Config~~ | Archived — `/ROME_framework_maintenance/archive/life-cycle/P04-config/operations-guidelines.md` | Deprecated |
+| ROME-PHASE-006 | ~~Phase 5 - Generation~~ | Archived — `/ROME_framework_maintenance/archive/life-cycle/P05-generation/operations-guidelines.md` | Deprecated |
 
 ### Robot Definitions
 
+Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<agent>/ROBOT.md`. Role/instance semantics are defined by ROME-STD-AGENT-ROLES.
+
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-ROBOT-001 | Bootstrap Robot | `/ROME/robot-templates/bootstrap/CLAUDE.md` | Draft |
-| ROME-ROBOT-002 | Talib Robot | `/ROME/robot-templates/talib/CLAUDE.md` | Draft |
-| ROME-ROBOT-003 | PMA Robot | `/ROME/robot-templates/pma/CLAUDE.md` | Draft |
-| ROME-ROBOT-004 | Roma Robot | `/ROME/robot-templates/roma/CLAUDE.md` | Draft |
-| ROME-ROBOT-005 | Sarah Robot | `/ROME/robot-templates/sarah/CLAUDE.md` | Draft |
-| ROME-ROBOT-006 | Clara Robot | `/ROME/robot-templates/clara/CLAUDE.md` | Draft |
-| ROME-ROBOT-007 | Charlie Robot | `/ROME/robot-templates/charlie/CLAUDE.md` | Draft |
-| ROME-ROBOT-008 | Reena Robot | `/ROME/robot-templates/reena/CLAUDE.md` | Draft |
-| ROME-ROBOT-009 | Lucien Robot | `/ROME/robot-templates/lucien/CLAUDE.md` | Draft |
-| ROME-ROBOT-010 | Ashok Robot | `/ROME/robot-templates/ashok/CLAUDE.md` | Draft |
+| ROME-ROBOT-001 | Bootstrap Robot | `/ROME/agents/bootstrap/ROBOT.md` | Draft |
+| ROME-ROBOT-002 | Talib Robot | `/ROME/agents/talib/ROBOT.md` | Draft |
+| ROME-ROBOT-003 | PMA Robot | `/ROME/agents/pma/ROBOT.md` | Draft |
+| ROME-ROBOT-004 | Roma Robot | `/ROME/agents/roma/ROBOT.md` | Draft |
+| ROME-ROBOT-005 | Sarah Robot | `/ROME/agents/sarah/ROBOT.md` | Draft |
+| ROME-ROBOT-006 | Clara Robot | `/ROME/agents/clara/ROBOT.md` | Draft |
+| ROME-ROBOT-007 | Charlie Robot | `/ROME/agents/charlie/ROBOT.md` | Draft |
+| ROME-ROBOT-008 | Reena Robot | `/ROME/agents/reena/ROBOT.md` | Draft |
+| ROME-ROBOT-009 | Lucien Robot | `/ROME/agents/lucien/ROBOT.md` | Draft |
+| ROME-ROBOT-010 | Ashok Robot | `/ROME/agents/ashok/ROBOT.md` | Draft |
+| ROME-ROBOT-011 | Surveyor Robot | `/ROME/agents/surveyor/ROBOT.md` | Draft |
 
 ### Role Definitions
 
@@ -137,6 +156,8 @@ ROME-[TYPE]-[NUMBER]
 | ROME-DEF-001 | Framework Analyst & Architect | `/ROME_architect/CLAUDE.md` | Draft |
 
 ### Proposal Documents
+
+> **UID conflict — ROME-PROP-008 (unresolved).** Through v4.0 this registry recorded PROP-008 as "Phase-Based Plugin Architecture" at `ROME-PROP-008-phase-based-plugin-architecture.md`. No such file exists. Two distinct files are in play: `ROME-PROP-008-framework-processing-optimization.md` (the actual 008) and `ROME-PROP-018-phase-based-plugin-architecture.md` (which carries the title 008 was claiming). The entry below now points at the real 008 file, but neither proposal declares a `Document UID` header, so which of the two the "Phase-Based Plugin Architecture" line was originally allocated for cannot be settled from the documents alone. Both are superseded in practice by PROP-034 (phase plugin consolidation). Sponsor decision needed before either UID is treated as authoritative.
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
@@ -148,14 +169,29 @@ ROME-[TYPE]-[NUMBER]
 | ROME-PROP-005 | Story ID Semantic Correction | `/ROME_framework_maintenance/proposals/ROME-PROP-005-story-id-semantic-correction.md` | Implemented |
 | ROME-PROP-006 | Integration Testing Framework | `/ROME_framework_maintenance/proposals/ROME-PROP-006-integration-testing-framework.md` | Proposal |
 | ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
-| ROME-PROP-008 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-008-phase-based-plugin-architecture.md` | Proposal |
-| ROME-PROP-023 | Operational/Governance Separation | `/ROME_framework_maintenance/proposals/ROME-PROP-023-operational-governance-separation.md` | Draft |
+| ROME-PROP-008 | Framework Processing Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-008-framework-processing-optimization.md` | Proposal |
+| ROME-PROP-023 | ~~Operational/Governance Separation~~ | ~~Deleted~~ — no file present; separation delivered via the `operational/` vs `framework-maintenance/` docs split | Deprecated |
 | ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-026-change-compliance-completeness.md` | Implemented |
 | ROME-PROP-027 | Framework Versioning | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-027-framework-versioning.md` | Implemented |
 | ROME-PROP-028 | P5 Implementation Proposal Gate | `/ROME_framework_maintenance/proposals/ROME-PROP-028-p5-implementation-proposal.md` | Draft |
 | ROME-PROP-029 | P5 Completion Enforcement | `/ROME_framework_maintenance/proposals/ROME-PROP-029-p5-completion-enforcement.md` | Draft |
 | ROME-PROP-030 | Roma Robot Documentation Restructure | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-030-roma-doc-restructure.md` | Implemented |
-| ROME-PROP-034 | Phase Plugin Consolidation | `/ROME_framework_maintenance/proposals/ROME-PROP-034-phase-plugin-consolidation.md` | Draft |
+| ROME-PROP-034 | Phase Plugin Consolidation | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-034-phase-plugin-consolidation.md` | Implemented |
+| ROME-PROP-035 | Sub-Agent Orchestration Model | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-035-subagent-orchestration-model.md` | Implemented (v2.0) |
+| ROME-PROP-036 | Input Characterization & Intent Routing | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-036-input-characterization-intent-routing.md` | Implemented |
+| ROME-PROP-037 | Visualization & Prototyping | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-037-visualization-prototyping.md` | Implemented |
+| ROME-PROP-038 | Topology-Driven Capability Instancing | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-038-topology-driven-capability-instancing.md` | Implemented |
+| ROME-PROP-039 | Executability & Resilience Contracts | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-039-executability-resilience-contracts.md` | Implemented |
+| ROME-PROP-040 | Governance, Knowledge & Security | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-040-governance-knowledge-security.md` | Implemented |
+| ROME-PROP-041 | Link-Level Traceability & Sponsor-OQ Gating | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-041-link-level-traceability-and-sponsor-oq-gating.md` | Implemented (v2.3.0) |
+| ROME-PROP-042 | Artifact-Graph Traceability Model | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-042-artifact-graph-traceability.md` | Implemented (v2.3.0) |
+| ROME-PROP-043 | Framework Ontology & Axiom Set | `/ROME_framework_maintenance/proposals/ROME-PROP-043-framework-ontology-and-axioms.md` | Draft |
+
+### Implementation Plans
+
+| UID | Document | Location | Status |
+|-----|----------|----------|--------|
+| ROME-PLAN-035 | PROP-035 Implementation Plan | `/ROME_framework_maintenance/proposals/ROME-PROP-035-IMPLEMENTATION-PLAN.md` | Complete |
 
 ### Migration Documents
 
@@ -167,9 +203,9 @@ ROME-[TYPE]-[NUMBER]
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-REV-002 | Git Activity Tracking Review | `/ROME_architect/git-activity-tracking-review.md` | Complete |
-| ROME-REV-003 | Activity Log Compliance Review | `/ROME_architect/activity-log-compliance-review.md` | Complete |
-| ROME-REV-004 | Activity Log MCP Source Review | `/ROME_architect/activity-log-mcp-source-review.md` | Complete |
+| ROME-REV-002 | ~~Git Activity Tracking Review~~ | ~~Deleted~~ — temporary review, work concluded | Deprecated |
+| ROME-REV-003 | ~~Activity Log Compliance Review~~ | ~~Deleted~~ — temporary review, work concluded | Deprecated |
+| ROME-REV-004 | ~~Activity Log MCP Source Review~~ | ~~Deleted~~ — temporary review, work concluded | Deprecated |
 | ROME-REV-005 | AORDL Ingest Pipeline Gap Review | `/ROME_framework_maintenance/reviews/aordl-ingest-pipeline-gap-review.md` | Review |
 
 ---
@@ -250,3 +286,4 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.1 | 2026-07-15T00:00:00Z | v2.x reconciliation — registry had not been maintained since v1.2.1 and did not reflect the v2.0 restructure. Added STD and PLAN type codes. Registered the five standards (ROME-STD-AGENT-ROLES / AORDL / GATE / SECURITY / TRACE), the v2.x proposal line (ROME-PROP-035 through 043), and ROME-PLAN-035. Repointed ROBOT-001..010 from retired `robot-templates/<robot>/CLAUDE.md` to `agents/<agent>/ROBOT.md`; registered ROME-ROBOT-011 (Surveyor, previously unregistered). Marked PHASE-001..006 and PROC-005/006 Deprecated (life-cycle tree archived in v2.0). Marked REV-002/003/004 and PROP-023 Deprecated (files deleted). Corrected PROP-034 location to implemented-proposals/. Corrected the PROP-008 title/path (see the UID conflict note under Proposal Documents). |

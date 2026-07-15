@@ -46,19 +46,27 @@ Every ROME document MUST include a metadata table at the top:
 ROME-[TYPE]-[NUMBER]
 ```
 
-| Type Code | Category | Example |
-|-----------|----------|---------|
-| PRIN | Principles | ROME-PRIN-001 |
-| IMPL | Implementation/Policy | ROME-IMPL-001 |
-| LEX | Lexicon | ROME-LEX-001 |
-| PROC | Procedure | ROME-PROC-001 |
-| PHASE | Phase Specification | ROME-PHASE-001 |
-| ROBOT | Robot Definition | ROME-ROBOT-001 |
-| GOV | Governance | ROME-GOV-001 |
-| REV | Review (temporary) | ROME-REV-001 |
-| DEF | Definition | ROME-DEF-001 |
+Forms below are patterns, not allocated UIDs — `###` is a placeholder for the 3-digit sequence, `[NAME]` for a word suffix.
 
-UID allocation tracked in `uid-registry.md` (ROME-GOV-002).
+| Type Code | Category | Form |
+|-----------|----------|------|
+| PRIN | Principles | ROME-PRIN-### |
+| IMPL | Implementation/Policy | ROME-IMPL-### |
+| LEX | Lexicon | ROME-LEX-### |
+| PROC | Procedure | ROME-PROC-### |
+| PHASE | Phase Specification | ROME-PHASE-### |
+| ROBOT | Robot Definition | ROME-ROBOT-### |
+| GOV | Governance | ROME-GOV-### |
+| CFG | Configuration | ROME-CFG-### |
+| REV | Review (temporary) | ROME-REV-### |
+| DEF | Definition | ROME-DEF-### |
+| PROP | Proposal | ROME-PROP-### |
+| PLAN | Implementation Plan | ROME-PLAN-### |
+| MIG | Migration | ROME-MIG-### |
+| SPEC | Technical Specification | ROME-SPEC-[NAME] |
+| STD | Standard | ROME-STD-[NAME] |
+
+UID allocation and the authoritative type-code list are tracked in `uid-registry.md` (ROME-GOV-002).
 
 ### Version Numbering
 
