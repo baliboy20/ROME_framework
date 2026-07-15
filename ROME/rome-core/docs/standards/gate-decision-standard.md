@@ -56,15 +56,24 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
 
    | Phase | Required mechanical facts |
    |-------|---------------------------|
+   | P0 / P0.5 | — (none) |
    | P1 | `aordl` (STRICT validation), `traceability` |
-   | P2 / P3 / P3.5 | `traceability` |
+   | P2 | `traceability`, `sponsorOq` |
+   | P3 / P3.5 | `traceability`, `matrix` |
    | P4 | `secrets`, `traceability` |
-   | P5 | `executability`, `testAdequacy`, `secrets`, `contracts`, `traceability` |
+   | P5 | `executability`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
+
+   `lifecycle.js` (`PHASES[].requires`) is authoritative for this table.
 
    - **traceability** is ALWAYS required (iterative-dev safety): every in-scope
      requirement maps requirement→artifact; at P5 also requirement→**code** AND →**test**.
    - **testAdequacy** is the **MVP rule** — each requirement's *declared* Outcomes +
      Errors (from AORDL) must be tested; nothing more is demanded (`verification.js#checkTestAdequacy`).
+   - **matrix** is link-level traceability (PROP-041): located edges projected per
+     requirement (`verification.js#checkMatrix`). Section anchors at P3, line-level at
+     P5 — WARN-only at P3, STRICT at P5.
+   - **sponsorOq** gates on open questions from P2 (PROP-041 Part B): a deferral is
+     valid ONLY with explicit `sponsorAuthorized: true` (`verification.js#checkSponsorOq`).
    - Facts are written by their modules (`executability.js`, `security.js`,
      `contracts.js`, `validate-aordl.js`) via `verification.js#recordVerification`,
      not asserted by the gate role.
@@ -86,3 +95,4 @@ EP-4). Exhaustion escalates to the sponsor (failure policy, PROP-039 B).
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — gate ownership, verdict record, the seven enforced rules; documents guard.js behavior (PROP-034 Track A / PROP-035 §3.5). |
+| 1.1 | 2026-07-15 | Drift correction (found while verifying PROP-043's axiom provenance). §3 rule 8 (mechanical preconditions) was added in v2.1.0 without a revision entry — logged retrospectively. `requires` table corrected to match `lifecycle.js`, which had diverged when PROP-041/042 landed in v2.3.0: P2 gains `sponsorOq`, P3/P3.5 gain `matrix`, P5 gains `matrix` as a sixth fact; P0/P0.5 stated explicitly. Added `matrix` and `sponsorOq` definitions. Named `lifecycle.js` (`PHASES[].requires`) authoritative for the table. |
