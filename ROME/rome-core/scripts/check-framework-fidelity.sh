@@ -30,6 +30,7 @@ PROPOSALS_DIR="$ROME_ROOT/ROME_framework_maintenance/proposals"
 IMPL_PROPOSALS_DIR="$ROME_ROOT/ROME_framework_maintenance/implemented-proposals"
 ACTIVITY_LOG_FORMAT="$ROME_CORE/docs/operational/activity-log-format.md"
 VERSION_FILE="$ROME_CORE/VERSION"
+ONTOLOGY="$ROME_CORE/docs/foundation/ontology.md"
 
 FAIL_COUNT=0
 WARN_COUNT=0
@@ -117,6 +118,10 @@ else
     if [ -z "$REF" ]; then continue; fi
     # Skip general patterns like ROME-GOV-### (placeholders)
     if [[ "$REF" == *"###"* ]]; then continue; fi
+    # Skip sub-document IDs scoped to ROME-ONT-001 (ROME-ENT/REL/AX-##). These
+    # deliberately take no UID of their own — standards are meant to cite
+    # ROME-AX-### freely (PROP-043 §4), so they must not warn here.
+    if [[ "$REF" =~ ^ROME-(ENT|REL|AX)-[0-9]+$ ]]; then continue; fi
     if ! grep -q "$REF" "$UID_REGISTRY" 2>/dev/null; then
       warn "Referenced UID $REF not found in uid-registry.md"
       BROKEN_REFS=$((BROKEN_REFS + 1))
@@ -228,6 +233,51 @@ else
     stable|rc|dev) pass "Framework status: $STATUS" ;;
     *) fail "ROME_FRAMEWORK_STATUS '$STATUS' must be one of: stable, rc, dev" ;;
   esac
+fi
+echo ""
+
+# ─────────────────────────────────────────────────────────
+# CHECK 6: Axiom Enforcement Provenance (ROME-PROP-043 / ROME-AX-11)
+# Every module.js#function cited by an axiom must still exist.
+# Catches renames and deletions — the realistic decay path for an ENFORCED
+# claim. Does NOT verify the code still implements the axiom (needs a test).
+# Runs in both quick and full mode — cheap and load-bearing.
+# ─────────────────────────────────────────────────────────
+bold "Check 6: Axiom Enforcement Provenance"
+
+if [ ! -f "$ONTOLOGY" ]; then
+  fail "ontology.md not found at expected path (ROME-ONT-001)"
+else
+  BAD_PROV=0
+  CITATIONS=$(grep -oE '`[a-z0-9-]+\.js#[A-Za-z_][A-Za-z0-9_]*`' "$ONTOLOGY" 2>/dev/null | tr -d '`' | sort -u || true)
+
+  if [ -z "$CITATIONS" ]; then
+    warn "No module#function citations found in ontology.md — provenance unverifiable"
+  else
+    while IFS= read -r CITE; do
+      [ -z "$CITE" ] && continue
+      MODULE="${CITE%%#*}"
+      FN="${CITE##*#}"
+
+      MODULE_PATH=$(find "$ROME_CORE" -name "$MODULE" -not -path "*/node_modules/*" -print -quit 2>/dev/null)
+      if [ -z "$MODULE_PATH" ]; then
+        fail "Axiom cites $CITE but module '$MODULE' does not exist"
+        BAD_PROV=$((BAD_PROV + 1))
+        continue
+      fi
+
+      # Accept: function decl, arrow/expression assignment, or object-literal method
+      if ! grep -qE "(function[[:space:]]+${FN}[[:space:]]*\()|(${FN}[[:space:]]*[:=][[:space:]]*(async[[:space:]]+)?(function|\())" "$MODULE_PATH" 2>/dev/null; then
+        fail "Axiom cites $CITE but function '$FN' not found in $MODULE"
+        BAD_PROV=$((BAD_PROV + 1))
+      fi
+    done <<< "$CITATIONS"
+
+    if [ "$BAD_PROV" -eq 0 ]; then
+      CITE_COUNT=$(echo "$CITATIONS" | grep -c . || true)
+      pass "All $CITE_COUNT axiom provenance citations resolve"
+    fi
+  fi
 fi
 echo ""
 

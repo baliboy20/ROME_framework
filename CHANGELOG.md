@@ -2,6 +2,56 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-15] - v2.4.0 "Vespasian" — ontology, axiom set, and verified provenance
+
+Codename **Vespasian** — restorer of order after a chaotic interval. Nero skipped, as
+Caligula was before him. This release makes the framework's invariants explicit and,
+for the first time, mechanically checkable.
+
+### Added
+- **Ontology & Axiom Set (ROME-ONT-001, PROP-043)**: new foundation document defining
+  the entity set (12), the relation set with cardinalities (10), and a numbered axiom
+  set (16). Each axiom carries enforcement provenance — `ENFORCED` (deterministic code
+  refuses the violation), `CHECKED` (a script detects it after the fact), or `ASSERTED`
+  (intent only, explicitly *not* a guarantee). Standards, gates, and reviews can now
+  cite `ROME-AX-###` instead of restating prose. The `ASSERTED` rows are the enforcement
+  backlog.
+- **Fidelity check 6 — axiom provenance (ROME-AX-11)**: every `<module>.js#<function>`
+  cited by an axiom must exist; the check fails on renames and deletions. Verified
+  against a deliberate rename. This is the answer to PROP-043 OQ2, taken now rather
+  than deferred: an unverified `ENFORCED` claim reads as a guarantee while decaying
+  silently.
+
+### Changed
+- **ROME-LEX-001 → v1.1** (companion fix, PROP-043 §P3). The phase table claimed P0–P5
+  with a gate at every boundary; the implemented model is P0 (ungated) → P0.5 → P1 → P2
+  → P3 → P3.5 → P4 → P5, rebuilt from `lifecycle.js` with gate and optional columns.
+  "Robot" re-labeled a retired legacy alias → Role/Instance per ROME-STD-AGENT-ROLES;
+  Role and Instance added. Logging Trigger repointed from the retired ROME-PROC-005 to
+  ROME-GOV-008. Revision log added — the document had none since initial issue,
+  contrary to ROME-GOV-001. Term definitions otherwise unchanged.
+- **UID registry → v4.2**: added the ONT type code, registered ROME-ONT-001, and noted
+  ROME-ENT/REL/AX as sub-document patterns that take no UID of their own.
+
+### Fixed
+- **ROME-STD-GATE → v1.1**: the §3 `requires` table had drifted from `lifecycle.js`.
+  P2 requires `sponsorOq`, P3/P3.5 require `matrix`, and P5 requires `matrix` as a
+  sixth fact — all landed with PROP-041/042 in v2.3.0 without the standard following.
+  `matrix` and `sponsorOq` were named by the table but never defined; now defined.
+  §3 rule 8 had been added in v2.1.0 with no revision entry; logged retrospectively.
+  `lifecycle.js` (`PHASES[].requires`) named authoritative to stop the table drifting
+  again. Found by verifying PROP-043's axiom provenance against the code, and fixed
+  first — an ontology built on a drifted standard institutionalizes the drift.
+
+### Note on PROP-043 as drafted
+Implementation verified all eight `ENFORCED` claims against the code. Three did not
+survive contact and were corrected before issue: AX-06 asserted "phases cannot be
+skipped", which ROME does not guarantee (`resolveRouting` rejects reordering but
+permits omitting optional phases by design — intent routing, PROP-036); the
+`guard.js r1..r8` citations referenced markers that do not exist, against a numbering
+that conflicts with the standard's; and AX-08's fact table inherited the STD-GATE
+staleness above. See the proposal's revision log for detail.
+
 ## [2026-07-15] - v2.3.0 "Claudius" — link-level + artifact-graph traceability
 
 Codename **Claudius** — the emperor known for compiling the records; a traceability release.

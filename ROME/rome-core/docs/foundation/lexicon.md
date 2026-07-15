@@ -3,8 +3,11 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
+| **Version** | 1.1 |
+| **Date** | 2026-07-15T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
+| **Companion** | ROME-ONT-001 (Ontology — structure and axioms) |
 
 ---
 
@@ -12,30 +15,40 @@
 
 Centralized definition of all framework-specific terms to ensure terminological integrity and prevent semantic conflicts.
 
+**Companion:** ROME-ONT-001 (Ontology) owns *structure* — the entity set, relations with cardinalities, and the axiom set. This document owns *definitions*. For "what does ROME guarantee is always true?", see the axiom set.
+
 ---
 
 ## Framework Structure
 
 | Term | Definition | ID Pattern / Values | Scope |
 |------|------------|---------------------|-------|
-| **ROME** | Multi-agent orchestration system enabling Claude Code instances to transform user requirements into executable applications through defined phases | Ingest → Analysis → Design → Config → Generation | Entire methodology |
-| **Phase** | Discrete transformation stage with explicit entry criteria, outputs, and exit criteria | P0-P5 | Major process divisions within ROME |
+| **ROME** | Multi-agent orchestration system enabling Claude Code instances to transform user requirements into executable applications through defined phases | Bootstrap → Intake → AORDL → Analysis → Design → Prototype → Config → Generation | Entire methodology |
+| **Phase** | Discrete transformation stage with explicit entry criteria, outputs, and exit criteria | P0, P0.5, P1-P3, P3.5, P4, P5 | Major process divisions within ROME |
 | **Quality Gate** | Validation checkpoint guarding phase transitions; enforces exit criteria | GATE-P# | Phase boundary control |
-| **Robot** | Autonomous Claude Code session executing specific tasks; task-assigned, role-defined, centrally coordinated, rule-constrained | - | Individual agent instance |
-| **Orchestrator** | Designated robot managing phase transitions, process integrity, multi-agent coordination; enforces quality gate compliance | Roma | Central coordination authority |
+| **Role** | A capability an agent instance may fill: producer, validator, gate authority, or orchestrator. Roles are definitions, not sessions. | - | Capability definition (ROME-STD-AGENT-ROLES §1) |
+| **Instance** | A sub-agent spawned from a Role by the Orchestrator to perform work. Fills exactly one Role for its lifetime. | - | Individual agent execution |
+| **Robot** | **Legacy alias — retired.** Formerly "autonomous Claude Code session executing specific tasks". Superseded by **Role** + **Instance** (ROME-STD-AGENT-ROLES §1), which separate the capability from the session filling it. Retained only to read pre-v2.0 documents and the `ROBOT.md` filenames, which are deliberately not renamed. | - | Do not use in new documents |
+| **Orchestrator** | Distinguished Role managing phase transitions, process integrity, and multi-agent coordination; spawns and coordinates all Instances; enforces quality gate compliance | Roma | Central coordination authority |
 
 ---
 
 ## Phases
 
-| Phase | Name | Description | Output |
-|-------|------|-------------|--------|
-| P0 | Bootup | Framework initialization and project setup | Project structure, activity log initialized |
-| P1 | AORDL | Capture and validation of structured requirements in Actor-Oriented Requirements Definition Language (AORDL) format | AORDL requirement files (ARTIFACTS/_requirements/aordl/*.yaml) |
-| P2 | Analysis | Functional decomposition, entity extraction, and user story generation from AORDL requirements | Entity models, dependency graphs, user stories |
-| P3 | Design | Conversion of requirements into architectural schemas and logic flows | System design specifications |
-| P4 | Config | Definition of technical constraints, environment variables, scaffolding instructions | Implementation configuration specifications |
-| P5 | Generation | Mechanical production of executable code based strictly on Phase 4 outputs | Executable application code |
+Gate ownership and enforcement: ROME-STD-GATE. Structure and invariants: ROME-ONT-001. `lifecycle.js` (`PHASES`) is authoritative.
+
+**Optional** phases may be omitted at routing time (intent routing, PROP-036); routing never reorders phases. See ROME-AX-06.
+
+| Phase | Name | Description | Gate | Optional | Output |
+|-------|------|-------------|------|----------|--------|
+| P0 | Bootup | Framework initialization and project setup | — (ungated) | No | Project structure, activity log initialized |
+| P0.5 | Intake | Input characterization and intent routing; determines which phases the project routes through | GATE-P0.5 | Yes | Intent classification, routing decision |
+| P1 | AORDL | Capture and validation of structured requirements in Actor-Oriented Requirements Definition Language (AORDL) format | GATE-P1 | No | AORDL requirement files (ARTIFACTS/_requirements/aordl/*.yaml) |
+| P2 | Analysis | Functional decomposition, entity extraction, and user story generation from AORDL requirements | GATE-P2 | No | Entity models, dependency graphs, user stories |
+| P3 | Design | Conversion of requirements into architectural schemas and logic flows | GATE-P3 | No | System design specifications |
+| P3.5 | Prototype | Visual prototyping and sponsor visual approval | GATE-P3.5 | Yes | Prototype artifacts, sponsor visual approval |
+| P4 | Config | Definition of technical constraints, environment variables, scaffolding instructions | GATE-P4 | No | Implementation configuration specifications |
+| P5 | Generation | Mechanical production of executable code based strictly on Phase 4 outputs | GATE-P5 | No | Executable application code |
 
 ---
 
@@ -145,7 +158,7 @@ EPIC-001: User Management
 - **Enforcement:** Roma reads declarations and coordinates P5 execution order.
 - **Example:** `api: [database]` means API capability cannot start until database capability completes.
 
-**Logging Trigger:** Event requiring mandatory activity log update (work start, work completion, blocker encountered, amendment requested). Defined in ROME-PROC-005.
+**Logging Trigger:** Event requiring mandatory activity log update (work start, work completion, blocker encountered, amendment requested). Format defined in ROME-GOV-008 (activity-log-format.md); logging is performed via the `activity-log-file` MCP. (Formerly ROME-PROC-005, retired with `robot-templates/` in v2.0.)
 
 ---
 
@@ -196,3 +209,12 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 - **"Architecture"** - Aligns with standard software engineering usage
 - **"Code Generation"** - Aligns with standard software engineering usage
 - **"Epic > Feature > Story"** - Aligns with Agile, Scrum, SAFe, and standard project management tools (Jira, Azure DevOps)
+
+---
+
+## Revision Log
+
+| Version | Date/Time (ISO 8601) | Summary |
+|---------|----------------------|---------|
+| 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.1 | 2026-07-15T00:00:00Z | Staleness corrections per ROME-PROP-043 §P3, companion to ROME-ONT-001. Phase table rebuilt from `lifecycle.js`: adds P0.5 (Intake) and P3.5 (Prototype), gate column, and optional column — the P0–P5 model with a gate at every boundary was never the implemented model (P0 is ungated). "Robot" re-labeled a retired legacy alias → Role/Instance per ROME-STD-AGENT-ROLES §1; Role and Instance added as entries. Cross-link to ROME-ONT-001 added. Logging Trigger repointed from the retired ROME-PROC-005 to ROME-GOV-008. Revision log added (absent since initial issue, contrary to ROME-GOV-001). Term definitions otherwise unchanged. |

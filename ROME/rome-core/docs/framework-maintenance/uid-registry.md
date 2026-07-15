@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.1 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.2 |
 | **Date** | 2026-07-15T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -51,6 +51,7 @@ ROME-[TYPE]-[NUMBER]
 | REV | Review | 001-999 | Temporary review documents |
 | SPEC | Technical Specification | 001-099 | Internal framework technical specifications (non-standard: uses word suffix instead of number) |
 | STD | Standard | n/a | Normative cross-cutting standards (non-standard: uses word suffix instead of number) |
+| ONT | Ontology | 001-009 | Formal entity/relation/axiom sets |
 | PLAN | Implementation Plan | 001-099 | Staged build plans for an accepted proposal; numbered to match the proposal |
 
 ---
@@ -78,11 +79,14 @@ Normative cross-cutting standards extracted per PROP-034 Track A. Enforced mecha
 
 ### Foundation Documents
 
+> **Sub-document ID patterns.** `ROME-ENT-##`, `ROME-REL-##`, and `ROME-AX-##` are scoped to ROME-ONT-001 and take no UID of their own — they are not allocated here and must not be registered as standalone entries.
+
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
 | ROME-PRIN-001 | Core Principles | `/ROME/rome-core/docs/framework-maintenance/core-principles.md` | Draft |
 | ROME-IMPL-001 | Core Principles Policy | `/ROME/rome-core/docs/framework-maintenance/core-principles-policy.md` | Draft |
 | ROME-LEX-001 | Lexicon | `/ROME/rome-core/docs/foundation/lexicon.md` | Draft |
+| ROME-ONT-001 | Ontology & Axiom Set | `/ROME/rome-core/docs/foundation/ontology.md` | Active |
 
 ### Governance Documents
 
@@ -185,7 +189,7 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-040 | Governance, Knowledge & Security | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-040-governance-knowledge-security.md` | Implemented |
 | ROME-PROP-041 | Link-Level Traceability & Sponsor-OQ Gating | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-041-link-level-traceability-and-sponsor-oq-gating.md` | Implemented (v2.3.0) |
 | ROME-PROP-042 | Artifact-Graph Traceability Model | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-042-artifact-graph-traceability.md` | Implemented (v2.3.0) |
-| ROME-PROP-043 | Framework Ontology & Axiom Set | `/ROME_framework_maintenance/proposals/ROME-PROP-043-framework-ontology-and-axioms.md` | Draft |
+| ROME-PROP-043 | Framework Ontology & Axiom Set | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-043-framework-ontology-and-axioms.md` | Implemented (v2.4.0) |
 
 ### Implementation Plans
 
@@ -286,4 +290,5 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.2 | 2026-07-15T00:00:00Z | PROP-043 implemented (v2.4.0). Added ONT type code; registered ROME-ONT-001 (Ontology & Axiom Set). Noted ROME-ENT/REL/AX as sub-document patterns scoped to ROME-ONT-001, not standalone entries. PROP-043 → Implemented, moved to implemented-proposals/. |
 | 4.1 | 2026-07-15T00:00:00Z | v2.x reconciliation — registry had not been maintained since v1.2.1 and did not reflect the v2.0 restructure. Added STD and PLAN type codes. Registered the five standards (ROME-STD-AGENT-ROLES / AORDL / GATE / SECURITY / TRACE), the v2.x proposal line (ROME-PROP-035 through 043), and ROME-PLAN-035. Repointed ROBOT-001..010 from retired `robot-templates/<robot>/CLAUDE.md` to `agents/<agent>/ROBOT.md`; registered ROME-ROBOT-011 (Surveyor, previously unregistered). Marked PHASE-001..006 and PROC-005/006 Deprecated (life-cycle tree archived in v2.0). Marked REV-002/003/004 and PROP-023 Deprecated (files deleted). Corrected PROP-034 location to implemented-proposals/. Corrected the PROP-008 title/path (see the UID conflict note under Proposal Documents). |
