@@ -3,9 +3,11 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-PROP-041 |
-| **Version** | 0.1 |
+| **Version** | 1.0 |
 | **Date** | 2026-06-19T00:00:00Z |
-| **Status** | Proposal |
+| **Status** | Implemented |
+| **Implemented In** | v2.3.0 "Claudius" (commit 88cad4c6) |
+| **Implemented By** | `verification.js` (`buildMatrix`, `checkMatrix`, `checkSponsorOq`), `state.js` (`state.traceability.matrix`, `state.oq`), `impact.js` (`resolveDeferral`), `guard-cli.cjs` |
 | **Document Type** | Proposal |
 | **Author** | Archie (Framework Analyst & Architect) |
 | **Proposed By** | Sponsor |
@@ -154,3 +156,4 @@ The P3 warning still earns its place: it gives early sight of likely gaps so the
 | 0.1 | 2026-06-19T00:00:00Z | Initial draft. Two recommendations from FLEET live-run inspection: link-level traceability matrix (Part A) + sponsor-OQ gating (Part B). Atomic-file reintroduction explicitly rejected (§5). |
 | 0.2 | 2026-06-19T00:00:00Z | Q2 resolved (sponsor): phased enforcement — WARN-only at P3, STRICT at P5. A3 updated. |
 | 0.3 | 2026-06-19T00:00:00Z | Q1 + Q3 resolved (sponsor): section anchors at P3 / line-level at P5 (A2); no new gate verdict — APPROVE with authorized `deferrals[]` (B3). All OQs closed; proposal build-ready. |
+| 1.0 | 2026-07-15T00:00:00Z | Status → Implemented. Parts A (link-level matrix) and B (sponsor-OQ gating) built in commit 88cad4c6; released in v2.3.0 "Claudius". Moved to `implemented-proposals/`. |

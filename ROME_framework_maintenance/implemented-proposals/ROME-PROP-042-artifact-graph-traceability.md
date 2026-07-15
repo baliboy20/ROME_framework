@@ -4,7 +4,9 @@
 |-------|-------|
 | **UID** | ROME-PROP-042 |
 | **Title** | Artifact-Graph Traceability — First-Class Artifact Citizens, Bipartite Edge Store, and Reverse Index |
-| **Status** | Draft |
+| **Status** | Implemented |
+| **Implemented In** | v2.3.0 "Claudius" (commit 88cad4c6) |
+| **Implemented By** | `subagent.js` (`processReturn`, `coverage`, `rebuildIndexes`), `state.js` (`state.traceability.edges`, `byArtifact` reverse index), `impact.js` (`markStale`, `applyChange`), `traceability-standard.md` |
 | **Author** | Archie |
 | **Created** | 2026-06-19T00:00:00Z |
 | **Targets** | `rome-core/orchestrator/state.js`, `subagent.js`, `impact.js`, `traceability-standard.md` |
@@ -245,3 +247,4 @@ All open questions resolved. Proposal is build-ready pending implementation sche
 |---------|------|---------|
 | 0.1 | 2026-06-19T00:00:00Z | Initial draft. Bipartite edge store, artifact identity model, three-level coverage, staleness via `stale` flag, backward compat with `deltas`. |
 | 0.2 | 2026-06-19T00:00:00Z | OQ-001 resolved (sponsor): canonical artifact id is `component:artifactId` — same name in different components = two distinct nodes. OQ-002 resolved (sponsor): upsert on `(req, artifactId, satisfiesHow)`, latest assertion wins. All OQs closed; proposal build-ready. |
+| 1.0 | 2026-07-15T00:00:00Z | Status → Implemented. Bipartite edge store, `component:artifactId` identity, reverse index, and three-level coverage built in commit 88cad4c6; released in v2.3.0 "Claudius". Legacy `deltas[]` retained for backward compat. Moved to `implemented-proposals/`. |

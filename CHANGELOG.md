@@ -2,6 +2,39 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-15] - v2.3.0 "Claudius" — link-level + artifact-graph traceability
+
+Codename **Claudius** — the emperor known for compiling the records; a traceability release.
+
+### Added
+- **Artifact-graph traceability (PROP-042)**: requirements and artifacts are now both
+  first-class nodes in a bipartite graph with typed, directed edges. Sub-agents return
+  `traceabilityEdges[]`; `processReturn` upserts them on natural key
+  `(req, artifactId, satisfiesHow)` — latest assertion wins, no duplicate accumulation.
+  Canonical artifact id is `component:artifactId`, so two components may define
+  identically named artifacts without collision. A `byArtifact` reverse index (rebuilt
+  by `rebuildIndexes()`) backs `computeImpact()` and `guard-cli.cjs trace`. Three-level
+  coverage: declared / linked (P3 WARN) / implemented (P5 entry). Renames update `path`
+  metadata only and leave the canonical id and its edges intact.
+- **Link-level traceability matrix (PROP-041 Part A)**: `buildMatrix()` projects located
+  edges into per-requirement design/code/tests buckets. Granularity is section anchors
+  at P3 (stable across prose edits), line-level at P5. Enforcement is phased —
+  WARN-only at P3, STRICT at P5.
+- **Sponsor-OQ gating (PROP-041 Part B)**: `state.oq` tracks open questions from Talib's
+  P2 return. No new gate verdict — a gate APPROVEs with `provisional: true` plus a
+  `deferrals[]` ledger, and a deferral is valid ONLY with explicit `sponsorAuthorized: true`.
+  `resolveDeferral()` clears the provisional flag once answered.
+
+### Changed
+- `traceability-standard.md` rewritten around the edge store, coverage levels, and matrix.
+- Agent modes updated to emit edges: talib P2, clara/pma P3, ashok/charlie/reena P5,
+  sarah QA-validator.
+- `state.traceability.deltas[]` retained as a legacy flat list for backward compat
+  during the PROP-042 transition.
+
+### Docs
+- Added GETTING-STARTED.md — newbie walkthrough (PRD → app).
+
 ## [2026-06-19] - v2.2.0 "Tiberius" — vendoring + skill/expert dedup
 
 ### Added
