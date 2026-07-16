@@ -77,7 +77,7 @@ Regression: `node ROME/rome-core/lib/aordl-parser/validate-aordl.test.cjs` (good
 
 ## 7. Maintenance
 
-To change a rule: edit this standard **and** `validate-aordl.yaml` together; the test fixtures (`tests/REQ-good.yaml`, `tests/REQ-bad.yaml`) guard regressions. Do not hardcode rule values in the validator code.
+To change a rule: edit this standard **and** `validate-aordl.yaml` together; the test fixtures (`tests/REQ-good.yaml`, `tests/REQ-bad.yaml`) guard regressions. Do not hardcode rule values in the validator code. **ROME-GUIDE-001** (`docs/guides/requirements-authoring-for-aordl.md`) quotes the verb and anti-pattern lists verbatim for external authors — update it in the same change.
 
 ---
 
