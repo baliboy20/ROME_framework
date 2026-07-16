@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.4 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.6 |
 | **Date** | 2026-07-15T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -161,8 +161,6 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 
 ### Proposal Documents
 
-> **UID conflict — ROME-PROP-008 (unresolved).** Through v4.0 this registry recorded PROP-008 as "Phase-Based Plugin Architecture" at `ROME-PROP-008-phase-based-plugin-architecture.md`. No such file exists. Two distinct files are in play: `ROME-PROP-008-framework-processing-optimization.md` (the actual 008) and `ROME-PROP-018-phase-based-plugin-architecture.md` (which carries the title 008 was claiming). The entry below now points at the real 008 file, but neither proposal declares a `Document UID` header, so which of the two the "Phase-Based Plugin Architecture" line was originally allocated for cannot be settled from the documents alone. Both are superseded in practice by PROP-034 (phase plugin consolidation). Sponsor decision needed before either UID is treated as authoritative.
-
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
 | ROME-PROP-001 | Parallel Development | `/ROME_framework_maintenance/proposals/ROME-PROP-001-parallel-development.md` | Proposal |
@@ -173,7 +171,8 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-005 | Story ID Semantic Correction | `/ROME_framework_maintenance/proposals/ROME-PROP-005-story-id-semantic-correction.md` | Implemented |
 | ROME-PROP-006 | Integration Testing Framework | `/ROME_framework_maintenance/proposals/ROME-PROP-006-integration-testing-framework.md` | Proposal |
 | ROME-PROP-007 | Event Log Activity Tracking | `/ROME_framework_maintenance/proposals/ROME-PROP-007-event-log-activity-tracking.md` | In Progress (40%) |
-| ROME-PROP-008 | Framework Processing Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-008-framework-processing-optimization.md` | Proposal |
+| ROME-PROP-008 | Framework Processing Speed Optimization | `/ROME_framework_maintenance/proposals/ROME-PROP-008-framework-processing-optimization.md` | Proposal |
+| ROME-PROP-018 | Phase-Based Plugin Architecture | `/ROME_framework_maintenance/proposals/ROME-PROP-018-phase-based-plugin-architecture.md` | Superseded (by PROP-034) |
 | ROME-PROP-023 | ~~Operational/Governance Separation~~ | ~~Deleted~~ — no file present; separation delivered via the `operational/` vs `framework-maintenance/` docs split | Deprecated |
 | ROME-PROP-026 | Change Management & Compliance Completeness | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-026-change-compliance-completeness.md` | Implemented |
 | ROME-PROP-027 | Framework Versioning | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-027-framework-versioning.md` | Implemented |
@@ -191,6 +190,8 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-042 | Artifact-Graph Traceability Model | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-042-artifact-graph-traceability.md` | Implemented (v2.3.0) |
 | ROME-PROP-043 | Framework Ontology & Axiom Set | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-043-framework-ontology-and-axioms.md` | Implemented (v2.4.0) |
 | ROME-PROP-044 | Axiom Enforcement & Role-Model Alignment | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-044-axiom-enforcement-and-role-model-alignment.md` | Implemented (v2.5.0) |
+| ROME-PROP-045 | Verdict–Dispatch Binding | `/ROME_framework_maintenance/proposals/ROME-PROP-045-verdict-dispatch-binding.md` | Draft |
+| ROME-PROP-046 | Integration Fact & Payload-Level Contracts | `/ROME_framework_maintenance/proposals/ROME-PROP-046-integration-fact-and-payload-contracts.md` | Draft |
 
 ### Implementation Plans
 
@@ -291,6 +292,8 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.6 | 2026-07-16T00:00:00Z | Registered ROME-PROP-045 (Verdict–Dispatch Binding — fob-admin D1) and ROME-PROP-046 (Integration Fact & Payload-Level Contracts — fob-admin D2/D8b). Both Draft. |
+| 4.5 | 2026-07-16T00:00:00Z | PROP-008 conflict resolved (unflagged). Both files self-declare their `Document UID` header — no actual conflict; the v4.0 note was over-cautious. PROP-008 = "Framework Processing Speed Optimization" (title corrected to match the file). Registered PROP-018 = "Phase-Based Plugin Architecture" (self-declared UID), marked Superseded by PROP-034. Removed the conflict note. |
 | 4.4 | 2026-07-16T00:00:00Z | PROP-044 implemented (v2.5.0 "Titus"); moved to implemented-proposals/. ONT-001's ASSERTED tier emptied (AX-12..16 → CHECKED). |
 | 4.3 | 2026-07-16T00:00:00Z | Registered ROME-PROP-044 (Axiom Enforcement & Role-Model Alignment — draft; promotes ONT-001's ASSERTED axioms, deepens ENFORCED provenance to behaviour, aligns the `robot` data field). |
 | 4.2 | 2026-07-15T00:00:00Z | PROP-043 implemented (v2.4.0). Added ONT type code; registered ROME-ONT-001 (Ontology & Axiom Set). Noted ROME-ENT/REL/AX as sub-document patterns scoped to ROME-ONT-001, not standalone entries. PROP-043 → Implemented, moved to implemented-proposals/. |
