@@ -169,6 +169,28 @@ console.log('subagent regression:');
   ok('mixed: requirementsCovered = 2 (delta + edge)', cov.requirementsCovered === 2);
 })();
 
+// D6 — a return must carry `agent`, and processReturn must close/flag the dispatch.
+(() => {
+  const base = { role: 'talib', phase: 'P1', status: RETURN_STATUS.COMPLETE, summary: 's', artifacts: [], traceabilityEdges: [] };
+  ok('D6: return missing agent is rejected', validateReturn(base).includes('missing agent'));
+  ok('D6: return with agent validates', validateReturn({ ...base, agent: 'i1' }).length === 0);
+
+  const s = createState({ project: 'd6', frameworkVersion: 't', timestamp: TS });
+  recordDispatch(s, { agent: 'i1', role: 'talib', phase: 'P1', timestamp: TS });
+  processReturn(s, { ...base, agent: 'i1' }, TS);
+  ok('D6: matching return closes its dispatch (not stuck RUNNING)', s.dispatch[0].status === 'COMPLETE');
+
+  processReturn(s, { ...base, agent: 'ghost' }, TS);
+  ok('D6: unmatched return is flagged, not silently dropped', s.audit.some(a => a.event === 'RETURN_UNMATCHED' && a.agent === 'ghost'));
+})();
+
+// D7 — testManifest validation and legacy `requirement` alias.
+(() => {
+  const base = { agent: 'i1', role: 'charlie', phase: 'P5', status: RETURN_STATUS.COMPLETE, summary: 's', artifacts: [], traceabilityEdges: [] };
+  ok('D7: testManifest entry without req is rejected', validateReturn({ ...base, testManifest: [{ outcomesTested: true }] }).some(e => /testManifest/.test(e)));
+  ok('D7: legacy `requirement` alias accepted', validateReturn({ ...base, testManifest: [{ requirement: 'REQ-1' }] }).length === 0);
+})();
+
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
 console.log('All subagent tests passed!');

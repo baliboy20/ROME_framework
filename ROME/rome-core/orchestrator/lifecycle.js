@@ -25,6 +25,14 @@ const STATUS = Object.freeze({
 
 const VERDICT = Object.freeze({ APPROVE: 'APPROVE', BLOCK: 'BLOCK' });
 
+// Edge `satisfiesHow` verbs that count as "code" for coverage purposes.
+// Single source of truth — checkTraceability, buildMatrix, and axioms.js#AX-15
+// MUST all read this, or they drift (fob-admin defect D17: a requirement
+// satisfied only by `enforces` edges passed one check and failed another).
+// A control (e.g. "the API MUST reject non-owners") is implemented via `enforces`,
+// not `implements`; both are code. `validates` = tests; `documents` = design.
+const CODE_SATISFIES = Object.freeze(['implements', 'enforces']);
+
 // Canonical phase catalog. `gate: null` means no transition gate (e.g. P0).
 //
 // `requires` = mechanical facts the guard demands (as recorded verification
@@ -71,4 +79,4 @@ function resolveRouting(ids = DEFAULT_ROUTING) {
   return [...ids];
 }
 
-module.exports = { STATUS, VERDICT, PHASES, PHASE_BY_ID, DEFAULT_ROUTING, resolveRouting };
+module.exports = { STATUS, VERDICT, CODE_SATISFIES, PHASES, PHASE_BY_ID, DEFAULT_ROUTING, resolveRouting };

@@ -59,9 +59,10 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
     identity,
     mode ? `\n---\n# Active Mode\n\n${mode}` : '',
     `\n---\n# Return Contract\n` +
-    `You FINISH by returning a single structured result (status, summary, artifacts, ` +
-    `traceabilityDeltas, blockers). Returning IS your progress record — there is no ` +
-    `separate logging step and no silent-finish path.`,
+    `You FINISH by returning a single structured result (agent, role, phase, status, ` +
+    `summary, artifacts, traceabilityEdges, blockers). \`agent\` MUST be your dispatch ` +
+    `instance id — it is how your return closes your dispatch. Returning IS your ` +
+    `progress record — there is no separate logging step and no silent-finish path.`,
   ].join('');
 
   return { role, systemPrompt, skills, modeFile: modeFile || null, sourceDir: dir };
@@ -78,6 +79,10 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
 function validateReturn(ret) {
   const errs = [];
   if (!ret || typeof ret !== 'object') return ['return is not an object'];
+  // `agent` (instance id) is required: processReturn closes the matching RUNNING
+  // dispatch by ret.agent. Without it a schema-valid return cannot close its own
+  // dispatch and the audit trail silently keeps it RUNNING (fob-admin defect D6).
+  if (!ret.agent) errs.push('missing agent');
   if (!ret.role) errs.push('missing role');
   if (!ret.phase) errs.push('missing phase');
   if (!Object.values(RETURN_STATUS).includes(ret.status)) {
@@ -103,6 +108,15 @@ function validateReturn(ret) {
   }
   if (ret.status === RETURN_STATUS.BLOCKED && !(Array.isArray(ret.blockers) && ret.blockers.length)) {
     errs.push('BLOCKED return must include blockers[]');
+  }
+  // testManifest is optional, but if present each entry must carry a requirement
+  // key. Canonical key is `req` (matches traceabilityEdges); `requirement` is
+  // accepted as a legacy alias (fob-admin defect D7 — key was inconsistent).
+  if (ret.testManifest !== undefined) {
+    if (!Array.isArray(ret.testManifest)) errs.push('testManifest must be an array');
+    else for (const m of ret.testManifest) {
+      if (!m.req && !m.requirement) { errs.push('testManifest entry needs {req}'); break; }
+    }
   }
   return errs;
 }
@@ -182,7 +196,13 @@ function processReturn(state, ret, timestamp) {
   if (!timestamp) throw new Error('processReturn: timestamp required');
 
   const d = [...state.dispatch].reverse().find(x => x.agent === ret.agent && x.status === 'RUNNING');
-  if (d) d.status = ret.status;
+  if (d) { d.status = ret.status; }
+  else {
+    // No matching RUNNING dispatch — the return can't be reconciled to a launch.
+    // Surface it rather than silently no-op (fob-admin defect D6): a return whose
+    // dispatch was never recorded, or already closed, is an audit inconsistency.
+    state.audit.push({ event: 'RETURN_UNMATCHED', agent: ret.agent, role: ret.role, phase: ret.phase, timestamp });
+  }
 
   // Legacy delta format (backward compat)
   for (const delta of ret.traceabilityDeltas || []) {
@@ -215,6 +235,18 @@ function processReturn(state, ret, timestamp) {
     });
   }
   if ((ret.traceabilityEdges || []).length) rebuildIndexes(state.traceability);
+
+  // D7: merge the test manifest into state so checkTestAdequacy has a source.
+  // Upsert by `req` (canonical, matching edges); latest assertion wins.
+  if (Array.isArray(ret.testManifest) && ret.testManifest.length) {
+    state.testManifest = state.testManifest || [];
+    for (const m of ret.testManifest) {
+      const req = m.req || m.requirement;
+      const entry = { req, outcomesTested: !!m.outcomesTested, errorsTested: m.errorsTested || [] };
+      const existing = state.testManifest.find(x => x.req === req);
+      if (existing) Object.assign(existing, entry); else state.testManifest.push(entry);
+    }
+  }
 
   // PROP-041: OQ counts from Talib P2 (latest return wins for awaitingSponsor)
   if (ret.openQuestions && typeof ret.openQuestions === 'object') {

@@ -12,7 +12,7 @@
  * over existing state, no more. Provenance in ontology.md must match.
  */
 
-const { PHASE_BY_ID } = require('./lifecycle');
+const { CODE_SATISFIES } = require('./lifecycle');
 
 const ORCHESTRATOR_ROLE = 'roma';
 const UPSTREAM_OF_P5 = ['P0', 'P0.5', 'P1', 'P2', 'P3', 'P3.5', 'P4'];
@@ -65,7 +65,9 @@ function checkOrchestratorSpawns(state) {
 
 /**
  * AX-15 — P5 introduces no requirement absent upstream.
- * Every requirement satisfied by a P5 `implements` edge must also appear on an
+ * Every requirement satisfied by a P5 code edge (implements|enforces, per
+ * CODE_SATISFIES — the same "what is code" set the traceability/matrix checks use)
+ * must also appear on an
  * edge from an upstream phase (P0..P4). A requirement first seen at P5 is a
  * fresh introduction — the drift this axiom forbids. (The contract-drift portion
  * is separately ENFORCED at GATE-P5 via AX-08 `contracts`; this covers the
@@ -79,7 +81,7 @@ function checkP5NoNewRequirements(state) {
   const violations = [];
   const seen = new Set();
   for (const e of edges) {
-    if (e.phase !== 'P5' || e.satisfiesHow !== 'implements') continue;
+    if (e.phase !== 'P5' || !CODE_SATISFIES.includes(e.satisfiesHow)) continue;
     if (!upstreamReqs.has(e.req) && !seen.has(e.req)) {
       seen.add(e.req);
       violations.push(`requirement "${e.req}" first appears at P5 (no upstream edge) — introduced during generation`);

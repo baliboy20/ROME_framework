@@ -14,6 +14,8 @@
  * Pure, no deps.
  */
 
+const { CODE_SATISFIES } = require('./lifecycle');
+
 /** Record a mechanical fact for a phase. Mutates + returns state. */
 function recordVerification(state, phase, key, pass, detail, timestamp) {
   if (!timestamp) throw new Error('recordVerification: timestamp required');
@@ -43,7 +45,7 @@ function checkTraceability(state, requirements = [], { requireTest = false } = {
       const active = edges.filter(e => e.req === req && !e.stale);
       if (!active.length) { missing.push({ requirement: req, missing: ['any'] }); continue; }
       if (requireTest) {
-        const hasImpl = active.some(e => e.satisfiesHow === 'implements');
+        const hasImpl = active.some(e => CODE_SATISFIES.includes(e.satisfiesHow));
         const hasTest = active.some(e => e.satisfiesHow === 'validates');
         const gap = [];
         if (!hasImpl) gap.push('code');
@@ -74,13 +76,16 @@ function checkTraceability(state, requirements = [], { requireTest = false } = {
 /**
  * MVP test adequacy. The producer reports, per requirement, which declared
  * Outcomes/Errors it tested; this verifies that against the AORDL declaration.
- * @param testManifest [{ requirement, outcomesTested:bool, errorsTested:[id] }]
+ * @param testManifest [{ req, outcomesTested:bool, errorsTested:[id] }]
+ *   Canonical key is `req` (matches traceabilityEdges); `requirement` accepted as
+ *   a legacy alias (fob-admin defect D7 — the two used to disagree, so every entry
+ *   keyed `undefined` and all requirements falsely reported "no tests").
  * @param aordl        [{ ID, Outcomes:[], Errors:[{error,...}] }]
  * Returns { pass, gaps:[{requirement, reason}] }
  */
 function checkTestAdequacy(testManifest = [], aordl = []) {
   const byId = Object.fromEntries(aordl.map(r => [r.ID || r.id, r]));
-  const manifestById = Object.fromEntries(testManifest.map(m => [m.requirement, m]));
+  const manifestById = Object.fromEntries(testManifest.map(m => [m.req || m.requirement, m]));
   const gaps = [];
   for (const req of Object.keys(byId)) {
     const m = manifestById[req];
@@ -116,7 +121,7 @@ function buildMatrix(state, requirements = []) {
   for (const req of requirements) {
     const active = edges.filter(e => e.req === req && !e.stale && e.location);
     const design = active.filter(e => e.satisfiesHow === 'documents').map(e => e.location);
-    const code   = active.filter(e => ['implements', 'enforces'].includes(e.satisfiesHow)).map(e => e.location);
+    const code   = active.filter(e => CODE_SATISFIES.includes(e.satisfiesHow)).map(e => e.location);
     const tests  = active.filter(e => e.satisfiesHow === 'validates').map(e => e.location);
     const hasCode = code.length > 0;
     const hasTest = tests.length > 0;

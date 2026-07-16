@@ -209,6 +209,32 @@ console.log('verification regression:');
   ok('B3: detail counts authorized deferral', /1 sponsor-authorized deferral/.test(r2.detail));
 })();
 
+// D17 — checkTraceability and buildMatrix agree that `enforces` counts as code.
+(() => {
+  const s = createState({ project: 'd17', frameworkVersion: 't', timestamp: TS });
+  s.traceability.edges.push({ req: 'REQ-106', artifactId: 'api:guard', satisfiesHow: 'enforces', location: 'require-owner.ts:3', phase: 'P5', stale: false });
+  s.traceability.edges.push({ req: 'REQ-106', artifactId: 'api:guard.test', satisfiesHow: 'validates', location: 'x.test.ts:1', phase: 'P5', stale: false });
+  const trace = checkTraceability(s, ['REQ-106'], { requireTest: true });
+  ok('D17: enforces-only req passes checkTraceability requireTest', trace.pass === true);
+  const matrix = buildMatrix(s, ['REQ-106']);
+  ok('D17: buildMatrix counts enforces as code', matrix['REQ-106'].code.length === 1);
+  ok('D17: both checks agree (status linked)', matrix['REQ-106'].status === 'linked');
+})();
+
+// D7 — testManifest merged from a return is read by checkTestAdequacy via `req`.
+(() => {
+  const s = createState({ project: 'd7', frameworkVersion: 't', timestamp: TS });
+  recordDispatch(s, { agent: 'i1', role: 'charlie', phase: 'P5', timestamp: TS });
+  processReturn(s, {
+    agent: 'i1', role: 'charlie', phase: 'P5', status: 'COMPLETE', summary: 's',
+    artifacts: [], traceabilityEdges: [],
+    testManifest: [{ req: 'REQ-1', outcomesTested: true, errorsTested: ['E1'] }],
+  }, TS);
+  ok('D7: testManifest merged into state', s.testManifest.length === 1 && s.testManifest[0].req === 'REQ-1');
+  const ta = checkTestAdequacy(s.testManifest, [{ ID: 'REQ-1', Outcomes: ['o'], Errors: [{ error: 'E1' }] }]);
+  ok('D7: checkTestAdequacy reads merged manifest (no false "no tests")', ta.pass === true);
+})();
+
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
 console.log('All verification tests passed!');

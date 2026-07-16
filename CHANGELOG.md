@@ -2,6 +2,52 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-16] - v2.6.0 "Nerva" — fob-admin defect fixes (cheap tier: D6, D7, D17)
+
+Codename **Nerva** — restorer of stability. Fixes three silent-corruption defects
+found in the fob-admin Module-1 live run (`FRAMEWORK-DEFECTS-2026-07-15.md`),
+verified still live against v2.5.0 before fixing. All three failed *silently* —
+green checks over broken state.
+
+### Fixed
+- **D17 — traceability and matrix disagreed on what counts as "code".**
+  `checkTraceability` counted only `implements`; `buildMatrix` counted
+  `implements`+`enforces`. A control-type requirement satisfied via `enforces`
+  (e.g. "the API MUST reject non-owners") passed `matrix` STRICT and failed
+  `traceability` requireTest on identical edges — the phase both satisfied and
+  failed its own P5 preconditions. Extracted the verb set to a single
+  `lifecycle.js#CODE_SATISFIES` constant now read by both checks **and** by
+  `axioms.js#checkP5NoNewRequirements` (AX-15) — which had the same bug,
+  introduced in v2.5.0. They can no longer drift.
+- **D6 — a valid return could not close its own dispatch.** `processReturn`
+  matches the RUNNING dispatch by `ret.agent`, but `validateReturn` never
+  required `agent`, so a schema-valid return left its dispatch RUNNING forever
+  (8 phantom dispatches on the live run). `agent` is now required and named in
+  the return contract; an unmatched return emits a `RETURN_UNMATCHED` audit event
+  instead of silently no-op'ing.
+- **D7 — `testManifest` was invented, unvalidated, unmerged, misnamed.**
+  `processReturn` never merged it (so `checkTestAdequacy` saw nothing and reported
+  "no tests" for every requirement) and its key disagreed with `traceabilityEdges`.
+  Now a first-class part of the return: validated by `validateReturn`, merged into
+  `state.testManifest`, keyed by `req` (canonical, matching edges; `requirement`
+  accepted as a legacy alias).
+
+### Added
+- `state.testManifest[]` (additive; old states default to `[]` — no schema break).
+- 11 regression tests (verification + subagent suites) pinning D6/D7/D17.
+
+### Not addressed (still open, need proposals + design input)
+Per the sponsor's "cheap tier only" scope. The architectural defects remain:
+D1 (gate verdicts are forgeable — not bound to a real Sarah dispatch; note this
+bounds what v2.5.0's AX-03 actually guarantees), D2/D8b (no integration or
+payload-schema check — the framework certifies browser-broken products VERIFIED),
+D3/D4/D16 (input reliability never assessed), D5 (Clara role contradiction),
+D15 (no first-class increments), and the D8/D9/D11/D12/D18 foot-guns. The report's
+thesis stands: ROME checks internal consistency, not correspondence to reality.
+
+### Verify
+- Tests: 256 pass (was 245; +11). All six fidelity checks green.
+
 ## [2026-07-16] - v2.5.0 "Titus" — axiom enforcement (ONT-001 ASSERTED tier → CHECKED)
 
 Codename **Titus** — Vespasian's successor. Implements PROP-044: empties the
