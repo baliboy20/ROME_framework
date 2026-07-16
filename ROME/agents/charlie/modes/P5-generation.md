@@ -653,7 +653,7 @@ Charlie logs using `charlie` as robot identifier.
 
 **Event format:**
 ```
-[timestamp] | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:charlie | layer:frontend | phase:P5-Generation
+[timestamp] | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:charlie | capability:ui-app | phase:P5-Generation
 [timestamp] | FEATURE | FEAT-001 | status:COMPLETED | robot:charlie | notes:[summary]
 [timestamp] | BLOCKER | BLOCK-001 | severity:HIGH | robot:charlie | title:[issue]
 ```

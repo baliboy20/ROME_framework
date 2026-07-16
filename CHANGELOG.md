@@ -2,6 +2,33 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-16] - v2.4.1 "Vespasian" — terminology drift cleanup
+
+PATCH. Documentation corrections + fidelity-script fix; no functional change.
+
+### Fixed
+- **Deprecated `Layer` terminology drift** (fidelity check 3, long-standing WARN).
+  The term was retired in favour of `Capability`, but survived in four places:
+  `activity-log-format.md` (`layer`/`layer:database` field → `capability`),
+  `document-taxonomy.md` (a fixed Layer/Robot→Database/Backend/Frontend table →
+  illustrative Capability/Role rows), `terminology-management.md` (listed `Layer`
+  as current → marked deprecated), and three P4/P5 agent-mode log examples
+  (`layer:frontend`/`layer:backend` → `capability:ui-app`/`capability:api`) that
+  would otherwise propagate the dead syntax into real project logs at runtime.
+- **Fidelity check 3 sharpened.** It matched the bare word `Layer`, firing on
+  ordinary architectural English ("system layers") and on the deprecation notes
+  themselves. Now matches only the deprecated value syntax `layer:database|backend|frontend`.
+  Verified it still catches a reintroduced `layer:` and no longer false-positives.
+  Full fidelity run is now green on all six checks.
+
+### Known drift (flagged, not fixed — needs a proposal)
+- The activity-log format defines a **`robot` field** (`robot:ashok`), used 58×
+  in the spec and 103× across agent modes. This is internally consistent but
+  inconsistent with the lexicon's retirement of "Robot" → Role/Instance. Renaming
+  it (`robot:` → `role:`) is a functional format migration touching what agents
+  emit and what parsers read — out of scope for a patch. Candidate for a future
+  proposal alongside the PROP-044 enforcement work.
+
 ## [2026-07-15] - v2.4.0 "Vespasian" — ontology, axiom set, and verified provenance
 
 Codename **Vespasian** — restorer of order after a chaotic interval. Nero skipped, as

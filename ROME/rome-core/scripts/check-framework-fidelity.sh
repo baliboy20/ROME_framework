@@ -148,16 +148,18 @@ else
 # ─────────────────────────────────────────────────────────
 bold "Check 3: Terminology Drift"
 
-DEPRECATED_TERMS=("Layer (Deprecated)" "layer:database" "layer:backend" "layer:frontend")
+# Match the deprecated Layer CONCEPT precisely, not the English word "layer".
+# Fingerprint = the value syntax `layer:database|backend|frontend`. Bare "Layer"
+# is intentionally NOT matched: it is ordinary architectural English ("system
+# layers") and appears in every legitimate deprecation note ("formerly Layer").
+DEPRECATED_PATTERNS=("layer:database" "layer:backend" "layer:frontend")
 DRIFT_FOUND=0
 
-for TERM in "${DEPRECATED_TERMS[@]}"; do
-  SEARCH_TERM=$(echo "$TERM" | sed 's/ (Deprecated)//')
-  # Search in docs (excluding lexicon itself)
-  MATCHES=$(find "$DOCS_DIR" -name "*.md" ! -path "*lexicon*" -exec grep -l "$SEARCH_TERM" {} \; 2>/dev/null | wc -l | tr -d ' ')
-  if [ "$MATCHES" -gt 0 ]; then
-    FILES=$(find "$DOCS_DIR" -name "*.md" ! -path "*lexicon*" -exec grep -l "$SEARCH_TERM" {} \; 2>/dev/null | tr '\n' ' ')
-    warn "Deprecated term '$SEARCH_TERM' still used in: $FILES"
+for PAT in "${DEPRECATED_PATTERNS[@]}"; do
+  # Search in docs (excluding lexicon, which owns the deprecation record)
+  FILES=$(find "$DOCS_DIR" -name "*.md" ! -path "*lexicon*" -exec grep -l "$PAT" {} \; 2>/dev/null | tr '\n' ' ')
+  if [ -n "$FILES" ]; then
+    warn "Deprecated term '$PAT' still used in: $FILES"
     ((DRIFT_FOUND++)) || true
   fi
 done

@@ -278,7 +278,7 @@ started:"2025-12-03"    # Timestamp should not be quoted
 | `phase` | Number | `phase:2` | Phase number |
 | `title` | String | `title:"User Authentication"` | Feature title |
 | `priority` | Enum | `priority:HIGH` | Priority (HIGH/MEDIUM/LOW) |
-| `layer` | String | `layer:database` | Capability identifier from tech-stack.yaml |
+| `capability` | String | `capability:database` | Capability identifier from tech-stack.yaml |
 
 **STORY:**
 | Attribute | Type | Example | Description |

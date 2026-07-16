@@ -401,7 +401,7 @@ Lucien logs using `lucien` as robot identifier.
 **Event format:**
 ```
 [timestamp] | PHASE | PHASE-4 | status:IN_PROGRESS | robot:lucien | phase:P4-Config
-[timestamp] | STORY | CONFIG-WS-backend | status:COMPLETED | robot:lucien | layer:backend
+[timestamp] | STORY | CONFIG-WS-backend | status:COMPLETED | robot:lucien | capability:api
 [timestamp] | BLOCKER | BLOCK-001 | severity:HIGH | robot:lucien | title:[issue]
 [timestamp] | PHASE | PHASE-4 | status:COMPLETED | robot:lucien | notes:[summary]
 ```

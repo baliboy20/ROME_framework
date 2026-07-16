@@ -187,7 +187,7 @@ Terms for document management:
 ### Activity Tracking Terms
 
 Terms for work tracking:
-- Activity Log, Feature Entry, Story Entry, Blocker Entry, Amendment Entry, Phase Entry, Layer, Activity Status, Logging Trigger
+- Activity Log, Feature Entry, Story Entry, Blocker Entry, Amendment Entry, Phase Entry, Capability (formerly Layer, deprecated), Activity Status, Logging Trigger
 
 ### Core Concept Terms
 

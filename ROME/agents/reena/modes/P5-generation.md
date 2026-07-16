@@ -561,7 +561,7 @@ Reena logs using `reena` as robot identifier.
 
 **Event format:**
 ```
-[timestamp] | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:reena | layer:backend | phase:P5-Generation
+[timestamp] | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:reena | capability:api | phase:P5-Generation
 [timestamp] | FEATURE | FEAT-001 | status:COMPLETED | robot:reena | notes:[summary]
 [timestamp] | BLOCKER | BLOCK-001 | severity:HIGH | robot:reena | title:[issue]
 ```
