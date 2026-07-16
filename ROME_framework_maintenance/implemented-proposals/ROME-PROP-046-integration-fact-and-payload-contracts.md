@@ -4,7 +4,9 @@
 |-------|-------|
 | **UID** | ROME-PROP-046 |
 | **Title** | Integration Fact & Payload-Level Contracts — Verify the Running System End-to-End, and Compare Code to Contract by Shape, Not Just Route |
-| **Status** | Draft |
+| **Status** | Implemented |
+| **Implemented In** | v2.7.0 "Trajan" |
+| **Implemented By** | `lifecycle.js` (P5 `integration` fact), `contracts.js` (field-level members doc + `consumer-no-usage` fail-closed), `gate-decision-standard.md` (integration/executability scope + waiver), `ontology.md` AX-08 table |
 | **Author** | Archie |
 | **Created** | 2026-07-16T00:00:00Z |
 | **Origin** | fob-admin Module-1 live run, defects D2 + D8b (both CRITICAL) — `FRAMEWORK-DEFECTS-2026-07-15.md` |
@@ -134,21 +136,32 @@ Rename the component-level check `componentExecutability` (or document clearly t
 
 ## Open Questions
 
-1. **Integration STRICT immediately, or WARN→STRICT?** STRICT is the point, but it
-   blocks P5 for any project the harness can't start (offline deps, external
-   services). *(Recommend: STRICT where the system is startable; a recorded,
-   sponsor-authorized `integrationWaiver` for genuinely un-runnable stacks — reuse
-   the PROP-041 deferral mechanism, not a silent skip.)*
-2. **Payload comparison depth — fields only, or fields + types?** *(Recommend:
-   field-set first (catches the snake/camel case that shipped); types as a fast
-   follow.)*
-3. **Does Part B belong here or in its own proposal?** D2 and D8b share a root
-   cause (nothing compares to reality) and the Part A run is where a live response
-   gets captured, so they are cheaper together. *(Recommend: keep together; split
-   only if Part A lands first for schedule reasons.)*
-4. **Where does the contract shape come from as source of truth** — `api-design.md`
-   (the Sarah-approved doc) or generated types? *(Recommend: `api-design.md` — it
-   was correct on the fob-admin run; the code was what diverged.)*
+1. ~~**Integration STRICT or WARN→STRICT?**~~ **RESOLVED (sponsor, 2026-07-16): STRICT where startable, sponsor-authorized waiver otherwise.** `integration` is a STRICT P5 fact. For a genuinely un-runnable stack, the fact may be recorded as passing with detail `WAIVED (sponsor-authorized)` plus an audit entry — never a silent skip. The waiver rides the existing fact mechanism (recorded+passing), so the guard is unchanged.
+2. ~~**Comparison depth.**~~ **RESOLVED (sponsor, 2026-07-16): field-set first.** Compare the set of payload fields (catches the snake/camel mismatch that shipped); types are a fast follow. `contracts.js` already does set arithmetic over arbitrary member strings, so field-level members (`Booking.partySize`) need no comparison-code change — only that extraction emit them.
+3. ~~**Part B here or separate?**~~ **RESOLVED (sponsor, 2026-07-16): together.** D2 and D8b share the root cause; Part A's run is where a live response is captured for comparison.
+4. ~~**Contract source of truth.**~~ **RESOLVED (sponsor, 2026-07-16): `api-design.md`.** The Sarah-approved design doc is authoritative; it was correct on the fob-admin run — the code diverged from it.
+
+**All open questions resolved. Build-ready.**
+
+---
+
+## Implementation Scope Note
+
+Grounding against `contracts.js` refined the split between code and documentation:
+
+- **Part A (integration fact)** is a new `integration` key in P5 `requires`
+  (`lifecycle.js`). The fact is *recorded* by the orchestrator after running the
+  real system (or via an audited sponsor waiver), exactly as `secrets`/`executability`
+  are recorded from their sources — no new pure "run the system" function.
+- **Part B (payload members)** needs **no change to `detectDrift`/`checkConsumer`** —
+  they already compare arbitrary member strings, so `Booking.partySize` "just works"
+  once extraction emits field-level members. This proposal's mechanical contribution
+  is Part C plus documenting that `kind:'api'` members MUST be field-level.
+- **Part C (fail-closed)** is the real `contracts.js` change: a consumer declared on
+  a contract but with zero extracted usage is flagged as drift
+  (`issue: 'consumer-no-usage'`) rather than passing vacuously.
+- **Naming:** `executability`'s component-only scope is documented in ROME-STD-GATE;
+  the fact key is not renamed (a key rename would break existing state) — deferred.
 
 ---
 
@@ -156,4 +169,5 @@ Rename the component-level check `componentExecutability` (or document clearly t
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.0 | 2026-07-16T00:00:00Z | Implemented in v2.7.0 "Trajan". Part A: `integration` added to P5 `requires` (STRICT; sponsor-authorized `WAIVED` recording for un-runnable stacks). Part C: `contracts.js` fails closed on a consumer with zero extracted usage (`consumer-no-usage`). Part B realized as documentation — `detectDrift` already compares arbitrary member strings, so field-level members need only be emitted by extraction; `kind:'api'` members MUST be field-level. `executability` scope documented (component-only); key not renamed. 5 regression tests. Moved to implemented-proposals/. |
 | 0.1 | 2026-07-16T00:00:00Z | Initial draft from fob-admin defects D2 + D8b. Part A: `integration` fact at P5 — run the real system, drive ≥1 requirement across the seam, assert response against contract. Part B: field-level contract members so drift detection sees payload shape, not just routes. Part C: contracts fail closed on empty consumer usage (D8). Naming: componentExecutability. Four OQs (STRICT-vs-WARN + waiver, comparison depth, A/B split, contract source of truth). |

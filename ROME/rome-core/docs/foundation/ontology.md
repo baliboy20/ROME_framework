@@ -84,7 +84,7 @@ Harvested from the eight deterministic rules in ROME-STD-GATE §3.
 |----|-------|------------|
 | AX-01 | Only the current routed phase may advance. | ENFORCED (`guard.js#canAdvance`; STD-GATE §3 r1) |
 | AX-02 | A gated phase advances only on an APPROVE verdict for its gate. | ENFORCED (`guard.js#canAdvance`; STD-GATE §3 r2) |
-| AX-03 | A verdict is accepted only from the gate's designated gate-authority role. Self-approval is structurally impossible (EP-5). | ENFORCED (`guard.js#recordGateVerdict`; STD-GATE §3 r3) |
+| AX-03 | A verdict is accepted only when bound to a completed dispatch of the gate's designated role for that phase; the role is derived from the dispatch, not trusted from a parameter. Self-approval requires forging a gate-role dispatch, not a string (EP-5). | ENFORCED (`guard.js#recordGateVerdict`; STD-GATE §3 r3; PROP-045). *Transitional: a legacy unbound verdict is accepted with a `VERDICT_LEGACY_UNBOUND` audit flag; a fully dishonest orchestrator can still fabricate a dispatch — transcript-level proof is out of scope (PROP-045 non-goal).* |
 | AX-04 | Latest verdict wins — a later BLOCK overrides an earlier APPROVE. | ENFORCED (`guard.js#latestVerdict`; STD-GATE §3 r4) |
 | AX-05 | Open blockers on a phase prevent advance. | ENFORCED (`guard.js#canAdvance`; STD-GATE §3 r5) |
 | AX-06 | Routing is a subset of the canonical phase catalog in canonical relative order; advance moves exactly one step along the routing. Phases may not be **reordered**. Optional phases (P0.5, P3.5) may be **omitted** at routing time — see the note below. | ENFORCED (`lifecycle.js#resolveRouting` rejects reordering; `guard.js#advance` moves one step; STD-GATE §3 r6) |
@@ -102,7 +102,7 @@ Harvested from the eight deterministic rules in ROME-STD-GATE §3.
 | P2 | `traceability`, `sponsorOq` |
 | P3 / P3.5 | `traceability`, `matrix` |
 | P4 | `secrets`, `traceability` |
-| P5 | `executability`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
+| P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
 
 ### Tier 2 — CHECKED
 

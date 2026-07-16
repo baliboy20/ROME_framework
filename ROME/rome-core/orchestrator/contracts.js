@@ -4,11 +4,18 @@
  * Components are generated in parallel (PROP-038) against shared contracts so
  * they integrate. A contract is the canonical interface between components:
  *   { id, kind:'api'|'types'|'event', members:[string], producer, consumers:[id] }
- * `members` are the interface elements (e.g. "POST /projects", "Project.ownerId").
+ * `members` are the interface elements. For kind:'api' they MUST be field-level
+ * (e.g. "Booking.partySize", "Booking.customer.email"), NOT just routes
+ * ("POST /projects") — route-only members let a producer and consumer agree on
+ * every URL and disagree on every field (fob-admin defect D8b). detectDrift does
+ * set arithmetic over whatever member strings it is given, so field-level
+ * comparison needs no code here — only that extraction emits field members.
  *
  * Drift = a producer not implementing a contract member, or a consumer using a
  * member the contract does not declare. Detected at GATE-P5 → BLOCK (§C.3).
- * A consumer implementing a SUBSET of the contract is fine. Pure, no deps.
+ * A consumer implementing a SUBSET of the contract is fine, EXCEPT a declared
+ * consumer with ZERO extracted usage — that is almost always a broken extractor,
+ * not a component that calls nothing, so it fails closed (D8). Pure, no deps.
  */
 
 function asSet(a) { return new Set(a || []); }
@@ -41,6 +48,14 @@ function detectDrift(contract, impls = {}) {
     if (!p.conforms) drift.push({ component: contract.producer, role: 'producer', issue: 'unimplemented-members', members: p.missing });
   }
   for (const [component, used] of Object.entries(impls.consumers || {})) {
+    // Fail closed on a consumer that was evaluated and yielded NOTHING (D8):
+    // an explicitly-empty usage set is almost always a broken extractor, not a
+    // component that calls nothing. (An ABSENT consumer is neutral — not
+    // evaluated this snapshot — so only an empty array trips this.)
+    if (Array.isArray(used) && used.length === 0) {
+      drift.push({ component, role: 'consumer', issue: 'consumer-no-usage', members: [] });
+      continue;
+    }
     const c = checkConsumer(contract, used);
     if (!c.conforms) drift.push({ component, role: 'consumer', issue: 'undeclared-usage', members: c.undeclared });
   }

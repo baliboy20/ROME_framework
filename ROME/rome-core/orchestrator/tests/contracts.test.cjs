@@ -56,6 +56,19 @@ ok('consumer using a subset conforms', checkConsumer(authApi, ['POST /login', 'G
   ok('gate blocks on any drift', g2.conforms === false);
 })();
 
+// PROP-046 Part C / D8 — a consumer evaluated to ZERO usage fails closed.
+(() => {
+  const api = { id: 'auth-api', kind: 'api', producer: 'srv', members: ['POST /login'], consumers: ['web'] };
+  const r = detectDrift(api, { producer: ['POST /login'], consumers: { web: [] } });
+  ok('D8: empty consumer usage flagged as drift', r.conforms === false && r.drift.some(d => d.issue === 'consumer-no-usage'));
+  // absent consumer stays neutral (not evaluated this snapshot)
+  const r2 = detectDrift(api, { producer: ['POST /login'], consumers: {} });
+  ok('D8: absent consumer is neutral (not flagged)', r2.conforms === true);
+  // gate blocks when a consumer extracted nothing
+  const g = gateContracts([api], { 'auth-api': { producer: ['POST /login'], consumers: { web: [] } } });
+  ok('D8: gate blocks on zero-usage consumer', g.conforms === false);
+})();
+
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);
 console.log('All contracts tests passed!');

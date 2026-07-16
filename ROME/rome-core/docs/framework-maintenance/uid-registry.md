@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.6 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.7 |
 | **Date** | 2026-07-15T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -190,8 +190,8 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-042 | Artifact-Graph Traceability Model | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-042-artifact-graph-traceability.md` | Implemented (v2.3.0) |
 | ROME-PROP-043 | Framework Ontology & Axiom Set | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-043-framework-ontology-and-axioms.md` | Implemented (v2.4.0) |
 | ROME-PROP-044 | Axiom Enforcement & Role-Model Alignment | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-044-axiom-enforcement-and-role-model-alignment.md` | Implemented (v2.5.0) |
-| ROME-PROP-045 | Verdict–Dispatch Binding | `/ROME_framework_maintenance/proposals/ROME-PROP-045-verdict-dispatch-binding.md` | Draft |
-| ROME-PROP-046 | Integration Fact & Payload-Level Contracts | `/ROME_framework_maintenance/proposals/ROME-PROP-046-integration-fact-and-payload-contracts.md` | Draft |
+| ROME-PROP-045 | Verdict–Dispatch Binding | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-045-verdict-dispatch-binding.md` | Implemented (v2.7.0) |
+| ROME-PROP-046 | Integration Fact & Payload-Level Contracts | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-046-integration-fact-and-payload-contracts.md` | Implemented (v2.7.0) |
 
 ### Implementation Plans
 
@@ -292,6 +292,7 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.7 | 2026-07-16T00:00:00Z | PROP-045 and PROP-046 implemented (v2.7.0 "Trajan"); both moved to implemented-proposals/. |
 | 4.6 | 2026-07-16T00:00:00Z | Registered ROME-PROP-045 (Verdict–Dispatch Binding — fob-admin D1) and ROME-PROP-046 (Integration Fact & Payload-Level Contracts — fob-admin D2/D8b). Both Draft. |
 | 4.5 | 2026-07-16T00:00:00Z | PROP-008 conflict resolved (unflagged). Both files self-declare their `Document UID` header — no actual conflict; the v4.0 note was over-cautious. PROP-008 = "Framework Processing Speed Optimization" (title corrected to match the file). Registered PROP-018 = "Phase-Based Plugin Architecture" (self-declared UID), marked Superseded by PROP-034. Removed the conflict note. |
 | 4.4 | 2026-07-16T00:00:00Z | PROP-044 implemented (v2.5.0 "Titus"); moved to implemented-proposals/. ONT-001's ASSERTED tier emptied (AX-12..16 → CHECKED). |

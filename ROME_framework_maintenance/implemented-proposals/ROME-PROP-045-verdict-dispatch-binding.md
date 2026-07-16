@@ -4,7 +4,9 @@
 |-------|-------|
 | **UID** | ROME-PROP-045 |
 | **Title** | Verdict–Dispatch Binding — Make a Gate Verdict Provable Against a Real Gate-Role Dispatch, Not a Caller-Supplied String |
-| **Status** | Draft |
+| **Status** | Implemented |
+| **Implemented In** | v2.7.0 "Trajan" |
+| **Implemented By** | `guard.js#recordGateVerdict` (dispatch binding + legacy flag), `guard-cli.cjs verdict --dispatch`, `ontology.md` AX-03 restated, `gate-decision-standard.md` |
 | **Author** | Archie |
 | **Created** | 2026-07-16T00:00:00Z |
 | **Origin** | fob-admin Module-1 live run, defect D1 (CRITICAL) — `FRAMEWORK-DEFECTS-2026-07-15.md` |
@@ -127,15 +129,11 @@ requires fabricating that dispatch record" — precise about the actual guarante
 
 ## Open Questions
 
-1. **Transitional signature.** Remove `role` outright, or accept `{dispatchId}`
-   OR `{role}` for one release with a warning on the legacy path? *(Recommend:
-   dual-accept one release; the fob-admin state files use the old shape.)*
-2. **How is `dispatchId` chosen?** Reuse the existing `agent` id (instance id) as
-   the dispatch handle, or introduce a separate dispatch uuid? *(Recommend: reuse
-   `agent` — D6 already keys dispatch closure on it; one identity, not two.)*
-3. **Retro-gate for imported/legacy state** with verdicts but no dispatch binding —
-   accept-with-warning, or refuse? *(Recommend: accept with a one-time WARN so
-   existing delivered projects still load.)*
+1. ~~**Transitional signature.**~~ **RESOLVED (sponsor, 2026-07-16): dual-accept one release.** `recordGateVerdict` accepts `{dispatchId}` (bound, preferred) or `{role}` (legacy). The legacy path records the verdict and emits a `VERDICT_LEGACY_UNBOUND` audit event; a future release removes it.
+2. ~~**How is `dispatchId` chosen?**~~ **RESOLVED (sponsor, 2026-07-16): reuse `agent`.** The dispatch instance id is the handle — one identity, matching the D6 dispatch-closure key.
+3. ~~**Retro-gate for legacy state.**~~ **RESOLVED (sponsor, 2026-07-16): accept with WARN.** A verdict with no dispatch binding still loads; the unbound path is audited, not refused.
+
+**All open questions resolved. Build-ready.**
 
 ---
 
@@ -143,4 +141,5 @@ requires fabricating that dispatch record" — precise about the actual guarante
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.0 | 2026-07-16T00:00:00Z | Implemented in v2.7.0 "Trajan". `recordGateVerdict` derives role from a cited `dispatchId` (completed gate-role dispatch for the phase); legacy `role` path accepted one release with a `VERDICT_LEGACY_UNBOUND` audit flag. AX-03 restated. 6 regression tests. Moved to implemented-proposals/. |
 | 0.1 | 2026-07-16T00:00:00Z | Initial draft from fob-admin defect D1. Bind gate verdicts to a completed gate-role dispatch; derive `role` from the dispatch record instead of trusting a parameter. Restates AX-03 to match. Full transcript-level rigour scoped as a non-goal (follow-up, pairs with D18). Three OQs (transitional signature, dispatch handle identity, legacy state). |

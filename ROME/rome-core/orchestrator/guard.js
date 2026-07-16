@@ -33,26 +33,51 @@ function latestVerdict(state, phaseId) {
 }
 
 /**
- * Record a gate verdict. Rejects:
- *  - verdicts for an ungated phase
- *  - verdicts from the wrong role (the self-approval guard)
- *  - unknown verdict values
- * Mutates and returns state.
+ * Record a gate verdict (ROME-PROP-045: verdict–dispatch binding).
+ *
+ * Preferred form binds the verdict to evidence: pass `dispatchId` (a sub-agent
+ * instance id). The role is then DERIVED from that dispatch record, not trusted
+ * from a parameter — a forged verdict must forge a completed gate-role dispatch,
+ * not merely a string. The guard rejects a verdict whose cited dispatch is
+ * unknown, for a different phase, of the wrong role, or not yet COMPLETE.
+ *
+ * Legacy form (transitional, one release) passes `role` with no `dispatchId`:
+ * accepted, but the role is unproven and a VERDICT_LEGACY_UNBOUND audit event is
+ * recorded. A future release removes this path.
+ *
+ * Rejects: ungated phase, unknown verdict, wrong (derived or supplied) role,
+ * and — in bound form — any dispatch-binding failure. Mutates and returns state.
  */
-function recordGateVerdict(state, { phase, verdict, role, timestamp, note }) {
+function recordGateVerdict(state, { phase, verdict, role, dispatchId, timestamp, note }) {
   const def = phaseDef(phase);
   if (!def.gate) throw new Error(`Phase ${phase} has no gate; cannot record a verdict`);
   if (verdict !== VERDICT.APPROVE && verdict !== VERDICT.BLOCK) {
     throw new Error(`Invalid verdict "${verdict}" (expected APPROVE|BLOCK)`);
   }
-  if (role !== def.gate.role) {
+  if (!timestamp) throw new Error('recordGateVerdict: timestamp required');
+
+  let resolvedRole = role;
+  let boundDispatch = null;
+  if (dispatchId) {
+    // Bound form: derive the role from a real, completed gate-role dispatch.
+    const d = (state.dispatch || []).find(x => x.agent === dispatchId);
+    if (!d) throw new Error(`Verdict cites unknown dispatch "${dispatchId}"`);
+    if (d.phase !== phase) throw new Error(`Dispatch "${dispatchId}" is for ${d.phase}, not ${phase}`);
+    if (d.status !== STATUS.COMPLETE) throw new Error(`Gate dispatch "${dispatchId}" has not completed (status ${d.status})`);
+    resolvedRole = d.role;
+    boundDispatch = dispatchId;
+  } else {
+    // Legacy unbound form (PROP-045 transitional): role is unproven — flag it.
+    state.audit.push({ event: 'VERDICT_LEGACY_UNBOUND', gate: def.gate.id, phase, role, timestamp });
+  }
+
+  if (resolvedRole !== def.gate.role) {
     throw new Error(
-      `Role "${role}" may not record ${def.gate.id}. Only "${def.gate.role}" holds gate authority ` +
+      `Role "${resolvedRole}" may not record ${def.gate.id}. Only "${def.gate.role}" holds gate authority ` +
       `(self-approval / wrong-approver blocked).`
     );
   }
-  if (!timestamp) throw new Error('recordGateVerdict: timestamp required');
-  state.gateLedger.push({ gate: def.gate.id, phase, verdict, role, timestamp, ...(note ? { note } : {}) });
+  state.gateLedger.push({ gate: def.gate.id, phase, verdict, role: resolvedRole, ...(boundDispatch ? { dispatchId: boundDispatch } : {}), timestamp, ...(note ? { note } : {}) });
   // reflect a BLOCK in phase status immediately
   if (verdict === VERDICT.BLOCK && state.phases[phase]) {
     state.phases[phase].status = STATUS.BLOCKED;

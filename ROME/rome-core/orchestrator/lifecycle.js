@@ -53,7 +53,7 @@ const PHASES = Object.freeze([
   { id: 'P3',   name: 'design',       owner: 'pma',                  gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability', 'matrix'] },
   { id: 'P3.5', name: 'prototype',    owner: 'reena',                gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true,  requires: ['traceability', 'matrix'] },
   { id: 'P4',   name: 'config',       owner: 'lucien',               gate: { id: 'GATE-P4',   role: 'sarah' }, optional: false, requires: ['secrets', 'traceability'] },
-  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'testAdequacy', 'secrets', 'contracts', 'traceability', 'matrix'] },
+  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'integration', 'testAdequacy', 'secrets', 'contracts', 'traceability', 'matrix'] },
 ]);
 
 const PHASE_BY_ID = Object.freeze(

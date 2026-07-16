@@ -61,7 +61,7 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
    | P2 | `traceability`, `sponsorOq` |
    | P3 / P3.5 | `traceability`, `matrix` |
    | P4 | `secrets`, `traceability` |
-   | P5 | `executability`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
+   | P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
 
    `lifecycle.js` (`PHASES[].requires`) is authoritative for this table.
 
@@ -74,6 +74,15 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
      P5 — WARN-only at P3, STRICT at P5.
    - **sponsorOq** gates on open questions from P2 (PROP-041 Part B): a deferral is
      valid ONLY with explicit `sponsorAuthorized: true` (`verification.js#checkSponsorOq`).
+   - **executability** is **component-level only** — each component's own build/test
+     in isolation (`executability.js#verifyComponent`). It does NOT prove the
+     integrated system runs; that is `integration` (PROP-046).
+   - **integration** (PROP-046): the real system starts and at least one in-scope
+     requirement is driven end-to-end **across the component seam** (client→API→store),
+     with the response asserted against the contract shape — not each side in-process
+     against its own mock. STRICT at P5. For a genuinely un-runnable stack it may be
+     recorded as passing with detail `WAIVED (sponsor-authorized)` plus an audit
+     entry — never a silent skip.
    - Facts are written by their modules (`executability.js`, `security.js`,
      `contracts.js`, `validate-aordl.js`) via `verification.js#recordVerification`,
      not asserted by the gate role.

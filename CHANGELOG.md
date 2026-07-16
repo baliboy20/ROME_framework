@@ -2,6 +2,46 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-16] - v2.7.0 "Trajan" — verdict binding (D1) + integration fact (D2/D8b)
+
+Codename **Trajan**. Implements PROP-045 and PROP-046 — the two architectural
+fob-admin defects where the framework asserted something was fine when it wasn't.
+
+### Fixed
+- **D1 — gate verdicts were forgeable (PROP-045).** `recordGateVerdict` trusted a
+  caller-supplied `role` string, so one line forged any gate without a Sarah
+  sub-agent ever running — collapsing PROP-035's core "holds even if the
+  orchestrator errs" claim. Verdicts now bind to a **completed gate-role dispatch**
+  cited by `dispatchId`; the role is **derived from the dispatch record**, not
+  trusted. A forged verdict must now forge a whole dispatch, not a string. Legacy
+  unbound `role` verdicts are accepted for one release with a `VERDICT_LEGACY_UNBOUND`
+  audit flag. AX-03 restated to match what it now guarantees. `guard-cli verdict`
+  gains `--dispatch`.
+- **D2/D8b — the framework certified browser-broken products VERIFIED (PROP-046).**
+  P5 checked six component-level facts; nothing ran the integrated system, and the
+  contracts gate compared route strings, not payloads (a producer/consumer agreed on
+  all 25 URLs and disagreed on nearly every field — every booking rendered blank).
+  - **`integration`** is now a STRICT P5 fact: start the real system, drive one
+    requirement across the seam, assert the response against the contract shape.
+    Un-runnable stacks record it `WAIVED (sponsor-authorized)` with an audit entry —
+    never a silent skip.
+  - **`contracts.js` fails closed (D8):** a consumer evaluated to zero usage is
+    flagged `consumer-no-usage` instead of passing vacuously (the broken-extractor
+    signature). `kind:'api'` contract members MUST be field-level (`Booking.partySize`);
+    `detectDrift` already compares arbitrary member strings, so no comparison-code
+    change is needed — only that extraction emit fields.
+  - `executability`'s component-only scope is documented (not renamed) in ROME-STD-GATE.
+
+### Honest limits
+- PROP-045 raises forgery cost from one line to a fabricated dispatch+return; a fully
+  dishonest orchestrator still needs an out-of-process transcript check (scoped as a
+  non-goal, pairs with D18). AX-03 says so.
+- PROP-046 Part B is doc-level: the framework now *requires* field-level members and
+  fails closed on empty extraction, but emitting field members is the generator's job.
+
+### Verify
+- Tests: 267 pass (was 256; +11). All six fidelity checks green.
+
 ## [2026-07-16] - v2.6.0 "Nerva" — fob-admin defect fixes (cheap tier: D6, D7, D17)
 
 Codename **Nerva** — restorer of stability. Fixes three silent-corruption defects

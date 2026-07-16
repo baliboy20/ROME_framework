@@ -30,12 +30,16 @@ try {
     process.exit(d.ok ? 0 : 1);
   }
   if (cmd === 'verdict') {
+    // PROP-045: --dispatch <agentId> binds the verdict to a real dispatch (role
+    // derived). --role is the legacy unbound form (flagged in the audit).
     guard.recordGateVerdict(state, {
-      phase: arg('--phase'), verdict: arg('--verdict'), role: arg('--role'),
+      phase: arg('--phase'), verdict: arg('--verdict'),
+      dispatchId: arg('--dispatch'), role: arg('--role'),
       timestamp: arg('--ts'), note: arg('--note'),
     });
     save(file, state, arg('--ts'));
-    console.log(`recorded ${arg('--verdict')} for ${arg('--phase')} by ${arg('--role')}`);
+    const by = arg('--dispatch') ? `dispatch ${arg('--dispatch')}` : `${arg('--role')} (unbound)`;
+    console.log(`recorded ${arg('--verdict')} for ${arg('--phase')} by ${by}`);
     process.exit(0);
   }
   if (cmd === 'advance') {

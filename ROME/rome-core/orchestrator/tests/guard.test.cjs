@@ -9,6 +9,7 @@ const { STATUS, VERDICT, PHASE_BY_ID } = require('../lifecycle');
 const { createState, save, load } = require('../state');
 const { recordGateVerdict, canAdvance, advance, isComplete, latestVerdict } = require('../guard');
 const { recordVerification } = require('../verification');
+const { recordDispatch } = require('../subagent');
 
 const TS = '2026-06-18T00:00:00Z';
 let passed = 0, failed = 0;
@@ -115,6 +116,61 @@ console.log('guard regression:');
   const r = load(file);
   ok('round-trip preserves gateLedger', r.gateLedger.length === 1 && r.gateLedger[0].role === 'sarah');
   ok('round-trip preserves routing', JSON.stringify(r.routing) === JSON.stringify(s.routing));
+})();
+
+// PROP-045 — verdict–dispatch binding. Role is DERIVED from a completed dispatch.
+(() => {
+  // helper: bring a fresh state to P3 (a gated phase owned by sarah)
+  function atP3() {
+    const s = fresh();
+    advance(s, TS);                       // P0 → P1
+    satisfy(s, 'P1'); recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS }); advance(s, TS);
+    satisfy(s, 'P2'); recordGateVerdict(s, { phase: 'P2', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS }); advance(s, TS);
+    return s; // now at P3
+  }
+
+  // bound form: a completed sarah dispatch for P3 → verdict accepted, role derived
+  const s1 = atP3();
+  recordDispatch(s1, { agent: 'sarah-p3', role: 'sarah', phase: 'P3', timestamp: TS });
+  const d1 = s1.dispatch.find(x => x.agent === 'sarah-p3'); d1.status = STATUS.COMPLETE;
+  recordGateVerdict(s1, { phase: 'P3', verdict: VERDICT.APPROVE, dispatchId: 'sarah-p3', timestamp: TS });
+  const led = s1.gateLedger[s1.gateLedger.length - 1];
+  ok('PROP-045 bound verdict derives role from dispatch', led.role === 'sarah' && led.dispatchId === 'sarah-p3');
+
+  // unknown dispatch rejected
+  const s2 = atP3();
+  ok('PROP-045 verdict citing unknown dispatch rejected', threw(() => recordGateVerdict(s2, { phase: 'P3', verdict: VERDICT.APPROVE, dispatchId: 'ghost', timestamp: TS })));
+
+  // wrong-role dispatch rejected (derived role ≠ gate role)
+  const s3 = atP3();
+  recordDispatch(s3, { agent: 'pma-p3', role: 'pma', phase: 'P3', timestamp: TS });
+  s3.dispatch.find(x => x.agent === 'pma-p3').status = STATUS.COMPLETE;
+  ok('PROP-045 wrong-role dispatch rejected', threw(() => recordGateVerdict(s3, { phase: 'P3', verdict: VERDICT.APPROVE, dispatchId: 'pma-p3', timestamp: TS })));
+
+  // incomplete dispatch rejected (still RUNNING)
+  const s4 = atP3();
+  recordDispatch(s4, { agent: 'sarah-run', role: 'sarah', phase: 'P3', timestamp: TS });
+  ok('PROP-045 incomplete dispatch rejected', threw(() => recordGateVerdict(s4, { phase: 'P3', verdict: VERDICT.APPROVE, dispatchId: 'sarah-run', timestamp: TS })));
+
+  // legacy unbound form still works but is flagged in the audit
+  const s5 = atP3();
+  recordGateVerdict(s5, { phase: 'P3', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
+  ok('PROP-045 legacy unbound verdict flagged', s5.audit.some(a => a.event === 'VERDICT_LEGACY_UNBOUND' && a.phase === 'P3'));
+})();
+
+// PROP-046 — `integration` is a required P5 fact; its absence blocks advance.
+(() => {
+  ok('PROP-046 integration is in P5 requires', PHASE_BY_ID['P5'].requires.includes('integration'));
+  // record every P5 fact EXCEPT integration → still blocked
+  const s = fresh();
+  for (const k of PHASE_BY_ID['P5'].requires) if (k !== 'integration') recordVerification(s, 'P5', k, true, null, TS);
+  s.currentPhase = 'P5';
+  recordDispatch(s, { agent: 'sarah-p5', role: 'sarah', phase: 'P5', timestamp: TS });
+  s.dispatch.find(x => x.agent === 'sarah-p5').status = STATUS.COMPLETE;
+  recordGateVerdict(s, { phase: 'P5', verdict: VERDICT.APPROVE, dispatchId: 'sarah-p5', timestamp: TS });
+  ok('PROP-046 P5 blocked without integration fact', canAdvance(s).ok === false);
+  recordVerification(s, 'P5', 'integration', true, null, TS);
+  ok('PROP-046 P5 allowed once integration recorded', canAdvance(s).ok === true);
 })();
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
