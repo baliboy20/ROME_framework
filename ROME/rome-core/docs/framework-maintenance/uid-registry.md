@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.12 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.13 |
 | **Date** | 2026-07-17T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -195,6 +195,7 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-047 | Input Characterization & Reliability Gating | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-047-input-characterization-and-reliability.md` | Implemented (v2.8.0) |
 | ROME-PROP-048 | First-Class Increments | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-048-first-class-increments.md` | Implemented (v3.0.0) |
 | ROME-PROP-049 | Input Staging & Build-Out Decisions | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-049-input-staging-and-buildout-decisions.md` | Implemented (v3.0.0) |
+| ROME-PROP-050 | Input Format Standard (ROME-STD-INPUT) | `/ROME_framework_maintenance/proposals/ROME-PROP-050-input-format-standard.md` | Draft |
 
 ### Implementation Plans
 
@@ -296,6 +297,7 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.13 | 2026-07-17T00:00:00Z | Registered ROME-PROP-050 (Input Format Standard — zoned module docs, canonical domain lexicon, wireframe sidecars, authority-marker consistency AX-25). Draft; STD-INPUT UID reserved for implementation. |
 | 4.12 | 2026-07-17T00:00:00Z | PROP-048 and PROP-049 implemented (v3.0.0 "Antoninus" — MAJOR); moved to implemented-proposals/. Registered ROME-MIG-002 (state v1 → increment model, auto-migrating). Lexicon v1.3 + ontology v1.3 companion changes (ENT-15..19, REL-14..21, AX-19..24). |
 | 4.11 | 2026-07-17T00:00:00Z | Registered ROME-PROP-049 (Input Staging & Build-Out Decisions — sponsor-ordered stages, core-subsystem identification, stub ledger). Draft; companion to PROP-048. |
 | 4.10 | 2026-07-16T00:00:00Z | Registered ROME-PROP-048 (First-Class Increments — fob-admin D15). Draft. |
