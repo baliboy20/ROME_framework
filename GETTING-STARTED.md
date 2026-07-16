@@ -4,7 +4,7 @@ You have a PRD/BRD and want an app. This is the absolute-beginner path, start to
 finish. ROME runs as **one Claude session (the orchestrator, "Roma") that calls
 specialist sub-agents and enforces quality with deterministic checks**.
 
-> Framework: ROME v2.x ("Tiberius" line). For concepts see `USER-GUIDE.md`; for
+> Framework: ROME v3.x. For concepts see `USER-GUIDE.md`; for
 > the engine see `ROME/rome-core/orchestrator/README.md`.
 
 ---
@@ -55,6 +55,15 @@ If you leave this folder empty or your inputs are inadequate, the framework will
 folder (PROP-047). If you write a note like `**Status:** PROPOSED` on a document,
 Surveyor reads it and checks with you before building on it. (Confident your inputs
 are clean and complete? `rome-start … --no-intake` skips the check.)
+
+**Building something with several modules?** Order your inputs into **stages** —
+`raw-requirements/stage-0/` (shared plumbing: login, database schema, design
+system), `stage-1/` (the thin slice you want demoable first — that IS your MVP),
+`stage-2/` and up (the rest). Each stage is built as its own increment, in your
+order; Surveyor checks the ordering is consistent and asks you which shared
+subsystems to implement now vs stub with a deadline. When one increment is
+delivered, grow the project with `rome-increment.cjs my-app --stage N --ts …` —
+it never erases the previous increment's record (PROP-048/049).
 
 ## Step 3 — Run it
 In your Claude session, say (plain English):

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.2 |
+| **Version** | 1.3 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
@@ -35,6 +35,12 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **ICR (Input Characterization Record)** | Surveyor's structured output: intent, quality verdict, per-input inventory, and reliability. The Orchestrator routes the lifecycle from it (`routeFromICR`). | - | Routing input (ROME-ONT-001 ENT-14) |
 | **Quality Verdict** | Surveyor's judgement of whether Inputs are adequate to proceed. | `SUFFICIENT` \| `INSUFFICIENT` | ICR field; gates routing (ROME-AX-17) |
 | **Input Reliability** | The sponsor-declared solidity of an Input, read by Surveyor from `**Status:**` markers. Shaky levels gate routing (ROME-AX-18). | `Reliable` \| `PROPOSED` \| `RECONSTRUCTED` \| `UNDEFINED` | Sponsor reliability signal |
+| **Increment** | One added unit of work (a module/slice) with its own lifecycle (routing, phases, gates, verification) over the Project's shared traceability store. Sealed on completion; sealed records are immutable (ROME-AX-19). | increment id 0..N | Growth unit (ROME-ONT-001 ENT-15; PROP-048) |
+| **Project** | The whole: one or more Increments sharing a traceability store, audit trail, and framework provenance. Has no terminal state (ROME-AX-21). | - | Top-level unit (ROME-ONT-001 ENT-16) |
+| **Stage** | A sponsor-ordered group of Inputs (`raw-requirements/stage-N/` or `stages.yaml`); binds to one Increment. Stage 0 = foundation (Core Subsystems); Stage 1 = the product MVP slice *by definition*. | stage-0..stage-N | Build-out ordering (ROME-ONT-001 ENT-17; PROP-049) |
+| **Core Subsystem** | A cross-cutting capability multiple Stages presume or consume (auth, data schema, API skeleton, design system, hosting). Identified by Surveyor at intake; designed by PMA in the foundation Increment. | - | Program architecture (ROME-ONT-001 ENT-18; PROP-049) |
+| **Stub** | A sponsor-declared stand-in implementing a Contract's interface shape with substitute behaviour, recorded with an `implementBy` Stage. Expired or undeclared stubs block delivery (ROME-AX-24). | `state.stubs[]` | Build-out decision (ROME-ONT-001 ENT-19; PROP-049) |
+| **Build-Out Decision** | The sponsor's recorded per-Stage choice for a Core Subsystem or external API: implement \| stub \| defer. Presented by Surveyor in the ICR decision matrix. | implement \| stub \| defer | Sponsor decision record (PROP-049) |
 
 ---
 
@@ -222,5 +228,6 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 companion additions: defined Increment, Project, Stage, Core Subsystem, Stub, Build-Out Decision (cross-linked to ROME-ONT-001 ENT-15..19 and AX-19..24). |
 | 1.2 | 2026-07-16T00:00:00Z | PROP-047 companion additions: defined Input, Surveyor, ICR, Quality Verdict, Input Reliability (previously undefined framework terms; cross-linked to ROME-ONT-001 ENT-13/14 and AX-17/18). |
 | 1.1 | 2026-07-15T00:00:00Z | Staleness corrections per ROME-PROP-043 §P3, companion to ROME-ONT-001. Phase table rebuilt from `lifecycle.js`: adds P0.5 (Intake) and P3.5 (Prototype), gate column, and optional column — the P0–P5 model with a gate at every boundary was never the implemented model (P0 is ungated). "Robot" re-labeled a retired legacy alias → Role/Instance per ROME-STD-AGENT-ROLES §1; Role and Instance added as entries. Cross-link to ROME-ONT-001 added. Logging Trigger repointed from the retired ROME-PROC-005 to ROME-GOV-008. Revision log added (absent since initial issue, contrary to ROME-GOV-001). Term definitions otherwise unchanged. |

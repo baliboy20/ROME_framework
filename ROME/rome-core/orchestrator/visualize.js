@@ -11,6 +11,8 @@ const TYPE_SHAPE = {
   bff: ['[', ']'], ui: ['([', '])'], integration: ['[/', '/]'],
 };
 
+const { active } = require('./state');
+
 function nodeShape(n) {
   const [l, r] = TYPE_SHAPE[n.type] || ['[', ']'];
   return `${n.id}${l}"${n.id}<br/>${n.type || ''}"${r}`;
@@ -33,10 +35,11 @@ function componentGraphMermaid(graph) {
 function lifecycleMermaid(state) {
   const lines = ['flowchart LR'];
   const mark = { COMPLETE: '✓', IN_PROGRESS: '▶', BLOCKED: '✗', GATE: '⊘', PENDING: '·' };
-  state.routing.forEach((id, i) => {
-    const st = (state.phases[id] || {}).status || 'PENDING';
+  const inc = active(state);
+  inc.routing.forEach((id, i) => {
+    const st = (inc.phases[id] || {}).status || 'PENDING';
     lines.push(`  ${id}["${id} ${mark[st] || ''}<br/>${st}"]`);
-    if (i > 0) lines.push(`  ${state.routing[i - 1]} --> ${id}`);
+    if (i > 0) lines.push(`  ${inc.routing[i - 1]} --> ${id}`);
   });
   return lines.join('\n');
 }

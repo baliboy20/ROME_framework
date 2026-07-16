@@ -15,6 +15,8 @@ const { validateGraph } = require('./topology');
 const { rebuildIndexes } = require('./subagent');
 
 /** Map: component id → [ids that depend on it] (reverse edges). */
+const { active } = require('./state');
+
 function dependentsIndex(graph) {
   const idx = {};
   for (const n of graph.nodes) idx[n.id] = idx[n.id] || [];
@@ -141,7 +143,7 @@ function applyChange(state, change = {}, opts = {}) {
  * @returns { resolved:boolean, affectedReqs:[REQ] }
  */
 function resolveDeferral(state, oqId) {
-  const oq = state.oq || {};
+  const oq = active(state).oq || {};
   const d = (oq.deferrals || []).find(x => x.oqId === oqId);
   if (!d) return { resolved: false, affectedReqs: [] };
   d.resolved = true;

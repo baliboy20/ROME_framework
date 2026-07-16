@@ -2,6 +2,57 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-17] - v3.0.0 "Antoninus" — first-class increments + input staging (MAJOR)
+
+Codename **Antoninus** — the builder of the long peace. Implements PROP-048 and
+PROP-049 together: a project can now GROW (increments) and the sponsor decides the
+build-out's shape through the inputs (staging, core subsystems, declared stubs).
+Closes fob-admin D15 and the program-planning gap from the sponsor design session.
+
+### BREAKING — state schema v1 → v2 (ROME-MIG-002, auto-migrating)
+Lifecycle fields (`routing`, `currentPhase`, `phases`, `gateLedger`, `blockers`,
+`dispatch`, `budget`, `verification`, `oq`, `testManifest`, `inputReliability`)
+now live per-increment under `state.increments[]`; `activeIncrement` selects the
+live one. Shared at project level: `traceability` (edges tagged by increment),
+`audit`, plus new `stubs[]` and `stagePlan`. **`load()` migrates v1 states
+automatically and losslessly** (wrapped as increment 0 — nothing deleted, per
+AX-19); no user action. Tool authors: read lifecycle via `state.js#active(state)`.
+Existing projects keep running on their vendored ≤ v2.8 framework regardless.
+
+### Added — increments (PROP-048)
+- `state.js`: `active()`, `sealActive()`, `beginIncrement()`, `migrateV1()`.
+  Sealed increments are immutable — the guard refuses verdicts and advances on
+  them (**AX-19**, append-only preservation).
+- One shared traceability store; coverage is the union across increments
+  (**AX-20** — edges tagged by producing increment).
+- `isComplete` is per-increment; the project has no terminal state (**AX-21**).
+- **`rome-increment.cjs`** — grow an existing project: seals the completed
+  increment, begins the next (Surveyor intake by default, PROP-047), never
+  overwrites. Refuses to grow past an incomplete increment.
+
+### Added — staging & build-out decisions (PROP-049)
+- Staging convention: `raw-requirements/stage-N/` (stage 0 = foundation, stage 1
+  = the product MVP *by curation*); each stage binds to one increment.
+- `routing.js#validateStagePlan`: **AX-23** — no stage presumes a core subsystem
+  no same-or-earlier stage provides or stubs (sponsor-authorizable); forward
+  stage dependencies WARN at intake.
+- `verification.js#checkStageConsistency`: **AX-22** STRICT at P2 — new required
+  P2 fact `stageConsistency` (unstaged projects pass trivially).
+- Stub ledger `state.stubs[]` + `checkStubs`; the guard blocks the P5 delivery
+  edge on any ACTIVE stub past its `implementBy` increment (**AX-24**, no silent
+  stubs — the rule that would have caught fob-admin's shipped fake token).
+
+### Framework alignment
+- Ontology v1.3 (ENT-15..19, REL-14..21, AX-19..24) and lexicon v1.3 (Increment,
+  Project, Stage, Core Subsystem, Stub, Build-Out Decision). ROME-STD-GATE v1.2.
+  Check 6b now demands tagged violation tests for 15 ENFORCED axioms.
+- ROME-MIG-002 migration guide (plain-terms + tool-author notes).
+
+### Verify
+- 313 tests pass (+29 increment/staging, incl. per-axiom tags and a v1→v2
+  migration round-trip). E2E: rome-start → complete → rome-increment verified
+  live (refusal on incomplete project; seal preserves all 5 gate records).
+
 ## [2026-07-16] - v2.8.0 "Hadrian" — input characterization & reliability gating (D3/D4/D16)
 
 Codename **Hadrian**. Implements PROP-047 — the input-side blind spot, the

@@ -19,6 +19,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { active } = require('./state');
 
 // Repo-relative default location of role definitions.
 const DEFAULT_ROLES_DIR = path.join(__dirname, '..', '..', 'agents');
@@ -129,7 +130,8 @@ function validateReturn(ret) {
  */
 function recordDispatch(state, { agent, role, phase, timestamp, spawnedBy = 'roma' }) {
   if (!agent || !role || !phase || !timestamp) throw new Error('recordDispatch: agent, role, phase, timestamp required');
-  state.dispatch.push({ agent, role, phase, status: 'RUNNING', timestamp, spawnedBy });
+  const inc = active(state);
+  inc.dispatch.push({ agent, role, phase, status: 'RUNNING', timestamp, spawnedBy });
   state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp, spawnedBy });
   return state;
 }
@@ -195,7 +197,8 @@ function processReturn(state, ret, timestamp) {
   if (errs.length) throw new Error(`Invalid sub-agent return: ${errs.join('; ')}`);
   if (!timestamp) throw new Error('processReturn: timestamp required');
 
-  const d = [...state.dispatch].reverse().find(x => x.agent === ret.agent && x.status === 'RUNNING');
+  const inc = active(state);
+  const d = [...inc.dispatch].reverse().find(x => x.agent === ret.agent && x.status === 'RUNNING');
   if (d) { d.status = ret.status; }
   else {
     // No matching RUNNING dispatch — the return can't be reconciled to a launch.
@@ -230,6 +233,7 @@ function processReturn(state, ret, timestamp) {
       satisfiesHow: e.satisfiesHow,
       ...(e.location ? { location: e.location } : {}),
       phase: ret.phase, role: ret.role, agent: ret.agent,
+      increment: inc.id, // PROP-048: shared store, edges tagged by producing increment (ROME-AX-20)
       ...(e.reqVersion ? { reqVersion: e.reqVersion } : {}),
       stale: false,
     });
@@ -239,24 +243,24 @@ function processReturn(state, ret, timestamp) {
   // D7: merge the test manifest into state so checkTestAdequacy has a source.
   // Upsert by `req` (canonical, matching edges); latest assertion wins.
   if (Array.isArray(ret.testManifest) && ret.testManifest.length) {
-    state.testManifest = state.testManifest || [];
+    inc.testManifest = inc.testManifest || [];
     for (const m of ret.testManifest) {
       const req = m.req || m.requirement;
       const entry = { req, outcomesTested: !!m.outcomesTested, errorsTested: m.errorsTested || [] };
-      const existing = state.testManifest.find(x => x.req === req);
-      if (existing) Object.assign(existing, entry); else state.testManifest.push(entry);
+      const existing = inc.testManifest.find(x => x.req === req);
+      if (existing) Object.assign(existing, entry); else inc.testManifest.push(entry);
     }
   }
 
   // PROP-041: OQ counts from Talib P2 (latest return wins for awaitingSponsor)
   if (ret.openQuestions && typeof ret.openQuestions === 'object') {
-    state.oq.resolvedByTalib += (ret.openQuestions.resolvedByTalib || 0);
-    state.oq.awaitingSponsor = (ret.openQuestions.awaitingSponsor || 0);
-    for (const d of ret.openQuestions.deferrals || []) state.oq.deferrals.push(d);
+    inc.oq.resolvedByTalib += (ret.openQuestions.resolvedByTalib || 0);
+    inc.oq.awaitingSponsor = (ret.openQuestions.awaitingSponsor || 0);
+    for (const d of ret.openQuestions.deferrals || []) inc.oq.deferrals.push(d);
   }
 
   if (Array.isArray(ret.blockers)) {
-    ret.blockers.forEach((b, i) => state.blockers.push({
+    ret.blockers.forEach((b, i) => inc.blockers.push({
       id: `BLK-${ret.agent}-${i}`, phase: ret.phase,
       description: typeof b === 'string' ? b : (b.description || JSON.stringify(b)),
       owner: ret.role, status: 'OPEN',

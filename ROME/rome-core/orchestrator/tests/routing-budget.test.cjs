@@ -1,6 +1,6 @@
 /** Routing (PROP-036) + budget (PROP-040) regression. Run: node tests/routing-budget.test.cjs */
 const { routeFromICR, routeInitial } = require('../routing');
-const { createState } = require('../state');
+const { createState, active } = require('../state');
 const budget = require('../budget');
 
 let passed = 0, failed = 0;
@@ -45,7 +45,7 @@ console.log('routing + budget regression:');
   const s = createState({ project: 'b', frameworkVersion: 't', timestamp: '2026-06-18T00:00:00Z' });
   ok('no ceiling → PROCEED, remaining Infinity', budget.policy(s).action === 'PROCEED' && budget.remaining(s) === Infinity);
 
-  s.budget.ceiling = 1000;
+  active(s).budget.ceiling = 1000;
   budget.record(s, 500);
   ok('half-spent → PROCEED', budget.policy(s).action === 'PROCEED');
   ok('remaining computed', budget.remaining(s) === 500);

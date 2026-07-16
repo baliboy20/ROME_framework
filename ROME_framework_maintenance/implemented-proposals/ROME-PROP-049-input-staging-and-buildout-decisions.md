@@ -196,26 +196,13 @@ Each with a tagged violation test (PROP-044 / check 6b).
 ---
 
 ## Open Questions
-1. **Staging syntax** — `stage-N/` directories, a `stages.yaml` manifest, or both
-   (directories canonical, manifest optional)? *(Recommend: both; directories are
-   self-evident, manifest allows staging without moving files.)*
-2. **Dependency detection at intake** — how does Surveyor infer inter-stage
-   dependencies before AORDL exists? Options: sponsor-declared `depends:` notes in
-   inputs (cheap, explicit), Surveyor's own reading (judgement), or defer hard
-   enforcement of AX-22 to P2 when the requirement graph is real, with intake
-   WARN-only. *(Recommend: sponsor-declared notes + Surveyor judgement at intake as
-   WARN; AX-22 STRICT at P2 where the dependency graph is mechanical.)*
-3. **Subsystem catalogue** — does Surveyor work from a seeded checklist of common
-   core subsystems (auth, schema, design system, hosting, observability) plus its own
-   reading, or purely from the inputs? *(Recommend: seeded checklist + reading; the
-   checklist encodes exactly what fob-admin missed.)*
-4. **Stub verification depth** — must a declared stub pass the integration fact
-   (PROP-046) against its contract shape in its own stage? *(Recommend: yes — a stub
-   that can't honor the contract shape is a bug, not a stub.)*
-5. **Who presents the decision matrix** — Surveyor emits it in the ICR and the
-   Orchestrator relays to the sponsor (Seez), or a dedicated sponsor-interaction step?
-   *(Recommend: emit in ICR, relay via the existing sponsor-interaction channel —
-   no new machinery.)*
+1. ~~**Staging syntax.**~~ **RESOLVED (sponsor, 2026-07-17): both.** `stage-N/` directories are canonical and self-evident; an optional `stages.yaml` manifest stages without moving files.
+2. ~~**Dependency detection at intake.**~~ **RESOLVED (sponsor, 2026-07-17): notes + judgement now, strict later.** Intake reads sponsor `depends:` notes plus Surveyor's own reading — WARN only. AX-22 turns STRICT at P2 (`stageConsistency` mechanical fact over the real requirement graph).
+3. ~~**Subsystem catalogue.**~~ **RESOLVED (sponsor, 2026-07-17): seeded checklist + reading.** The checklist (auth, data schema, API skeleton, design system, hosting/CORS, observability) encodes exactly what fob-admin missed.
+4. ~~**Stub verification depth.**~~ **RESOLVED (sponsor, 2026-07-17): yes.** A declared stub must pass the integration fact (PROP-046) against its contract shape in its own stage — a stub that can't honor the contract is a bug, not a stub.
+5. ~~**Decision-matrix channel.**~~ **RESOLVED (sponsor, 2026-07-17): ICR + existing sponsor channel.** No new machinery.
+
+**All open questions resolved. Build-ready.**
 
 ---
 
@@ -223,4 +210,5 @@ Each with a tagged violation test (PROP-044 / check 6b).
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.0 | 2026-07-17T00:00:00Z | Implemented in v3.0.0 "Antoninus" (MAJOR — state schema restructure per OQ-1, auto-migration ROME-MIG-002). All parts shipped with tagged violation tests; companion ONT/LEX changes applied (v1.3). 29 increment/staging regression tests; 313 total pass; fidelity green (6b covers 15 ENFORCED axioms). Moved to implemented-proposals/. |
 | 0.1 | 2026-07-16T00:00:00Z | Initial draft from the sponsor design session. Four parts over one intake surface: (A) sponsor-ordered stages — MVP = stage 1 by curation, foundation = stage 0; (B) stage dependency-consistency (AX-22); (C) Surveyor core-subsystem identification + dangling-presumption check (AX-23), PMA designs in increment 0; (D) sponsor implement/stub/defer matrix + stub ledger with due-stage expiry (AX-24, no-silent-stubs). Companion ONT/LEX additions (ENT-17..19, REL-18..21). Five OQs; load-bearing: dependency detection at intake (OQ-2). |

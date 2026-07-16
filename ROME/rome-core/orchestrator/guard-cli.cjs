@@ -12,7 +12,7 @@
  *
  * Exit codes: 0 = allowed/done, 1 = BLOCKED/invalid, 2 = usage error.
  */
-const { load, save } = require('./state');
+const { load, save, active } = require('./state');
 const guard = require('./guard');
 const axioms = require('./axioms');
 
@@ -26,7 +26,7 @@ try {
   const state = load(file);
   if (cmd === 'check') {
     const d = guard.canAdvance(state);
-    console.log(`${d.ok ? 'ALLOW' : 'BLOCK'}: ${d.reason} (phase ${state.currentPhase})`);
+    console.log(`${d.ok ? 'ALLOW' : 'BLOCK'}: ${d.reason} (increment ${active(state).id}, phase ${active(state).currentPhase})`);
     process.exit(d.ok ? 0 : 1);
   }
   if (cmd === 'verdict') {
@@ -45,7 +45,7 @@ try {
   if (cmd === 'advance') {
     guard.advance(state, arg('--ts'));
     save(file, state, arg('--ts'));
-    console.log(`advanced → ${state.currentPhase || '(complete)'}`);
+    console.log(`advanced → ${active(state).currentPhase || '(increment complete)'}`);
     process.exit(0);
   }
   if (cmd === 'trace') {

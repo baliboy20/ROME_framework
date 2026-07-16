@@ -58,7 +58,7 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
    |-------|---------------------------|
    | P0 / P0.5 | — (none) |
    | P1 | `aordl` (STRICT validation), `traceability` |
-   | P2 | `traceability`, `sponsorOq` |
+   | P2 | `traceability`, `sponsorOq`, `stageConsistency` |
    | P3 / P3.5 | `traceability`, `matrix` |
    | P4 | `secrets`, `traceability` |
    | P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
@@ -74,9 +74,16 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
      P5 — WARN-only at P3, STRICT at P5.
    - **sponsorOq** gates on open questions from P2 (PROP-041 Part B): a deferral is
      valid ONLY with explicit `sponsorAuthorized: true` (`verification.js#checkSponsorOq`).
+   - **stageConsistency** (PROP-049 / ROME-AX-22): on a staged project, no requirement
+     may depend on a requirement in a LATER stage (`verification.js#checkStageConsistency`).
+     WARN-only at intake (judgement); STRICT here, where the requirement graph is
+     mechanical. Unstaged projects pass trivially.
    - **executability** is **component-level only** — each component's own build/test
      in isolation (`executability.js#verifyComponent`). It does NOT prove the
      integrated system runs; that is `integration` (PROP-046).
+   - **Stub expiry (PROP-049 / ROME-AX-24)** is enforced by the guard directly at the
+     P5 delivery edge (not a `requires` fact): an ACTIVE stub whose `implementBy`
+     increment is due blocks advance; delivery refuses undeclared or expired stubs.
    - **integration** (PROP-046): the real system starts and at least one in-scope
      requirement is driven end-to-end **across the component seam** (client→API→store),
      with the response asserted against the contract shape — not each side in-process
@@ -104,4 +111,5 @@ EP-4). Exhaustion escalates to the sponsor (failure policy, PROP-039 B).
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — gate ownership, verdict record, the seven enforced rules; documents guard.js behavior (PROP-034 Track A / PROP-035 §3.5). |
+| 1.2 | 2026-07-17 | v3.0.0 (PROP-048/049): lifecycle fields live on the ACTIVE increment (state.js#active); sealed increments immutable (ROME-AX-19). P2 gains `stageConsistency` (ROME-AX-22, STRICT at P2). Stub expiry (ROME-AX-24) enforced by the guard at the P5 delivery edge. |
 | 1.1 | 2026-07-15 | Drift correction (found while verifying PROP-043's axiom provenance). §3 rule 8 (mechanical preconditions) was added in v2.1.0 without a revision entry — logged retrospectively. `requires` table corrected to match `lifecycle.js`, which had diverged when PROP-041/042 landed in v2.3.0: P2 gains `sponsorOq`, P3/P3.5 gain `matrix`, P5 gains `matrix` as a sixth fact; P0/P0.5 stated explicitly. Added `matrix` and `sponsorOq` definitions. Named `lifecycle.js` (`PHASES[].requires`) authoritative for the table. |

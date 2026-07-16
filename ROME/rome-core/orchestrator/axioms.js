@@ -14,13 +14,19 @@
 
 const { CODE_SATISFIES } = require('./lifecycle');
 
+/** PROP-048: axioms span ALL increments — violations don't expire when an
+ *  increment seals. Helpers flatten the per-increment lifecycle records. */
+function allIncrements(state) { return state.increments || []; }
+function allDispatch(state) { return allIncrements(state).flatMap(i => i.dispatch || []); }
+function allGateLedger(state) { return allIncrements(state).flatMap(i => i.gateLedger || []); }
+
 const ORCHESTRATOR_ROLE = 'roma';
 const UPSTREAM_OF_P5 = ['P0', 'P0.5', 'P1', 'P2', 'P3', 'P3.5', 'P4'];
 
 /** AX-12 — every Instance (agent) fills exactly one Role for its lifetime. */
 function checkOneRolePerInstance(state) {
   const rolesByAgent = {};
-  for (const d of state.dispatch || []) {
+  for (const d of allDispatch(state)) {
     (rolesByAgent[d.agent] = rolesByAgent[d.agent] || new Set()).add(d.role);
   }
   const violations = Object.entries(rolesByAgent)
@@ -42,7 +48,7 @@ function checkSeparationOfDuties(state) {
     (producersByPhase[e.phase] = producersByPhase[e.phase] || new Set()).add(e.role);
   }
   const violations = [];
-  for (const v of state.gateLedger || []) {
+  for (const v of allGateLedger(state)) {
     const producers = producersByPhase[v.phase];
     if (producers && producers.has(v.role)) {
       violations.push(`role "${v.role}" both produced an artifact and held gate authority in ${v.phase}`);
@@ -57,7 +63,7 @@ function checkSeparationOfDuties(state) {
  * the orchestrator role is a violation.
  */
 function checkOrchestratorSpawns(state) {
-  const violations = (state.dispatch || [])
+  const violations = allDispatch(state)
     .filter(d => (d.spawnedBy || ORCHESTRATOR_ROLE) !== ORCHESTRATOR_ROLE)
     .map(d => `agent "${d.agent}" (${d.role}) was spawned by "${d.spawnedBy}", not the orchestrator`);
   return { axiom: 'AX-14', pass: violations.length === 0, violations };
@@ -102,14 +108,16 @@ function checkP5NoNewRequirements(state) {
 const VALID_BLOCKER_STATES = new Set(['OPEN', 'ESCALATED', 'RESOLVED']);
 function checkNoSilentRecovery(state) {
   const violations = [];
-  for (const b of state.blockers || []) {
-    if (!VALID_BLOCKER_STATES.has(b.status)) {
-      violations.push(`blocker "${b.id}" has unrecorded status "${b.status}"`);
-      continue;
-    }
-    const phase = state.phases?.[b.phase];
-    if (phase && phase.status === 'COMPLETE' && b.status !== 'RESOLVED') {
-      violations.push(`phase ${b.phase} COMPLETE with non-resolved blocker "${b.id}" (${b.status}) — silent recovery`);
+  for (const inc of allIncrements(state)) {
+    for (const b of inc.blockers || []) {
+      if (!VALID_BLOCKER_STATES.has(b.status)) {
+        violations.push(`blocker "${b.id}" has unrecorded status "${b.status}"`);
+        continue;
+      }
+      const phase = inc.phases?.[b.phase];
+      if (phase && phase.status === 'COMPLETE' && b.status !== 'RESOLVED') {
+        violations.push(`increment ${inc.id} phase ${b.phase} COMPLETE with non-resolved blocker "${b.id}" (${b.status}) — silent recovery`);
+      }
     }
   }
   return { axiom: 'AX-16', pass: violations.length === 0, violations };

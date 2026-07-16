@@ -11,7 +11,7 @@
 const os = require('os');
 const fs = require('fs');
 const path = require('path');
-const { createState } = require('../state');
+const { createState, active } = require('../state');
 const guard = require('../guard');
 const { PHASE_BY_ID } = require('../lifecycle');
 const { recordDispatch, processReturn, coverage } = require('../subagent');
@@ -31,8 +31,8 @@ console.log('integration (full lifecycle composition):');
 // --- Intake → routing (036) ---
 const route = routeFromICR({ intent: 'greenfield', qualityVerdict: 'SUFFICIENT' });
 const s = createState({ project: 'integ', frameworkVersion: 'rearch-dev', routing: route.routing, timestamp: TS });
-s.budget.ceiling = 100000;
-ok('routed greenfield P0..P5', s.routing.join() === 'P0,P1,P2,P3,P4,P5');
+active(s).budget.ceiling = 100000;
+ok('routed greenfield P0..P5', active(s).routing.join() === 'P0,P1,P2,P3,P4,P5');
 
 // helper: a producer return for a phase
 function produce(role, phase, deltas) {
@@ -55,7 +55,7 @@ function gateAndAdvance(phase) {
 // --- P0 bootstrap (no gate) ---
 produce('bootstrap', 'P0');
 gateAndAdvance('P0');
-ok('advanced to P1', s.currentPhase === 'P1');
+ok('advanced to P1', active(s).currentPhase === 'P1');
 
 // --- P1 requirements (mechanical AORDL gate validated elsewhere) ---
 produce('talib', 'P1', [{ requirement: 'REQ-001', produces: 'REQ-001.yaml' }, { requirement: 'REQ-002', produces: 'REQ-002.yaml' }]);
@@ -77,7 +77,7 @@ produce('lucien', 'P4');
 gateAndAdvance('P4');
 
 // --- P5 generation: topology fan-out + executability + contract drift ---
-ok('at P5', s.currentPhase === 'P5');
+ok('at P5', active(s).currentPhase === 'P5');
 const graph = { nodes: [
   { id: 'lib', type: 'shared-lib' },
   { id: 'api', type: 'service', dependsOn: ['lib'] },
@@ -109,9 +109,9 @@ gateAndAdvance('P5');
 
 // --- assertions on final composed state ---
 ok('lifecycle complete', guard.isComplete(s) === true);
-ok('all 5 gates APPROVE by sarah', s.gateLedger.filter(g => g.verdict === 'APPROVE' && g.role === 'sarah').length === 5);
+ok('all 5 gates APPROVE by sarah', active(s).gateLedger.filter(g => g.verdict === 'APPROVE' && g.role === 'sarah').length === 5);
 ok('coverage = 2 requirements', coverage(s).requirementsCovered === 2);
-ok('no open blockers', s.blockers.filter(b => b.status !== 'RESOLVED').length === 0);
+ok('no open blockers', active(s).blockers.filter(b => b.status !== 'RESOLVED').length === 0);
 ok('budget within ceiling', budget.remaining(s) > 0 && budget.policy(s).action !== 'ESCALATE');
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);

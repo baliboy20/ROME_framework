@@ -1,5 +1,5 @@
 /** Verification module regression (PROP-035 §3.5 hardening + PROP-042 edge path + PROP-041 matrix/sponsorOq). Run: node tests/verification.test.cjs */
-const { createState } = require('../state');
+const { createState, active } = require('../state');
 const { recordDispatch, processReturn } = require('../subagent');
 const { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq } = require('../verification');
 
@@ -26,7 +26,7 @@ console.log('verification regression:');
 (() => {
   const s = createState({ project: 'v', frameworkVersion: 't', timestamp: TS });
   recordVerification(s, 'P5', 'executability', true, null, TS);
-  ok('records a passing fact', s.verification.P5.executability.pass === true);
+  ok('records a passing fact', active(s).verification.P5.executability.pass === true);
   ok('audit entry written', s.audit.some(a => a.event === 'VERIFY' && a.key === 'executability'));
 })();
 
@@ -149,7 +149,7 @@ console.log('verification regression:');
     summary: 'analysis done', artifacts: [], traceabilityDeltas: [],
     openQuestions: { resolvedByTalib: 10, awaitingSponsor: 3, deferrals: [] },
   }, TS);
-  ok('oq merged into state', s.oq.awaitingSponsor === 3 && s.oq.resolvedByTalib === 10);
+  ok('oq merged into state', active(s).oq.awaitingSponsor === 3 && active(s).oq.resolvedByTalib === 10);
   ok('checkSponsorOq fails when awaitingSponsor > 0', checkSponsorOq(s).pass === false);
   ok('detail mentions count', /3 sponsor-owned/.test(checkSponsorOq(s).detail));
 
@@ -160,8 +160,8 @@ console.log('verification regression:');
     summary: 'oqs resolved', artifacts: [], traceabilityDeltas: [],
     openQuestions: { resolvedByTalib: 3, awaitingSponsor: 0, deferrals: [] },
   }, TS);
-  ok('awaitingSponsor reset to 0 on re-return', s.oq.awaitingSponsor === 0);
-  ok('resolvedByTalib accumulates across returns', s.oq.resolvedByTalib === 13);
+  ok('awaitingSponsor reset to 0 on re-return', active(s).oq.awaitingSponsor === 0);
+  ok('resolvedByTalib accumulates across returns', active(s).oq.resolvedByTalib === 13);
   ok('checkSponsorOq passes once awaitingSponsor = 0', checkSponsorOq(s).pass === true);
 
   // deferral recorded
@@ -174,7 +174,7 @@ console.log('verification regression:');
       deferrals: [{ oqId: 'OQ-003', provisional: true, provisionalAssumption: '8-12 models', affectedReqs: ['REQ-005'] }],
     },
   }, TS);
-  ok('deferral stored in state.oq.deferrals', s.oq.deferrals.length === 1 && s.oq.deferrals[0].oqId === 'OQ-003');
+  ok('deferral stored in active(state).oq.deferrals', active(s).oq.deferrals.length === 1 && active(s).oq.deferrals[0].oqId === 'OQ-003');
 })();
 
 // PROP-041 B3: deferral authorization enforcement (silent-escape-hatch guard)
@@ -230,8 +230,8 @@ console.log('verification regression:');
     artifacts: [], traceabilityEdges: [],
     testManifest: [{ req: 'REQ-1', outcomesTested: true, errorsTested: ['E1'] }],
   }, TS);
-  ok('D7: testManifest merged into state', s.testManifest.length === 1 && s.testManifest[0].req === 'REQ-1');
-  const ta = checkTestAdequacy(s.testManifest, [{ ID: 'REQ-1', Outcomes: ['o'], Errors: [{ error: 'E1' }] }]);
+  ok('D7: testManifest merged into state', active(s).testManifest.length === 1 && active(s).testManifest[0].req === 'REQ-1');
+  const ta = checkTestAdequacy(active(s).testManifest, [{ ID: 'REQ-1', Outcomes: ['o'], Errors: [{ error: 'E1' }] }]);
   ok('D7: checkTestAdequacy reads merged manifest (no false "no tests")', ta.pass === true);
 })();
 

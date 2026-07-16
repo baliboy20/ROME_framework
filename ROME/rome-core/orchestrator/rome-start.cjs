@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execFileSync } = require('child_process');
-const { createState, save } = require('./state');
+const { createState, save, active } = require('./state');
 const { routeInitial } = require('./routing');
 const { nextAction } = require('./driver');
 
@@ -76,12 +76,11 @@ const vendored = !has('--no-vendor');
 let vendorPath = null;
 if (vendored) vendorPath = vendorFramework(projectDir);
 
-const state = createState({ project, frameworkVersion: version, frameworkCommit: commit, vendored, routing: route.routing, timestamp: ts });
-state.intent = intent;
 // PROP-047: routing is provisional until Surveyor's intake produces the real ICR.
-state.awaitingIntake = !skipIntake;
+// PROP-048: increment 0 carries the lifecycle; the project itself never seals.
+const state = createState({ project, frameworkVersion: version, frameworkCommit: commit, vendored, routing: route.routing, intent, awaitingIntake: !skipIntake, timestamp: ts });
 const budgetFlag = arg('--budget');
-if (budgetFlag) state.budget.ceiling = Number(budgetFlag);
+if (budgetFlag) active(state).budget.ceiling = Number(budgetFlag);
 const statePath = path.join(projectDir, 'ARTIFACTS/_orchestration/state.json');
 save(statePath, state, ts);
 
@@ -89,14 +88,14 @@ const na = nextAction(state);
 console.log(`ROME project initialized: ${project}`);
 console.log(`  framework: v${version}${commit ? ' @ ' + commit.slice(0, 8) : ''}${vendored ? ` (vendored → ${path.join(projectDir, '.rome')})` : ' (not vendored)'}`);
 console.log(`  intent:   ${intent} (greenfield forward-only unless intake reclassifies)`);
-console.log(`  routing:  ${route.routing.join(' → ')}${state.awaitingIntake ? '  [PROVISIONAL — finalized by intake]' : ''}`);
+console.log(`  routing:  ${route.routing.join(' → ')}${active(state).awaitingIntake ? '  [PROVISIONAL — finalized by intake]' : ''}`);
 if (budgetFlag) console.log(`  budget:   ceiling ${budgetFlag} tokens`);
 console.log(`  state:    ${statePath}`);
 console.log(`  notes:    ${route.notes.join('; ')}`);
 console.log('');
 console.log(`NEXT ACTION → [${na.step}] ${na.instruction}`);
 console.log(`  STEP 1: stage your inputs in ${path.join(projectDir, '_user_input/raw-requirements')}`);
-if (state.awaitingIntake) {
+if (active(state).awaitingIntake) {
   console.log(`  STEP 2: run intake — Surveyor (P0.5) reads them, produces the ICR, and finalizes routing.`);
   console.log(`          The framework will NOT proceed on an empty or insufficient input set (PROP-047 AX-17).`);
 } else {

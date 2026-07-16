@@ -286,9 +286,11 @@ else
 
   # 6b: every ENFORCED axiom must retain a tagged violation test somewhere under
   # orchestrator/tests/ (gate-time AX-01..08 in axioms.test.cjs; routing-time
-  # AX-17..18 in routing-budget.test.cjs).
+  # AX-17..18 in routing-budget.test.cjs; increment/staging AX-19..24 in
+  # increments.test.cjs — AX-20 is CHECKED, its tagged test exists but is not
+  # demanded here).
   TESTS_DIR="$ROME_CORE/orchestrator/tests"
-  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18"
+  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18 AX-19 AX-21 AX-22 AX-23 AX-24"
   if [ ! -d "$TESTS_DIR" ]; then
     fail "6b: orchestrator/tests not found — ENFORCED axioms have no behavioural provenance"
   else

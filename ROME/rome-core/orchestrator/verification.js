@@ -15,12 +15,14 @@
  */
 
 const { CODE_SATISFIES } = require('./lifecycle');
+const { active } = require('./state');
 
 /** Record a mechanical fact for a phase. Mutates + returns state. */
 function recordVerification(state, phase, key, pass, detail, timestamp) {
   if (!timestamp) throw new Error('recordVerification: timestamp required');
-  state.verification[phase] = state.verification[phase] || {};
-  state.verification[phase][key] = { pass: !!pass, detail: detail || null, timestamp };
+  const inc = active(state);
+  inc.verification[phase] = inc.verification[phase] || {};
+  inc.verification[phase][key] = { pass: !!pass, detail: detail || null, timestamp };
   state.audit.push({ event: 'VERIFY', phase, key, pass: !!pass, timestamp });
   return state;
 }
@@ -181,7 +183,7 @@ function checkMatrix(state, requirements = [], { phase = 'P5' } = {}) {
  * Returns { pass, awaitingSponsor, resolvedByTalib, unauthorizedDeferrals, detail }
  */
 function checkSponsorOq(state) {
-  const oq = state.oq || { resolvedByTalib: 0, awaitingSponsor: 0, deferrals: [] };
+  const oq = active(state).oq || { resolvedByTalib: 0, awaitingSponsor: 0, deferrals: [] };
   const deferrals = oq.deferrals || [];
 
   // PROP-041 B3: a deferral is valid ONLY with explicit sponsor authorization
@@ -210,4 +212,49 @@ function checkSponsorOq(state) {
   };
 }
 
-module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq };
+
+/**
+ * Stage dependency-consistency (ROME-PROP-049 / ROME-AX-22, STRICT at P2).
+ * A requirement may depend only on requirements in the SAME or an EARLIER stage.
+ * At intake this is WARN-only (judgement); here at P2 the requirement graph is
+ * mechanical, so it is a recorded P2 fact (`stageConsistency` in PHASES.requires).
+ *
+ * Unstaged projects (no stagePlan) pass trivially.
+ * @param requirements [{ id, stage, dependsOn:[reqId] }] — stage per requirement
+ * Returns { pass, violations:[{requirement, dependsOn, reqStage, depStage}], detail }
+ */
+function checkStageConsistency(state, requirements = []) {
+  if (!state.stagePlan) return { pass: true, violations: [], detail: 'unstaged project — trivially consistent' };
+  const stageOf = Object.fromEntries(requirements.map(r => [r.id, r.stage]));
+  const violations = [];
+  for (const r of requirements) {
+    for (const dep of r.dependsOn || []) {
+      const rs = r.stage, ds = stageOf[dep];
+      if (rs != null && ds != null && ds > rs) {
+        violations.push({ requirement: r.id, dependsOn: dep, reqStage: rs, depStage: ds });
+      }
+    }
+  }
+  return {
+    pass: violations.length === 0,
+    violations,
+    detail: violations.length
+      ? `${violations.length} forward stage dependency(ies): ${violations.map(v => `${v.requirement}(s${v.reqStage})→${v.dependsOn}(s${v.depStage})`).join(', ')} (ROME-AX-22)`
+      : 'no forward stage dependencies',
+  };
+}
+
+/**
+ * Stub ledger status (ROME-PROP-049 / ROME-AX-24). Reports ACTIVE stubs due by
+ * the given increment. The guard enforces expiry at the P5 delivery edge; this
+ * gives the orchestrator/CLI the same fact for reporting.
+ * Returns { pass, expired:[stub], active:[stub] }
+ */
+function checkStubs(state, incrementId) {
+  const stubs = state.stubs || [];
+  const activeStubs = stubs.filter(st => st.status === 'ACTIVE');
+  const expired = activeStubs.filter(st => st.implementBy <= incrementId);
+  return { pass: expired.length === 0, expired, active: activeStubs };
+}
+
+module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs };

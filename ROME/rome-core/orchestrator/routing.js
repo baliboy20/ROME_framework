@@ -96,4 +96,53 @@ function routeFromICR(icr = {}) {
   return { routing: resolveRouting(phases), reverseFirst, notes };
 }
 
-module.exports = { routeFromICR, routeInitial, BROWNFIELD, RELIABILITY, SHAKY };
+
+/**
+ * Validate a Surveyor-produced stage plan (ROME-PROP-049).
+ *
+ * ENFORCED — ROME-AX-23 (dangling presumption): no stage may presume a Core
+ * Subsystem that no same-or-earlier stage provides OR stubs, absent explicit
+ * sponsor authorization on that presumption.
+ *
+ * WARN — forward stage dependencies at intake (sponsor notes + Surveyor
+ * judgement; OQ-2 resolution): reported in `warnings`, not refused here.
+ * ROME-AX-22 turns STRICT at P2 (verification.js#checkStageConsistency).
+ *
+ * stagePlan = { stages: [{ id, inputs:[], provides:[subsystem], presumes:[subsystem|{subsystem, sponsorAuthorized}], dependsOn:[stageId] }],
+ *               decisions: [{ subsystem, stage, decision:'implement'|'stub'|'defer' }] }
+ * Returns { ok, warnings:[string] } or throws on an AX-23 violation.
+ */
+function validateStagePlan(stagePlan = {}) {
+  const stages = stagePlan.stages || [];
+  const warnings = [];
+  const providedBy = {}; // subsystem → earliest providing/stubbing stage id
+  for (const st of stages) {
+    for (const p of st.provides || []) {
+      if (providedBy[p] === undefined || st.id < providedBy[p]) providedBy[p] = st.id;
+    }
+  }
+  for (const d of stagePlan.decisions || []) {
+    if (d.decision === 'stub' || d.decision === 'implement') {
+      if (providedBy[d.subsystem] === undefined || d.stage < providedBy[d.subsystem]) providedBy[d.subsystem] = d.stage;
+    }
+  }
+  const dangling = [];
+  for (const st of stages) {
+    for (const raw of st.presumes || []) {
+      const p = typeof raw === 'string' ? { subsystem: raw } : raw;
+      const at = providedBy[p.subsystem];
+      if ((at === undefined || at > st.id) && p.sponsorAuthorized !== true) {
+        dangling.push(`stage ${st.id} presumes "${p.subsystem}" ` + (at === undefined ? '(provided by no stage)' : `(first provided at stage ${at})`));
+      }
+    }
+    for (const dep of st.dependsOn || []) {
+      if (dep > st.id) warnings.push(`stage ${st.id} declares a forward dependency on stage ${dep} — verify or reorder (STRICT at P2, ROME-AX-22)`);
+    }
+  }
+  if (dangling.length) {
+    throw new Error(`${dangling.length} dangling presumption(s) (ROME-AX-23): ${dangling.join('; ')}. Provide, stub, or sponsor-authorize.`);
+  }
+  return { ok: true, warnings };
+}
+
+module.exports = { routeFromICR, routeInitial, validateStagePlan, BROWNFIELD, RELIABILITY, SHAKY };

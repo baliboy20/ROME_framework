@@ -3,7 +3,7 @@
  * Loads a REAL role (pma) from agents and exercises return processing.
  * Run: node tests/subagent.test.cjs
  */
-const { createState } = require('../state');
+const { createState, active } = require('../state');
 const {
   RETURN_STATUS, loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
   canonicalId,
@@ -65,7 +65,7 @@ console.log('subagent regression:');
 (() => {
   const s = createState({ project: 'demo', frameworkVersion: 'test', timestamp: TS });
   recordDispatch(s, { agent: 'pma-1', role: 'pma', phase: 'P3', timestamp: TS });
-  ok('dispatch recorded RUNNING', s.dispatch[0].status === 'RUNNING');
+  ok('dispatch recorded RUNNING', active(s).dispatch[0].status === 'RUNNING');
   processReturn(s, {
     agent: 'pma-1', role: 'pma', phase: 'P3', status: RETURN_STATUS.COMPLETE,
     summary: 'done', artifacts: [{ path: 'architecture.md' }],
@@ -74,7 +74,7 @@ console.log('subagent regression:');
       { requirement: 'REQ-002', produces: 'api-spec.yaml' },
     ],
   }, TS);
-  ok('dispatch updated to COMPLETE', s.dispatch[0].status === 'COMPLETE');
+  ok('dispatch updated to COMPLETE', active(s).dispatch[0].status === 'COMPLETE');
   ok('traceability deltas merged', s.traceability.deltas.length === 2);
   ok('coverage counts distinct requirements', coverage(s).requirementsCovered === 2);
   ok('audit has DISPATCH + RETURN', s.audit.filter(a => ['DISPATCH', 'RETURN'].includes(a.event)).length === 2);
@@ -89,7 +89,7 @@ console.log('subagent regression:');
     summary: 'cannot proceed', artifacts: [], traceabilityDeltas: [],
     blockers: ['ambiguous requirement REQ-003'],
   }, TS);
-  ok('BLOCKED return records an open blocker', s.blockers.length === 1 && s.blockers[0].status === 'OPEN');
+  ok('BLOCKED return records an open blocker', active(s).blockers.length === 1 && active(s).blockers[0].status === 'OPEN');
 })();
 
 // 6. PROP-042: traceabilityEdges — artifact graph, indexes, three-level coverage
@@ -178,7 +178,7 @@ console.log('subagent regression:');
   const s = createState({ project: 'd6', frameworkVersion: 't', timestamp: TS });
   recordDispatch(s, { agent: 'i1', role: 'talib', phase: 'P1', timestamp: TS });
   processReturn(s, { ...base, agent: 'i1' }, TS);
-  ok('D6: matching return closes its dispatch (not stuck RUNNING)', s.dispatch[0].status === 'COMPLETE');
+  ok('D6: matching return closes its dispatch (not stuck RUNNING)', active(s).dispatch[0].status === 'COMPLETE');
 
   processReturn(s, { ...base, agent: 'ghost' }, TS);
   ok('D6: unmatched return is flagged, not silently dropped', s.audit.some(a => a.event === 'RETURN_UNMATCHED' && a.agent === 'ghost'));

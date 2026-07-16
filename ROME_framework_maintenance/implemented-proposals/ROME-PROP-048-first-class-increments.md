@@ -161,22 +161,12 @@ Each ENFORCED axiom gets a tagged violation test (PROP-044 Part A / check 6b).
 
 ## Open Questions
 
-1. **Schema model — nested (breaking) or wrapper (compatible)?** (a) Restructure
-   `state.json` so the lifecycle fields live under `increments[]` — cleanest, but a
-   breaking change → MAJOR + a migration that wraps existing single-lifecycle states
-   as "increment 0". (b) Keep the current shape as increment 0 and add an increments
-   registry beside it — backward-compatible, messier. *(Recommend: (a) nested with a
-   migration — the clean model is worth one MAJOR; the migration is mechanical and
-   one-time.)*
-2. **Traceability sharing.** Confirm one project-wide store with edges tagged by
-   increment (vs per-increment stores merged on demand). *(Recommend: one shared store,
-   tagged — matches PROP-042 and makes AX-20 trivial.)*
-3. **Cross-increment dependencies.** May increment N's gates read increment N-1's
-   traceability (a new module depending on a delivered one)? *(Recommend: yes,
-   read-only; a sealed increment's ledger is immutable (AX-19).)*
-4. **New-increment intake.** Does `rome-increment` always run Surveyor intake
-   (PROP-047) on the new module's inputs? *(Recommend: yes — a new module is new input;
-   it gets the same characterization + reliability gating as a fresh project.)*
+1. ~~**Schema model?**~~ **RESOLVED (sponsor, 2026-07-17): nested restructure + migration.** Lifecycle fields live under `increments[]`; one shape going forward; `load()` auto-migrates prior single-lifecycle states by wrapping them as increment 0. Breaking format change → **MAJOR (v3.0.0)** with a migration guide (ROME-MIG-002).
+2. ~~**Traceability sharing.**~~ **RESOLVED (sponsor, 2026-07-17): one project-wide store, edges tagged by increment.** AX-20 holds by construction.
+3. ~~**Cross-increment dependencies.**~~ **RESOLVED (sponsor, 2026-07-17): read-only.** A new increment's gates may read sealed increments' traceability and ledgers; sealed records are immutable (AX-19).
+4. ~~**New-increment intake.**~~ **RESOLVED (sponsor, 2026-07-17): yes.** `rome-increment` runs Surveyor intake (PROP-047) on the new module's inputs — same characterization and reliability gating as a fresh project.
+
+**All open questions resolved. Build-ready.**
 
 ---
 
@@ -184,4 +174,5 @@ Each ENFORCED axiom gets a tagged violation test (PROP-044 Part A / check 6b).
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.0 | 2026-07-17T00:00:00Z | Implemented in v3.0.0 "Antoninus" (MAJOR — state schema restructure per OQ-1, auto-migration ROME-MIG-002). All parts shipped with tagged violation tests; companion ONT/LEX changes applied (v1.3). 29 increment/staging regression tests; 313 total pass; fidelity green (6b covers 15 ENFORCED axioms). Moved to implemented-proposals/. |
 | 0.1 | 2026-07-16T00:00:00Z | Initial draft from fob-admin defect D15. Increment as first-class unit: per-increment lifecycle (routing/phases/gates) over a shared project-wide traceability store; `isComplete` per-increment (project never seals); `rome-increment` appends without overwriting. Ontology/lexicon/axiom alignment: ENT-15/16, REL-14..17, AX-19 (append-only preservation), AX-20 (union coverage), AX-21 (no terminal project). Four OQs — the load-bearing one is schema model (nested+migration → MAJOR, vs compatible wrapper). |

@@ -4,19 +4,20 @@
  * enforces it. Pure, no deps.
  */
 
+const { active } = require('./state');
 const { PHASE_BY_ID } = require('./lifecycle');
 const { isComplete, latestVerdict, canAdvance } = require('./guard');
 
 /** Mechanical facts a phase still needs (missing or failed) in state.verification. */
 function outstandingChecks(state, phase) {
   const def = PHASE_BY_ID[phase];
-  const recs = state.verification[phase] || {};
+  const recs = active(state).verification[phase] || {};
   return (def.requires || []).filter(k => !recs[k] || !recs[k].pass);
 }
 
 /** Has the phase owner produced (a COMPLETE return for this phase)? */
 function producedFor(state, phase) {
-  return state.dispatch.some(d => d.phase === phase && d.status === 'COMPLETE');
+  return active(state).dispatch.some(d => d.phase === phase && d.status === 'COMPLETE');
 }
 
 /**
@@ -26,7 +27,7 @@ function producedFor(state, phase) {
  */
 function nextAction(state) {
   if (isComplete(state)) return { done: true, instruction: 'lifecycle complete — deliver' };
-  const phase = state.currentPhase;
+  const phase = active(state).currentPhase;
   const def = PHASE_BY_ID[phase];
   const owner = def.owner;
   const gateRole = def.gate ? def.gate.role : null;

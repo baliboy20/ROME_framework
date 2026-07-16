@@ -11,7 +11,7 @@
  * Pure, headless, no deps. Run: node tests/axioms.test.cjs
  */
 const { STATUS, VERDICT, PHASE_BY_ID, resolveRouting } = require('../lifecycle');
-const { createState } = require('../state');
+const { createState, active } = require('../state');
 const { recordGateVerdict, canAdvance, advance } = require('../guard');
 const { recordVerification } = require('../verification');
 const { recordDispatch } = require('../subagent');
@@ -31,7 +31,7 @@ console.log('axiom regression:');
 // AX-01 — only the current routed phase may advance.
 (() => {
   const s = fresh();
-  s.currentPhase = 'P9-bogus';
+  active(s).currentPhase = 'P9-bogus';
   ok('AX-01 non-current/unrouted phase cannot advance', canAdvance(s).ok === false);
 })();
 
@@ -59,7 +59,7 @@ console.log('axiom regression:');
 (() => {
   const s = fresh(); advance(s, TS); satisfy(s, 'P1');
   recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
-  s.blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', status: 'OPEN' });
+  active(s).blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', status: 'OPEN' });
   ok('AX-05 open blocker prevents advance', canAdvance(s).ok === false);
 })();
 
@@ -100,9 +100,9 @@ console.log('axiom regression:');
 (() => {
   const s = fresh();
   s.traceability.edges.push({ req: 'REQ-1', artifactId: 'c:A', satisfiesHow: 'implements', phase: 'P5', role: 'charlie', agent: 'i1' });
-  s.gateLedger.push({ gate: 'GATE-P5', phase: 'P5', verdict: 'APPROVE', role: 'sarah', timestamp: TS });
+  active(s).gateLedger.push({ gate: 'GATE-P5', phase: 'P5', verdict: 'APPROVE', role: 'sarah', timestamp: TS });
   ok('AX-13 distinct producer/gate roles pass', axioms.checkSeparationOfDuties(s).pass === true);
-  s.gateLedger.push({ gate: 'GATE-P5', phase: 'P5', verdict: 'APPROVE', role: 'charlie', timestamp: TS });
+  active(s).gateLedger.push({ gate: 'GATE-P5', phase: 'P5', verdict: 'APPROVE', role: 'charlie', timestamp: TS });
   ok('AX-13 producer holding gate authority fails', axioms.checkSeparationOfDuties(s).pass === false);
 })();
 
@@ -129,13 +129,13 @@ console.log('axiom regression:');
 // AX-16 — no silent recovery.
 (() => {
   const s = fresh();
-  s.phases.P1 = { status: STATUS.COMPLETE };
-  s.blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', status: 'RESOLVED' });
+  active(s).phases.P1 = { status: STATUS.COMPLETE };
+  active(s).blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', status: 'RESOLVED' });
   ok('AX-16 resolved blocker on complete phase passes', axioms.checkNoSilentRecovery(s).pass === true);
-  s.blockers.push({ id: 'BLK-2', phase: 'P1', description: 'y', status: 'OPEN' });
+  active(s).blockers.push({ id: 'BLK-2', phase: 'P1', description: 'y', status: 'OPEN' });
   ok('AX-16 complete phase over open blocker fails', axioms.checkNoSilentRecovery(s).pass === false);
   const s2 = fresh();
-  s2.blockers.push({ id: 'BLK-3', phase: 'P2', description: 'z', status: 'VANISHED' });
+  active(s2).blockers.push({ id: 'BLK-3', phase: 'P2', description: 'z', status: 'VANISHED' });
   ok('AX-16 unrecorded blocker status fails', axioms.checkNoSilentRecovery(s2).pass === false);
 })();
 

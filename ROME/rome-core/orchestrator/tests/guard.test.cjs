@@ -6,7 +6,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const { STATUS, VERDICT, PHASE_BY_ID } = require('../lifecycle');
-const { createState, save, load } = require('../state');
+const { createState, save, load, active } = require('../state');
 const { recordGateVerdict, canAdvance, advance, isComplete, latestVerdict } = require('../guard');
 const { recordVerification } = require('../verification');
 const { recordDispatch } = require('../subagent');
@@ -24,11 +24,11 @@ console.log('guard regression:');
 // 1. P0 has no gate → advances without a verdict
 (() => {
   const s = fresh();
-  ok('starts at P0 IN_PROGRESS', s.currentPhase === 'P0' && s.phases.P0.status === STATUS.IN_PROGRESS);
+  ok('starts at P0 IN_PROGRESS', active(s).currentPhase === 'P0' && active(s).phases.P0.status === STATUS.IN_PROGRESS);
   ok('P0 (no gate) may advance with no verdict', canAdvance(s).ok === true);
   advance(s, TS);
-  ok('after advance currentPhase is P1', s.currentPhase === 'P1');
-  ok('P0 marked COMPLETE', s.phases.P0.status === STATUS.COMPLETE);
+  ok('after advance currentPhase is P1', active(s).currentPhase === 'P1');
+  ok('P0 marked COMPLETE', active(s).phases.P0.status === STATUS.COMPLETE);
 })();
 
 // 2. Gated phase blocked without a verdict
@@ -52,7 +52,7 @@ console.log('guard regression:');
 (() => {
   const s = fresh(); advance(s, TS); // at P1
   recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.BLOCK, role: 'sarah', timestamp: TS });
-  ok('P1 BLOCKED status after BLOCK verdict', s.phases.P1.status === STATUS.BLOCKED);
+  ok('P1 BLOCKED status after BLOCK verdict', active(s).phases.P1.status === STATUS.BLOCKED);
   ok('cannot advance on BLOCK', canAdvance(s).ok === false);
   recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
   satisfy(s, 'P1');
@@ -65,9 +65,9 @@ console.log('guard regression:');
   const s = fresh(); advance(s, TS); // at P1
   recordGateVerdict(s, { phase: 'P1', verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
   satisfy(s, 'P1');
-  s.blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', owner: 'talib', status: 'OPEN' });
+  active(s).blockers.push({ id: 'BLK-1', phase: 'P1', description: 'x', owner: 'talib', status: 'OPEN' });
   ok('open blocker blocks advance', canAdvance(s).ok === false);
-  s.blockers[0].status = 'RESOLVED';
+  active(s).blockers[0].status = 'RESOLVED';
   ok('resolved blocker unblocks', canAdvance(s).ok === true);
 })();
 
@@ -82,14 +82,14 @@ console.log('guard regression:');
 (() => {
   const s = fresh();
   for (let step = 0; step < 6; step++) {
-    const p = s.currentPhase;
+    const p = active(s).currentPhase;
     const def = PHASE_BY_ID[p];
     if (def.gate) recordGateVerdict(s, { phase: p, verdict: VERDICT.APPROVE, role: 'sarah', timestamp: TS });
     satisfy(s, p); // record the phase's required mechanical facts
     advance(s, TS);
   }
   ok('lifecycle completes after all gates approved + facts', isComplete(s) === true);
-  ok('currentPhase null at completion', s.currentPhase === null);
+  ok('currentPhase null at completion', active(s).currentPhase === null);
 })();
 
 // 9. Mechanical precondition: APPROVE alone is NOT enough (the §3.5 hardening)
@@ -114,8 +114,8 @@ console.log('guard regression:');
   const file = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'rome-')), 'state.json');
   save(file, s, TS);
   const r = load(file);
-  ok('round-trip preserves gateLedger', r.gateLedger.length === 1 && r.gateLedger[0].role === 'sarah');
-  ok('round-trip preserves routing', JSON.stringify(r.routing) === JSON.stringify(s.routing));
+  ok('round-trip preserves gateLedger', active(r).gateLedger.length === 1 && active(r).gateLedger[0].role === 'sarah');
+  ok('round-trip preserves routing', JSON.stringify(active(r).routing) === JSON.stringify(active(s).routing));
 })();
 
 // PROP-045 — verdict–dispatch binding. Role is DERIVED from a completed dispatch.
@@ -132,9 +132,9 @@ console.log('guard regression:');
   // bound form: a completed sarah dispatch for P3 → verdict accepted, role derived
   const s1 = atP3();
   recordDispatch(s1, { agent: 'sarah-p3', role: 'sarah', phase: 'P3', timestamp: TS });
-  const d1 = s1.dispatch.find(x => x.agent === 'sarah-p3'); d1.status = STATUS.COMPLETE;
+  const d1 = active(s1).dispatch.find(x => x.agent === 'sarah-p3'); d1.status = STATUS.COMPLETE;
   recordGateVerdict(s1, { phase: 'P3', verdict: VERDICT.APPROVE, dispatchId: 'sarah-p3', timestamp: TS });
-  const led = s1.gateLedger[s1.gateLedger.length - 1];
+  const led = active(s1).gateLedger[active(s1).gateLedger.length - 1];
   ok('PROP-045 bound verdict derives role from dispatch', led.role === 'sarah' && led.dispatchId === 'sarah-p3');
 
   // unknown dispatch rejected
@@ -144,7 +144,7 @@ console.log('guard regression:');
   // wrong-role dispatch rejected (derived role ≠ gate role)
   const s3 = atP3();
   recordDispatch(s3, { agent: 'pma-p3', role: 'pma', phase: 'P3', timestamp: TS });
-  s3.dispatch.find(x => x.agent === 'pma-p3').status = STATUS.COMPLETE;
+  active(s3).dispatch.find(x => x.agent === 'pma-p3').status = STATUS.COMPLETE;
   ok('PROP-045 wrong-role dispatch rejected', threw(() => recordGateVerdict(s3, { phase: 'P3', verdict: VERDICT.APPROVE, dispatchId: 'pma-p3', timestamp: TS })));
 
   // incomplete dispatch rejected (still RUNNING)
@@ -164,9 +164,9 @@ console.log('guard regression:');
   // record every P5 fact EXCEPT integration → still blocked
   const s = fresh();
   for (const k of PHASE_BY_ID['P5'].requires) if (k !== 'integration') recordVerification(s, 'P5', k, true, null, TS);
-  s.currentPhase = 'P5';
+  active(s).currentPhase = 'P5';
   recordDispatch(s, { agent: 'sarah-p5', role: 'sarah', phase: 'P5', timestamp: TS });
-  s.dispatch.find(x => x.agent === 'sarah-p5').status = STATUS.COMPLETE;
+  active(s).dispatch.find(x => x.agent === 'sarah-p5').status = STATUS.COMPLETE;
   recordGateVerdict(s, { phase: 'P5', verdict: VERDICT.APPROVE, dispatchId: 'sarah-p5', timestamp: TS });
   ok('PROP-046 P5 blocked without integration fact', canAdvance(s).ok === false);
   recordVerification(s, 'P5', 'integration', true, null, TS);

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.2 |
+| **Version** | 1.3 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
@@ -42,6 +42,11 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | ENT-12 | Document (UID-bearing) | ROME-GOV-002 |
 | ENT-13 | Input (raw material a project starts from — doc/idea/codebase/asset) | ROME-LEX-001; PROP-036/047 |
 | ENT-14 | ICR (Input Characterization Record — Surveyor's output) | ROME-STD-AGENT-ROLES (Surveyor); PROP-036 |
+| ENT-15 | Increment (one added unit of work with its own lifecycle over the shared traceability store) | ROME-LEX-001; PROP-048 |
+| ENT-16 | Project (the whole — one or more Increments sharing traceability, audit, provenance) | ROME-LEX-001; PROP-048 |
+| ENT-17 | Stage (sponsor-ordered group of Inputs; stage 0 = foundation, stage 1 = product MVP) | ROME-LEX-001; PROP-049 |
+| ENT-18 | Core Subsystem (cross-cutting capability multiple Stages presume — auth, schema, design system, …) | ROME-LEX-001; PROP-049 |
+| ENT-19 | Stub (sponsor-declared contract-shaped stand-in with an `implementBy` due Stage) | ROME-LEX-001; PROP-049 |
 
 **Deprecation note:** "Robot" is not an entity. ROME-STD-AGENT-ROLES §1 retires it in favour of **Role** + **Instance**. It survives in the lexicon only as a legacy alias, and in filenames (`ROBOT.md`) which are deliberately not renamed.
 
@@ -64,6 +69,14 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | REL-11 | Surveyor `characterizes` Input → ICR | Surveyor(1) → Input(N) → ICR(1) (P0.5; PROP-036/047) |
 | REL-12 | Orchestrator `routes-from` ICR | routing derives from ICR(1) (`routeFromICR`; PROP-047) |
 | REL-13 | Sponsor `declares-reliability-of` Input | Sponsor(1) → Input(N) (`**Status:**` markers; PROP-047) |
+| REL-14 | Project `contains` Increment | Project(1) → Increment(N) — append-only (PROP-048) |
+| REL-15 | Increment `has` Lifecycle (routing/phases/gates/verification) | Increment(1) → Lifecycle(1) |
+| REL-16 | Increment `shares` Traceability store | Increment(N) → Traceability(1) — project-wide, edges tagged by increment |
+| REL-17 | Requirement `belongs-to` Increment | Requirement(N) → Increment(1) |
+| REL-18 | Stage `contains` Input | Stage(1) → Input(N) (PROP-049) |
+| REL-19 | Increment `builds` Stage | Increment(1) → Stage(0..1) — unstaged increments permitted |
+| REL-20 | Stage `provides/presumes` Core Subsystem | N ↔ M — basis of AX-23 |
+| REL-21 | Stub `stands-in-for` Core Subsystem/Contract `until` Stage | Stub(1) → Subsystem(1), due Stage(1) |
 
 ---
 
@@ -84,8 +97,10 @@ Each axiom carries **enforcement provenance**:
 ### Tier 1 — ENFORCED
 
 AX-01..08 are the gate-time rules harvested from ROME-STD-GATE §3 (`guard.js`).
-AX-17..18 are routing-time invariants (`routing.js`, PROP-047) — enforced the same
-way (deterministic refusal), before P1.
+AX-17..18 are routing-time invariants (`routing.js`, PROP-047). AX-19..24 are the
+increment/staging invariants (PROP-048/049) — same enforcement style throughout:
+deterministic refusal. (AX-20 is CHECKED, listed here to keep the numbering
+contiguous with its siblings.)
 
 | ID | Axiom | Provenance |
 |----|-------|------------|
@@ -99,6 +114,12 @@ way (deterministic refusal), before P1.
 | AX-08 | A verdict is insufficient alone: every mechanical fact the phase declares in `requires` must be recorded AND passing in `state.verification[phase]` before advance. An LLM gate role cannot approve past an unrun check. | ENFORCED (`guard.js#canAdvance` over `lifecycle.js` `PHASES[].requires`; STD-GATE §3 r8) |
 | AX-17 | A project routes only on a Surveyor-produced ICR whose `qualityVerdict` is `SUFFICIENT`, over a non-empty input set. Absent or `INSUFFICIENT` quality blocks routing (`rome-start` no longer fabricates the verdict). | ENFORCED (`routing.js#routeFromICR`; PROP-047). Routing-time, not gate-time. |
 | AX-18 | An Input the sponsor marked shaky (`PROPOSED` / `RECONSTRUCTED` / `UNDEFINED`) routes into requirements only with `sponsorAuthorized: true`. | ENFORCED (`routing.js#routeFromICR`; PROP-047). The sponsor's own reliability call, surfaced not overridden. |
+| AX-19 | Adding an Increment preserves every prior Increment's gate ledger, traceability, and audit — append-only, never overwrite; a sealed Increment's records are immutable. | ENFORCED (`state.js#sealActive`/`beginIncrement` append-only by construction; `guard.js#recordGateVerdict`/`canAdvance` refuse sealed increments; PROP-048) |
+| AX-20 | Whole-project requirement coverage is the union across all Increments — one shared traceability store, edges tagged by producing increment. | CHECKED (`verification.js#checkTraceability` over the shared store; PROP-048) |
+| AX-21 | A Project has no terminal state: `isComplete` is per-Increment, and a new Increment may always begin once the prior is sealed. | ENFORCED (`guard.js#isComplete`, `state.js#beginIncrement`; PROP-048) |
+| AX-22 | On a staged project, no requirement depends on a requirement in a later Stage. WARN at intake (judgement); STRICT at P2 (`stageConsistency` required fact over the mechanical requirement graph). | ENFORCED (`verification.js#checkStageConsistency` + `guard.js#canAdvance` P2 requires; PROP-049) |
+| AX-23 | No Stage presumes a Core Subsystem that no same-or-earlier Stage provides or stubs, absent recorded sponsor authorization. | ENFORCED (`routing.js#validateStagePlan`; PROP-049) |
+| AX-24 | Every Stub is sponsor-declared with an `implementBy` Stage; an ACTIVE stub past due blocks the P5 delivery edge — no silent stubs. | ENFORCED (`guard.js#canAdvance` over `state.stubs[]`; `verification.js#checkStubs`; PROP-049) |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
 
@@ -144,6 +165,7 @@ way (deterministic refusal), before P1.
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 implemented (v3.0.0). Added ENT-15..19 (Increment, Project, Stage, Core Subsystem, Stub), REL-14..21, and AX-19..24: AX-19 append-only preservation, AX-20 union coverage (CHECKED), AX-21 no terminal project, AX-22 stage dependency-consistency, AX-23 no dangling presumption, AX-24 no silent stubs. All ENFORCED axioms carry tagged violation tests (increments.test.cjs); check 6b extended. |
 | 1.2 | 2026-07-16T00:00:00Z | PROP-047 implemented (v2.8.0). Added ENT-13 (Input), ENT-14 (ICR); REL-11 (Surveyor characterizes Input→ICR), REL-12 (Orchestrator routes-from ICR), REL-13 (Sponsor declares-reliability-of Input); AX-17 (route only on SUFFICIENT ICR over non-empty inputs — converts routing.js's dead guard to a live invariant) and AX-18 (shaky inputs route only with sponsor authorization), both ENFORCED via `routing.js#routeFromICR`, both with tagged tests. Check 6b extended to cover routing-time ENFORCED axioms. |
 | 1.1 | 2026-07-16T00:00:00Z | PROP-044 implemented (v2.5.0). ASSERTED tier emptied: AX-12..16 promoted to CHECKED via `axioms.js` (AX-13 role-level per OQ-2; AX-16 CHECKED per OQ-1). AX-11 deepened — check 6 now also asserts each ENFORCED axiom keeps a tagged violation test in `tests/axioms.test.cjs` (behavioural provenance, PROP-044 Part A). Scope limits stated inline. |
 | 1.0 | 2026-07-15T00:00:00Z | Initial issue per ROME-PROP-043. Entity set (12), relation set (10), axiom set (16) across three provenance tiers. Corrections applied during implementation against verified code: AX-06 restated (the guard enforces one-step-along-routing and rejects reordering, but permits omission of optional phases — the drafted "phases cannot be skipped" was not a guarantee the framework makes); provenance cites STD-GATE §3 rule numbers + `<module>.js#<function>` rather than guard.js line IDs, which do not exist and whose nearest numbering conflicts with the standard's; AX-08 fact table taken from `lifecycle.js` per ROME-STD-GATE v1.1. Added AX-11 (provenance existence, fidelity check 6) — drafted axiom count 15 → 16 with renumbering below AX-10. |

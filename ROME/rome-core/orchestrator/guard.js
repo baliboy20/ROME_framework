@@ -4,6 +4,9 @@
  * decides what is ALLOWED. Quality guarantees hold even if the orchestrator errs.
  *
  * Pure functions over a state object (see state.js). No I/O, no deps.
+ * PROP-048: lifecycle fields live on the ACTIVE increment (state.js#active);
+ * sealed increments are immutable (ROME-AX-19) and the guard refuses to touch
+ * them. PROP-049: stub expiry (ROME-AX-24) is enforced at the P5 delivery edge.
  *
  * Enforced invariants:
  *  1. Only the current phase may be advanced.
@@ -14,6 +17,7 @@
  */
 
 const { STATUS, VERDICT, PHASE_BY_ID } = require('./lifecycle');
+const { active } = require('./state');
 
 function phaseDef(phaseId) {
   const def = PHASE_BY_ID[phaseId];
@@ -25,8 +29,9 @@ function phaseDef(phaseId) {
 function latestVerdict(state, phaseId) {
   const def = phaseDef(phaseId);
   if (!def.gate) return null;
-  for (let i = state.gateLedger.length - 1; i >= 0; i--) {
-    const e = state.gateLedger[i];
+  const inc = active(state);
+  for (let i = inc.gateLedger.length - 1; i >= 0; i--) {
+    const e = inc.gateLedger[i];
     if (e.phase === phaseId && e.gate === def.gate.id) return e;
   }
   return null;
@@ -55,12 +60,14 @@ function recordGateVerdict(state, { phase, verdict, role, dispatchId, timestamp,
     throw new Error(`Invalid verdict "${verdict}" (expected APPROVE|BLOCK)`);
   }
   if (!timestamp) throw new Error('recordGateVerdict: timestamp required');
+  const inc = active(state);
+  if (inc.sealed) throw new Error(`Increment ${inc.id} is sealed — its ledger is immutable (ROME-AX-19)`);
 
   let resolvedRole = role;
   let boundDispatch = null;
   if (dispatchId) {
     // Bound form: derive the role from a real, completed gate-role dispatch.
-    const d = (state.dispatch || []).find(x => x.agent === dispatchId);
+    const d = (inc.dispatch || []).find(x => x.agent === dispatchId);
     if (!d) throw new Error(`Verdict cites unknown dispatch "${dispatchId}"`);
     if (d.phase !== phase) throw new Error(`Dispatch "${dispatchId}" is for ${d.phase}, not ${phase}`);
     if (d.status !== STATUS.COMPLETE) throw new Error(`Gate dispatch "${dispatchId}" has not completed (status ${d.status})`);
@@ -77,12 +84,12 @@ function recordGateVerdict(state, { phase, verdict, role, dispatchId, timestamp,
       `(self-approval / wrong-approver blocked).`
     );
   }
-  state.gateLedger.push({ gate: def.gate.id, phase, verdict, role: resolvedRole, ...(boundDispatch ? { dispatchId: boundDispatch } : {}), timestamp, ...(note ? { note } : {}) });
+  inc.gateLedger.push({ gate: def.gate.id, phase, verdict, role: resolvedRole, ...(boundDispatch ? { dispatchId: boundDispatch } : {}), timestamp, ...(note ? { note } : {}) });
   // reflect a BLOCK in phase status immediately
-  if (verdict === VERDICT.BLOCK && state.phases[phase]) {
-    state.phases[phase].status = STATUS.BLOCKED;
-  } else if (verdict === VERDICT.APPROVE && state.phases[phase]) {
-    state.phases[phase].status = STATUS.GATE;
+  if (verdict === VERDICT.BLOCK && inc.phases[phase]) {
+    inc.phases[phase].status = STATUS.BLOCKED;
+  } else if (verdict === VERDICT.APPROVE && inc.phases[phase]) {
+    inc.phases[phase].status = STATUS.GATE;
   }
   return state;
 }
@@ -92,15 +99,17 @@ function recordGateVerdict(state, { phase, verdict, role, dispatchId, timestamp,
  * Does not mutate.
  */
 function canAdvance(state) {
-  const phaseId = state.currentPhase;
-  if (!phaseId) return { ok: false, reason: 'No current phase (lifecycle complete?)' };
-  if (!state.routing.includes(phaseId)) {
+  const inc = active(state);
+  const phaseId = inc.currentPhase;
+  if (inc.sealed) return { ok: false, reason: `Increment ${inc.id} is sealed (ROME-AX-19)` };
+  if (!phaseId) return { ok: false, reason: 'No current phase (increment complete?)' };
+  if (!inc.routing.includes(phaseId)) {
     return { ok: false, reason: `Current phase ${phaseId} not in routing` };
   }
   const def = phaseDef(phaseId);
 
   // open blockers on this phase prevent advance
-  const openBlockers = (state.blockers || []).filter(
+  const openBlockers = (inc.blockers || []).filter(
     b => b.phase === phaseId && b.status !== 'RESOLVED'
   );
   if (openBlockers.length) {
@@ -111,9 +120,20 @@ function canAdvance(state) {
   // required facts must be recorded AND passing (PROP-035 §3.5 hardening).
   // This prevents an LLM gate role from APPROVING without the checks having run.
   for (const key of def.requires || []) {
-    const rec = (state.verification[phaseId] || {})[key];
+    const rec = (inc.verification[phaseId] || {})[key];
     if (!rec) return { ok: false, reason: `${phaseId}: missing mechanical check "${key}" (no verification record)` };
     if (!rec.pass) return { ok: false, reason: `${phaseId}: mechanical check "${key}" FAILED${rec.detail ? ' — ' + rec.detail : ''}` };
+  }
+
+  // PROP-049 / ROME-AX-24 (no silent stubs): at the P5 delivery edge, any stub
+  // whose implementBy increment is due (<= this increment) and still ACTIVE
+  // blocks advance. Undeclared stubs are a generation defect the contracts and
+  // integration facts own; DECLARED stubs expire here.
+  if (phaseId === 'P5') {
+    const expired = (state.stubs || []).filter(st => st.status === 'ACTIVE' && st.implementBy <= inc.id);
+    if (expired.length) {
+      return { ok: false, reason: `${expired.length} expired stub(s) due by increment ${inc.id}: ${expired.map(st => st.subsystem).join(', ')} (ROME-AX-24)` };
+    }
   }
 
   if (def.gate) {
@@ -139,23 +159,29 @@ function advance(state, timestamp) {
   if (!decision.ok) throw new Error(`Advance BLOCKED: ${decision.reason}`);
   if (!timestamp) throw new Error('advance: timestamp required');
 
-  const i = state.routing.indexOf(state.currentPhase);
-  state.phases[state.currentPhase].status = STATUS.COMPLETE;
-  const next = state.routing[i + 1];
+  const inc = active(state);
+  const i = inc.routing.indexOf(inc.currentPhase);
+  inc.phases[inc.currentPhase].status = STATUS.COMPLETE;
+  const next = inc.routing[i + 1];
   if (next) {
-    state.currentPhase = next;
-    state.phases[next].status = STATUS.IN_PROGRESS;
+    inc.currentPhase = next;
+    inc.phases[next].status = STATUS.IN_PROGRESS;
   } else {
-    state.currentPhase = null; // lifecycle complete
+    inc.currentPhase = null; // increment complete — the PROJECT never seals (ROME-AX-21)
   }
   state.updatedAt = timestamp;
   return state;
 }
 
-/** True when all routed phases are COMPLETE. */
+/**
+ * True when the ACTIVE increment's routed phases are all COMPLETE.
+ * Per-increment by definition (ROME-AX-21): a Project has no terminal state —
+ * beginIncrement (state.js) may always append the next increment.
+ */
 function isComplete(state) {
-  return state.currentPhase === null &&
-    state.routing.every(id => state.phases[id] && state.phases[id].status === STATUS.COMPLETE);
+  const inc = active(state);
+  return inc.currentPhase === null &&
+    inc.routing.every(id => inc.phases[id] && inc.phases[id].status === STATUS.COMPLETE);
 }
 
 module.exports = { latestVerdict, recordGateVerdict, canAdvance, advance, isComplete };

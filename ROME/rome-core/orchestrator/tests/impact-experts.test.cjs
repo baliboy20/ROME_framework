@@ -1,7 +1,7 @@
 /** Impact analysis (040 E) + expert-pack selection (040 F). Run: node tests/impact-experts.test.cjs */
 const { computeImpact, downstreamClosure, markStale, applyChange, resolveDeferral } = require('../impact');
 const { selectPacks, enforcedRules, loadPacks } = require('../experts');
-const { createState } = require('../state');
+const { createState, active } = require('../state');
 const { recordDispatch, processReturn } = require('../subagent');
 
 let passed = 0, failed = 0;
@@ -115,12 +115,12 @@ const deltas = [{ requirement: 'REQ-001', component: 'billing' }, { requirement:
     agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [],
     traceabilityEdges: [{ req: 'REQ-005', artifactId: 'FleetSvc', component: 'backend', satisfiesHow: 'implements', location: 'f.dart:1' }],
   }, TS);
-  s.oq.deferrals.push({ oqId: 'OQ-003', provisional: true, sponsorAuthorized: true, affectedReqs: ['REQ-005'] });
+  active(s).oq.deferrals.push({ oqId: 'OQ-003', provisional: true, sponsorAuthorized: true, affectedReqs: ['REQ-005'] });
 
   const r = resolveDeferral(s, 'OQ-003');
   ok('resolveDeferral: reports resolved', r.resolved === true);
   ok('resolveDeferral: returns affected reqs', eq(r.affectedReqs, ['REQ-005']));
-  ok('resolveDeferral: deferral marked resolved + no longer provisional', s.oq.deferrals[0].resolved === true && s.oq.deferrals[0].provisional === false);
+  ok('resolveDeferral: deferral marked resolved + no longer provisional', active(s).oq.deferrals[0].resolved === true && active(s).oq.deferrals[0].provisional === false);
   ok('resolveDeferral: affected REQ-005 edges staled for re-gen', s.traceability.edges.filter(e => e.req === 'REQ-005').every(e => e.stale));
   ok('resolveDeferral: unknown OQ → not resolved', resolveDeferral(s, 'OQ-999').resolved === false);
 })();
