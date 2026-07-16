@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-001 |
-| **Version** | 1.0 |
-| **Date** | 2025-11-21T00:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -139,6 +139,33 @@ Per ROME-PRIN-001 (LLM Optimization):
 - **Structured**: Use lists, tables over prose where appropriate
 - **No filler**: Avoid conversational padding, decorative text
 
+### Proposal Accessibility (applies to ROME-PROP-### documents)
+
+Proposals have two audiences — the sponsor (a human, often non-engineer, who
+approves the work) and the agents (who implement it). Serve both:
+
+- **Plain-language on-ramp (REQUIRED).** Every proposal opens with an `## In Plain
+  Terms` section: a jargon-free, plain-English summary a non-engineer can follow,
+  explaining the problem and the fix in everyday words. ROME-PROP-047 is the
+  reference example.
+- **This does NOT loosen terseness (ROME-PRIN-001).** The on-ramp is a bounded
+  section, not a licence for padding. The technical body stays terse and
+  high-signal. Accessibility is achieved by *adding a plain summary*, never by
+  diluting the precise sections.
+- **Simplify without distorting.** The plain section MUST be technically and
+  semantically correct and MUST NOT contradict the technical body. It simplifies;
+  it never misstates.
+- **Keep framework vocabulary in the body.** Retain the framework's defined terms,
+  Role names, and UIDs in the technical sections (removing them breaks
+  framework-consistency). The plain section may gloss a term on first use; it must
+  not redefine or rename it.
+- **Align with the ontology, lexicon, and axioms wherever possible.** A proposal
+  that introduces or changes a term, entity, relation, or invariant MUST reconcile
+  with ROME-LEX-001 (define new terms), ROME-ONT-001 (register new entities /
+  relations / axioms), and the axiom set — as companion changes applied on
+  implementation (the ROME-PROP-043 pattern). Cite `ROME-AX-###` where a proposal's
+  guarantee is or becomes an axiom.
+
 ### Markdown Conventions
 
 - **Bold** for key terms on first use
@@ -266,3 +293,4 @@ Before document approval:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0 | 2025-11-21T00:00:00Z | Initial document creation |
+| 1.1 | 2026-07-16T00:00:00Z | Added Proposal Accessibility convention: ROME-PROP-### docs open with a jargon-free `In Plain Terms` on-ramp (sponsor audience) while the technical body stays terse per ROME-PRIN-001; plain section must be correct, non-distorting, and retain framework vocabulary; proposals align new terms/entities/invariants with ROME-LEX-001, ROME-ONT-001, and the axiom set (PROP-043 pattern). Reference example: ROME-PROP-047. |
