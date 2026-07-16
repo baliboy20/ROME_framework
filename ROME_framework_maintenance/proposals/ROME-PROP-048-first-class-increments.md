@@ -10,6 +10,7 @@
 | **Origin** | fob-admin live run, defect D15 — `FRAMEWORK-DEFECTS-2026-07-15.md` |
 | **Targets** | `rome-core/orchestrator/state.js`, `guard.js` (`isComplete`), new `rome-increment` command, `driver.js`, `docs/foundation/lexicon.md`, `docs/foundation/ontology.md`, `GETTING-STARTED.md` |
 | **Builds On** | ROME-PROP-035 (state.json), ROME-PROP-042 (artifact-graph traceability), ROME-PROP-047 (Surveyor intake), ROME-PROP-043/044 (ontology/axioms) |
+| **Companion To** | ROME-PROP-049 (Input Staging & Build-Out Decisions) — staging is the intended front door that decides increment order, foundation (stage 0), and the MVP slice (stage 1); this proposal supplies the execution mechanics |
 
 ---
 
