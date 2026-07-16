@@ -107,11 +107,16 @@ function validateReturn(ret) {
   return errs;
 }
 
-/** Record a dispatch (sub-agent launched). Mutates + returns state. */
-function recordDispatch(state, { agent, role, phase, timestamp }) {
+/**
+ * Record a dispatch (sub-agent launched). Mutates + returns state.
+ * `spawnedBy` defaults to the orchestrator role — recordDispatch IS the
+ * orchestrator's spawn action (ROME-AX-14). Pass it explicitly only to record a
+ * non-orchestrator spawner, which the AX-14 check will then flag.
+ */
+function recordDispatch(state, { agent, role, phase, timestamp, spawnedBy = 'roma' }) {
   if (!agent || !role || !phase || !timestamp) throw new Error('recordDispatch: agent, role, phase, timestamp required');
-  state.dispatch.push({ agent, role, phase, status: 'RUNNING', timestamp });
-  state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp });
+  state.dispatch.push({ agent, role, phase, status: 'RUNNING', timestamp, spawnedBy });
+  state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp, spawnedBy });
   return state;
 }
 

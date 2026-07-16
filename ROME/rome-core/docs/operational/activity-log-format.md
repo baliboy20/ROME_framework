@@ -230,7 +230,10 @@ started:"2025-12-03"    # Timestamp should not be quoted
 | Attribute | Type | Required? | Example | Description |
 |-----------|------|-----------|---------|-------------|
 | `status` | Enum | Yes | `status:IN_PROGRESS` | Entry current status |
-| `robot` | String | Yes | `robot:ashok` | Robot identifier |
+| `role` | String | Yes | `role:ashok` | Producing Role (ROME-STD-AGENT-ROLES). Canonical. |
+| `robot` | String | No | `robot:ashok` | **Legacy alias for `role`.** Deprecated (ROME-STD-AGENT-ROLES §1 retired "Robot" → Role/Instance). Parsers accept it as a synonym for `role`; new entries SHOULD emit `role`. |
+
+> **`role` vs `robot` (PROP-044 Part C).** `role` is canonical; `robot` is retained as a backward-compatible alias so existing logs and parsers keep working. Optionally pair `role` with `agent:<instance-id>` to distinguish the Role from the specific Instance filling it (the orchestrator state already records both). A hard rename is deferred to a future MAJOR release.
 
 #### Status Values by Entry Type
 

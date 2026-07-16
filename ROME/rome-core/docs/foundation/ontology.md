@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.0 |
-| **Date** | 2026-07-15T00:00:00Z |
+| **Version** | 1.1 |
+| **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
 | **Author** | Archie |
@@ -72,9 +72,9 @@ Each axiom carries **enforcement provenance**:
 |------|---------|
 | `ENFORCED` | Deterministic code refuses the violation. Cites `<module>.js#<function>`. |
 | `CHECKED` | A script detects the violation after the fact. Cites the check. |
-| `ASSERTED` | No mechanical check. Intent only — **not a guarantee**. |
+| `ASSERTED` | No mechanical check. Intent only — **not a guarantee**. (Empty as of PROP-044.) |
 
-**Provenance is verified.** Fidelity check 6 asserts every cited module and function still exists. It does **not** verify the cited code still implements the axiom — that requires a test, and is the open work named in PROP-043 Non-Goals. Treat `ENFORCED` as "a named function is responsible", not "proven correct today".
+**Provenance is verified, at two levels.** Fidelity check 6 asserts every cited module and function still exists, **and** (PROP-044 Part A) that every ENFORCED axiom retains a violation test tagged with its ID in `tests/axioms.test.cjs`. This closes the "function exists but no longer enforces" gap to "a violation test guards it". It still is not a proof of correctness — a rewrite that kept the test green but broke the behaviour would pass — but an axiom cannot silently lose its enforcement without a test failing.
 
 ### Tier 1 — ENFORCED
 
@@ -110,19 +110,18 @@ Harvested from the eight deterministic rules in ROME-STD-GATE §3.
 |----|-------|------------|
 | AX-09 | Every Document has exactly one UID, stable across revisions, resolvable in the UID registry. | CHECKED (fidelity check 1 + 2) |
 | AX-10 | Every generated Artifact traces to ≥1 Requirement; at P5 every in-scope Requirement traces to code AND test. | CHECKED (`verification.js#checkTraceability`) — promotes to ENFORCED at a gate via AX-08 |
-| AX-11 | Every axiom's cited enforcement module and function exists. | CHECKED (fidelity check 6) |
+| AX-11 | Every axiom's cited enforcement module and function exists, and every ENFORCED axiom retains a tagged violation test. | CHECKED (fidelity check 6) |
+| AX-12 | Every Instance fills exactly one Role for its lifetime; roles do not blend within an instance. | CHECKED (`axioms.js#checkOneRolePerInstance`) |
+| AX-13 | Separation of duties at Role level: a producing Role does not also hold gate authority in the same phase. | CHECKED (`axioms.js#checkSeparationOfDuties`); gate-verdict portion also ENFORCED via AX-03 |
+| AX-14 | Every Instance is spawned by the Orchestrator; no instance spawns peers. | CHECKED (`axioms.js#checkOrchestratorSpawns` over `dispatch[].spawnedBy`) |
+| AX-15 | P5 introduces no requirement absent upstream: every requirement on a P5 `implements` edge appears on an upstream (P0–P4) edge. | CHECKED (`axioms.js#checkP5NoNewRequirements`); contract-drift portion also ENFORCED via AX-08 `contracts` |
+| AX-16 | No silent recovery (EP-4): a phase does not complete over a non-terminal blocker, and every blocker is in a recorded lifecycle state. | CHECKED (`axioms.js#checkNoSilentRecovery`) |
+
+**Scope of AX-13..16 (honest limits).** AX-13 binds at Role level (sponsor decision, PROP-044 OQ-2), not instance level. AX-14's spawner is `dispatch[].spawnedBy`, stamped by `recordDispatch` — it catches a dispatch constructed with a non-orchestrator spawner, not an out-of-band spawn that never calls `recordDispatch`. AX-16 covers the blocker lifecycle; uniform retry/escalation *audit-event* coverage is a later extension. None of AX-12..16 is ENFORCED — the guard does not refuse advance on their basis (AX-16 target = CHECKED, PROP-044 OQ-1). Surfaced by `guard-cli.cjs axioms`.
 
 ### Tier 3 — ASSERTED (enforcement backlog)
 
-**These are intentions, not guarantees.** Nothing prevents their violation.
-
-| ID | Axiom | Provenance |
-|----|-------|------------|
-| AX-12 | Every Instance fills exactly one Role for its lifetime; roles do not blend within an instance. | ASSERTED |
-| AX-13 | Separation of duties: for any artifact, producer role ≠ validator role ≠ gate-authority role. | ASSERTED (gate-authority portion ENFORCED via AX-03) |
-| AX-14 | Every Instance is spawned and coordinated by the Orchestrator; no instance self-transitions phases or spawns peers. | ASSERTED |
-| AX-15 | P5 output derives strictly from P4 outputs + SPECs; P5 introduces no requirement absent upstream. | ASSERTED (contract-drift portion ENFORCED via AX-08 `contracts`) |
-| AX-16 | All BLOCKs, retries, and escalations are recorded; no silent recovery (EP-4); exhaustion escalates to the Sponsor. | ASSERTED |
+*Empty as of PROP-044.* All previously-asserted axioms (AX-12..16) are now CHECKED. New invariants added here in future must state their provenance tier explicitly.
 
 ---
 
@@ -136,4 +135,5 @@ Harvested from the eight deterministic rules in ROME-STD-GATE §3.
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.1 | 2026-07-16T00:00:00Z | PROP-044 implemented (v2.5.0). ASSERTED tier emptied: AX-12..16 promoted to CHECKED via `axioms.js` (AX-13 role-level per OQ-2; AX-16 CHECKED per OQ-1). AX-11 deepened — check 6 now also asserts each ENFORCED axiom keeps a tagged violation test in `tests/axioms.test.cjs` (behavioural provenance, PROP-044 Part A). Scope limits stated inline. |
 | 1.0 | 2026-07-15T00:00:00Z | Initial issue per ROME-PROP-043. Entity set (12), relation set (10), axiom set (16) across three provenance tiers. Corrections applied during implementation against verified code: AX-06 restated (the guard enforces one-step-along-routing and rejects reordering, but permits omission of optional phases — the drafted "phases cannot be skipped" was not a guarantee the framework makes); provenance cites STD-GATE §3 rule numbers + `<module>.js#<function>` rather than guard.js line IDs, which do not exist and whose nearest numbering conflicts with the standard's; AX-08 fact table taken from `lifecycle.js` per ROME-STD-GATE v1.1. Added AX-11 (provenance existence, fidelity check 6) — drafted axiom count 15 → 16 with renumbering below AX-10. |

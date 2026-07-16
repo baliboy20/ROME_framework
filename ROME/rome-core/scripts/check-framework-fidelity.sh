@@ -240,10 +240,13 @@ echo ""
 
 # ─────────────────────────────────────────────────────────
 # CHECK 6: Axiom Enforcement Provenance (ROME-PROP-043 / ROME-AX-11)
-# Every module.js#function cited by an axiom must still exist.
-# Catches renames and deletions — the realistic decay path for an ENFORCED
-# claim. Does NOT verify the code still implements the axiom (needs a test).
-# Runs in both quick and full mode — cheap and load-bearing.
+# 6a: every module.js#function cited by an axiom must still exist (catches
+#     renames and deletions).
+# 6b: every ENFORCED axiom (AX-01..08) must retain a violation test tagged with
+#     its ID in tests/axioms.test.cjs (PROP-044 Part A — behavioural provenance:
+#     an axiom cannot silently lose its enforcement without a test failing).
+# Neither proves the code is correct — but together they close the "exists but
+# no longer enforces" gap. Runs in both quick and full mode.
 # ─────────────────────────────────────────────────────────
 bold "Check 6: Axiom Enforcement Provenance"
 
@@ -277,7 +280,24 @@ else
 
     if [ "$BAD_PROV" -eq 0 ]; then
       CITE_COUNT=$(echo "$CITATIONS" | grep -c . || true)
-      pass "All $CITE_COUNT axiom provenance citations resolve"
+      pass "6a: all $CITE_COUNT axiom provenance citations resolve"
+    fi
+  fi
+
+  # 6b: ENFORCED axioms must each retain a tagged violation test.
+  AXIOM_TESTS="$ROME_CORE/orchestrator/tests/axioms.test.cjs"
+  if [ ! -f "$AXIOM_TESTS" ]; then
+    fail "6b: axioms.test.cjs not found — ENFORCED axioms have no behavioural provenance"
+  else
+    MISSING_TEST=0
+    for AX in AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08; do
+      if ! grep -q "$AX" "$AXIOM_TESTS" 2>/dev/null; then
+        fail "6b: ENFORCED axiom $AX has no tagged test in axioms.test.cjs"
+        MISSING_TEST=$((MISSING_TEST + 1))
+      fi
+    done
+    if [ "$MISSING_TEST" -eq 0 ]; then
+      pass "6b: all 8 ENFORCED axioms retain a tagged violation test"
     fi
   fi
 fi

@@ -14,12 +14,13 @@
  */
 const { load, save } = require('./state');
 const guard = require('./guard');
+const axioms = require('./axioms');
 
 function arg(flag) { const i = process.argv.indexOf(flag); return i >= 0 ? process.argv[i + 1] : undefined; }
 
 const cmd = process.argv[2];
 const file = process.argv[3];
-if (!cmd || !file) { console.error('usage: guard-cli.cjs <check|verdict|advance> <state.json> [opts]'); process.exit(2); }
+if (!cmd || !file) { console.error('usage: guard-cli.cjs <check|verdict|advance|trace|axioms> <state.json> [opts]'); process.exit(2); }
 
 try {
   const state = load(file);
@@ -60,6 +61,17 @@ try {
       console.log(`${reqId}: artifacts = ${byReq[reqId].join(', ')} (no location links yet)`);
     }
     process.exit(0);
+  }
+  if (cmd === 'axioms') {
+    // CHECKED axioms (ROME-PROP-044 / AX-12..16). Detect-after-the-fact, not a
+    // gate precondition — reports violations without blocking.
+    const { pass, results } = axioms.checkAll(state);
+    for (const r of results) {
+      if (r.pass) { console.log(`  ok   ${r.axiom}`); }
+      else { for (const v of r.violations) console.log(`  FAIL ${r.axiom}: ${v}`); }
+    }
+    console.log(pass ? 'ALL AXIOMS HOLD' : 'AXIOM VIOLATION(S) FOUND');
+    process.exit(pass ? 0 : 1);
   }
   console.error(`unknown command: ${cmd}`); process.exit(2);
 } catch (e) {

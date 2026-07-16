@@ -4,7 +4,9 @@
 |-------|-------|
 | **UID** | ROME-PROP-044 |
 | **Title** | Axiom Enforcement & Role-Model Alignment — Promote ASSERTED Invariants to CHECKED/ENFORCED, Deepen Provenance from Existence to Behaviour, Align the `robot` Data Field |
-| **Status** | Draft |
+| **Status** | Implemented |
+| **Implemented In** | v2.5.0 "Titus" |
+| **Implemented By** | `orchestrator/axioms.js` (AX-12..16), `tests/axioms.test.cjs`, `guard-cli.cjs axioms`, `subagent.js#recordDispatch` (`spawnedBy`), `check-framework-fidelity.sh` check 6b, `ontology.md` v1.1, `activity-log-format.md` (role/robot alias) |
 | **Author** | Archie |
 | **Created** | 2026-07-16T00:00:00Z |
 | **Targets** | `rome-core/orchestrator/` (new `axioms.js` checks + small `state.js`/`subagent.js` additions), `check-framework-fidelity.sh` (check 6 deepening), `docs/foundation/ontology.md` (provenance updates), `docs/operational/activity-log-format.md` + agent modes (field alignment) |
@@ -103,9 +105,25 @@ AX-13 and AX-15 remain **partially ENFORCED** at their gates via AX-03 and AX-08
 
 ## Open Questions
 
-1. **AX-16 target — CHECKED or ENFORCED?** Recording escalations is CHECKED. Making the guard *refuse advance* when the escalation trail is incomplete is ENFORCED but risks blocking legitimate flows on audit-completeness grounds. *(Recommend: CHECKED first; consider ENFORCED once the audit vocabulary has soaked.)*
-2. **AX-13 scope of "producer".** Does separation-of-duties bind at the artifact level (producing agent ≠ validating agent) or the role level (producing role ≠ validating role)? The lexicon permits one Role, many Instances. *(Recommend: role-level, matching AX-03's gate-authority rule; artifact-level as a stricter opt-in.)*
-3. **`robot` field — rename or alias?** Hard rename (`robot` → `role`/`agent`) is cleaner but touches 161 sites and any external log parser. Documented alias is backward-compatible but keeps the dead word visible. *(Recommend: alias now, hard rename in a MAJOR release with a migration note.)*
+1. ~~**AX-16 target — CHECKED or ENFORCED?**~~ **RESOLVED (sponsor, 2026-07-16): CHECKED.** Escalations and retries are recorded and checked after the fact; the guard does not refuse advance on audit-completeness grounds. Revisit ENFORCED once the audit vocabulary has soaked.
+2. ~~**AX-13 scope of "producer".**~~ **RESOLVED (sponsor, 2026-07-16): role-level.** Separation of duties binds producing Role ≠ validating Role ≠ gate-authority Role, matching AX-03. Artifact-level (instance-vs-instance) is not required.
+3. ~~**`robot` field — rename or alias?**~~ **RESOLVED (sponsor, 2026-07-16): documented alias.** `robot` is retained in the activity-log format as a legacy alias mapping to `role`; the format documents `role` as canonical and `robot` as its deprecated synonym. Backward-compatible — existing logs and parsers keep working — so this is **additive (MINOR)**, not a break. A hard rename is left to a future MAJOR if ever desired.
+
+**All open questions resolved. Build-ready.**
+
+---
+
+## Sequencing
+
+All three parts are additive and ship together as one MINOR release (v2.5.0). The alias decision on OQ-3 removed the format break that would otherwise have split the work:
+
+| Part | Scope | Version impact |
+|------|-------|----------------|
+| A | Behavioural provenance — test-per-ENFORCED-axiom + check 6 deepening | additive |
+| B | Promote AX-12..16 to CHECKED (AX-13 role-level, AX-16 CHECKED) | additive |
+| C | Document `role` as canonical in the activity-log format; `robot` as a legacy alias | additive (backward-compatible) |
+
+No breaking change; no migration guide required. `axioms.js` reads `state.dispatch[].role`, which already exists.
 
 ---
 
@@ -113,4 +131,6 @@ AX-13 and AX-15 remain **partially ENFORCED** at their gates via AX-03 and AX-08
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.0 | 2026-07-16T00:00:00Z | Implemented in v2.5.0 "Titus". All three parts shipped: A (test-per-ENFORCED-axiom + check 6b), B (`axioms.js` promoting AX-12..16 to CHECKED), C (role/robot alias in activity-log-format). 245 tests pass; six fidelity checks green. Moved to implemented-proposals/. |
+| 0.2 | 2026-07-16T00:00:00Z | OQs resolved (sponsor): AX-16 CHECKED (not ENFORCED); AX-13 role-level; `robot` field documented alias (not hard rename). All three parts additive → single MINOR release (v2.5.0), no MAJOR split, no migration guide. Added Sequencing section. Status → Build-Ready. |
 | 0.1 | 2026-07-16T00:00:00Z | Initial draft. Follows PROP-043: Part A (behavioural provenance — test-per-ENFORCED-axiom, deepening AX-11/check 6), Part B (promote ASSERTED AX-12..16 to CHECKED/ENFORCED via a new `axioms.js`), Part C (align the `robot` data field — doc/format only, since `state.js` already separates role/agent). Grounded against the orchestrator: four of five ASSERTED axioms are checkable from existing state. Three OQs open (AX-16 tier, AX-13 scope, robot rename-vs-alias). |

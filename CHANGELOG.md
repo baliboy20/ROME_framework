@@ -2,6 +2,44 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-16] - v2.5.0 "Titus" — axiom enforcement (ONT-001 ASSERTED tier → CHECKED)
+
+Codename **Titus** — Vespasian's successor. Implements PROP-044: empties the
+ontology's ASSERTED tier and makes the ENFORCED tier self-auditing.
+
+### Added
+- **`axioms.js`** — five CHECKED axiom functions promoting ROME-AX-12..16 out of
+  ASSERTED (pure functions over state, `guard.js` style):
+  - AX-12 one Role per Instance (`dispatch[]`),
+  - AX-13 role-level separation of duties — a producing Role does not also hold
+    gate authority in the same phase (sponsor OQ-2: role-level, not instance),
+  - AX-14 orchestrator-only spawn (`dispatch[].spawnedBy`),
+  - AX-15 P5 introduces no requirement absent upstream (traceability edges),
+  - AX-16 no silent recovery — no phase completes over a non-terminal blocker
+    (sponsor OQ-1: CHECKED, not ENFORCED).
+- **`tests/axioms.test.cjs`** (22 tests) — Part A maps one violation test to each
+  ENFORCED axiom (AX-01..08), tagged by ID; Part B covers AX-12..16.
+- **`guard-cli.cjs axioms <state.json>`** — reports CHECKED-axiom violations
+  without blocking (they are detect-after-the-fact, not gate preconditions).
+- **Fidelity check 6b** — asserts every ENFORCED axiom keeps a tagged violation
+  test. With 6a (citation existence) this closes the "function exists but no
+  longer enforces" gap PROP-043 had left open (its OQ-2 tail). Verified: 6b fails
+  when a tag is removed.
+
+### Changed
+- **`recordDispatch`** gains an additive `spawnedBy` field (defaults to the
+  orchestrator role) — the only new state AX-14 needs. No schema break.
+- **ROME-ONT-001 → v1.1**: AX-12..16 moved to the CHECKED tier with per-axiom
+  scope limits stated inline; ASSERTED tier now empty; AX-11 deepened to cover 6b.
+- **activity-log-format.md**: `role` documented as canonical; `robot` retained as
+  a **backward-compatible legacy alias** (sponsor OQ-3: alias, not hard rename).
+  Existing `robot:` entries and the 103 agent-mode examples remain valid as
+  aliases and may migrate to `role:` opportunistically — no mass rename, no break.
+
+### Notes
+- All three PROP-044 parts are additive → single MINOR release, no v3.0.0 split.
+- Tests: 245 pass (was 223; +22). Fidelity: all six checks green.
+
 ## [2026-07-16] - v2.4.1 "Vespasian" — terminology drift cleanup
 
 PATCH. Documentation corrections + fidelity-script fix; no functional change.
