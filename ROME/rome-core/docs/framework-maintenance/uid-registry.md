@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.8 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.9 |
 | **Date** | 2026-07-15T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -192,7 +192,7 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-044 | Axiom Enforcement & Role-Model Alignment | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-044-axiom-enforcement-and-role-model-alignment.md` | Implemented (v2.5.0) |
 | ROME-PROP-045 | Verdict–Dispatch Binding | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-045-verdict-dispatch-binding.md` | Implemented (v2.7.0) |
 | ROME-PROP-046 | Integration Fact & Payload-Level Contracts | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-046-integration-fact-and-payload-contracts.md` | Implemented (v2.7.0) |
-| ROME-PROP-047 | Input Characterization & Reliability Gating | `/ROME_framework_maintenance/proposals/ROME-PROP-047-input-characterization-and-reliability.md` | Draft |
+| ROME-PROP-047 | Input Characterization & Reliability Gating | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-047-input-characterization-and-reliability.md` | Implemented (v2.8.0) |
 
 ### Implementation Plans
 
@@ -293,6 +293,7 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.9 | 2026-07-16T00:00:00Z | PROP-047 implemented (v2.8.0 "Hadrian"); moved to implemented-proposals/. Lexicon v1.2 + ontology v1.2 companion changes (Input/Surveyor/ICR terms; ENT-13/14, REL-11/12/13, AX-17/18). |
 | 4.8 | 2026-07-16T00:00:00Z | Registered ROME-PROP-047 (Input Characterization & Reliability Gating — fob-admin D3/D4/D16). Draft. |
 | 4.7 | 2026-07-16T00:00:00Z | PROP-045 and PROP-046 implemented (v2.7.0 "Trajan"); both moved to implemented-proposals/. |
 | 4.6 | 2026-07-16T00:00:00Z | Registered ROME-PROP-045 (Verdict–Dispatch Binding — fob-admin D1) and ROME-PROP-046 (Integration Fact & Payload-Level Contracts — fob-admin D2/D8b). Both Draft. |

@@ -1,5 +1,5 @@
 /** Routing (PROP-036) + budget (PROP-040) regression. Run: node tests/routing-budget.test.cjs */
-const { routeFromICR } = require('../routing');
+const { routeFromICR, routeInitial } = require('../routing');
 const { createState } = require('../state');
 const budget = require('../budget');
 
@@ -19,13 +19,25 @@ console.log('routing + budget regression:');
   ok('brownfield includes P0.5 intake', b.routing.includes('P0.5'));
   ok('brownfield is reverse-first', b.reverseFirst === true);
 
-  const p = routeFromICR({ intent: 'greenfield', prototype: { enabled: true } });
+  const p = routeFromICR({ intent: 'greenfield', qualityVerdict: 'SUFFICIENT', prototype: { enabled: true } });
   ok('prototype enabled adds P3.5', p.routing.includes('P3.5'));
 
   ok('insufficient input quality throws', threw(() => routeFromICR({ intent: 'greenfield', qualityVerdict: 'INSUFFICIENT' })));
 
-  const def = routeFromICR({});
-  ok('empty ICR defaults to greenfield', def.reverseFirst === false && !def.routing.includes('P0.5'));
+  // PROP-047 AX-17: absent verdict is NOT sufficient — routeFromICR refuses it.
+  ok('absent verdict throws (AX-17)', threw(() => routeFromICR({ intent: 'greenfield' })));
+  ok('empty input set throws (AX-17)', threw(() => routeFromICR({ intent: 'greenfield', qualityVerdict: 'SUFFICIENT', inputs: [] })));
+
+  // PROP-047 AX-18: a sponsor-flagged-shaky input blocks routing unless authorized.
+  const shaky = { intent: 'greenfield', qualityVerdict: 'SUFFICIENT', inputs: [{ location: 'm2.md', reliability: 'PROPOSED' }] };
+  ok('unauthorized shaky input throws (AX-18)', threw(() => routeFromICR(shaky)));
+  const authorized = { intent: 'greenfield', qualityVerdict: 'SUFFICIENT', inputs: [{ location: 'm2.md', reliability: 'PROPOSED', sponsorAuthorized: true }] };
+  ok('sponsor-authorized shaky input routes (AX-18)', routeFromICR(authorized).routing.length > 0);
+
+  // PROP-047 Part A: provisional pre-assessment routing always includes intake.
+  const init = routeInitial({});
+  ok('routeInitial includes P0.5 intake', init.routing.includes('P0.5') && init.provisional === true);
+  ok('routeInitial --no-intake skips P0.5', !routeInitial({ skipIntake: true }).routing.includes('P0.5'));
 })();
 
 // --- budget (040) ---

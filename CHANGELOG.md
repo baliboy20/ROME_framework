@@ -2,6 +2,44 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-16] - v2.8.0 "Hadrian" — input characterization & reliability gating (D3/D4/D16)
+
+Codename **Hadrian**. Implements PROP-047 — the input-side blind spot, the
+fob-admin run's largest source of rework. The fix is mostly *wiring up the
+Surveyor role that already existed but was bypassed*, plus one real extension.
+
+### Fixed
+- **D3 — `rome-start` fabricated Surveyor's verdict.** It hardcoded
+  `qualityVerdict: 'SUFFICIENT'` and routed on it, certifying an empty folder
+  before any input was staged — making `routeFromICR`'s `INSUFFICIENT` refusal dead
+  code. Now `rome-start` emits **no** verdict: it scaffolds, routes *provisionally
+  through intake* (`routeInitial`), and stops. Surveyor's P0.5 pass produces the real
+  ICR from staged inputs; `routeFromICR` enforces **AX-17** (route only on a present
+  `SUFFICIENT` verdict over a non-empty input set). The dead guard is now live.
+- **D4 — greenfield could never invoke Surveyor.** Intake ran only for brownfield.
+  `rome-start` now routes greenfield through intake by default and exposes
+  `--force-intake` / `--no-intake`; `intake.js#classifyInputs` flags heterogeneous
+  input sets (mixed formats, binaries, many files) as the ones most needing it.
+- **D16 — the sponsor's reliability markers were ignored.** New
+  `intake.js#parseReliability` reads `**Status:** Reliable/PROPOSED/RECONSTRUCTED/
+  UNDEFINED` markers; **AX-18** blocks routing a shaky input into requirements unless
+  the sponsor sets `sponsorAuthorized: true`. Surface, don't silently build on sand.
+
+### Framework alignment (companion changes)
+- **Lexicon v1.2 + Ontology v1.2**: defined the previously-missing terms (Input,
+  Surveyor, ICR, Quality Verdict, Input Reliability); added ENT-13 (Input), ENT-14
+  (ICR), REL-11/12/13, and **AX-17/AX-18** — both ENFORCED via `routing.js#routeFromICR`,
+  both with tagged violation tests. Fidelity check 6b extended to cover routing-time
+  ENFORCED axioms (now 10). `state.inputReliability[]` added (additive; no schema break).
+
+### Honest limits
+- Surveyor *running* and *reading files* is orchestrator-driven (like the integration
+  fact) — the framework enforces the gate; the agent does the reading. `--no-intake`
+  is an explicit, audited escape for confidently-clean inputs.
+
+### Verify
+- Tests: 284 pass (was 267; +17). All six fidelity checks green (6a: 12 citations, 6b: 10 axioms).
+
 ## [2026-07-16] - v2.7.0 "Trajan" — verdict binding (D1) + integration fact (D2/D8b)
 
 Codename **Trajan**. Implements PROP-045 and PROP-046 — the two architectural

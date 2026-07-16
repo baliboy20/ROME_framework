@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.1 |
-| **Date** | 2026-07-15T00:00:00Z |
+| **Version** | 1.2 |
+| **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
 | **Companion** | ROME-ONT-001 (Ontology — structure and axioms) |
@@ -30,6 +30,11 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **Instance** | A sub-agent spawned from a Role by the Orchestrator to perform work. Fills exactly one Role for its lifetime. | - | Individual agent execution |
 | **Robot** | **Legacy alias — retired.** Formerly "autonomous Claude Code session executing specific tasks". Superseded by **Role** + **Instance** (ROME-STD-AGENT-ROLES §1), which separate the capability from the session filling it. Retained only to read pre-v2.0 documents and the `ROBOT.md` filenames, which are deliberately not renamed. | - | Do not use in new documents |
 | **Orchestrator** | Distinguished Role managing phase transitions, process integrity, and multi-agent coordination; spawns and coordinates all Instances; enforces quality gate compliance | Roma | Central coordination authority |
+| **Input** | A raw material a project starts from — a document (PRD/BRD), an idea, an existing codebase, or a design asset. Staged in `_user_input/raw-requirements/`. | - | Pre-P1 project material (ROME-ONT-001 ENT-13) |
+| **Surveyor** | The Role that characterizes Inputs at P0.5 and produces the ICR. Does not author requirements, design, or approve gates. | Surveyor | Input characterization (ROME-STD-AGENT-ROLES) |
+| **ICR (Input Characterization Record)** | Surveyor's structured output: intent, quality verdict, per-input inventory, and reliability. The Orchestrator routes the lifecycle from it (`routeFromICR`). | - | Routing input (ROME-ONT-001 ENT-14) |
+| **Quality Verdict** | Surveyor's judgement of whether Inputs are adequate to proceed. | `SUFFICIENT` \| `INSUFFICIENT` | ICR field; gates routing (ROME-AX-17) |
+| **Input Reliability** | The sponsor-declared solidity of an Input, read by Surveyor from `**Status:**` markers. Shaky levels gate routing (ROME-AX-18). | `Reliable` \| `PROPOSED` \| `RECONSTRUCTED` \| `UNDEFINED` | Sponsor reliability signal |
 
 ---
 
@@ -217,4 +222,5 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.2 | 2026-07-16T00:00:00Z | PROP-047 companion additions: defined Input, Surveyor, ICR, Quality Verdict, Input Reliability (previously undefined framework terms; cross-linked to ROME-ONT-001 ENT-13/14 and AX-17/18). |
 | 1.1 | 2026-07-15T00:00:00Z | Staleness corrections per ROME-PROP-043 §P3, companion to ROME-ONT-001. Phase table rebuilt from `lifecycle.js`: adds P0.5 (Intake) and P3.5 (Prototype), gate column, and optional column — the P0–P5 model with a gate at every boundary was never the implemented model (P0 is ungated). "Robot" re-labeled a retired legacy alias → Role/Instance per ROME-STD-AGENT-ROLES §1; Role and Instance added as entries. Cross-link to ROME-ONT-001 added. Logging Trigger repointed from the retired ROME-PROC-005 to ROME-GOV-008. Revision log added (absent since initial issue, contrary to ROME-GOV-001). Term definitions otherwise unchanged. |

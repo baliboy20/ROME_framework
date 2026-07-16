@@ -284,20 +284,24 @@ else
     fi
   fi
 
-  # 6b: ENFORCED axioms must each retain a tagged violation test.
-  AXIOM_TESTS="$ROME_CORE/orchestrator/tests/axioms.test.cjs"
-  if [ ! -f "$AXIOM_TESTS" ]; then
-    fail "6b: axioms.test.cjs not found — ENFORCED axioms have no behavioural provenance"
+  # 6b: every ENFORCED axiom must retain a tagged violation test somewhere under
+  # orchestrator/tests/ (gate-time AX-01..08 in axioms.test.cjs; routing-time
+  # AX-17..18 in routing-budget.test.cjs).
+  TESTS_DIR="$ROME_CORE/orchestrator/tests"
+  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18"
+  if [ ! -d "$TESTS_DIR" ]; then
+    fail "6b: orchestrator/tests not found — ENFORCED axioms have no behavioural provenance"
   else
     MISSING_TEST=0
-    for AX in AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08; do
-      if ! grep -q "$AX" "$AXIOM_TESTS" 2>/dev/null; then
-        fail "6b: ENFORCED axiom $AX has no tagged test in axioms.test.cjs"
+    for AX in $ENFORCED_AXIOMS; do
+      if ! grep -rq "$AX" "$TESTS_DIR" 2>/dev/null; then
+        fail "6b: ENFORCED axiom $AX has no tagged violation test under orchestrator/tests/"
         MISSING_TEST=$((MISSING_TEST + 1))
       fi
     done
     if [ "$MISSING_TEST" -eq 0 ]; then
-      pass "6b: all 8 ENFORCED axioms retain a tagged violation test"
+      NAX=$(echo "$ENFORCED_AXIOMS" | wc -w | tr -d ' ')
+      pass "6b: all $NAX ENFORCED axioms retain a tagged violation test"
     fi
   fi
 fi

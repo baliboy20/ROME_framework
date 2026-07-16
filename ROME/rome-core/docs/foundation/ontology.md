@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.1 |
+| **Version** | 1.2 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
@@ -40,6 +40,8 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | ENT-10 | Gate Verdict / Gate Ledger entry | ROME-STD-GATE §2 |
 | ENT-11 | Blocker | ROME-STD-GATE §3 |
 | ENT-12 | Document (UID-bearing) | ROME-GOV-002 |
+| ENT-13 | Input (raw material a project starts from — doc/idea/codebase/asset) | ROME-LEX-001; PROP-036/047 |
+| ENT-14 | ICR (Input Characterization Record — Surveyor's output) | ROME-STD-AGENT-ROLES (Surveyor); PROP-036 |
 
 **Deprecation note:** "Robot" is not an entity. ROME-STD-AGENT-ROLES §1 retires it in favour of **Role** + **Instance**. It survives in the lexicon only as a legacy alias, and in filenames (`ROBOT.md`) which are deliberately not renamed.
 
@@ -59,6 +61,9 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | REL-08 | Document `identified-by` UID | Document(1) → UID(1), stable across revisions |
 | REL-09 | Verdict `recorded-for` Gate `by` Role | append-only ledger; N verdicts per gate |
 | REL-10 | Sponsor `approves/escalated-to` Gate/Failure | GATE-P3.5 approval; PROP-039 B exhaustion; PROP-041 deferral authorization |
+| REL-11 | Surveyor `characterizes` Input → ICR | Surveyor(1) → Input(N) → ICR(1) (P0.5; PROP-036/047) |
+| REL-12 | Orchestrator `routes-from` ICR | routing derives from ICR(1) (`routeFromICR`; PROP-047) |
+| REL-13 | Sponsor `declares-reliability-of` Input | Sponsor(1) → Input(N) (`**Status:**` markers; PROP-047) |
 
 ---
 
@@ -74,11 +79,13 @@ Each axiom carries **enforcement provenance**:
 | `CHECKED` | A script detects the violation after the fact. Cites the check. |
 | `ASSERTED` | No mechanical check. Intent only — **not a guarantee**. (Empty as of PROP-044.) |
 
-**Provenance is verified, at two levels.** Fidelity check 6 asserts every cited module and function still exists, **and** (PROP-044 Part A) that every ENFORCED axiom retains a violation test tagged with its ID in `tests/axioms.test.cjs`. This closes the "function exists but no longer enforces" gap to "a violation test guards it". It still is not a proof of correctness — a rewrite that kept the test green but broke the behaviour would pass — but an axiom cannot silently lose its enforcement without a test failing.
+**Provenance is verified, at two levels.** Fidelity check 6 asserts every cited module and function still exists, **and** (PROP-044 Part A) that every ENFORCED axiom retains a violation test tagged with its ID somewhere under `orchestrator/tests/`. This closes the "function exists but no longer enforces" gap to "a violation test guards it". It still is not a proof of correctness — a rewrite that kept the test green but broke the behaviour would pass — but an axiom cannot silently lose its enforcement without a test failing.
 
 ### Tier 1 — ENFORCED
 
-Harvested from the eight deterministic rules in ROME-STD-GATE §3.
+AX-01..08 are the gate-time rules harvested from ROME-STD-GATE §3 (`guard.js`).
+AX-17..18 are routing-time invariants (`routing.js`, PROP-047) — enforced the same
+way (deterministic refusal), before P1.
 
 | ID | Axiom | Provenance |
 |----|-------|------------|
@@ -90,6 +97,8 @@ Harvested from the eight deterministic rules in ROME-STD-GATE §3.
 | AX-06 | Routing is a subset of the canonical phase catalog in canonical relative order; advance moves exactly one step along the routing. Phases may not be **reordered**. Optional phases (P0.5, P3.5) may be **omitted** at routing time — see the note below. | ENFORCED (`lifecycle.js#resolveRouting` rejects reordering; `guard.js#advance` moves one step; STD-GATE §3 r6) |
 | AX-07 | A verdict on an ungated phase is rejected. | ENFORCED (`guard.js#recordGateVerdict`; STD-GATE §3 r7) |
 | AX-08 | A verdict is insufficient alone: every mechanical fact the phase declares in `requires` must be recorded AND passing in `state.verification[phase]` before advance. An LLM gate role cannot approve past an unrun check. | ENFORCED (`guard.js#canAdvance` over `lifecycle.js` `PHASES[].requires`; STD-GATE §3 r8) |
+| AX-17 | A project routes only on a Surveyor-produced ICR whose `qualityVerdict` is `SUFFICIENT`, over a non-empty input set. Absent or `INSUFFICIENT` quality blocks routing (`rome-start` no longer fabricates the verdict). | ENFORCED (`routing.js#routeFromICR`; PROP-047). Routing-time, not gate-time. |
+| AX-18 | An Input the sponsor marked shaky (`PROPOSED` / `RECONSTRUCTED` / `UNDEFINED`) routes into requirements only with `sponsorAuthorized: true`. | ENFORCED (`routing.js#routeFromICR`; PROP-047). The sponsor's own reliability call, surfaced not overridden. |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
 
@@ -135,5 +144,6 @@ Harvested from the eight deterministic rules in ROME-STD-GATE §3.
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.2 | 2026-07-16T00:00:00Z | PROP-047 implemented (v2.8.0). Added ENT-13 (Input), ENT-14 (ICR); REL-11 (Surveyor characterizes Input→ICR), REL-12 (Orchestrator routes-from ICR), REL-13 (Sponsor declares-reliability-of Input); AX-17 (route only on SUFFICIENT ICR over non-empty inputs — converts routing.js's dead guard to a live invariant) and AX-18 (shaky inputs route only with sponsor authorization), both ENFORCED via `routing.js#routeFromICR`, both with tagged tests. Check 6b extended to cover routing-time ENFORCED axioms. |
 | 1.1 | 2026-07-16T00:00:00Z | PROP-044 implemented (v2.5.0). ASSERTED tier emptied: AX-12..16 promoted to CHECKED via `axioms.js` (AX-13 role-level per OQ-2; AX-16 CHECKED per OQ-1). AX-11 deepened — check 6 now also asserts each ENFORCED axiom keeps a tagged violation test in `tests/axioms.test.cjs` (behavioural provenance, PROP-044 Part A). Scope limits stated inline. |
 | 1.0 | 2026-07-15T00:00:00Z | Initial issue per ROME-PROP-043. Entity set (12), relation set (10), axiom set (16) across three provenance tiers. Corrections applied during implementation against verified code: AX-06 restated (the guard enforces one-step-along-routing and rejects reordering, but permits omission of optional phases — the drafted "phases cannot be skipped" was not a guarantee the framework makes); provenance cites STD-GATE §3 rule numbers + `<module>.js#<function>` rather than guard.js line IDs, which do not exist and whose nearest numbering conflicts with the standard's; AX-08 fact table taken from `lifecycle.js` per ROME-STD-GATE v1.1. Added AX-11 (provenance existence, fidelity check 6) — drafted axiom count 15 → 16 with renumbering below AX-10. |

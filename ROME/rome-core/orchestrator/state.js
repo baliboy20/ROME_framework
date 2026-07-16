@@ -47,6 +47,7 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
       matrix: {},    // derived: REQ-ID → { design:[loc], code:[loc], tests:[loc], status } — PROP-041
     },
     oq: { resolvedByTalib: 0, awaitingSponsor: 0, deferrals: [] }, // PROP-041 sponsor-OQ gating
+    inputReliability: [], // [{ location, form, reliability, sponsorAuthorized? }] — Surveyor intake (PROP-047 / D16)
     testManifest: [],   // [{ req, outcomesTested, errorsTested:[id] }] — merged from returns (D7); keyed by `req` like edges
     verification: {},   // phase → { key: { pass, detail, timestamp } } — guard preconditions
     audit: [],          // append-only audit entries mirrored to activity-log MCP

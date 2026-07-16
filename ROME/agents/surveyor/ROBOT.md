@@ -35,8 +35,8 @@ record (no separate logging). The ICR fields:
 | Field | Meaning |
 |-------|---------|
 | `intent` | `greenfield` \| `refinement` \| `extension` \| `migration` |
-| `qualityVerdict` | `SUFFICIENT` \| `INSUFFICIENT` |
-| `inputs[]` | each `{form, location, quality_score, issues[]}` (form = docs/code/app/idea) |
+| `qualityVerdict` | `SUFFICIENT` \| `INSUFFICIENT` — gates routing (ROME-AX-17; absent ≠ sufficient) |
+| `inputs[]` | each `{form, location, quality_score, issues[], reliability, sponsorAuthorized?}` (form = docs/code/app/idea) |
 | `clarifications[]` | targeted questions if quality is INSUFFICIENT (do NOT guess) |
 | `as_is_required` | true for brownfield (triggers as-is derivation) |
 | `prototype` | `{enabled}` — recommend on for novel/complex UIs |
@@ -46,6 +46,13 @@ record (no separate logging). The ICR fields:
 
 - **Do not guess on poor input.** If inputs are vague/contradictory/incomplete,
   set `qualityVerdict: INSUFFICIENT` and emit `clarifications` instead of proceeding.
+  Routing refuses anything but `SUFFICIENT` (ROME-AX-17) — a fabricated verdict is
+  no longer possible; `rome-start` defers to this pass (PROP-047).
+- **Read the sponsor's reliability markers (PROP-047 / D16).** For each Input, read
+  any `**Status:**` marker (`Reliable` / `PROPOSED` / `RECONSTRUCTED` / `UNDEFINED`)
+  into `reliability`; assess it yourself where no marker is present. A shaky input
+  (`PROPOSED`/`RECONSTRUCTED`/`UNDEFINED`) blocks routing unless the sponsor sets
+  `sponsorAuthorized: true` on it (ROME-AX-18) — surface it, do not silently proceed.
 - **Classify intent from evidence:** existing code/app present → brownfield;
   only docs/idea for a new system → greenfield.
 - Surveyor characterizes and (for brownfield) reverse-derives as-is; it does NOT

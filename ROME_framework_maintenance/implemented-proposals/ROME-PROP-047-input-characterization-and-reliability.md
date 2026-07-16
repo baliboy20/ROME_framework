@@ -4,7 +4,9 @@
 |-------|-------|
 | **UID** | ROME-PROP-047 |
 | **Title** | Input Characterization & Reliability Gating — Assess Real Inputs Before Routing, Expose Intake for Greenfield, and Read the Sponsor's Own Reliability Markers |
-| **Status** | Draft |
+| **Status** | Implemented |
+| **Implemented In** | v2.8.0 "Hadrian" |
+| **Implemented By** | `routing.js` (`routeFromICR` AX-17/18, `routeInitial`), `intake.js` (`parseReliability`, `classifyInputs`), `rome-start.cjs` (two-step, `--force-intake`/`--no-intake`), `state.js` (`inputReliability`), `ontology.md` (ENT-13/14, REL-11/12/13, AX-17/18), `lexicon.md` v1.2, `agents/surveyor/ROBOT.md`, `check-framework-fidelity.sh` 6b, `GETTING-STARTED.md` |
 | **Author** | Archie |
 | **Created** | 2026-07-16T00:00:00Z |
 | **Origin** | fob-admin Module-1 live run, defects D3 + D4 + D16 — `FRAMEWORK-DEFECTS-2026-07-15.md` |
@@ -269,4 +271,5 @@ AX-18 is the mechanical form of "don't silently build on sand."
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 0.1 | 2026-07-16T00:00:00Z | Initial draft from fob-admin defects D3/D4/D16. Part A: `rome-start` stops stamping `qualityVerdict`; a Surveyor P0.5 pass assesses real staged inputs; `routeFromICR` refuses absent-verdict / empty-inputs. Part B: expose `--force-intake`, default P0.5 for heterogeneous greenfield. Part C: record `inputReliability` from `**Status:**` markers; route refuses/warns on PROPOSED/UNDEFINED/RECONSTRUCTED with sponsor-authorized override. Four OQs (ordering, greenfield default, refuse-vs-warn, marker source). |
+| 1.0 | 2026-07-16T00:00:00Z | Implemented in v2.8.0 "Hadrian". OQs resolved: two-step scaffold→intake; auto-intake for heterogeneous greenfield (`--force-intake`/`--no-intake`); shaky inputs WARN + sponsor-authorized; read `**Status:**` markers + Surveyor assesses the rest. Part A: `rome-start` stops fabricating the verdict, routes provisionally through intake (`routeInitial`); `routeFromICR` enforces AX-17 (SUFFICIENT over non-empty inputs — the dead guard is now live). Part B: `--force-intake`/`--no-intake`, `classifyInputs` heterogeneity. Part C: `parseReliability` + AX-18 (shaky inputs need `sponsorAuthorized`). Companion changes applied: lexicon v1.2, ontology v1.2 (ENT-13/14, REL-11/12/13, AX-17/18 ENFORCED with tagged tests). 17 regression tests. Moved to implemented-proposals/. |
 | 0.2 | 2026-07-16T00:00:00Z | Reframed on the correct diagnosis (sponsor): input characterization is **Surveyor's existing role**, bypassed not missing — D3/D4 are wiring the existing Role reachable; only D16 (reliability markers) adds to Surveyor's job. Added a jargon-free "In Plain Terms" on-ramp. Added Ontology/Lexicon/Axiom alignment: Surveyor, Input, ICR, Quality Verdict, Input Reliability are undefined in ROME-LEX-001 and absent from ROME-ONT-001 — companion additions specified (ENT-13/14, REL-11/12/13, AX-17 input-quality gating [ENFORCED, converts dead guard to live], AX-18 reliability authorization [CHECKED]). |

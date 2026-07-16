@@ -47,6 +47,15 @@ my-app/_user_input/raw-requirements/
 ```
 (Just drop in your `*.md` PRD/BRD files.)
 
+`rome-start` deliberately does **not** judge your inputs yet — it sets up the
+folders and stops. The input specialist (**Surveyor**) reads what you actually
+stage here in the next step and decides whether it's good enough to build from.
+If you leave this folder empty or your inputs are inadequate, the framework will
+**refuse to proceed** and ask you to clarify — it no longer rubber-stamps an empty
+folder (PROP-047). If you write a note like `**Status:** PROPOSED` on a document,
+Surveyor reads it and checks with you before building on it. (Confident your inputs
+are clean and complete? `rome-start … --no-intake` skips the check.)
+
 ## Step 3 — Run it
 In your Claude session, say (plain English):
 > "You are Roma, the ROME orchestrator. Run the project at `my-app/` following `ROME/agents/roma/modes/orchestrator.md`. Begin."
