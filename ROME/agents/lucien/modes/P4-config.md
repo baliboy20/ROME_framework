@@ -23,7 +23,7 @@ Transform design artifacts into ready-to-code project infrastructure. P5 robots 
 - `/scaffold-workspace` - Create workspace directory structure
 - `/init-project` - Initialize project with technology stack
 - `/install-dependencies` - Install required packages
-- `/create-config-files` - Generate build, lint, test configuration
+- `/create-config-files` - Generate build, lint, test configuration — test config derives from each capability's `testing` block in tech-stack.yaml (v3.1.1); Lucien materialises the declared framework/command, he does not select one independently
 - `/validate-workspace-structure` - Check workspace completeness
 
 **Data Workspace Preparation:**

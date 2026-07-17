@@ -2,6 +2,19 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-17] - v3.1.1 — testing declared in tech-stack.yaml (PATCH)
+
+Small but sponsor-visible: the test framework per capability was an implicit
+ecosystem convention that only materialised in P4 config files — nowhere could
+the sponsor see or veto the testing approach at design time.
+
+### Changed
+- **tech-stack.yaml gains a REQUIRED `testing` block per capability** (framework,
+  types, run command), declared by PMA at P3 and presented to the sponsor with
+  the rest of the stack (5c). Lucien derives P4 test config/CI stages FROM it
+  (no independent choice); executability `steps[]` derive from `testing.command`.
+  Deviating from ecosystem-native tooling requires stated rationale.
+
 ## [2026-07-17] - v3.1.0 "Marcus" — design authority pass (D5 fix + PROP-037 completion)
 
 Codename **Marcus** (Aurelius). Settles who decides the look: the sponsor decides

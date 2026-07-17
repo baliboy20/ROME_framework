@@ -199,6 +199,30 @@ Present complete tech-stack.yaml via Seez:
 
 Define capabilities: for each system service, specify id, technology, robot assignment, workspace, `mandate` (true/false), and `source`. Declare dependencies between capabilities.
 
+**Testing declaration (REQUIRED per capability, v3.1.1):** each capability also
+declares its `testing` block — the test framework, the test types expected, and
+the run command. This makes the testing approach a first-class, sponsor-reviewable
+design decision (it is presented with the rest of tech-stack.yaml in 5c), instead
+of an implicit ecosystem convention that only materialises in P4 config files.
+
+```yaml
+capabilities:
+  - id: ui-app
+    technology: flutter
+    robot: charlie
+    testing: { framework: flutter_test, types: [unit, widget, integration], command: "flutter test" }
+  - id: api
+    technology: hono-typescript
+    robot: reena
+    testing: { framework: vitest, types: [unit, integration], command: "npx vitest run" }
+```
+
+Downstream consumers: Lucien derives the P4 test configuration files and CI
+stages FROM this block (he does not choose independently); the component
+`steps[]` that the executability check runs are generated from `testing.command`.
+Deviating from the ecosystem's native tooling requires a stated rationale, like
+any other non-mandated selection.
+
 ### Stage 2: Core Design (Iterative)
 
 #### Step 6: Data Dictionary Creation
