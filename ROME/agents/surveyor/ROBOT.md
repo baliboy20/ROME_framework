@@ -36,10 +36,13 @@ record (no separate logging). The ICR fields:
 |-------|---------|
 | `intent` | `greenfield` \| `refinement` \| `extension` \| `migration` |
 | `qualityVerdict` | `SUFFICIENT` \| `INSUFFICIENT` — gates routing (ROME-AX-17; absent ≠ sufficient) |
-| `inputs[]` | each `{form, location, quality_score, issues[], reliability, sponsorAuthorized?}` (form = docs/code/app/idea) |
+| `inputs[]` | each `{form, location, quality_score, issues[], reliability, sponsorAuthorized?}` (form = docs/code/app/idea/**spec** — spec = a technical specification carrying TDRs, ROME-STD-TECHSPEC) |
 | `clarifications[]` | targeted questions if quality is INSUFFICIENT (do NOT guess) |
 | `as_is_required` | true for brownfield (triggers as-is derivation) |
 | `prototype` | `{enabled}` — recommend on for novel/complex UIs |
+| `tdrs[]` | TDRs extracted from spec inputs, post carrier-reliability downgrade — `{id, status, scope, decision, binds, ...}` (PROP-052; validated by `intake.js#validateTdrs`) |
+| `infraConstraints` | sponsor's existing infra/vendor facts from the intake question block (PROP-051 §2.4; null if none) |
+| `sponsorCheckpoint` / `sponsorCheckpointAuthorized` | only when the sponsor opts out of the P3/P4 checkpoint — omission requires their authorization (ROME-AX-27) |
 | `notes` | short rationale |
 
 ## Rules

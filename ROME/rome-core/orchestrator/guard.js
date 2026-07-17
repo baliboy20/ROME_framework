@@ -8,12 +8,18 @@
  * sealed increments are immutable (ROME-AX-19) and the guard refuses to touch
  * them. PROP-049: stub expiry (ROME-AX-24) is enforced at the P5 delivery edge.
  *
- * Enforced invariants:
- *  1. Only the current phase may be advanced.
- *  2. A gated phase advances only on an APPROVE verdict for its gate...
- *  3. ...recorded by the phase's designated gate role (no self-approval — EP-5).
- *  4. A later BLOCK overrides an earlier APPROVE (latest verdict wins).
- *  5. Phases cannot be skipped or reordered (advance moves exactly one step).
+ * Enforced invariants (see ROME-ONT-001 for the full axiom set):
+ *  1. Only the current phase may be advanced (AX-01).
+ *  2. A gated phase advances only on an APPROVE verdict for its gate (AX-02)...
+ *  3. ...bound to a completed gate-role dispatch (no self-approval — EP-5/AX-03).
+ *  4. A later BLOCK overrides an earlier APPROVE (latest verdict wins, AX-04).
+ *  5. Open blockers prevent advance (AX-05); no routed phase may be jumped and
+ *     reordering is rejected — advance moves exactly one step (AX-06).
+ *  6. Every required mechanical fact must be recorded AND passing (AX-08).
+ *  7. Sealed increments are immutable (AX-19); expired ACTIVE stubs block the
+ *     P5 delivery edge (AX-24).
+ *  8. TDR deviations resolve only by the sponsor (AX-30; recordTdrDeviation /
+ *     resolveTdrDeviation below).
  */
 
 const { STATUS, VERDICT, PHASE_BY_ID } = require('./lifecycle');

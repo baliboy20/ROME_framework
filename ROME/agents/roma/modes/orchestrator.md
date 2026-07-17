@@ -54,8 +54,11 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
 ## Operating loop
 
 ```
-1. Intake: build/confirm the ICR → routing = routeFromICR(icr)        (PROP-036)
-   createState({project, routing}) → state.json                       (source of truth)
+1. Intake: Surveyor produces the ICR (incl. tdrs[] from any spec input, and
+   infraConstraints — PROP-051/052). Finalize deterministically:
+     `guard-cli intake <state.json> --icr <icr.json> --ts <iso>`
+   (validates + carrier-downgrades TDRs, applies routing, persists
+   state.tdrs / state.infraConstraints, clears awaitingIntake — PROP-047)
 2. While not isComplete(state):  (use driver.nextAction(state) for the next step)
    phase = state.currentPhase
    a. budget.policy(state) → if ESCALATE, surface to sponsor; if DEGRADE, reduce parallelism/self-heal
@@ -64,12 +67,38 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
         recordDispatch(state, {...}); <invoke sub-agent>; processReturn(state, <return>)
       - P5 only: component-graph → topoBatches → one sub-agent per node, batch by batch.
    c. VERIFY — run the phase's mechanical checks and recordVerification(...) for each
-      key in PHASE.requires (the guard demands these BEFORE the gate):
-        P1: validate-aordl STRICT → 'aordl';  checkTraceability → 'traceability'
-        P4: gateSecurity(config) → 'secrets'; checkTraceability → 'traceability'
-        P5: verifyComponent/selfHeal → 'executability'; gateContracts → 'contracts';
-            gateSecurity(source) → 'secrets'; checkTestAdequacy → 'testAdequacy';
-            checkTraceability(requireTest) → 'traceability'
+      key in PHASE.requires (the guard demands these BEFORE the gate; the
+      authoritative per-phase list is lifecycle.js PHASES[].requires):
+        P1:   validate-aordl STRICT → 'aordl'; checkTraceability → 'traceability'
+        P2:   checkTraceability → 'traceability'; checkSponsorOq → 'sponsorOq';
+              checkStageConsistency → 'stageConsistency'
+        P3:   checkTraceability → 'traceability'; checkMatrix → 'matrix';
+              checkDesignAssets → 'designAssets'; checkSponsorAib(P3) → 'sponsorArch';
+              checkTdrConformance(P3) → 'tdrConformance'
+        P3.5: checkTraceability → 'traceability'; checkMatrix → 'matrix'
+        P4:   gateSecurity(config) → 'secrets'; checkTraceability → 'traceability';
+              checkSponsorAib(P4) → 'sponsorInfra'; checkTdrConformance(P4) → 'tdrConformance'
+        P5:   verifyComponent/selfHeal → 'executability'; runIntegration → 'integration';
+              gateContracts → 'contracts'; gateSecurity(source) → 'secrets';
+              checkTestAdequacy → 'testAdequacy'; checkTraceability(requireTest) → 'traceability';
+              checkMatrix(P5 STRICT) → 'matrix'; checkTdrConformance(P5) → 'tdrConformance'
+      Also at P5: checkEnvDivergence(configManifest, runtime) — a failing result
+      is filed as a blocker (ROME-AX-28), not a required fact.
+   c2. SPONSOR CHECKPOINT (P3 and P4 — PROP-051 / ROME-AX-27). Before 'sponsorArch'
+      / 'sponsorInfra' can pass:
+        1. Producer's return includes the AIB (PMA → AIB-P3; Lucien → AIB-P4).
+        2. `guard-cli aib <state> issue --phase P3 --revision <hash> --ts <iso>`
+        3. Deliver the brief to the sponsor via Seez; collect CONFIRM / REDIRECT /
+           DELEGATE (AskUserQuestion).
+        4. `guard-cli aib <state> respond --phase P3 --revision <hash> --type <answer> --ts <iso>`
+        5. REDIRECT → re-dispatch the producer with the sponsor's notes, reissue
+           the revised AIB (new revision), return to step 3. DELEGATE at P3 never
+           carries to P4 — run the checkpoint fresh there.
+        6. recordVerification from checkSponsorAib.
+      Any deviation a producer filed (`guard-cli deviation file …`) is surfaced in
+      the same brief as a highlighted delta; resolve it only as the sponsor's
+      recorded answer: `guard-cli deviation resolve --id DEV-# --approved … --sponsor`.
+      An unresolved deviation fails 'tdrConformance' — never build past it.
    d. REQUEST_GATE — gate role (Sarah) verdict; record ONLY via guard (rejects non-gate-role).
    e. guard advance — BLOCKS unless APPROVE by the correct role AND all required facts pass.
    f. emit visualize.* diagrams; mirror audit to activity-log.
@@ -137,3 +166,4 @@ All retries/escalations/blocks are recorded in `state.json` + audit. No silent r
 |---------|------|---------|
 | 4.0 | 2026-03-03 | ROME-PROP-030 monolith split. |
 | 5.0 | 2026-06-18 | ROME-PROP-035..040: rewritten as the single-session lifecycle driver over the deterministic substrate (state/guard/subagent/topology/executability/contracts/routing/budget). Drives only; guard enforces. Replaces log-based coordination with call/return + guard. |
+| 5.1 | 2026-07-17 | v3.2.0 consistency pass: VERIFY step (c) rebuilt complete from lifecycle.js (was stale — P2/P3/P3.5 facts and matrix/integration missing); intake finalization via `guard-cli intake` (persists TDRs/infraConstraints — PROP-047/051/052); new step (c2) sponsor AIB checkpoint (issue → deliver → respond → REDIRECT loop, AX-27) and TDR deviation resolution (AX-29/30); AX-28 blocker note. |

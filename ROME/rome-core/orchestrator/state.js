@@ -84,6 +84,67 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
   };
 }
 
+/**
+ * Finalize intake (PROP-047/051/052): apply a Surveyor-produced routing result
+ * (the return of routing.js#routeFromICR) to state. This is the missing link
+ * between the ICR and state — it replaces the provisional routing, clears
+ * awaitingIntake, and persists TDRs / infra constraints / checkpoint-omission
+ * records. TDRs must already be schema-validated and carrier-downgraded
+ * (intake.js#validateTdrs + #applyCarrierReliability) by the caller.
+ */
+function finalizeIntake(state, routed, timestamp) {
+  if (!timestamp) throw new Error('finalizeIntake: timestamp required');
+  if (!routed || !Array.isArray(routed.routing)) throw new Error('finalizeIntake: routed.routing required (pass routeFromICR\'s return)');
+  const inc = active(state);
+  if (inc.sealed) throw new Error(`Increment ${inc.id} is sealed (ROME-AX-19)`);
+  const routing = resolveRouting(routed.routing);
+  const done = Object.fromEntries(Object.entries(inc.phases).filter(([, p]) => p.status === STATUS.COMPLETE));
+  inc.routing = routing;
+  inc.phases = {};
+  routing.forEach(pid => { inc.phases[pid] = done[pid] || { status: STATUS.PENDING }; });
+  if (!inc.currentPhase || !routing.includes(inc.currentPhase)) inc.currentPhase = routing.find(pid => inc.phases[pid].status !== STATUS.COMPLETE) || null;
+  if (inc.currentPhase) inc.phases[inc.currentPhase].status = STATUS.IN_PROGRESS;
+  inc.awaitingIntake = false;
+  if (Array.isArray(routed.tdrs)) state.tdrs = routed.tdrs;
+  if (routed.infraConstraints !== undefined) state.infraConstraints = routed.infraConstraints;
+  if (routed.sponsorCheckpointOmitted) {
+    // Sponsor-authorized omission (AX-27): record it so checkSponsorAib passes.
+    inc.aib = inc.aib || {};
+    for (const phase of ['P3', 'P4']) inc.aib[phase] = { omitted: true, sponsorAuthorized: true };
+  }
+  state.audit.push({ event: 'INTAKE_FINALIZED', increment: inc.id, routing, tdrs: (routed.tdrs || []).length, timestamp });
+  state.updatedAt = timestamp;
+  return state;
+}
+
+/**
+ * Record/refresh an AIB (PROP-051 / ROME-AX-27). Issuing a new revision clears
+ * any prior response — a sponsor answer never carries over to a changed brief.
+ */
+function recordAib(state, phase, revision, timestamp) {
+  if (!timestamp) throw new Error('recordAib: timestamp required');
+  if (!revision) throw new Error('recordAib: revision required');
+  const inc = active(state);
+  if (inc.sealed) throw new Error(`Increment ${inc.id} is sealed (ROME-AX-19)`);
+  inc.aib = inc.aib || {};
+  inc.aib[phase] = { revision, timestamp };
+  state.audit.push({ event: 'AIB_ISSUED', phase, revision, timestamp });
+  return state;
+}
+
+/** Record the sponsor's response to the current AIB revision (ROME-AX-27). */
+function recordAibResponse(state, phase, { type, revision, timestamp }) {
+  if (!timestamp) throw new Error('recordAibResponse: timestamp required');
+  if (!['CONFIRM', 'REDIRECT', 'DELEGATE'].includes(type)) throw new Error(`recordAibResponse: type must be CONFIRM|REDIRECT|DELEGATE (got "${type}")`);
+  const inc = active(state);
+  const aib = (inc.aib || {})[phase];
+  if (!aib) throw new Error(`recordAibResponse: no AIB issued for ${phase} — recordAib first`);
+  if (revision !== aib.revision) throw new Error(`recordAibResponse: response cites revision "${revision}" but current AIB-${phase} is "${aib.revision}" (stale — reissue or reconfirm)`);
+  aib.response = { type, revision, timestamp };
+  state.audit.push({ event: 'AIB_RESPONSE', phase, type, revision, timestamp });
+  return state;
+}
+
 /** The active increment — where all lifecycle reads/writes go. */
 function active(state) {
   const inc = (state.increments || [])[state.activeIncrement];
@@ -142,6 +203,7 @@ function migrateV1(v1) {
     inputReliability: v1.inputReliability || [],
     testManifest: v1.testManifest || [],
     verification: v1.verification || {},
+    aib: {},
   };
   // edges from a v1 state all belong to increment 0
   const traceability = v1.traceability || { deltas: [], artifacts: {}, edges: [], byReq: {}, byArtifact: {}, matrix: {} };
@@ -158,6 +220,9 @@ function migrateV1(v1) {
     traceability,
     stagePlan: null,
     stubs: [],
+    tdrs: [],
+    tdrDeviations: [],
+    infraConstraints: null,
     audit: v1.audit || [],
   };
 }
@@ -179,4 +244,4 @@ function save(file, state, timestamp) {
   return file;
 }
 
-module.exports = { SCHEMA_VERSION, createState, newIncrement, active, sealActive, beginIncrement, migrateV1, load, save };
+module.exports = { SCHEMA_VERSION, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, migrateV1, load, save };

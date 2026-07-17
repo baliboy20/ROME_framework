@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.4 |
+| **Version** | 1.5 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
@@ -78,7 +78,7 @@ Gate ownership and enforcement: ROME-STD-GATE. Structure and invariants: ROME-ON
 | **PRD** | Product Requirements Document - user-provided specification of desired application functionality | - | Input artifact type |
 | **BRD** | Business Requirements Document - user-provided specification of business objectives and constraints | - | Input artifact type |
 | **Data Dictionary** | Centralized single-source-of-truth defining data entities, attributes, relationships | YAML | Data model authority |
-| **Technical Specification** | Centralized doc defining technical constraints, platform requirements, implementation parameters | Markdown | Technical constraints authority |
+| **Technical Specs Artifact** | Lucien's P4 output doc recording technical constraints, platform requirements, implementation parameters. *Distinct from* **Technical Specification (spec input)** — the sponsor's TDR-carrying input document (ROME-STD-TECHSPEC), defined under Intake above. | Markdown | P4 configuration output |
 | **Action List** | Centralized task inventory used for robot task assignment | Markdown | Task management and coordination |
 | **Glossary** | Mapping between framework-specific terms and standard software engineering terminology | - | External terminology alignment |
 | **Technical Brief** | Structured sponsor input declaring platform mandates, preferences, and constraints. Optional. | YAML (`_user_input/technical-brief.yaml`) | Project input document |
@@ -101,7 +101,7 @@ Gate ownership and enforcement: ROME-STD-GATE. Structure and invariants: ROME-ON
 |------|-----------|--------------|-------|
 | **Mandate** | Non-negotiable technical requirement from sponsor. Only changeable via AMD-### with sponsor approval. | Validate feasibility only. Cannot override. | Technical Brief classification |
 | **Preference** | Sponsor-preferred technology. PMA may propose alternatives with documented justification. | May override with justification. | Technical Brief classification |
-| **Constraint** | External limitation (existing infrastructure, compliance, integration dependency). | Must respect. Can propose workarounds. | Technical Brief classification |
+| **Constraint** | External limitation (existing infrastructure, compliance, integration dependency). *Distinct from* **Infra Constraint** (Intake section): a Constraint arrives in the legacy technical-brief.yaml; an Infra Constraint is captured by Surveyor's intake questions into the ICR (PROP-051). Where both exist, treat consistently and surface conflicts in the AIB. | Must respect. Can propose workarounds. | Technical Brief classification |
 
 ---
 
@@ -235,6 +235,7 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.5 | 2026-07-17T00:00:00Z | v3.2.1 consistency pass: duplicate "Technical Specification" resolved (P4 artifact renamed **Technical Specs Artifact**, cross-referenced to the spec-input term); Constraint ↔ Infra Constraint distinct-from note. |
 | 1.4 | 2026-07-17T00:00:00Z | PROP-051/052 companion additions: AIB, Sponsor Checkpoint Response (CONFIRM/REDIRECT/DELEGATE), Technical Specification (spec input), TDR, Deviation Request, Carrier Reliability, Infra Constraint (cross-linked to ENT-20 and AX-27..30). |
 | 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 companion additions: defined Increment, Project, Stage, Core Subsystem, Stub, Build-Out Decision (cross-linked to ROME-ONT-001 ENT-15..19 and AX-19..24). |
 | 1.2 | 2026-07-16T00:00:00Z | PROP-047 companion additions: defined Input, Surveyor, ICR, Quality Verdict, Input Reliability (previously undefined framework terms; cross-linked to ROME-ONT-001 ENT-13/14 and AX-17/18). |

@@ -169,9 +169,22 @@ Companion changes on implementation (PROP-043 pattern):
 *Wireframe Sidecar* (text annotation companion to a visual input). Reuses — not
 duplicates — the existing **Mandate / Preference / Constraint** classifications.
 
-**Ontology (ROME-ONT-001):** ENT-20 *Wireframe* (annotated visual Input);
-REL-22 *Wireframe `expresses` Requirement/Journey* (via sidecar bindings);
-REL-23 *Module Doc `defers-to` Domain Lexicon*.
+**Ontology (ROME-ONT-001):** ENT-21 *Wireframe* (annotated visual Input);
+REL-25 *Wireframe `expresses` Requirement/Journey* (via sidecar bindings);
+REL-26 *Module Doc `defers-to` Domain Lexicon*.
+*(Renumbered 2026-07-17: the originally drafted ENT-20/REL-22/REL-23 were
+claimed by ROME-PROP-052 — ENT-20 = TDR, REL-22..24 — implemented in ontology
+v1.5 before this proposal. AX-25 remains reserved for this proposal.)*
+
+**Reconciliation with ROME-STD-TECHSPEC (added 2026-07-17):** made technical
+decisions do NOT live in module-doc prose or zones — they are TDRs
+(`decisions.tdr.yaml`, PROP-052), and Surveyor flags decision-shaped prose
+outside a TDR as unconstituted. On implementation, Part B gains either an
+optional **Decided** zone rendering the project's TDR table (extraction emits
+the canonical YAML per STD-TECHSPEC §2) or an explicit defer-to rule
+("technical decisions: see decisions.tdr.yaml"). AX-25's authority-marker rule
+and AX-30's carrier-reliability downgrade are siblings of one discipline —
+cross-reference them in the standard.
 
 **Axiom:**
 | ID | Axiom | Provenance (on implementation) |
@@ -225,4 +238,5 @@ REL-23 *Module Doc `defers-to` Domain Lexicon*.
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 0.2 | 2026-07-17T00:00:00Z | v3.2.0 consistency amendment: ENT/REL renumbered (ENT-21, REL-25/26 — original IDs claimed by implemented PROP-052); added STD-TECHSPEC reconciliation (Decided zone or defer-to rule for TDRs; AX-25 ↔ AX-30 cross-reference). |
 | 0.1 | 2026-07-17T00:00:00Z | Initial draft from live-input intake analysis (FOB Module-10 + Domain Lexicon) and the sponsor design session on input formalisation and annotated wireframes. Parts A–E: canonical domain doc; zoned module doc with machine-readable header; authority-marker consistency (AX-25, CHECKED); WF-* wireframe sidecars with lexicon bindings and the no-unmapped-element rule; scaffolding + advisory intake conformance. Four OQs (disposition, front-matter, binding depth, template ownership). |

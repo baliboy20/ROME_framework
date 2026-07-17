@@ -32,7 +32,7 @@ Defines MCP (Model Context Protocol) server dependency declaration schema for RO
 | UID | Document | Purpose |
 |-----|----------|---------|
 | ROME-GOV-002 | UID Registry | UID allocation |
-| ROME-PROC-005 | Activity Logging Protocol | activity-log-file server usage |
+| ROME-GOV-008 | Activity Log Format (was: Activity Logging Protocol, ROME-PROC-005 retired) | activity-log-file server usage |
 | ROME-GOV-006 | Sponsor Interaction | Seez server usage |
 
 ---
@@ -94,7 +94,7 @@ Plugins declare MCP server requirements in the `requires.mcpServers` array:
 
 ### Required by All Robots
 
-Per ROME-PROC-005 (Activity Logging Protocol), all robots must use:
+Per ROME-GOV-008 (Activity Log Format), all robots must use:
 
 **activity-log-file**
 - Provider: rome-core (`servers/activity-log/activity-log-file/`)
@@ -188,7 +188,7 @@ Per ROME-GOV-006 (Sponsor Interaction):
 ```javascript
 // All phase plugins MUST require activity-log-file
 if (hasServer("activity-log-file") && server.optional === true) {
-  ERROR("activity-log-file cannot be optional per ROME-PROC-005")
+  ERROR("activity-log-file cannot be optional per ROME-GOV-008")
 }
 ```
 
@@ -341,6 +341,6 @@ node scripts/validate-mcp-dependencies.cjs --check-runtime
 
 ## References
 
-- **ROME-PROC-005:** Activity Logging Protocol (activity-log-file usage)
+- **ROME-GOV-008:** Activity Log Format (was: Activity Logging Protocol, ROME-PROC-005 retired) (activity-log-file usage)
 - **ROME-GOV-006:** Sponsor Interaction (Seez usage)
 - **ROME-GOV-002:** UID Registry (Document UID allocation)

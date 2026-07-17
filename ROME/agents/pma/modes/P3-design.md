@@ -157,7 +157,28 @@ mcp__Seez__ask_questions({
 
 #### Step 5: Technology Stack Selection
 
-##### 5a: Load Technical Brief (if present)
+##### 5a-0: Honor binding TDRs FIRST (ROME-STD-TECHSPEC / ROME-AX-29 — takes precedence)
+
+If `state.tdrs` contains APPROVED TDRs with `binds` ∋ P3:
+  - Each is a CONSTRAINT, not an input: adopt the decided value and annotate the
+    implementing element `satisfies: TDR-##` (in tech-stack.yaml and/or the
+    architecture decision table). GATE-P3 refuses advance on an uncited TDR.
+  - To depart (deprecated library, vendor cannot meet a requirement): file a
+    deviation via Roma (`recordTdrDeviation` — reason + proposed alternative);
+    NEVER design around a TDR silently. Only the sponsor supersedes it (AX-30).
+  - PROPOSED TDRs never bind — list them as open questions in AIB-P3 (Step 20).
+  - **Precedence:** TDRs (canonical, PROP-052) > technical-brief.yaml MANDATE
+    (legacy channel, below) > preferences > PMA selection. Where both a TDR and
+    a technical-brief entry cover the same concern, the TDR governs and the
+    brief entry is ignored (note the shadowing in tech-stack.yaml).
+  - Honor recorded `state.infraConstraints` the same way: a choice contradicting
+    one must be surfaced in AIB-P3, never made silently (PROP-051).
+
+##### 5a: Load Technical Brief (legacy channel, if present)
+
+*technical-brief.yaml predates ROME-STD-TECHSPEC. Sponsors should author TDRs
+(`decisions.tdr.yaml`, GUIDE-002); this section remains for projects staged the
+old way and is subordinate to 5a-0.*
 
 If `_user_input/technical-brief.yaml` exists:
 
@@ -205,11 +226,16 @@ the run command. This makes the testing approach a first-class, sponsor-reviewab
 design decision (it is presented with the rest of tech-stack.yaml in 5c), instead
 of an implicit ecosystem convention that only materialises in P4 config files.
 
+**TDR citation (REQUIRED where a TDR decided the item, v3.2.0):** any capability
+or stack entry implementing an APPROVED TDR carries `satisfies: TDR-##` — this is
+what `checkTdrConformance` reads at GATE-P3 (ROME-AX-29).
+
 ```yaml
 capabilities:
   - id: ui-app
     technology: flutter
     robot: charlie
+    satisfies: TDR-3        # when a TDR decided this item
     testing: { framework: flutter_test, types: [unit, widget, integration], command: "flutter test" }
   - id: api
     technology: hono-typescript
@@ -418,44 +444,32 @@ mcp__activity-log__append({
 })
 ```
 
-#### Step 20: Notify Sponsor
+#### Step 20: Produce AIB-P3 (Architecture & Infrastructure Brief — PROP-051 / ROME-AX-27)
 
-```bash
-terminal-notifier -title "ROME: P3 Design Complete" -message "System design complete. Ready for gate review." -sound Ping
-```
+Author `ARTIFACTS/_design/AIB-P3.md`, ≤1 page, plain language (ROME-GOV-001
+accessibility convention):
+- Component shape (topology summary) and architectural patterns chosen, one-line
+  rationale each
+- Every named third-party dependency/vendor so far — each with a one-line "why"
+  and `swappable: yes/no/costly`
+- Open infrastructure questions; PROPOSED TDRs as open questions
+- Any TDR deviation filed (highlighted delta) and any choice touching a recorded
+  infra constraint (highlighted)
 
-#### Step 21: Request Gate Review
+Include the AIB in your structured return (artifacts[]). Roma issues it to the
+sponsor (`guard-cli aib issue` → Seez) and collects CONFIRM / REDIRECT /
+DELEGATE; GATE-P3 cannot pass without that response (`sponsorArch` fact). On
+REDIRECT you are re-dispatched with the sponsor's notes — revise and the brief
+is reissued as a new revision.
 
-Notify user to request GATE-P3 validation from Sarah:
+#### Step 21: Return
 
-```
-✓ Phase 3 Design Complete
-
-All design artifacts created:
-- Tech stack selected
-- Data dictionary complete
-- API design documented
-- Use cases elaborated
-- System architecture defined
-- Work breakdown (actionlist.md) ready for P5
-- Test architecture designed
-
-Next step: Request GATE-P3 validation from Sarah
-
-To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
-  #   - Activity log (PHASE-3 IN_PROGRESS and COMPLETED)
-  #   - 100% requirements coverage
-  #   - Data dictionary completeness
-  #   - API design completeness
-  #   - Tech stack appropriateness
-  #   - System architecture meets NFRs
-
-Sarah will APPROVE or BLOCK the P3→P4 transition.
-```
-
-**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P3 validation.
+Finish by RETURNING your structured result (Return Contract in ROBOT.md):
+status, artifacts (including AIB-P3 and all design artifacts), traceabilityEdges,
+`tdrCitations` for every APPROVED TDR you satisfied, blockers. Returning IS the
+completion record. Roma runs the mechanical checks, drives the sponsor
+checkpoint, and requests the GATE-P3 verdict from Sarah — there is no
+user-notification step and no path outside the orchestrator.
 
 ---
 
@@ -560,11 +574,10 @@ Before marking P3 complete:
 - [ ] Work breakdown (actionlist) created
 - [ ] Test data specification complete
 - [ ] Sponsor design review approved
+- [ ] Every APPROVED TDR binding P3 cited (`satisfies: TDR-##`) or deviation filed — none silently contradicted (ROME-AX-29)
+- [ ] AIB-P3 produced (component shape, vendors + rationale/swappable, open questions, deviations highlighted)
 - [ ] Phase 3 handover document created
-- [ ] Feature entries logged
-- [ ] Activity log shows PHASE-3 COMPLETED
-- [ ] Sponsor notified
-- [ ] GATE-P3 approval requested
+- [ ] Structured return delivered with tdrCitations (Roma drives the sponsor checkpoint + gate)
 
 ---
 

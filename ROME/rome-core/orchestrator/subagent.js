@@ -63,7 +63,10 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
     `You FINISH by returning a single structured result (agent, role, phase, status, ` +
     `summary, artifacts, traceabilityEdges, blockers). \`agent\` MUST be your dispatch ` +
     `instance id — it is how your return closes your dispatch. Returning IS your ` +
-    `progress record — there is no separate logging step and no silent-finish path.`,
+    `progress record — there is no separate logging step and no silent-finish path. ` +
+    `If APPROVED TDRs bind your phase (state.tdrs), include tdrCitations: ` +
+    `[{tdr:"TDR-##", artifact:"<element>"}] — one per TDR you satisfied (ROME-AX-29); ` +
+    `to depart from one, file a deviation via the orchestrator instead (never deviate silently).`,
   ].join('');
 
   return { role, systemPrompt, skills, modeFile: modeFile || null, sourceDir: dir };
@@ -117,6 +120,14 @@ function validateReturn(ret) {
     if (!Array.isArray(ret.testManifest)) errs.push('testManifest must be an array');
     else for (const m of ret.testManifest) {
       if (!m.req && !m.requirement) { errs.push('testManifest entry needs {req}'); break; }
+    }
+  }
+  // PROP-052 (ROME-AX-29): optional TDR citations — 'TDR-##' or {tdr, artifact}.
+  if (ret.tdrCitations !== undefined) {
+    if (!Array.isArray(ret.tdrCitations)) errs.push('tdrCitations must be an array');
+    else for (const c of ret.tdrCitations) {
+      const id = typeof c === 'string' ? c : c && c.tdr;
+      if (!/^TDR-\d+$/.test(id || '')) { errs.push('tdrCitations entry needs a TDR-<n> id (string or {tdr, artifact})'); break; }
     }
   }
   return errs;
@@ -249,6 +260,19 @@ function processReturn(state, ret, timestamp) {
       const entry = { req, outcomesTested: !!m.outcomesTested, errorsTested: m.errorsTested || [] };
       const existing = inc.testManifest.find(x => x.req === req);
       if (existing) Object.assign(existing, entry); else inc.testManifest.push(entry);
+    }
+  }
+
+  // PROP-052 (ROME-AX-29): accumulate TDR citations per phase — the source
+  // checkTdrConformance reads (state.tdrCitations[phase]). Dedup by TDR id;
+  // a later citation for the same TDR updates its artifact.
+  if (Array.isArray(ret.tdrCitations) && ret.tdrCitations.length) {
+    state.tdrCitations = state.tdrCitations || {};
+    const bucket = (state.tdrCitations[ret.phase] = state.tdrCitations[ret.phase] || []);
+    for (const c of ret.tdrCitations) {
+      const entry = typeof c === 'string' ? { tdr: c, artifact: null } : { tdr: c.tdr, artifact: c.artifact || null };
+      const existing = bucket.find(x => x.tdr === entry.tdr);
+      if (existing) Object.assign(existing, entry); else bucket.push(entry);
     }
   }
 

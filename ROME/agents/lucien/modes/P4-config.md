@@ -326,43 +326,37 @@ mcp__activity-log__append({
 })
 ```
 
-### Step 13: Notify Sponsor
+### Step 13: Produce AIB-P4 (Architecture & Infrastructure Brief — PROP-051 / ROME-AX-27)
 
-```bash
-terminal-notifier -title "ROME: P4 Config Complete" -message "All workspaces scaffolded. Development environment ready." -sound Ping
-```
+Author `ARTIFACTS/_config/AIB-P4.md`, ≤1 page, plain language:
+- Final dependency/vendor list — delta from AIB-P3 highlighted; each named item
+  with one-line "why" and `swappable: yes/no/costly`
+- Deployment target + environment topology; secrets flow (where they live, how
+  they reach the deployed environment)
+- The sponsor's **local dev loop** (what they run) and the **`devRuntimeDiffers`
+  declaration** (ROME-AX-28): the scaffolding manifest carries the required
+  `devRuntimeDiffers: true|false` field, with a `divergenceNote` when true (e.g.
+  dev in-memory store vs. prod Postgres). Never scaffold a production schema the
+  delivered runtime will silently ignore.
+- **Standards in force** (PROP-051 §2.1a): expert packs to be injected per P5
+  capability (with enforce-rule counts), dispatched skills, and a NO-PACK flag
+  for any stack area lacking a codified standard
+- Any TDR deviation filed and any choice touching a recorded infra constraint
+  (highlighted)
 
-### Step 14: Request Gate Validation
+Roma issues the brief to the sponsor and collects CONFIRM / REDIRECT / DELEGATE;
+GATE-P4 cannot pass without it (`sponsorInfra` fact). A P3 DELEGATE never
+carries over — the P4 checkpoint runs fresh.
 
-Present exit criteria summary and notify user to request GATE-P4 validation:
+### Step 14: Return
 
-```
-✓ Phase 4 Configuration Complete
-
-All configuration artifacts created:
-- Workspace scaffolded (SOURCE/ directories)
-- Build system configured
-- Dependencies installed
-- Environment configs (dev, test, staging, prod)
-- Security settings configured
-- CI/CD pipeline setup
-- Scaffolding manifest documented
-
-Next step: Request GATE-P4 validation from Sarah
-
-To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
-  #   - Activity log (PHASE-4 IN_PROGRESS and COMPLETED)
-  #   - Workspace structure completeness
-  #   - Environment configuration
-  #   - Security configuration
-  #   - No hardcoded secrets
-
-Sarah will APPROVE or BLOCK the P4→P5 transition.
-```
-
-**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P4 validation.
+Finish by RETURNING your structured result (Return Contract in ROBOT.md):
+status, artifacts (including AIB-P4, scaffolding manifest, environment configs),
+traceabilityEdges, `tdrCitations` for every APPROVED TDR binding P4 that you
+satisfied, blockers. Returning IS the completion record. Roma runs the
+mechanical checks (secrets, traceability, sponsorInfra, tdrConformance), drives
+the sponsor checkpoint, and requests the GATE-P4 verdict from Sarah — there is
+no user-notification step and no path outside the orchestrator.
 
 ---
 
@@ -453,9 +447,10 @@ Before marking P4 complete:
 - [ ] Scaffolding manifest created
 - [ ] Phase 4 handover document created
 - [ ] Configuration validated (builds work, tests run, YAML valid)
-- [ ] Activity log shows PHASE-4 COMPLETED
-- [ ] Sponsor notified
-- [ ] GATE-P4 approval requested
+- [ ] Every APPROVED TDR binding P4 cited (`satisfies: TDR-##`) or deviation filed (ROME-AX-29)
+- [ ] Scaffolding manifest carries `devRuntimeDiffers` (+ note when true) — ROME-AX-28
+- [ ] AIB-P4 produced (dependency delta, deployment target, secrets flow, local dev loop, standards in force)
+- [ ] Structured return delivered with tdrCitations (Roma drives the sponsor checkpoint + gate)
 
 ---
 

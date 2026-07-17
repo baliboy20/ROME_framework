@@ -9,10 +9,15 @@
  *   guard-cli.cjs verdict <state.json> --phase P3 --verdict APPROVE --role sarah --ts <iso> [--note "..."]
  *   guard-cli.cjs advance <state.json> --ts <iso>
  *   guard-cli.cjs trace   <state.json> --req REQ-001
+ *   guard-cli.cjs intake  <state.json> --icr <icr.json> --ts <iso>          (PROP-047/051/052: finalize routing + persist TDRs/constraints)
+ *   guard-cli.cjs aib     <state.json> issue   --phase P3 --revision r1 --ts <iso>
+ *   guard-cli.cjs aib     <state.json> respond --phase P3 --revision r1 --type CONFIRM|REDIRECT|DELEGATE --ts <iso>
+ *   guard-cli.cjs deviation <state.json> file    --tdr TDR-1 --phase P3 --reason "..." --alt "..." --ts <iso>
+ *   guard-cli.cjs deviation <state.json> resolve --id DEV-1 --approved true|false --sponsor --ts <iso>
  *
  * Exit codes: 0 = allowed/done, 1 = BLOCKED/invalid, 2 = usage error.
  */
-const { load, save, active } = require('./state');
+const { load, save, active, finalizeIntake, recordAib, recordAibResponse } = require('./state');
 const guard = require('./guard');
 const axioms = require('./axioms');
 
@@ -20,7 +25,7 @@ function arg(flag) { const i = process.argv.indexOf(flag); return i >= 0 ? proce
 
 const cmd = process.argv[2];
 const file = process.argv[3];
-if (!cmd || !file) { console.error('usage: guard-cli.cjs <check|verdict|advance|trace|axioms> <state.json> [opts]'); process.exit(2); }
+if (!cmd || !file) { console.error('usage: guard-cli.cjs <check|verdict|advance|trace|axioms|intake|aib|deviation> <state.json> [opts]'); process.exit(2); }
 
 try {
   const state = load(file);
@@ -46,6 +51,47 @@ try {
     guard.advance(state, arg('--ts'));
     save(file, state, arg('--ts'));
     console.log(`advanced → ${active(state).currentPhase || '(increment complete)'}`);
+    process.exit(0);
+  }
+  if (cmd === 'intake') {
+    // Finalize routing from a Surveyor ICR (validates + downgrades TDRs here —
+    // the deterministic path, no LLM in the authority loop).
+    const fs = require('fs');
+    const { routeFromICR } = require('./routing');
+    const { validateTdrs, applyCarrierReliability } = require('./intake');
+    const icr = JSON.parse(fs.readFileSync(arg('--icr'), 'utf8'));
+    if (Array.isArray(icr.tdrs) && icr.tdrs.length) {
+      const v = validateTdrs(icr.tdrs);
+      if (!v.ok) { console.error(`BLOCK: invalid TDRs — ${v.errors.join('; ')}`); process.exit(1); }
+      const specInput = (icr.inputs || []).find(i => i.form === 'spec');
+      icr.tdrs = applyCarrierReliability(icr.tdrs, specInput ? specInput.reliability : undefined);
+    }
+    const routed = routeFromICR(icr);
+    finalizeIntake(state, routed, arg('--ts'));
+    save(file, state, arg('--ts'));
+    console.log(`intake finalized: routing [${routed.routing.join(', ')}]; ${(routed.tdrs || []).length} TDR(s); ${routed.notes.join(' | ')}`);
+    process.exit(0);
+  }
+  if (cmd === 'aib') {
+    const sub = process.argv[4];
+    if (sub === 'issue') recordAib(state, arg('--phase'), arg('--revision'), arg('--ts'));
+    else if (sub === 'respond') recordAibResponse(state, arg('--phase'), { type: arg('--type'), revision: arg('--revision'), timestamp: arg('--ts') });
+    else { console.error('usage: guard-cli.cjs aib <state.json> issue|respond --phase P3|P4 --revision r --ts <iso> [--type CONFIRM|REDIRECT|DELEGATE]'); process.exit(2); }
+    save(file, state, arg('--ts'));
+    console.log(`aib ${sub}: ${arg('--phase')} rev ${arg('--revision')}${sub === 'respond' ? ` ${arg('--type')}` : ''}`);
+    process.exit(0);
+  }
+  if (cmd === 'deviation') {
+    const sub = process.argv[4];
+    if (sub === 'file') {
+      guard.recordTdrDeviation(state, { tdr: arg('--tdr'), phase: arg('--phase'), reason: arg('--reason'), proposedAlternative: arg('--alt'), timestamp: arg('--ts') });
+    } else if (sub === 'resolve') {
+      // --sponsor is a bare flag: its presence asserts the resolution is the
+      // sponsor's recorded answer (ROME-AX-30). Without it, guard refuses.
+      guard.resolveTdrDeviation(state, { deviation: arg('--id'), approved: arg('--approved') === 'true', sponsor: process.argv.includes('--sponsor'), timestamp: arg('--ts') });
+    } else { console.error('usage: guard-cli.cjs deviation <state.json> file|resolve [--tdr TDR-1 --phase P3 --reason .. --alt ..] [--id DEV-1 --approved true|false --sponsor] --ts <iso>'); process.exit(2); }
+    save(file, state, arg('--ts'));
+    console.log(`deviation ${sub}: ${sub === 'file' ? arg('--tdr') : arg('--id')}`);
     process.exit(0);
   }
   if (cmd === 'trace') {

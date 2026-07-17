@@ -367,3 +367,4 @@ For projects requiring UX design:
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0.0 | 2026-01-28 | Robot identity extracted from rome-p3-design agent definition |
+| 1.1.0 | 2026-07-17 | v3.2.0/v3.2.1: Required section — binding TDRs (satisfies: TDR-##, deviation path, ROME-AX-29/30) and AIB-P3 production (ROME-AX-27). |

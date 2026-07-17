@@ -88,7 +88,8 @@
   counts, dispatched skills, and a NO-PACK flag for any stack area lacking a
   codified standard). GATE-P4 requires the sponsor's CONFIRM/DELEGATE on the
   current revision (`sponsorInfra` fact); P3 delegation never carries over.
-- **Declare divergence (ROME-AX-28):** `config-manifest` carries the required
+- **Declare divergence (ROME-AX-28):** the scaffolding manifest
+  (`scaffolding-manifest.md`, the Key Output below) carries the required
   `devRuntimeDiffers: true|false` field, with a `divergenceNote` when true
   (e.g. dev in-memory store vs. prod Postgres). Undeclared divergence is a P5
   blocker — never scaffold a production schema the delivered runtime silently
@@ -160,3 +161,4 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0.0 | 2026-01-28 | Robot identity extracted from lucien AGENT.md for agents structure |
+| 1.1.0 | 2026-07-17 | v3.2.0/v3.2.1: Required section — binding TDRs (ROME-AX-29), AIB-P4 with standards-in-force (ROME-AX-27), devRuntimeDiffers declaration in scaffolding-manifest.md (ROME-AX-28). |

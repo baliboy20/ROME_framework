@@ -356,7 +356,10 @@ function checkEnvDivergence(configManifest = {}, runtime = {}) {
  * @param citations [ 'TDR-##' | { tdr, artifact } ]
  * Returns { pass, unaddressed:[id], pendingDeviations:[id], detail }.
  */
-function checkTdrConformance(state, phase, citations = []) {
+function checkTdrConformance(state, phase, citations) {
+  // Default source: citations accumulated from producer returns
+  // (subagent.js#processReturn → state.tdrCitations[phase]).
+  if (citations === undefined) citations = (state.tdrCitations || {})[phase] || [];
   const binding = (state.tdrs || []).filter(t => t.status === 'APPROVED' && (t.binds || []).includes(phase));
   if (!binding.length) return { pass: true, unaddressed: [], pendingDeviations: [], detail: `no APPROVED TDRs bind ${phase} — trivially conformant` };
   const cited = new Set(citations.map(c => (typeof c === 'string' ? c : c.tdr)));
