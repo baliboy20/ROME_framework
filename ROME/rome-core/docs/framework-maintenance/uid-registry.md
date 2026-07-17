@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.14 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.15 |
 | **Date** | 2026-07-17T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -93,7 +93,7 @@ Normative cross-cutting standards extracted per PROP-034 Track A. Enforced mecha
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-GUIDE-001 | Requirements Authoring for AORDL (portable) | `/ROME/rome-core/docs/guides/requirements-authoring-for-aordl.md` | Active |
+| ROME-GUIDE-001 | Requirements Authoring for AORDL (portable) | `/REQUIREMENTS-AUTHORING-GUIDE.md` | Active |
 
 ### Governance Documents
 
@@ -304,6 +304,7 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.15 | 2026-07-17T00:00:00Z | ROME-GUIDE-001 relocated to repo root (`/REQUIREMENTS-AUTHORING-GUIDE.md`) — sponsor-facing external document, sits beside GETTING-STARTED.md outside rome-core. |
 | 4.14 | 2026-07-17T00:00:00Z | Added GUIDE type code; registered ROME-GUIDE-001 (Requirements Authoring for AORDL — portable, self-contained; quotes ROME-STD-AORDL rule lists verbatim). PROP-050 remains Draft (parked — sponsor prioritised the portable guide over intake conformance machinery). |
 | 4.13 | 2026-07-17T00:00:00Z | Registered ROME-PROP-050 (Input Format Standard — zoned module docs, canonical domain lexicon, wireframe sidecars, authority-marker consistency AX-25). Draft; STD-INPUT UID reserved for implementation. |
 | 4.12 | 2026-07-17T00:00:00Z | PROP-048 and PROP-049 implemented (v3.0.0 "Antoninus" — MAJOR); moved to implemented-proposals/. Registered ROME-MIG-002 (state v1 → increment model, auto-migrating). Lexicon v1.3 + ontology v1.3 companion changes (ENT-15..19, REL-14..21, AX-19..24). |
