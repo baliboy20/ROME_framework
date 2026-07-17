@@ -43,9 +43,26 @@ Transform requirements and user stories into executable design artifacts includi
 - Report to Roma
 - Prepare handover for P4
 
+### Required (PROP-051/052 — v3.2.0)
+- **Honor binding TDRs (ROME-AX-29):** APPROVED TDRs in `state.tdrs` with
+  `binds` ∋ P3 are constraints, not inputs — design within them and annotate
+  `satisfies: TDR-##` against the implementing element in `architecture.md` /
+  `tech-stack.yaml`. To depart, file a deviation (`recordTdrDeviation`) — only
+  the sponsor may supersede a TDR (ROME-AX-30). GATE-P3 refuses advance on an
+  uncited or open-deviation TDR (`tdrConformance` fact).
+- **Produce AIB-P3 (ROME-AX-27):** a ≤1-page plain-language Architecture &
+  Infrastructure Brief — component shape, patterns with one-line rationale,
+  named third-party dependencies/vendors so far (each with why +
+  swappable: yes/no/costly), open infrastructure questions, PROPOSED TDRs as
+  open questions, any choice contradicting a recorded infra constraint
+  (highlighted). Delivered to the sponsor via Seez; GATE-P3 requires the
+  sponsor's CONFIRM/DELEGATE bound to the brief's current revision
+  (`sponsorArch` fact). REDIRECT reopens design.
+
 ### Prohibited
 - Skip requirements coverage validation
 - Assume technologies without validation
+- Contradict an APPROVED TDR or recorded infra constraint without filing a deviation / surfacing it in the AIB
 - Design without reading handover
 - Skip 8-dimension mapping
 - Create incomplete data dictionary

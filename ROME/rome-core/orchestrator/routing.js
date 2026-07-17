@@ -76,6 +76,16 @@ function routeFromICR(icr = {}) {
     );
   }
 
+  // AX-27 (routing side, PROP-051): the P3/P4 sponsor checkpoint is default-on.
+  // Omitting it requires the sponsor's own recorded authorization (AX-18 pattern)
+  // — an agent cannot route the sponsor's checkpoint away.
+  if (icr.sponsorCheckpoint === false && icr.sponsorCheckpointAuthorized !== true) {
+    throw new Error(
+      'Sponsor P3/P4 checkpoint omitted without sponsor authorization ' +
+      '(sponsorCheckpointAuthorized:true required — PROP-051 AX-27). Only the sponsor routes away their own checkpoint.'
+    );
+  }
+
   const intent = icr.intent || 'greenfield';
   const notes = [];
   const phases = ['P0'];
@@ -93,7 +103,15 @@ function routeFromICR(icr = {}) {
   const authorizedShaky = (icr.inputs || []).filter(i => SHAKY.has(i.reliability)).length;
   if (authorizedShaky) notes.push(`${authorizedShaky} sponsor-authorized shaky input(s) routed`);
 
-  return { routing: resolveRouting(phases), reverseFirst, notes };
+  // PROP-052: TDRs extracted by Surveyor (canonical decisions.tdr.yaml) pass
+  // through to project state; PROP-051: infra constraints likewise.
+  const tdrs = icr.tdrs || [];
+  const approvedTdrs = tdrs.filter(t => t.status === 'APPROVED').length;
+  if (tdrs.length) notes.push(`${tdrs.length} TDR(s) routed (${approvedTdrs} APPROVED — bind P3/P4/P5 per their binds field)`);
+  const sponsorCheckpointOmitted = icr.sponsorCheckpoint === false;
+  if (sponsorCheckpointOmitted) notes.push('sponsor P3/P4 checkpoint omitted (sponsor-authorized)');
+
+  return { routing: resolveRouting(phases), reverseFirst, notes, tdrs, infraConstraints: icr.infraConstraints || null, sponsorCheckpointOmitted };
 }
 
 

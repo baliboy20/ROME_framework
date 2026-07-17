@@ -63,4 +63,56 @@ function recommendPrototype(files = []) {
   });
 }
 
-module.exports = { parseReliability, classifyInputs, recommendPrototype, RELIABILITY, HETEROGENEOUS_FILE_COUNT, BINARY_EXT, UI_ASSET_EXT };
+// ── Technical Decision Records (ROME-PROP-052 / ROME-STD-TECHSPEC) ──────────
+// The canonical TDR artifact is decisions.tdr.yaml — parsed by the caller and
+// validated HERE by plain code: no LLM sits in the authority-parsing loop
+// (OQ-2 resolution). Surveyor emits this YAML when the sponsor authored a
+// markdown table instead; the sponsor confirms the extraction once at intake.
+
+const TDR_SCOPES = Object.freeze(['stack', 'dependency', 'vendor', 'pattern', 'deployment', 'data', 'dev-env']);
+const TDR_STATUSES = Object.freeze(['APPROVED', 'PROPOSED', 'SUPERSEDED']);
+const TDR_BINDS = Object.freeze(['P3', 'P4', 'P5']);
+
+/**
+ * Schema-validate a TDR set (deterministic; a malformed TDR is a hard error
+ * with a reason, not a judgement call). Returns { ok, errors:[string] }.
+ */
+function validateTdrs(tdrs = []) {
+  const errors = [];
+  const seen = new Set();
+  tdrs.forEach((t, i) => {
+    const label = t && t.id ? t.id : `tdrs[${i}]`;
+    if (!t || typeof t !== 'object') { errors.push(`${label}: not an object`); return; }
+    if (!/^TDR-\d+$/.test(t.id || '')) errors.push(`${label}: id must match TDR-<n>`);
+    if (seen.has(t.id)) errors.push(`${label}: duplicate id`);
+    seen.add(t.id);
+    if (!TDR_STATUSES.includes(t.status)) errors.push(`${label}: status must be one of ${TDR_STATUSES.join('|')}`);
+    if (!TDR_SCOPES.includes(t.scope)) errors.push(`${label}: scope must be one of ${TDR_SCOPES.join('|')}`);
+    if (!t.decision || !String(t.decision).trim()) errors.push(`${label}: decision sentence required`);
+    if (!Array.isArray(t.binds) || t.binds.length === 0 || t.binds.some(b => !TDR_BINDS.includes(b))) {
+      errors.push(`${label}: binds must be a non-empty subset of ${TDR_BINDS.join('|')}`);
+    }
+    if (t.status === 'SUPERSEDED' && !t.supersededBy) errors.push(`${label}: SUPERSEDED requires supersededBy`);
+  });
+  return { ok: errors.length === 0, errors };
+}
+
+/**
+ * Carrier-reliability downgrade (ROME-PROP-052 §2.1 / ROME-AX-30): TDR
+ * authority never exceeds the reliability of its carrying document. In a
+ * non-Reliable input (PROPOSED / RECONSTRUCTED / UNDEFINED — or unmarked),
+ * every APPROVED TDR is downgraded to PROPOSED, whatever its own status field
+ * says. Pure: returns a new array; downgraded entries carry
+ * `{ downgraded: true, declaredStatus }` so the sponsor sees exactly what was
+ * demoted and can re-assert it by marking the carrier Reliable.
+ */
+function applyCarrierReliability(tdrs = [], carrierReliability) {
+  if (carrierReliability === 'Reliable') return tdrs.map(t => ({ ...t }));
+  return tdrs.map(t => (
+    t.status === 'APPROVED'
+      ? { ...t, status: 'PROPOSED', downgraded: true, declaredStatus: 'APPROVED' }
+      : { ...t }
+  ));
+}
+
+module.exports = { parseReliability, classifyInputs, recommendPrototype, validateTdrs, applyCarrierReliability, RELIABILITY, HETEROGENEOUS_FILE_COUNT, BINARY_EXT, UI_ASSET_EXT, TDR_SCOPES, TDR_STATUSES, TDR_BINDS };

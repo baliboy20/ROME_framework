@@ -45,6 +45,7 @@ function newIncrement({ id, intent = 'greenfield', stage = null, routing, timest
     inputReliability: [], // [{ location, form, reliability, sponsorAuthorized? }] — PROP-047
     testManifest: [],   // [{ req, outcomesTested, errorsTested:[id] }] — D7
     verification: {},   // phase → { key: { pass, detail, timestamp } } — guard preconditions
+    aib: {},            // PROP-051: phase → { revision, omitted?, sponsorAuthorized?, response? } — sponsor briefs (AX-27)
   };
 }
 
@@ -76,6 +77,9 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
     },
     stagePlan: null,    // PROP-049: { stages:[{id, inputs, provides, presumes, dependsOn}], decisions:[] }
     stubs: [],          // PROP-049 stub ledger: { id, subsystem, contract?, stubbedIn, implementBy, sponsorDecision, status, timestamp }
+    tdrs: [],           // PROP-052: validated TDRs from decisions.tdr.yaml (post carrier-reliability downgrade)
+    tdrDeviations: [],  // PROP-052 §2.5: { id, tdr, phase?, reason, proposedAlternative, status:OPEN|SPONSOR_APPROVED|SPONSOR_REJECTED, timestamp }
+    infraConstraints: null, // PROP-051: sponsor's existing infra/vendor constraints from intake (ICR passthrough)
     audit: [],          // append-only, project-wide
   };
 }

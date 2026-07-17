@@ -277,4 +277,106 @@ function checkDesignAssets(hasUiCapability, assets = []) {
   };
 }
 
-module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets };
+/**
+ * Sponsor Architecture/Infrastructure Brief consent (ROME-PROP-051 / ROME-AX-27).
+ * One check serves both facts: `sponsorArch` (P3, AIB-P3) and `sponsorInfra`
+ * (P4, AIB-P4) — the record shape is identical; only the phase differs.
+ *
+ * The AIB record lives at active(state).aib[phase]:
+ *   { revision, omitted?, sponsorAuthorized?,
+ *     response?: { type:'CONFIRM'|'DELEGATE'|'REDIRECT', revision, timestamp } }
+ *
+ * Rules (all sponsor-side; Sarah cannot approve past this fact):
+ *  - No record / no response → fail (awaiting sponsor).
+ *  - Response bound to a stale AIB revision → fail (reconfirm the current brief).
+ *  - CONFIRM or DELEGATE on the current revision → pass. DELEGATE is a
+ *    first-class recorded answer and never auto-extends across phases (OQ-2:
+ *    P3 delegation does not satisfy P4 — each phase has its own record).
+ *  - REDIRECT → fail until the brief is revised and reconfirmed.
+ *  - Checkpoint omitted from this project → pass ONLY with recorded sponsor
+ *    authorization (the AX-18 pattern: only the sponsor routes away their
+ *    own checkpoint).
+ * Returns { pass, detail }.
+ */
+function checkSponsorAib(state, phase) {
+  const aib = (active(state).aib || {})[phase];
+  if (!aib) return { pass: false, detail: `${phase}: no AIB record — produce the brief and obtain a sponsor response (ROME-AX-27)` };
+  if (aib.omitted) {
+    return aib.sponsorAuthorized === true
+      ? { pass: true, detail: `${phase} sponsor checkpoint omitted with recorded sponsor authorization` }
+      : { pass: false, detail: `${phase} sponsor checkpoint omitted WITHOUT sponsor authorization (ROME-AX-27)` };
+  }
+  const r = aib.response;
+  if (!r) return { pass: false, detail: `AIB-${phase} rev ${aib.revision}: awaiting sponsor response (ROME-AX-27)` };
+  if (r.revision !== aib.revision) {
+    return { pass: false, detail: `sponsor response bound to stale AIB-${phase} rev ${r.revision} (current: ${aib.revision}) — reconfirm the current brief (ROME-AX-27)` };
+  }
+  if (r.type === 'CONFIRM' || r.type === 'DELEGATE') {
+    return { pass: true, detail: `sponsor ${r.type} on AIB-${phase} rev ${aib.revision}` };
+  }
+  if (r.type === 'REDIRECT') {
+    return { pass: false, detail: `sponsor REDIRECT open on AIB-${phase} — revise the brief and obtain confirmation (ROME-AX-27)` };
+  }
+  return { pass: false, detail: `unknown sponsor response type "${r.type}" on AIB-${phase}` };
+}
+
+/**
+ * Dev/prod environment divergence declaration (ROME-PROP-051 / ROME-AX-28,
+ * CHECKED tier). `configManifest.devRuntimeDiffers` is a REQUIRED boolean
+ * (OQ-3 resolution): absent = fail; true requires a divergenceNote; an
+ * observed divergence (`runtime.devRuntimeDiffers`, computed by the
+ * orchestrator from the delivered runtime's defaults) with a false
+ * declaration = fail. A failing check is filed as a P5 blocker (AX-05 path).
+ * Returns { pass, detail }.
+ */
+function checkEnvDivergence(configManifest = {}, runtime = {}) {
+  const declared = configManifest.devRuntimeDiffers;
+  if (declared === undefined || declared === null) {
+    return { pass: false, detail: 'config-manifest missing required devRuntimeDiffers declaration (ROME-AX-28)' };
+  }
+  if (declared === true && !(configManifest.divergenceNote || '').trim()) {
+    return { pass: false, detail: 'devRuntimeDiffers:true requires a divergenceNote stating what diverges and why (ROME-AX-28)' };
+  }
+  if (runtime.devRuntimeDiffers && declared !== true) {
+    return { pass: false, detail: 'delivered runtime diverges from the configured environment but the manifest declares devRuntimeDiffers:false — undeclared divergence (ROME-AX-28)' };
+  }
+  return {
+    pass: true,
+    detail: declared ? `declared divergence: ${configManifest.divergenceNote}` : 'no dev/prod divergence declared or observed',
+  };
+}
+
+/**
+ * TDR conformance (ROME-PROP-052 / ROME-AX-29). Citation-level, not semantic:
+ * every APPROVED TDR in state.tdrs whose `binds` includes this phase must be
+ * either cited by the phase's producers (`satisfies: TDR-##` → `citations`) or
+ * covered by a SPONSOR_APPROVED deviation (guard.js#resolveTdrDeviation). An
+ * OPEN deviation fails the check (pending sponsor); a SPONSOR_REJECTED one
+ * leaves the TDR binding. Projects with no spec input pass trivially.
+ * @param citations [ 'TDR-##' | { tdr, artifact } ]
+ * Returns { pass, unaddressed:[id], pendingDeviations:[id], detail }.
+ */
+function checkTdrConformance(state, phase, citations = []) {
+  const binding = (state.tdrs || []).filter(t => t.status === 'APPROVED' && (t.binds || []).includes(phase));
+  if (!binding.length) return { pass: true, unaddressed: [], pendingDeviations: [], detail: `no APPROVED TDRs bind ${phase} — trivially conformant` };
+  const cited = new Set(citations.map(c => (typeof c === 'string' ? c : c.tdr)));
+  const deviations = state.tdrDeviations || [];
+  const approvedDeviation = id => deviations.some(d => d.tdr === id && d.status === 'SPONSOR_APPROVED');
+  const openDeviation = id => deviations.some(d => d.tdr === id && d.status === 'OPEN');
+  const pendingDeviations = binding.filter(t => openDeviation(t.id)).map(t => t.id);
+  const unaddressed = binding.filter(t => !cited.has(t.id) && !approvedDeviation(t.id) && !openDeviation(t.id)).map(t => t.id);
+  const pass = unaddressed.length === 0 && pendingDeviations.length === 0;
+  return {
+    pass,
+    unaddressed,
+    pendingDeviations,
+    detail: pass
+      ? `${binding.length} binding TDR(s) satisfied or sponsor-deviated at ${phase}`
+      : [
+          unaddressed.length ? `${unaddressed.length} binding TDR(s) unaddressed at ${phase}: ${unaddressed.join(', ')}` : null,
+          pendingDeviations.length ? `${pendingDeviations.length} deviation(s) awaiting sponsor: ${pendingDeviations.join(', ')}` : null,
+        ].filter(Boolean).join('; ') + ' (ROME-AX-29)',
+  };
+}
+
+module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets, checkSponsorAib, checkEnvDivergence, checkTdrConformance };

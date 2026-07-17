@@ -290,7 +290,7 @@ else
   # increments.test.cjs — AX-20 is CHECKED, its tagged test exists but is not
   # demanded here).
   TESTS_DIR="$ROME_CORE/orchestrator/tests"
-  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18 AX-19 AX-21 AX-22 AX-23 AX-24 AX-26"
+  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18 AX-19 AX-21 AX-22 AX-23 AX-24 AX-26 AX-27 AX-29 AX-30"
   if [ ! -d "$TESTS_DIR" ]; then
     fail "6b: orchestrator/tests not found — ENFORCED axioms have no behavioural provenance"
   else

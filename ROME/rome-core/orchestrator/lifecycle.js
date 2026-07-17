@@ -45,15 +45,18 @@ const CODE_SATISFIES = Object.freeze(['implements', 'enforces']);
 //   contracts    — inter-component contract drift = 0
 //   executability— generated code installs/builds/tests pass
 //   testAdequacy — MVP rule: each requirement's declared Outcomes + Errors are tested
+//   sponsorArch  — sponsor CONFIRM/DELEGATE on AIB-P3 (PROP-051, ROME-AX-27)
+//   sponsorInfra — sponsor CONFIRM/DELEGATE on AIB-P4 (PROP-051, ROME-AX-27)
+//   tdrConformance — every binding APPROVED TDR cited or sponsor-deviated (PROP-052, ROME-AX-29)
 const PHASES = Object.freeze([
   { id: 'P0',   name: 'bootstrap',    owner: 'bootstrap',            gate: null,                              optional: false, requires: [] },
   { id: 'P0.5', name: 'intake',       owner: 'surveyor',             gate: { id: 'GATE-P0.5', role: 'sarah' }, optional: true,  requires: [] },
   { id: 'P1',   name: 'requirements', owner: 'talib',                gate: { id: 'GATE-P1',   role: 'sarah' }, optional: false, requires: ['aordl', 'traceability'] },
   { id: 'P2',   name: 'analysis',     owner: 'talib',                gate: { id: 'GATE-P2',   role: 'sarah' }, optional: false, requires: ['traceability', 'sponsorOq', 'stageConsistency'] },
-  { id: 'P3',   name: 'design',       owner: 'pma|clara',            gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability', 'matrix', 'designAssets'] },
+  { id: 'P3',   name: 'design',       owner: 'pma|clara',            gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability', 'matrix', 'designAssets', 'sponsorArch', 'tdrConformance'] },
   { id: 'P3.5', name: 'prototype',    owner: 'reena|charlie',        gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true,  requires: ['traceability', 'matrix'] },
-  { id: 'P4',   name: 'config',       owner: 'lucien',               gate: { id: 'GATE-P4',   role: 'sarah' }, optional: false, requires: ['secrets', 'traceability'] },
-  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'integration', 'testAdequacy', 'secrets', 'contracts', 'traceability', 'matrix'] },
+  { id: 'P4',   name: 'config',       owner: 'lucien',               gate: { id: 'GATE-P4',   role: 'sarah' }, optional: false, requires: ['secrets', 'traceability', 'sponsorInfra', 'tdrConformance'] },
+  { id: 'P5',   name: 'generation',   owner: 'ashok|reena|charlie',  gate: { id: 'GATE-P5',   role: 'sarah' }, optional: false, requires: ['executability', 'integration', 'testAdequacy', 'secrets', 'contracts', 'traceability', 'matrix', 'tdrConformance'] },
 ]);
 
 const PHASE_BY_ID = Object.freeze(

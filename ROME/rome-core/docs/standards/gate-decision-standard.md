@@ -59,10 +59,10 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
    | P0 / P0.5 | — (none) |
    | P1 | `aordl` (STRICT validation), `traceability` |
    | P2 | `traceability`, `sponsorOq`, `stageConsistency` |
-   | P3 | `traceability`, `matrix`, `designAssets` |
+   | P3 | `traceability`, `matrix`, `designAssets`, `sponsorArch`, `tdrConformance` |
    | P3.5 | `traceability`, `matrix` |
-   | P4 | `secrets`, `traceability` |
-   | P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
+   | P4 | `secrets`, `traceability`, `sponsorInfra`, `tdrConformance` |
+   | P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix`, `tdrConformance` |
 
    `lifecycle.js` (`PHASES[].requires`) is authoritative for this table.
 
@@ -80,6 +80,15 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
      `ARTIFACTS/_design/design-assets/`) — `verification.js#checkDesignAssets`.
      Projects with no ui capability pass trivially. Closes the "if Clara provided"
      escape hatch that let the fob-admin design gap ship.
+   - **sponsorArch / sponsorInfra** (PROP-051 / ROME-AX-27): a recorded sponsor
+     response (CONFIRM/DELEGATE, or resolved REDIRECT) on the phase's Architecture &
+     Infrastructure Brief, bound to the current brief revision
+     (`verification.js#checkSponsorAib`). DELEGATE never auto-extends across phases.
+     Checkpoint omission passes only with recorded sponsor authorization.
+   - **tdrConformance** (PROP-052 / ROME-AX-29): every APPROVED TDR binding this
+     phase is cited (`satisfies: TDR-##`) or covered by a sponsor-approved deviation
+     (`verification.js#checkTdrConformance`). OPEN deviations fail; no-spec projects
+     pass trivially. Citation-level, not semantic proof.
    - **stageConsistency** (PROP-049 / ROME-AX-22): on a staged project, no requirement
      may depend on a requirement in a LATER stage (`verification.js#checkStageConsistency`).
      WARN-only at intake (judgement); STRICT here, where the requirement graph is
@@ -117,6 +126,7 @@ EP-4). Exhaustion escalates to the sponsor (failure policy, PROP-039 B).
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — gate ownership, verdict record, the seven enforced rules; documents guard.js behavior (PROP-034 Track A / PROP-035 §3.5). |
+| 1.4 | 2026-07-17 | v3.2.0 (PROP-051/052): P3 gains `sponsorArch`, P4 `sponsorInfra` (ROME-AX-27 sponsor AIB checkpoints); P3/P4/P5 gain `tdrConformance` (ROME-AX-29 TDR binding, ROME-STD-TECHSPEC). |
 | 1.3 | 2026-07-17 | v3.1.0 (D5 fix + PROP-037 completion): P3 gains `designAssets` (ROME-AX-26 — Clara's design system required for ui-app projects); P3.5 owner clarified reena|charlie; P3 owner pma|clara. |
 | 1.2 | 2026-07-17 | v3.0.0 (PROP-048/049): lifecycle fields live on the ACTIVE increment (state.js#active); sealed increments immutable (ROME-AX-19). P2 gains `stageConsistency` (ROME-AX-22, STRICT at P2). Stub expiry (ROME-AX-24) enforced by the guard at the P5 delivery edge. |
 | 1.1 | 2026-07-15 | Drift correction (found while verifying PROP-043's axiom provenance). §3 rule 8 (mechanical preconditions) was added in v2.1.0 without a revision entry — logged retrospectively. `requires` table corrected to match `lifecycle.js`, which had diverged when PROP-041/042 landed in v2.3.0: P2 gains `sponsorOq`, P3/P3.5 gain `matrix`, P5 gains `matrix` as a sixth fact; P0/P0.5 stated explicitly. Added `matrix` and `sponsorOq` definitions. Named `lifecycle.js` (`PHASES[].requires`) authoritative for the table. |

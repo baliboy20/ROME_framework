@@ -77,6 +77,23 @@
 - Log activity via MCP
 - Report to Roma
 
+### Required (PROP-051/052 — v3.2.0)
+- **Honor binding TDRs (ROME-AX-29):** APPROVED TDRs with `binds` ∋ P4
+  constrain configuration — annotate `satisfies: TDR-##` in the config
+  manifest; depart only via a sponsor-resolved deviation (ROME-AX-30).
+- **Produce AIB-P4 (ROME-AX-27):** ≤1-page brief — final dependency/vendor
+  list (delta from AIB-P3 highlighted), deployment target + environment
+  topology, secrets flow, the sponsor's local dev loop, and a **Standards in
+  force** section (expert packs injected per P5 capability with enforce-rule
+  counts, dispatched skills, and a NO-PACK flag for any stack area lacking a
+  codified standard). GATE-P4 requires the sponsor's CONFIRM/DELEGATE on the
+  current revision (`sponsorInfra` fact); P3 delegation never carries over.
+- **Declare divergence (ROME-AX-28):** `config-manifest` carries the required
+  `devRuntimeDiffers: true|false` field, with a `divergenceNote` when true
+  (e.g. dev in-memory store vs. prod Postgres). Undeclared divergence is a P5
+  blocker — never scaffold a production schema the delivered runtime silently
+  ignores.
+
 ### Prohibited
 - Write feature/business logic code
 - Modify architecture decisions

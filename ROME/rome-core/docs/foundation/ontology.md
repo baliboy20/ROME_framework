@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.4 |
+| **Version** | 1.5 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
@@ -47,6 +47,7 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | ENT-17 | Stage (sponsor-ordered group of Inputs; stage 0 = foundation, stage 1 = product MVP) | ROME-LEX-001; PROP-049 |
 | ENT-18 | Core Subsystem (cross-cutting capability multiple Stages presume — auth, schema, design system, …) | ROME-LEX-001; PROP-049 |
 | ENT-19 | Stub (sponsor-declared contract-shaped stand-in with an `implementBy` due Stage) | ROME-LEX-001; PROP-049 |
+| ENT-20 | TDR (Technical Decision Record — one made technical decision with status, scope, binds) | ROME-STD-TECHSPEC; PROP-052 |
 
 **Deprecation note:** "Robot" is not an entity. ROME-STD-AGENT-ROLES §1 retires it in favour of **Role** + **Instance**. It survives in the lexicon only as a legacy alias, and in filenames (`ROBOT.md`) which are deliberately not renamed.
 
@@ -77,6 +78,9 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | REL-19 | Increment `builds` Stage | Increment(1) → Stage(0..1) — unstaged increments permitted |
 | REL-20 | Stage `provides/presumes` Core Subsystem | N ↔ M — basis of AX-23 |
 | REL-21 | Stub `stands-in-for` Core Subsystem/Contract `until` Stage | Stub(1) → Subsystem(1), due Stage(1) |
+| REL-22 | TDR `constrains` Phase-producer | TDR(N) → Phase(1..3) per `binds` (PROP-052) |
+| REL-23 | Deviation `supersedes` TDR `by` Sponsor | Deviation(1) → TDR(1); sponsor-approved only (PROP-052 §2.5) |
+| REL-24 | Sponsor `confirms/redirects/delegates` AIB | Sponsor(1) → AIB(1 per P3/P4), bound to AIB revision (PROP-051) |
 
 ---
 
@@ -121,6 +125,10 @@ contiguous with its siblings.)
 | AX-23 | No Stage presumes a Core Subsystem that no same-or-earlier Stage provides or stubs, absent recorded sponsor authorization. | ENFORCED (`routing.js#validateStagePlan`; PROP-049) |
 | AX-24 | Every Stub is sponsor-declared with an `implementBy` Stage; an ACTIVE stub past due blocks the P5 delivery edge — no silent stubs. | ENFORCED (`guard.js#canAdvance` over `state.stubs[]`; `verification.js#checkStubs`; PROP-049) |
 | AX-26 | A project with a ui capability does not pass GATE-P3 without produced design assets (design system + user flows); "optional if requested" does not apply to ui-app projects. Non-UI projects pass trivially. | ENFORCED (`verification.js#checkDesignAssets` as required P3 fact via `guard.js#canAdvance`; D5 fix) |
+| AX-27 | On a routing that includes the sponsor P3/P4 checkpoint (default-on), GATE-P3/GATE-P4 do not pass without a recorded sponsor response (CONFIRM/DELEGATE, or resolved REDIRECT) bound to the current AIB revision; DELEGATE never auto-extends across phases. Omitting the checkpoint requires recorded sponsor authorization. | ENFORCED (`verification.js#checkSponsorAib` as required `sponsorArch`/`sponsorInfra` facts via `guard.js#canAdvance`; `routing.js#routeFromICR` omission guard; PROP-051) |
+| AX-28 | Any intentional divergence between the configured production environment and the delivered runtime/dev default is declared (`devRuntimeDiffers` required manifest field + note); an undeclared divergence is a P5 blocker. | CHECKED (`verification.js#checkEnvDivergence`; failing check filed as a blocker per AX-05; PROP-051) |
+| AX-29 | An APPROVED TDR from a Reliable spec input binds its `binds` phases: GATE-P3/P4/P5 do not pass while any binding TDR is uncited and undeviated, or has an OPEN deviation, in the produced artifacts — absent a sponsor-approved deviation. Citation-level, not semantic proof. | ENFORCED (`verification.js#checkTdrConformance` as required `tdrConformance` fact via `guard.js#canAdvance`; PROP-052) |
+| AX-30 | TDR authority never exceeds carrier reliability (APPROVED in a non-Reliable input → PROPOSED at extraction), and only the sponsor resolves a deviation from an APPROVED TDR. | ENFORCED (`intake.js#applyCarrierReliability` at extraction; `guard.js#resolveTdrDeviation` refuses non-sponsor resolution; PROP-052) |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
 
@@ -131,10 +139,10 @@ contiguous with its siblings.)
 | P0 / P0.5 | — |
 | P1 | `aordl`, `traceability` |
 | P2 | `traceability`, `sponsorOq` |
-| P3 | `traceability`, `matrix`, `designAssets` |
+| P3 | `traceability`, `matrix`, `designAssets`, `sponsorArch`, `tdrConformance` |
 | P3.5 | `traceability`, `matrix` |
-| P4 | `secrets`, `traceability` |
-| P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
+| P4 | `secrets`, `traceability`, `sponsorInfra`, `tdrConformance` |
+| P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix`, `tdrConformance` |
 
 ### Tier 2 — CHECKED
 
@@ -167,6 +175,7 @@ contiguous with its siblings.)
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.5 | 2026-07-17T00:00:00Z | PROP-051/052 implemented (v3.2.0). Added ENT-20 (TDR), REL-22..24, and AX-27..30: AX-27 sponsor P3/P4 checkpoint (ENFORCED via `sponsorArch`/`sponsorInfra` facts + routing omission guard), AX-28 declared dev/prod divergence (CHECKED, required `devRuntimeDiffers` manifest field), AX-29 TDR conformance (ENFORCED via `tdrConformance` fact at P3/P4/P5), AX-30 carrier reliability + sponsor-only deviation (ENFORCED). AX-25 remains reserved by PROP-050 (Draft) — numbering deliberately skips it. AX-08 fact table updated. Tagged violation tests in `sponsor-tdr.test.cjs`; check 6b extended. |
 | 1.4 | 2026-07-17T00:00:00Z | v3.1.0 (D5 fix): AX-26 — design assets required at P3 for ui-app projects (ENFORCED, tagged test). AX-25 remains reserved by PROP-050 (Draft). AX-08 fact table updated (P3 += designAssets). |
 | 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 implemented (v3.0.0). Added ENT-15..19 (Increment, Project, Stage, Core Subsystem, Stub), REL-14..21, and AX-19..24: AX-19 append-only preservation, AX-20 union coverage (CHECKED), AX-21 no terminal project, AX-22 stage dependency-consistency, AX-23 no dangling presumption, AX-24 no silent stubs. All ENFORCED axioms carry tagged violation tests (increments.test.cjs); check 6b extended. |
 | 1.2 | 2026-07-16T00:00:00Z | PROP-047 implemented (v2.8.0). Added ENT-13 (Input), ENT-14 (ICR); REL-11 (Surveyor characterizes Input→ICR), REL-12 (Orchestrator routes-from ICR), REL-13 (Sponsor declares-reliability-of Input); AX-17 (route only on SUFFICIENT ICR over non-empty inputs — converts routing.js's dead guard to a live invariant) and AX-18 (shaky inputs route only with sponsor authorization), both ENFORCED via `routing.js#routeFromICR`, both with tagged tests. Check 6b extended to cover routing-time ENFORCED axioms. |

@@ -60,6 +60,22 @@ record (no separate logging). The ICR fields:
   opt out; record the opt-out in the ICR notes, never skip silently.
 - **Classify intent from evidence:** existing code/app present → brownfield;
   only docs/idea for a new system → greenfield.
+- **Ask about existing infrastructure (PROP-051 §2.4).** The intake question set
+  includes an infra-constraint block: existing hosting/deployment accounts,
+  existing vendor accounts (payment/email/storage/auth), stacks the sponsor's
+  team operates, vendors/technologies to avoid, local-dev expectations. Answers
+  land in ICR `infraConstraints` (absence of constraints is a valid answer —
+  the point is the question is asked once, up front). PMA/Lucien must surface
+  any contradicting choice in the AIB, never silently.
+- **Recognize and extract technical specs (ROME-STD-TECHSPEC / PROP-052).** An
+  input carrying made technical decisions is `form: spec`. Extract its TDRs
+  into ICR `tdrs[]` — from `decisions.tdr.yaml` directly, or by extracting a
+  markdown TDR table and emitting the canonical YAML for one-time sponsor
+  confirmation (the confirmation grants authority, not the extraction).
+  Validation is mechanical (`intake.js#validateTdrs`); apply the
+  carrier-reliability downgrade (`applyCarrierReliability`, ROME-AX-30): in a
+  non-Reliable input every APPROVED TDR becomes PROPOSED. Flag decision-shaped
+  prose outside a TDR as an unconstituted candidate (report, not block).
 - Surveyor characterizes and (for brownfield) reverse-derives as-is; it does NOT
   write requirements forward (Talib) or design (PMA) or approve gates (Sarah).
 

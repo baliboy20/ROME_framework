@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.15 |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.17 |
 | **Date** | 2026-07-17T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
@@ -77,6 +77,7 @@ Normative cross-cutting standards extracted per PROP-034 Track A. Enforced mecha
 | ROME-STD-GATE | Gate Decision Standard | `/ROME/rome-core/docs/standards/gate-decision-standard.md` | Active |
 | ROME-STD-SECURITY | Security Standard | `/ROME/rome-core/docs/standards/security-standard.md` | Active |
 | ROME-STD-TRACE | Traceability Standard | `/ROME/rome-core/docs/standards/traceability-standard.md` | Active |
+| ROME-STD-TECHSPEC | Technical Specification Standard (TDRs) | `/ROME/rome-core/docs/standards/techspec-standard.md` | Active |
 
 ### Foundation Documents
 
@@ -94,6 +95,7 @@ Normative cross-cutting standards extracted per PROP-034 Track A. Enforced mecha
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
 | ROME-GUIDE-001 | Requirements Authoring for AORDL (portable) | `/REQUIREMENTS-AUTHORING-GUIDE.md` | Active |
+| ROME-GUIDE-002 | Technical Spec Authoring (portable; TDRs) | `/TECHNICAL-SPEC-AUTHORING-GUIDE.md` | Active |
 
 ### Governance Documents
 
@@ -202,6 +204,8 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-047 | Input Characterization & Reliability Gating | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-047-input-characterization-and-reliability.md` | Implemented (v2.8.0) |
 | ROME-PROP-048 | First-Class Increments | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-048-first-class-increments.md` | Implemented (v3.0.0) |
 | ROME-PROP-049 | Input Staging & Build-Out Decisions | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-049-input-staging-and-buildout-decisions.md` | Implemented (v3.0.0) |
+| ROME-PROP-051 | Sponsor Architecture & Infrastructure Agreement | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-051-sponsor-architecture-agreement.md` | Implemented (v3.2.0) |
+| ROME-PROP-052 | Technical Specification Standard (TDRs) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-052-technical-spec-standard.md` | Implemented (v3.2.0) |
 | ROME-PROP-050 | Input Format Standard (ROME-STD-INPUT) | `/ROME_framework_maintenance/proposals/ROME-PROP-050-input-format-standard.md` | Draft |
 
 ### Implementation Plans
@@ -304,6 +308,8 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.17 | 2026-07-17T00:00:00Z | PROP-051 and PROP-052 implemented (v3.2.0 — MINOR); moved to implemented-proposals/ and registered. Registered ROME-STD-TECHSPEC; ROME-GUIDE-002 promoted Draft → Active. Companion updates: ontology v1.5 (ENT-20, REL-22..24, AX-27..30), lexicon v1.4, GOV-006 v3.0 (per-row enforcement citations), gate-decision-standard v1.4. |
+| 4.16 | 2026-07-17T00:00:00Z | Registered ROME-GUIDE-002 (Technical Spec Authoring — portable TDR guide, Draft; companion to ROME-PROP-052, activates with ROME-STD-TECHSPEC). |
 | 4.15 | 2026-07-17T00:00:00Z | ROME-GUIDE-001 relocated to repo root (`/REQUIREMENTS-AUTHORING-GUIDE.md`) — sponsor-facing external document, sits beside GETTING-STARTED.md outside rome-core. |
 | 4.14 | 2026-07-17T00:00:00Z | Added GUIDE type code; registered ROME-GUIDE-001 (Requirements Authoring for AORDL — portable, self-contained; quotes ROME-STD-AORDL rule lists verbatim). PROP-050 remains Draft (parked — sponsor prioritised the portable guide over intake conformance machinery). |
 | 4.13 | 2026-07-17T00:00:00Z | Registered ROME-PROP-050 (Input Format Standard — zoned module docs, canonical domain lexicon, wireframe sidecars, authority-marker consistency AX-25). Draft; STD-INPUT UID reserved for implementation. |

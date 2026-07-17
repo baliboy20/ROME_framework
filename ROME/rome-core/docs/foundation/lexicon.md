@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.3 |
+| **Version** | 1.4 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
@@ -41,6 +41,13 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **Core Subsystem** | A cross-cutting capability multiple Stages presume or consume (auth, data schema, API skeleton, design system, hosting). Identified by Surveyor at intake; designed by PMA in the foundation Increment. | - | Program architecture (ROME-ONT-001 ENT-18; PROP-049) |
 | **Stub** | A sponsor-declared stand-in implementing a Contract's interface shape with substitute behaviour, recorded with an `implementBy` Stage. Expired or undeclared stubs block delivery (ROME-AX-24). | `state.stubs[]` | Build-out decision (ROME-ONT-001 ENT-19; PROP-049) |
 | **Build-Out Decision** | The sponsor's recorded per-Stage choice for a Core Subsystem or external API: implement \| stub \| defer. Presented by Surveyor in the ICR decision matrix. | implement \| stub \| defer | Sponsor decision record (PROP-049) |
+| **AIB (Architecture & Infrastructure Brief)** | Sponsor-legible ≤1-page summary produced twice: AIB-P3 by PMA (component shape, patterns, vendors) and AIB-P4 by Lucien (final dependencies, deployment target, secrets flow, local dev loop, standards in force). Sponsor response required at the gate (ROME-AX-27). | `state.increments[].aib[phase]` | Sponsor checkpoint artifact (PROP-051) |
+| **Sponsor Checkpoint Response** | The sponsor's recorded answer to an AIB, bound to its revision: CONFIRM (accept), REDIRECT (reopen the producing phase), DELEGATE (explicit "agent decides" — a recorded consent, never an absence; never auto-extends across phases). | CONFIRM \| REDIRECT \| DELEGATE | Gate precondition `sponsorArch`/`sponsorInfra` (PROP-051) |
+| **Technical Specification (spec input)** | A properly constituted sponsor input carrying made technical decisions as TDRs. Canonical artifact: `decisions.tdr.yaml`, schema-validated by `intake.js#validateTdrs` — no LLM in the authority-parsing loop. | ICR `form: spec` | Authoritative input (ROME-STD-TECHSPEC; ROME-ONT-001 ENT-20) |
+| **TDR (Technical Decision Record)** | One made technical decision: id, status, scope, one checkable decision sentence, and the phases it binds. APPROVED TDRs from a Reliable carrier constrain producers (ROME-AX-29); PROPOSED TDRs surface as checkpoint questions and never bind. | TDR-## | Decision authority unit (ROME-STD-TECHSPEC; ENT-20) |
+| **Deviation Request** | A producer's recorded request to depart from an APPROVED TDR (reason + proposed alternative). Surfaced via the AIB (or blocking sponsor question); only sponsor approval supersedes the TDR (ROME-AX-30). While OPEN it fails `tdrConformance`. | `state.tdrDeviations[]` DEV-# | TDR override path (PROP-052 §2.5) |
+| **Carrier Reliability** | The rule that TDR authority never exceeds the reliability of the document carrying it: in a non-Reliable input every APPROVED TDR is downgraded to PROPOSED at extraction (ROME-AX-30). | `intake.js#applyCarrierReliability` | Authority bound (PROP-052 §2.1) |
+| **Infra Constraint** | A sponsor-declared fact about existing infrastructure or vendor commitments (hosting/vendor accounts, operated stacks, vendors to avoid), captured by Surveyor at intake into the ICR. A P3/P4 choice contradicting one must surface in the AIB, never silently. | ICR `infraConstraints` | Intake capture (PROP-051 §2.4) |
 
 ---
 
@@ -228,6 +235,7 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.4 | 2026-07-17T00:00:00Z | PROP-051/052 companion additions: AIB, Sponsor Checkpoint Response (CONFIRM/REDIRECT/DELEGATE), Technical Specification (spec input), TDR, Deviation Request, Carrier Reliability, Infra Constraint (cross-linked to ENT-20 and AX-27..30). |
 | 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 companion additions: defined Increment, Project, Stage, Core Subsystem, Stub, Build-Out Decision (cross-linked to ROME-ONT-001 ENT-15..19 and AX-19..24). |
 | 1.2 | 2026-07-16T00:00:00Z | PROP-047 companion additions: defined Input, Surveyor, ICR, Quality Verdict, Input Reliability (previously undefined framework terms; cross-linked to ROME-ONT-001 ENT-13/14 and AX-17/18). |
 | 1.1 | 2026-07-15T00:00:00Z | Staleness corrections per ROME-PROP-043 §P3, companion to ROME-ONT-001. Phase table rebuilt from `lifecycle.js`: adds P0.5 (Intake) and P3.5 (Prototype), gate column, and optional column — the P0–P5 model with a gate at every boundary was never the implemented model (P0 is ungated). "Robot" re-labeled a retired legacy alias → Role/Instance per ROME-STD-AGENT-ROLES §1; Role and Instance added as entries. Cross-link to ROME-ONT-001 added. Logging Trigger repointed from the retired ROME-PROC-005 to ROME-GOV-008. Revision log added (absent since initial issue, contrary to ROME-GOV-001). Term definitions otherwise unchanged. |

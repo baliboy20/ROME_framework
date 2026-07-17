@@ -184,4 +184,51 @@ function isComplete(state) {
     inc.routing.every(id => inc.phases[id] && inc.phases[id].status === STATUS.COMPLETE);
 }
 
-module.exports = { latestVerdict, recordGateVerdict, canAdvance, advance, isComplete };
+/**
+ * File a TDR deviation request (ROME-PROP-052 §2.5). A producer that cannot or
+ * should not honor an APPROVED TDR records it here; the checkpoint surfaces it
+ * to the sponsor (AIB delta, or blocking AskUserQuestion when the checkpoint is
+ * routed out). While OPEN, checkTdrConformance fails for that TDR's phases —
+ * building past an unresolved deviation is structurally impossible.
+ * Mutates and returns state.
+ */
+function recordTdrDeviation(state, { tdr, phase, reason, proposedAlternative, timestamp }) {
+  if (!timestamp) throw new Error('recordTdrDeviation: timestamp required');
+  const target = (state.tdrs || []).find(t => t.id === tdr);
+  if (!target) throw new Error(`recordTdrDeviation: unknown TDR "${tdr}"`);
+  if (target.status !== 'APPROVED') throw new Error(`recordTdrDeviation: TDR ${tdr} is ${target.status}, not APPROVED — nothing to deviate from`);
+  if (!reason || !proposedAlternative) throw new Error('recordTdrDeviation: reason and proposedAlternative required');
+  state.tdrDeviations = state.tdrDeviations || [];
+  const id = `DEV-${state.tdrDeviations.length + 1}`;
+  state.tdrDeviations.push({ id, tdr, phase: phase || null, reason, proposedAlternative, status: 'OPEN', timestamp });
+  state.audit.push({ event: 'TDR_DEVIATION_FILED', deviation: id, tdr, phase: phase || null, timestamp });
+  return state;
+}
+
+/**
+ * Resolve a TDR deviation (ROME-PROP-052 §2.5 / ROME-AX-30): ONLY the sponsor
+ * changes a decision's authority. The caller must pass `sponsor: true` — an
+ * explicit assertion that the resolution is the sponsor's recorded answer (the
+ * sponsorAuthorized pattern of AX-18/23); anything else is refused. Approval
+ * supersedes the TDR (status → SUPERSEDED, `supersededBy` = deviation id);
+ * rejection reinstates it as binding. Mutates and returns state.
+ */
+function resolveTdrDeviation(state, { deviation, approved, sponsor, timestamp }) {
+  if (!timestamp) throw new Error('resolveTdrDeviation: timestamp required');
+  if (sponsor !== true) {
+    throw new Error('Only the sponsor resolves a TDR deviation (sponsor:true required — ROME-AX-30). Detection or producer judgement never strips an APPROVED TDR of authority.');
+  }
+  const d = (state.tdrDeviations || []).find(x => x.id === deviation);
+  if (!d) throw new Error(`resolveTdrDeviation: unknown deviation "${deviation}"`);
+  if (d.status !== 'OPEN') throw new Error(`resolveTdrDeviation: deviation ${deviation} already ${d.status}`);
+  d.status = approved ? 'SPONSOR_APPROVED' : 'SPONSOR_REJECTED';
+  d.resolvedAt = timestamp;
+  if (approved) {
+    const t = (state.tdrs || []).find(x => x.id === d.tdr);
+    if (t) { t.status = 'SUPERSEDED'; t.supersededBy = deviation; }
+  }
+  state.audit.push({ event: 'TDR_DEVIATION_RESOLVED', deviation, tdr: d.tdr, approved: !!approved, timestamp });
+  return state;
+}
+
+module.exports = { latestVerdict, recordGateVerdict, canAdvance, advance, isComplete, recordTdrDeviation, resolveTdrDeviation };
