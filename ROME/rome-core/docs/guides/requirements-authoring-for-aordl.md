@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GUIDE-001 |
-| **Version** | 1.0 |
+| **Version** | 1.1 |
 | **Date** | 2026-07-17T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Guide (portable — self-contained, no framework context required) |
@@ -147,6 +147,49 @@ ambiguity class — two documents meaning different things by the same word:
   ones become coin-flips by a machine.
 - A precedence rule: *"where a module doc and this doc disagree, this doc wins."*
 
+**Data structures — how far to go.** The scope rule: *facts about data, never
+shape-design of data.* Attributes and storage for NEW entities are the designer's
+job downstream, derived from your requirements — do not author a data dictionary,
+DDL, or types for them. But two data facts belong here:
+
+- **Attribute tables — mandatory for `Built` entities, optional for `Referenced`,
+  absent for `New`.** Existing columns are reality, therefore constraints. Meaning
+  and constraints, not SQL types (unless the type is itself a business fact, e.g.
+  "money is stored in pence"):
+
+  ```markdown
+  ### bookings — attributes (Built; columns are constraints)
+  | Field | Meaning | Constraint |
+  |---|---|---|
+  | status       | lifecycle state       | see state table below |
+  | source       | booking channel       | direct | ota | owner-created |
+  | participants | riders on the booking | 1..10 |
+  ```
+
+- **State/lifecycle tables — one per stateful entity.** Value sets and legal
+  transitions are domain truth, and stating them once makes them checkable:
+  every legal transition should have a requirement driving it — a transition with
+  no requirement is a hole you can spot at authoring time.
+
+  ```markdown
+  ### booking — states
+  | From | To | Trigger (→ requirement) |
+  |---|---|---|
+  | pending   | confirmed | payment succeeds (REQ-011) |
+  | confirmed | cancelled | customer cancels (REQ-014) |
+  | confirmed | completed | departure session ends (REQ-020) |
+  ```
+
+- **A canonical named fixture set** — half a dozen shared example rows the whole
+  spec set references by name ("the *Hidden City* tour, the *Saturday 10:00*
+  departure, booking *b-001*"). Every document's examples use the same fixtures,
+  so examples stay mutually consistent — and at build time the set doubles as
+  seed data for the end-to-end verification run. Five canonical rows beat five
+  hundred; this is a reference set, not a database dump.
+
+Wireframe sidecar `binds-to` entries resolve against these attribute tables —
+never bind a wireframe element to a field no table declares.
+
 ### The module document — five sections, fixed order
 
 ```markdown
@@ -210,7 +253,19 @@ invariants:    departure capacity never exceeds its maximum; refunds never excee
 non-functional: cancellation reflected in availability within 1 minute
 scope:         in: self-service cancel + auto-refund | out: partial cancellation of individual participants
 open-questions: none
+example:
+  given:  booking b-001 (canonical fixture), confirmed, 2 participants, £90.00 paid, departure in 5 days
+  when:   Customer cancels
+  then:   status=cancelled; refund £90.00; Saturday-10:00 departure capacity +2
 ```
+
+**The `example` block** is a concrete input→expected-outcome pair, given/when/then
+flavoured, referencing the named fixtures. It converts nearly verbatim into a test
+vector, and it nails what prose leaves open — units (pence vs pounds), formats
+(ISO dates), and boundaries (participants ≤ 10). One well-chosen example per
+requirement; add a second only for a boundary or error path worth pinning.
+Examples are **normative for format, illustrative for scope**: they show what a
+valid record looks like, they do not enumerate which records exist.
 
 Note what makes this convert cleanly: an approved verb (`cancel`), one specific
 actor, zero UI/tech words, outcomes observable by named actors, every error a
@@ -231,7 +286,29 @@ If you think in EARS patterns, they translate directly:
 
 ---
 
-## Part 5 — Anti-pattern checklist (what gets specs bounced)
+## Part 5 — What NOT to author (and why leaving it out is a feature)
+
+Two artifacts feel like diligence but are produced *downstream from* your spec, by
+the design phase, under a gate. Authoring them at input level duplicates work,
+preempts the designer, and creates a second authority that drifts:
+
+| Don't author | Because | You supply instead |
+|---|---|---|
+| **Data dictionary** (attributes/types/storage for NEW entities) | The designer derives it from your requirements; yours drifts the moment a real design decision is made | The lexicon: entities + relationships + Built-entity attribute tables + state tables (facts only) |
+| **Use cases** (UML-style main/alternate/exception flows) | The requirement entry already IS the use-case skeleton — preconditions, conditions, postconditions, outcomes, errors. A formal UC restates it in heavier notation | Journeys (the thread) + requirement entries (the beads) |
+
+If you already possess use-case documents from earlier work, include them as raw
+source material — they mine fine. Just don't write new ones for this pipeline's
+sake.
+
+Journeys, by contrast, are load-bearing input twice over: empirically, modules
+with documented journeys are the reliable ones (journeys are *evidence the intent
+is real*), and at final verification a journey is the ready-made script for
+driving the built system end-to-end.
+
+---
+
+## Part 6 — Anti-pattern checklist (what gets specs bounced)
 
 **Mechanically rejected by the validator:**
 - ☐ Ambiguous verb in an intent (`manage/handle/process/…`)
@@ -254,7 +331,7 @@ If you think in EARS patterns, they translate directly:
 
 ---
 
-## Part 6 — Final pre-flight (run before handing the spec over)
+## Part 7 — Final pre-flight (run before handing the spec over)
 
 1. Every requirement: approved verb, one intent, specific actor? — Part 2.1/2.2
 2. Every requirement: ≥1 observable outcome AND its error cases declared? — the test contract
@@ -264,10 +341,12 @@ If you think in EARS patterns, they translate directly:
 6. Each document status-marked (`Reliable`/`PROPOSED`/`RECONSTRUCTED`/`UNDEFINED`)?
 7. Dependencies and presumed shared subsystems declared in each module header?
 8. Each fact stated exactly once; no table-mirroring diagrams?
-9. Wireframes: sidecar present, elements bound to lexicon names and REQ ids?
+9. Wireframes: sidecar present, elements bound to declared attribute names and REQ ids?
 10. Known contradictions listed explicitly, not left for the machine to arbitrate?
+11. Built entities: attribute tables present? Stateful entities: state tables, with every transition mapped to a requirement?
+12. Each requirement carries one concrete example (given/when/then) using the named fixtures? No authored data dictionary or use cases for NEW material?
 
-A spec passing all ten converts to AORDL nearly mechanically, is validated
+A spec passing all twelve converts to AORDL nearly mechanically, is validated
 STRICT-clean at the first gate, and — most importantly — is built to mean exactly
 what you meant.
 
@@ -277,4 +356,5 @@ what you meant.
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.1 | 2026-07-17T00:00:00Z | Data & examples completion (sponsor session): attribute tables for Built entities (facts, not design — mandatory Built / optional Referenced / absent New), state/lifecycle tables with transition→requirement mapping, per-requirement `example` blocks (given/when/then; normative for format, illustrative for scope), canonical named fixture set (consistency + end-to-end seed data), wireframe binds-to resolves against declared attributes. New Part 5: what NOT to author (data dictionary, use cases — downstream design outputs) and why journeys are load-bearing. Pre-flight 10 → 12 points. |
 | 1.0 | 2026-07-17T00:00:00Z | Initial issue. Derived from ROME-STD-AORDL (13 fields, approved verbs, validator anti-pattern lists — kept verbatim in sync), the AORDL REQ template, and live-input intake analysis (FOB Module-10 + Domain Lexicon: zone structure, authority-marker rule, lexicon-first, wireframe sidecars). Portable by design: self-contained for use in sessions without framework context. |
