@@ -12,8 +12,8 @@ specialist sub-agents and enforces quality with deterministic checks**.
 ## Step 0 — One-time setup
 1. Get the framework:
    ```bash
-   git clone <the rome_assistants repo>
-   cd rome_assistants
+   git clone https://github.com/baliboy20/ROME_framework.git
+   cd ROME_framework
    ```
 2. Install the one dependency the AORDL validator needs:
    ```bash
@@ -32,7 +32,9 @@ node ROME/rome-core/orchestrator/rome-start.cjs my-app --intent greenfield --ts 
 - `my-app` = any folder name.
 - `--intent greenfield` for a brand-new app; use `refinement` / `extension` / `migration` if changing an existing system.
 - Optional flags — add them **without brackets**; type only the ones you want:
-  - `--prototype` (adds a UI mock-up + approval step)
+  - `--prototype` (adds a UI mock-up + sponsor approval step; if you stage
+    wireframes or images, Surveyor recommends this automatically — v3.1)
+  - `--no-intake` (skip the input check — only if your inputs are clean and complete)
   - `--budget 400000` (token ceiling)
 - Example with options (note: no `[ ]` — those mean "optional" in docs, don't type them):
   ```bash
@@ -46,6 +48,14 @@ Put your documents here:
 my-app/_user_input/raw-requirements/
 ```
 (Just drop in your `*.md` PRD/BRD files.)
+
+**Writing the PRD/BRD first?** Use the authoring guide at the repo root —
+`REQUIREMENTS-AUTHORING-GUIDE.md`. Paste it into the Claude session where you
+draft your requirements: specs written to it convert into the framework's formal
+requirements almost mechanically, pass validation first time, and skip the
+clarification round-trips. Hand-drawn screen sketches are welcome too — photograph
+them, add the small text annotation file the guide describes (`WF-*`), and stage
+them here; they become the layout contract AND switch the prototype step on.
 
 `rome-start` deliberately does **not** judge your inputs yet — it sets up the
 folders and stops. The input specialist (**Surveyor**) reads what you actually
