@@ -11,6 +11,11 @@
 
 ---
 
+> **D5 resolution (v3.1.0):** for any project with a ui capability, `design-system.md`
+> and `user-flows.md` in `ARTIFACTS/_design/design-assets/` are **required P3 outputs**
+> — the guard demands the `designAssets` fact (ROME-AX-26) before GATE-P3 can advance.
+> "Optional if requested" no longer applies to ui-app projects.
+
 ## Phase-Specific Purpose
 
 Transform PMA's use cases into visual designs that enable P5 robots (Charlie, Ashok) to implement UI without design ambiguity.

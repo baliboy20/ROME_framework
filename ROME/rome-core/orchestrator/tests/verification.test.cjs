@@ -1,7 +1,7 @@
 /** Verification module regression (PROP-035 §3.5 hardening + PROP-042 edge path + PROP-041 matrix/sponsorOq). Run: node tests/verification.test.cjs */
 const { createState, active } = require('../state');
 const { recordDispatch, processReturn } = require('../subagent');
-const { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq } = require('../verification');
+const { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkDesignAssets } = require('../verification');
 
 const TS = '2026-06-19T00:00:00Z';
 let passed = 0, failed = 0;
@@ -233,6 +233,15 @@ console.log('verification regression:');
   ok('D7: testManifest merged into state', active(s).testManifest.length === 1 && active(s).testManifest[0].req === 'REQ-1');
   const ta = checkTestAdequacy(active(s).testManifest, [{ ID: 'REQ-1', Outcomes: ['o'], Errors: [{ error: 'E1' }] }]);
   ok('D7: checkTestAdequacy reads merged manifest (no false "no tests")', ta.pass === true);
+})();
+
+// AX-26 — design assets required at P3 for ui-app projects (D5 fix).
+(() => {
+  ok('AX-26 non-UI project passes trivially', checkDesignAssets(false, []).pass === true);
+  const bad = checkDesignAssets(true, []);
+  ok('AX-26 ui project with empty design-assets fails', bad.pass === false && /design-system/.test(bad.detail));
+  ok('AX-26 ui project with assets passes', checkDesignAssets(true, ['design-system.md', 'user-flows.md']).pass === true);
+  ok('AX-26 designAssets is a required P3 fact', require('../lifecycle').PHASE_BY_ID['P3'].requires.includes('designAssets'));
 })();
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);

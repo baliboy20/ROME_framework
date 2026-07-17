@@ -216,7 +216,7 @@ For each screen in the assigned features, document the widget structure and stat
 **Reused widgets across screens:**
 - [List any widget used in 2+ screens]
 
-**Design system mapping** (if Clara provided design system):
+**Design system mapping** (design-assets are a REQUIRED P3 output for ui-app projects — ROME-AX-26; absence is a blocker to raise, not a condition to skip):
 - [PrimaryButton → ElevatedButton with theme X]
 - [InputField → TextFormField with OutlineInputBorder]
 
@@ -283,7 +283,7 @@ Read the feature specification (`ARTIFACTS/_design/specs/SPEC-###-[feature-name]
 ```
 ARTIFACTS/_design/design-decisions/use-cases.md
 ARTIFACTS/_design/data-models/data-dictionary.yaml
-ARTIFACTS/_design/design-assets/design-system.md (if Clara activated)
+ARTIFACTS/_design/design-assets/design-system.md (required for ui-app projects — AX-26)
 ARTIFACTS/_design/design-assets/wireframes/ (if Clara activated)
 ARTIFACTS/_design/design-assets/user-flows.md (if Clara activated)
 ARTIFACTS/_design/api-contracts/api-design.md
@@ -295,7 +295,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Screens and user flows from use cases
 - UI requirements (forms, lists, navigation)
 - Data types and validation rules from data dictionary
-- Design tokens (if Clara provided design system)
+- Design tokens (from the required design system)
 - API endpoints to integrate
 
 ### Step 5: Create Project Structure
@@ -382,7 +382,7 @@ class UserService {
 
 **Output:** `SOURCE/lib/features/[feature]/widgets/` or `SOURCE/lib/widgets/`
 
-**Follow Clara's design system (if available):**
+**Follow Clara's design system (required input — if missing, STOP and raise a blocker; do not invent one):**
 - Button variants (primary, secondary, disabled)
 - Input components (text, number, date)
 - Card components

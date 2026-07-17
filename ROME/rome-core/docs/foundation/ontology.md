@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.3 |
+| **Version** | 1.4 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
@@ -120,6 +120,7 @@ contiguous with its siblings.)
 | AX-22 | On a staged project, no requirement depends on a requirement in a later Stage. WARN at intake (judgement); STRICT at P2 (`stageConsistency` required fact over the mechanical requirement graph). | ENFORCED (`verification.js#checkStageConsistency` + `guard.js#canAdvance` P2 requires; PROP-049) |
 | AX-23 | No Stage presumes a Core Subsystem that no same-or-earlier Stage provides or stubs, absent recorded sponsor authorization. | ENFORCED (`routing.js#validateStagePlan`; PROP-049) |
 | AX-24 | Every Stub is sponsor-declared with an `implementBy` Stage; an ACTIVE stub past due blocks the P5 delivery edge — no silent stubs. | ENFORCED (`guard.js#canAdvance` over `state.stubs[]`; `verification.js#checkStubs`; PROP-049) |
+| AX-26 | A project with a ui capability does not pass GATE-P3 without produced design assets (design system + user flows); "optional if requested" does not apply to ui-app projects. Non-UI projects pass trivially. | ENFORCED (`verification.js#checkDesignAssets` as required P3 fact via `guard.js#canAdvance`; D5 fix) |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
 
@@ -130,7 +131,8 @@ contiguous with its siblings.)
 | P0 / P0.5 | — |
 | P1 | `aordl`, `traceability` |
 | P2 | `traceability`, `sponsorOq` |
-| P3 / P3.5 | `traceability`, `matrix` |
+| P3 | `traceability`, `matrix`, `designAssets` |
+| P3.5 | `traceability`, `matrix` |
 | P4 | `secrets`, `traceability` |
 | P5 | `executability`, `integration`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` |
 
@@ -165,6 +167,7 @@ contiguous with its siblings.)
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.4 | 2026-07-17T00:00:00Z | v3.1.0 (D5 fix): AX-26 — design assets required at P3 for ui-app projects (ENFORCED, tagged test). AX-25 remains reserved by PROP-050 (Draft). AX-08 fact table updated (P3 += designAssets). |
 | 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 implemented (v3.0.0). Added ENT-15..19 (Increment, Project, Stage, Core Subsystem, Stub), REL-14..21, and AX-19..24: AX-19 append-only preservation, AX-20 union coverage (CHECKED), AX-21 no terminal project, AX-22 stage dependency-consistency, AX-23 no dangling presumption, AX-24 no silent stubs. All ENFORCED axioms carry tagged violation tests (increments.test.cjs); check 6b extended. |
 | 1.2 | 2026-07-16T00:00:00Z | PROP-047 implemented (v2.8.0). Added ENT-13 (Input), ENT-14 (ICR); REL-11 (Surveyor characterizes Input→ICR), REL-12 (Orchestrator routes-from ICR), REL-13 (Sponsor declares-reliability-of Input); AX-17 (route only on SUFFICIENT ICR over non-empty inputs — converts routing.js's dead guard to a live invariant) and AX-18 (shaky inputs route only with sponsor authorization), both ENFORCED via `routing.js#routeFromICR`, both with tagged tests. Check 6b extended to cover routing-time ENFORCED axioms. |
 | 1.1 | 2026-07-16T00:00:00Z | PROP-044 implemented (v2.5.0). ASSERTED tier emptied: AX-12..16 promoted to CHECKED via `axioms.js` (AX-13 role-level per OQ-2; AX-16 CHECKED per OQ-1). AX-11 deepened — check 6 now also asserts each ENFORCED axiom keeps a tagged violation test in `tests/axioms.test.cjs` (behavioural provenance, PROP-044 Part A). Scope limits stated inline. |

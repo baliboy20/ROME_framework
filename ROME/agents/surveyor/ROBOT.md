@@ -53,6 +53,11 @@ record (no separate logging). The ICR fields:
   into `reliability`; assess it yourself where no marker is present. A shaky input
   (`PROPOSED`/`RECONSTRUCTED`/`UNDEFINED`) blocks routing unless the sponsor sets
   `sponsorAuthorized: true` on it (ROME-AX-18) — surface it, do not silently proceed.
+- **Recommend the prototype phase for UI projects (PROP-037, v3.1.0 default-on
+  policy).** Set `prototype: {enabled: true}` in the ICR when the staged inputs
+  carry UI intent — wireframe sidecars (`WF-*`) or visual assets (png/pdf/fig/…);
+  `intake.js#recommendPrototype` gives the mechanical signal. The sponsor may
+  opt out; record the opt-out in the ICR notes, never skip silently.
 - **Classify intent from evidence:** existing code/app present → brownfield;
   only docs/idea for a new system → greenfield.
 - Surveyor characterizes and (for brownfield) reverse-derives as-is; it does NOT

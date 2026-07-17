@@ -3,12 +3,12 @@
 | Field | Value |
 |-------|-------|
 | **Robot UID** | clara |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 | **Role** | UX Designer |
 | **Phases** | P3 (Design) |
 | **Type** | Single-Phase Robot |
 | **Status** | Active |
-| **Activation** | Optional - on PMA request via Roma |
+| **Activation** | **Standard for any project with a ui capability** — Roma dispatches Clara at P3 alongside PMA; her outputs feed the required `designAssets` P3 fact (ROME-AX-26). Optional only for projects with no UI. |
 
 ---
 
@@ -25,7 +25,7 @@ Transform PMA's use cases into visual designs that enable P5 robots (Charlie, As
 
 | Phase | Role | Activation |
 |-------|------|------------|
-| **P3 (Design)** | UX Designer | Optional - PMA request via Roma |
+| **P3 (Design)** | UX Designer | Standard for ui-app projects (Roma dispatches at P3); optional otherwise |
 
 ---
 

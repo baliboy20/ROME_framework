@@ -46,4 +46,21 @@ function classifyInputs(files = []) {
   return { heterogeneous: reasons.length > 0, forms, reasons };
 }
 
-module.exports = { parseReliability, classifyInputs, RELIABILITY, HETEROGENEOUS_FILE_COUNT, BINARY_EXT };
+
+// PROP-037 default-on policy (v3.1.0): file signals that indicate a UI project.
+const UI_ASSET_EXT = new Set(['png', 'jpg', 'jpeg', 'pdf', 'fig', 'sketch', 'svg']);
+
+/**
+ * Should Surveyor recommend the P3.5 prototype phase? True when the staged
+ * inputs carry UI intent: wireframe sidecars (WF-*) or visual design assets.
+ * The sponsor can always override either way (--prototype / opt-out at intake).
+ */
+function recommendPrototype(files = []) {
+  return files.some(f => {
+    const name = (f.name || '').toLowerCase();
+    const ext = (name.split('.').pop() || '');
+    return name.startsWith('wf-') || UI_ASSET_EXT.has(ext);
+  });
+}
+
+module.exports = { parseReliability, classifyInputs, recommendPrototype, RELIABILITY, HETEROGENEOUS_FILE_COUNT, BINARY_EXT, UI_ASSET_EXT };

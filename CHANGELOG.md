@@ -2,6 +2,44 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-17] - v3.1.0 "Marcus" — design authority pass (D5 fix + PROP-037 completion)
+
+Codename **Marcus** (Aurelius). Settles who decides the look: the sponsor decides
+patterns via the prototype gate; Clara owns the design system; the generator's
+discretion shrinks to mechanics. Closes fob-admin D5 — the last open defect from
+the live-run report.
+
+### Fixed — D5: the Clara contradiction
+- Sponsor decision: **Clara is the UX Designer** her ROBOT.md describes. The
+  orchestrator matrix (which had recast her as a validator) is corrected: P3 =
+  PMA (architecture/specs) + Clara (design system, user flows), gated by Sarah.
+- Clara's activation changes from "optional, on PMA request" (the root cause —
+  never requested, never run) to **standard for any project with a ui capability**.
+- **New required P3 fact `designAssets` (ROME-AX-26, ENFORCED):** a ui-app project
+  cannot pass GATE-P3 with an empty `design-assets/` directory
+  (`verification.js#checkDesignAssets`; non-UI projects pass trivially).
+- Charlie's four "(if Clara provided)" conditionals — the escape hatch that let
+  the fob-admin design gap ship (74-file restyle) — removed: a missing design
+  system is now a blocker to raise, never a condition to skip.
+
+### Fixed — P3.5 completion (PROP-037)
+- **Reena's missing P3.5 prototype mode written** (the phase was fully wired at
+  orchestration level but its designated owner had no instructions). Division of
+  labour: Reena T0–T2 (wireframe render / static / clickable), Charlie T3
+  (target-stack skeleton). `lifecycle.js` P3.5 owner → `reena|charlie`;
+  P3 owner → `pma|clara`.
+- Prototype mode renders sponsor WF-* wireframes where supplied — the visual gate
+  criterion becomes "matches WF-x", not taste.
+
+### Added — prototype default-on for UI projects
+- `intake.js#recommendPrototype`: Surveyor sets `prototype: {enabled: true}` when
+  staged inputs carry UI intent (WF-* sidecars, visual assets). Sponsor may opt
+  out — recorded in the ICR, never silent.
+
+### Verify
+- 320 tests pass (+7). Fidelity green (6a: 19 citations; 6b: 16 ENFORCED axioms).
+  STD-GATE v1.3; ontology v1.4 (AX-26).
+
 ## [2026-07-17] - v3.0.0 "Antoninus" — first-class increments + input staging (MAJOR)
 
 Codename **Antoninus** — the builder of the long peace. Implements PROP-048 and

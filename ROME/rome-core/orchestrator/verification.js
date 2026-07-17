@@ -257,4 +257,24 @@ function checkStubs(state, incrementId) {
   return { pass: expired.length === 0, expired, active: activeStubs };
 }
 
-module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs };
+
+/**
+ * Design-assets presence (D5 fix / ROME-AX-26). For a project WITH a ui
+ * capability, P3 must produce design assets (design-system + user-flows in
+ * ARTIFACTS/_design/design-assets/) — Clara's output. Projects with no ui
+ * capability pass trivially (the stageConsistency pattern). Pure: the caller
+ * supplies the capability flag and the asset list (orchestrator reads the dir).
+ * Returns { pass, detail }.
+ */
+function checkDesignAssets(hasUiCapability, assets = []) {
+  if (!hasUiCapability) return { pass: true, detail: 'no ui capability — design assets not required' };
+  const pass = assets.length > 0;
+  return {
+    pass,
+    detail: pass
+      ? `${assets.length} design asset(s) present`
+      : 'ui capability declared but ARTIFACTS/_design/design-assets/ is empty — Clara must produce design-system + user-flows (ROME-AX-26)',
+  };
+}
+
+module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets };

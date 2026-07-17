@@ -2,7 +2,7 @@
  * Intake helper regression (ROME-PROP-047 / D16, D4).
  * Run: node tests/intake.test.cjs
  */
-const { parseReliability, classifyInputs } = require('../intake');
+const { parseReliability, classifyInputs, recommendPrototype } = require('../intake');
 
 let passed = 0, failed = 0;
 function ok(name, cond) { if (cond) { console.log(`  ✓ ${name}`); passed++; } else { console.log(`  ✗ ${name}`); failed++; } }
@@ -24,6 +24,11 @@ ok('mixed formats → heterogeneous', classifyInputs([{ name: 'prd.md' }, { name
 ok('binary asset → heterogeneous', classifyInputs([{ name: 'wireframes.pdf' }]).heterogeneous === true);
 ok('binary reason reported', /binary/.test(classifyInputs([{ name: 'ui.png' }]).reasons.join()));
 ok('many files → heterogeneous', classifyInputs(Array.from({ length: 6 }, (_, i) => ({ name: `f${i}.md` }))).heterogeneous === true);
+
+// recommendPrototype — PROP-037 default-on for UI projects (v3.1.0)
+ok('wireframe sidecar triggers prototype recommendation', recommendPrototype([{ name: 'WF-BOOK-01.md' }]) === true);
+ok('visual asset triggers prototype recommendation', recommendPrototype([{ name: 'style-guide.pdf' }]) === true);
+ok('text-only inputs do not trigger prototype', recommendPrototype([{ name: 'prd.md' }, { name: 'notes.txt' }]) === false);
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
 if (failed > 0) process.exit(1);

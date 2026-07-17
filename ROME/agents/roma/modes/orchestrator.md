@@ -92,8 +92,8 @@ checks over LLM judgment where they exist (§3.5.3). Incremental change: use
 | P0.5 intake (optional) | Surveyor | Sarah |
 | P1 requirements | Talib | Sarah (after AORDL STRICT passes) |
 | P2 analysis | Talib | Sarah |
-| P3 design | PMA (produce), Clara (validate) | Sarah |
-| P3.5 prototype (optional) | Reena/Charlie | Sarah (+ sponsor) |
+| P3 design | PMA (produce: architecture, specs, data dictionary) + Clara (produce: design system, user flows — REQUIRED for ui-app projects, feeds the `designAssets` P3 fact) | Sarah |
+| P3.5 prototype (optional) | Reena/Charlie (throwaway prototype per PROP-037) | Sarah (+ sponsor visual approval) |
 | P4 config | Lucien | Sarah |
 | P5 generation | capability instances (Ashok/Reena/Charlie per component) | Sarah |
 
