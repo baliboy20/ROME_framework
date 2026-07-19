@@ -23,7 +23,29 @@ specialist sub-agents and enforces quality with deterministic checks**.
    ```bash
    node ROME/rome-core/orchestrator/tests/run.cjs   # should be all green
    ```
-4. Open a **Claude Code session on Opus 4.8** in this repo. That session *is* the orchestrator.
+4. Open a **Claude Code session on Opus 4.8** with `ROME_framework/` (the folder from step 1, where you just ran `npm install`) as its working directory. That session *is* the orchestrator — keep it there for every step below; `my-app/` is created as a subfolder of it, and all paths in this guide (`my-app/...`, `ROME/...`) are relative to it.
+
+## Steps 0.2, 0.3, 1, 2 — automated
+After step 0.1 (clone + `cd ROME_framework`), if you already have your PRD/BRD
+file(s) ready, one command does the dependency install, the sanity check,
+project scaffolding, and staging your inputs:
+```bash
+./bootstrap.sh my-app --intent greenfield -- path/to/prd.md
+```
+(Flags before `--` pass through to `rome-start.cjs`; files after `--` are staged
+into `my-app/_user_input/raw-requirements/`. Add `--skip-check` to skip the
+sanity check. Run it from the `ROME_framework/` root — where it lives.) It
+prints step 0.4 and Step 3 for you to do by hand: opening the Claude Code
+session and pasting the launch line — those are chat actions, not shell ones.
+
+On a pristine clone (clean tree, no local commits ahead of upstream), it also
+removes the dev-only folders you don't need to build an app: `ROME_architect/`,
+`ROME_framework_maintenance/`, `testapps/`, `test-project-to-validate-framework-v1/`.
+It automatically skips this on a maintainer's working copy (dirty tree or
+commits ahead) — use `--skip-prune` to opt out explicitly, or `--force-prune`
+to override the check.
+
+Otherwise, follow the manual steps below.
 
 ## Step 1 — Create your project
 ```bash
