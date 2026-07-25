@@ -62,20 +62,18 @@ CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
         CurvedAnimation(parent: secondaryAnimation, curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),
       );
 
-      return AnimatedBuilder(
-        animation: Listenable.merge([fadeIn, fadeOutWhenCovered]),
-        child: child,
-        builder: (_, inner) {
-          final opacity = (fadeIn.value * fadeOutWhenCovered.value).clamp(0.0, 1.0);
-          return Opacity(
-            opacity: opacity,
-            child: Transform.translate(
-              // subtle rise as the incoming page fades in
-              offset: Offset(0, (1 - fadeIn.value) * 6),
-              child: inner,
-            ),
-          );
-        },
+      // FadeTransition (RenderAnimatedOpacity) over a RepaintBoundary composites
+      // the fade as a GPU opacity layer — no per-frame saveLayer/offscreen raster.
+      // Nesting multiplies the two opacities; each is a no-op at 1.0.
+      return FadeTransition(
+        opacity: fadeOutWhenCovered,
+        child: FadeTransition(
+          opacity: fadeIn,
+          child: SlideTransition(
+            position: Tween<Offset>(begin: const Offset(0, 0.012), end: Offset.zero).animate(fadeIn),
+            child: RepaintBoundary(child: child),
+          ),
+        ),
       );
     },
   );
