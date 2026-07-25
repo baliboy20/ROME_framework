@@ -301,11 +301,11 @@ class _TourEditorState extends State<_TourEditor> {
             style: TextButton.styleFrom(foregroundColor: FobColors.error),
             child: const Text('Delete'),
           ),
-        const Spacer(),
         TextButton(onPressed: _saving ? null : () => Navigator.of(context).pop(false), child: const Text('Cancel')),
         FilledButton(onPressed: _saving ? null : _save, child: Text(_saving ? 'Saving…' : 'Save')),
       ],
-      actionsAlignment: MainAxisAlignment.start,
+      // Delete sits to the left, Cancel/Save to the right, when there's room.
+      actionsAlignment: _isEdit ? MainAxisAlignment.spaceBetween : MainAxisAlignment.end,
     );
   }
 
