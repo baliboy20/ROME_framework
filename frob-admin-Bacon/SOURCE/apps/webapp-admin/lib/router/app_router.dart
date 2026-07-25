@@ -43,36 +43,40 @@ class _BlocRefresh extends ChangeNotifier {
   }
 }
 
-/// Sequenced fade-through for content-region page changes: the outgoing page
-/// fades fully out over the first half of the transition, then the incoming
-/// page fades in over the second half — the two are never visible at the same
-/// time. Honours the platform "reduce motion" setting (instant swap when set).
+/// Shared-axis horizontal push for content-region page changes. The incoming
+/// page is opaque and slides in from the right, cleanly covering whatever is
+/// behind it (no see-through overlap / collision); the outgoing page slides
+/// left and fades away underneath. Honours the platform "reduce motion" setting.
 CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 340),
-    reverseTransitionDuration: const Duration(milliseconds: 340),
+    transitionDuration: const Duration(milliseconds: 300),
+    reverseTransitionDuration: const Duration(milliseconds: 260),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
 
-      // Incoming page: invisible until the halfway point, then fades in.
-      final fadeIn = CurvedAnimation(parent: animation, curve: const Interval(0.5, 1.0, curve: Curves.easeOut));
-      // Outgoing page (covered by a push): fully out by the halfway point.
-      final fadeOutWhenCovered = Tween<double>(begin: 1.0, end: 0.0).animate(
-        CurvedAnimation(parent: secondaryAnimation, curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),
-      );
+      // Incoming: enters from the right, decelerating; stays fully opaque.
+      final slideIn = Tween<Offset>(begin: const Offset(0.12, 0), end: Offset.zero)
+          .animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
+      // Outgoing (covered): drifts left and fades out beneath the incoming page.
+      final slideOut = Tween<Offset>(begin: Offset.zero, end: const Offset(-0.06, 0))
+          .animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeInCubic));
+      final fadeOut = Tween<double>(begin: 1.0, end: 0.0)
+          .animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeIn));
 
-      // FadeTransition (RenderAnimatedOpacity) over a RepaintBoundary composites
-      // the fade as a GPU opacity layer — no per-frame saveLayer/offscreen raster.
-      // Nesting multiplies the two opacities; each is a no-op at 1.0.
-      return FadeTransition(
-        opacity: fadeOutWhenCovered,
+      return SlideTransition(
+        position: slideOut,
         child: FadeTransition(
-          opacity: fadeIn,
+          opacity: fadeOut,
           child: SlideTransition(
-            position: Tween<Offset>(begin: const Offset(0, 0.012), end: Offset.zero).animate(fadeIn),
-            child: RepaintBoundary(child: child),
+            position: slideIn,
+            // Opaque background so the incoming page fully occludes the outgoing
+            // one as it slides — the two are never blended together.
+            child: ColoredBox(
+              color: FobColors.surfaceBg,
+              child: RepaintBoundary(child: child),
+            ),
           ),
         ),
       );
