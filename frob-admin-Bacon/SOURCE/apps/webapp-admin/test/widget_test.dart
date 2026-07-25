@@ -24,6 +24,11 @@ void main() {
     await tester.pumpWidget(const FobAdminApp());
     await tester.pump();
 
+    // The sign-in form dev-prefills credentials; clear them so this exercises
+    // the genuinely-empty case the validator guards.
+    await tester.enterText(find.byKey(const Key('signin-email')), '');
+    await tester.enterText(find.byKey(const Key('signin-password')), '');
+
     await tester.tap(find.byKey(const Key('signin-submit')));
     await tester.pump();
 

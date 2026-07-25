@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import 'features/auth/presentation/bloc/auth_bloc.dart';
-import 'features/auth/presentation/pages/sign_in_page.dart';
 import 'injection_container.dart';
-import 'screens/shell_screen.dart';
+import 'router/app_router.dart';
 import 'theme/tokens.dart';
 
 void main() {
@@ -13,33 +13,28 @@ void main() {
 }
 
 /// webapp-admin — FOB back-office console (A1–A22). Satisfies TDR-13.
-class FobAdminApp extends StatelessWidget {
+class FobAdminApp extends StatefulWidget {
   const FobAdminApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return BlocProvider<AuthBloc>(
-      create: (_) => sl<AuthBloc>(),
-      child: MaterialApp(
-        title: 'FOB Booking Admin',
-        debugShowCheckedModeBanner: false,
-        theme: buildFobTheme(),
-        home: const _RootGate(),
-      ),
-    );
-  }
+  State<FobAdminApp> createState() => _FobAdminAppState();
 }
 
-class _RootGate extends StatelessWidget {
-  const _RootGate();
+class _FobAdminAppState extends State<FobAdminApp> {
+  // One AuthBloc instance drives both the router redirect and the widget tree.
+  final AuthBloc _authBloc = sl<AuthBloc>();
+  late final GoRouter _router = createRouter(_authBloc);
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
-      builder: (context, state) {
-        if (state is AuthSignedIn) return const ShellScreen();
-        return const SignInPage();
-      },
+    return BlocProvider<AuthBloc>.value(
+      value: _authBloc,
+      child: MaterialApp.router(
+        title: 'FOB Booking Admin',
+        debugShowCheckedModeBanner: false,
+        theme: buildFobTheme(),
+        routerConfig: _router,
+      ),
     );
   }
 }
