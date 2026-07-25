@@ -16,6 +16,13 @@ import 'features/bookings/data/repositories/booking_repository_impl.dart';
 import 'features/bookings/domain/repositories/booking_repository.dart';
 import 'features/bookings/domain/usecases/get_booking_detail.dart';
 
+import 'features/enquiries/data/datasources/enquiry_remote_data_source.dart';
+import 'features/enquiries/data/repositories/enquiry_repository_impl.dart';
+import 'features/enquiries/domain/repositories/enquiry_repository.dart';
+import 'features/enquiries/domain/usecases/get_enquiries.dart';
+import 'features/enquiries/domain/usecases/reply_enquiry.dart';
+import 'features/enquiries/presentation/bloc/enquiries_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -36,6 +43,16 @@ void configureDependencies() {
   // ---- features -----------------------------------------------------------
   _registerBookings();
   _registerPayments();
+  _registerEnquiries();
+}
+
+void _registerEnquiries() {
+  sl.registerLazySingleton<EnquiryRemoteDataSource>(
+      () => EnquiryRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<EnquiryRepository>(() => EnquiryRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => GetEnquiries(sl()));
+  sl.registerLazySingleton(() => ReplyEnquiry(sl()));
+  sl.registerFactory(() => EnquiriesBloc(getEnquiries: sl(), replyEnquiry: sl()));
 }
 
 void _registerBookings() {

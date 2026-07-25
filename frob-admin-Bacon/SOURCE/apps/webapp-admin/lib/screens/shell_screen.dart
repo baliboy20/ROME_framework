@@ -4,7 +4,7 @@ import '../bloc/auth_cubit.dart';
 import '../theme/tokens.dart';
 import '../widgets/tree_nav.dart';
 import '../features/payments/presentation/pages/payments_page.dart';
-import 'enquiries_screen.dart';
+import '../features/enquiries/presentation/pages/enquiries_page.dart';
 import 'calendar_screen.dart';
 import 'scheduler_screen.dart';
 import 'bike_allocation_screen.dart';
@@ -76,7 +76,7 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/new-booking':
         return const NewBookingScreen();
       case '/enquiries':
-        return const EnquiriesScreen();
+        return const EnquiriesPage();
       case '/booking-browser':
         return const BookingBrowserScreen();
       case '/tours':
