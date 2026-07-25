@@ -16,8 +16,8 @@ import 'alerts_screen.dart';
 import 'deliverability_screen.dart';
 import 'audit_screen.dart';
 import 'publish_screen.dart';
-import 'incidents_screen.dart';
-import 'hazards_screen.dart';
+import '../features/safety/presentation/pages/incidents_page.dart';
+import '../features/safety/presentation/pages/hazards_page.dart';
 import 'equipment_screen.dart';
 import 'fleet_readiness_screen.dart';
 import 'bikes_screen.dart';
@@ -96,9 +96,9 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/publish':
         return const PublishScreen();
       case '/incidents':
-        return const IncidentsScreen();
+        return const IncidentsPage();
       case '/hazards':
-        return const HazardsScreen();
+        return const HazardsPage();
       case '/fleet-readiness':
         return const FleetReadinessScreen();
       case '/bikes':
