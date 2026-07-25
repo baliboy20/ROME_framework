@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/auth_cubit.dart';
+import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../theme/tokens.dart';
 import '../widgets/tree_nav.dart';
 import '../features/payments/presentation/pages/payments_page.dart';
@@ -147,7 +147,7 @@ class _ShellScreenState extends State<ShellScreen> {
                       const SizedBox(width: 12),
                       TextButton(
                         key: const Key('signout-button'),
-                        onPressed: () => context.read<AuthCubit>().signOut(),
+                        onPressed: () => context.read<AuthBloc>().add(const SignOutRequested()),
                         child: const Text('Sign out'),
                       ),
                     ],

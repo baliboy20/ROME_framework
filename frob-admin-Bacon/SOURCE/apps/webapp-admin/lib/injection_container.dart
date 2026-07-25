@@ -59,6 +59,12 @@ import 'features/scheduling/presentation/bloc/tours_bloc.dart';
 import 'features/scheduling/presentation/bloc/calendar_bloc.dart';
 import 'features/scheduling/presentation/bloc/scheduler_bloc.dart';
 
+import 'features/auth/data/datasources/auth_remote_data_source.dart';
+import 'features/auth/data/repositories/auth_repository_impl.dart';
+import 'features/auth/domain/repositories/auth_repository.dart';
+import 'features/auth/domain/usecases/auth_usecases.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -84,6 +90,16 @@ void configureDependencies() {
   _registerComms();
   _registerFleet();
   _registerScheduling();
+  _registerAuth();
+}
+
+void _registerAuth() {
+  sl.registerLazySingleton<AuthRemoteDataSource>(() => AuthRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(sl(), sl()));
+  sl.registerLazySingleton(() => SignIn(sl()));
+  sl.registerLazySingleton(() => SignOut(sl()));
+  // Singleton: one AuthBloc gates the whole app shell.
+  sl.registerLazySingleton(() => AuthBloc(signIn: sl(), signOut: sl()));
 }
 
 void _registerScheduling() {
