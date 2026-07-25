@@ -30,6 +30,12 @@ import 'features/safety/domain/usecases/safety_usecases.dart';
 import 'features/safety/presentation/bloc/incidents_bloc.dart';
 import 'features/safety/presentation/bloc/hazards_bloc.dart';
 
+import 'features/comms/data/datasources/comms_remote_data_source.dart';
+import 'features/comms/data/repositories/comms_repository_impl.dart';
+import 'features/comms/domain/repositories/comms_repository.dart';
+import 'features/comms/domain/usecases/comms_usecases.dart';
+import 'features/comms/presentation/bloc/publish_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -52,6 +58,19 @@ void configureDependencies() {
   _registerPayments();
   _registerEnquiries();
   _registerSafety();
+  _registerComms();
+}
+
+void _registerComms() {
+  sl.registerLazySingleton<CommsRemoteDataSource>(
+      () => CommsRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<CommsRepository>(() => CommsRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => GetAlerts(sl()));
+  sl.registerLazySingleton(() => GetDeliverability(sl()));
+  sl.registerLazySingleton(() => GetAudit(sl()));
+  sl.registerLazySingleton(() => GetContent(sl()));
+  sl.registerLazySingleton(() => Publish(sl()));
+  sl.registerFactory(() => PublishBloc(getContent: sl(), publish: sl()));
 }
 
 void _registerSafety() {

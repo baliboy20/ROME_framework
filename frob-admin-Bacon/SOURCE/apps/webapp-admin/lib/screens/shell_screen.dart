@@ -12,10 +12,10 @@ import 'add_bike_screen.dart';
 import 'flagged_bike_screen.dart';
 import 'new_booking_screen.dart';
 import 'booking_browser_screen.dart';
-import 'alerts_screen.dart';
-import 'deliverability_screen.dart';
-import 'audit_screen.dart';
-import 'publish_screen.dart';
+import '../features/comms/presentation/pages/alerts_page.dart';
+import '../features/comms/presentation/pages/deliverability_page.dart';
+import '../features/comms/presentation/pages/audit_page.dart';
+import '../features/comms/presentation/pages/publish_page.dart';
 import '../features/safety/presentation/pages/incidents_page.dart';
 import '../features/safety/presentation/pages/hazards_page.dart';
 import 'equipment_screen.dart';
@@ -88,13 +88,13 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/bike-allocation':
         return const BikeAllocationScreen();
       case '/alerts':
-        return const AlertsScreen();
+        return const AlertsPage();
       case '/deliverability':
-        return const DeliverabilityScreen();
+        return const DeliverabilityPage();
       case '/audit':
-        return const AuditScreen();
+        return const AuditPage();
       case '/publish':
-        return const PublishScreen();
+        return const PublishPage();
       case '/incidents':
         return const IncidentsPage();
       case '/hazards':
