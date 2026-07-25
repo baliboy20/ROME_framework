@@ -1,23 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../api/api_client.dart';
-import '../models/models.dart';
-import '../theme/tokens.dart';
+
+import '../../../../injection_container.dart';
+import '../../../../theme/tokens.dart';
+import '../bloc/readiness_bloc.dart';
 
 /// A14 / FLEET03 — fleet & equipment readiness dashboard.
-class FleetReadinessScreen extends StatelessWidget {
-  const FleetReadinessScreen({super.key});
+class FleetReadinessPage extends StatelessWidget {
+  const FleetReadinessPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final api = context.read<ApiClient>();
-    return FutureBuilder<Map<String, dynamic>>(
-      future: api.getFleetReadiness(),
-      builder: (context, snap) {
-        if (snap.connectionState == ConnectionState.waiting) {
+    return BlocProvider<ReadinessBloc>(
+      create: (_) => sl<ReadinessBloc>()..add(const LoadReadiness()),
+      child: const _ReadinessView(),
+    );
+  }
+}
+
+class _ReadinessView extends StatelessWidget {
+  const _ReadinessView();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ReadinessBloc, ReadinessState>(
+      builder: (context, state) {
+        if (state is ReadinessLoading || state is ReadinessInitial) {
           return const Center(child: CircularProgressIndicator());
         }
-        final readiness = FleetReadiness.fromJson(snap.data ?? const {});
+        if (state is ReadinessFailure) {
+          return Text(state.message, style: FobText.body);
+        }
+        final readiness = (state as ReadinessLoaded).readiness;
         return SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -39,8 +53,7 @@ class FleetReadinessScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text('${e.value}', style: FobText.pageTitle),
-                              Text(e.key.replaceAll('_', ' '),
-                                  style: FobText.microLabel),
+                              Text(e.key.replaceAll('_', ' '), style: FobText.microLabel),
                             ],
                           ),
                         ))
@@ -57,9 +70,7 @@ class FleetReadinessScreen extends StatelessWidget {
                   children: readiness.alerts
                       .map((a) => Padding(
                             padding: const EdgeInsets.only(bottom: FobSpace.row),
-                            child: Text(a,
-                                style: FobText.body
-                                    .copyWith(color: FobColors.orangeText)),
+                            child: Text(a, style: FobText.body.copyWith(color: FobColors.orangeText)),
                           ))
                       .toList(),
                 ),

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../api/api_client.dart';
-import '../bloc/flagged_bike_cubit.dart';
-import '../theme/tokens.dart';
-import '../widgets/app_button.dart';
-import '../widgets/app_field.dart';
 
-/// A15 — Flagged-bike clear-to-service gate (UXD-11). FINDING-001: real
-/// flagged-bike picker (was hard-coded to 'FOB-004').
-class FlaggedBikeScreen extends StatelessWidget {
-  const FlaggedBikeScreen({super.key});
+import '../../../../injection_container.dart';
+import '../../../../theme/tokens.dart';
+import '../../../../widgets/app_button.dart';
+import '../../../../widgets/app_field.dart';
+import '../bloc/flagged_bike_bloc.dart';
+
+/// A15 — Flagged-bike clear-to-service gate (UXD-11).
+class FlaggedBikePage extends StatelessWidget {
+  const FlaggedBikePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => FlaggedBikeCubit(context.read()),
+    return BlocProvider<FlaggedBikeBloc>(
+      create: (_) => sl<FlaggedBikeBloc>()..add(const LoadFlaggedBikesEvent()),
       child: const _FlaggedBikeView(),
     );
   }
@@ -28,33 +28,18 @@ class _FlaggedBikeView extends StatefulWidget {
 
 class _FlaggedBikeViewState extends State<_FlaggedBikeView> {
   final noteCtrl = TextEditingController();
-  List<Map<String, dynamic>> _flagged = [];
-  String? _bikeId;
-
-  ApiClient get _api => context.read<ApiClient>();
 
   @override
-  void initState() {
-    super.initState();
-    _load();
-  }
-
-  Future<void> _load() async {
-    try {
-      final all = await _api.getFleet();
-      if (!mounted) return;
-      setState(() => _flagged = all
-          .cast<Map<String, dynamic>>()
-          .where((b) => b['status'] == 'flagged_for_service' || b['status'] == 'in_maintenance')
-          .toList());
-    } catch (_) {}
+  void dispose() {
+    noteCtrl.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FlaggedBikeCubit, FlaggedBikeState>(
+    return BlocBuilder<FlaggedBikeBloc, FlaggedBikeState>(
       builder: (context, state) {
-        final cubit = context.read<FlaggedBikeCubit>();
+        final bloc = context.read<FlaggedBikeBloc>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -68,25 +53,22 @@ class _FlaggedBikeViewState extends State<_FlaggedBikeView> {
                     const Text('Bike: ', style: FobText.body),
                     const SizedBox(width: 8),
                     DropdownButton<String?>(
-                      value: _bikeId,
+                      value: state.bikeId,
                       hint: const Text('Select a flagged bike'),
-                      items: _flagged
+                      items: state.flagged
                           .map((b) => DropdownMenuItem<String?>(
-                                value: b['id'].toString(),
-                                child: Text('${b['id']} — ${b['make']} ${b['model']} (${b['status']})'),
+                                value: b.id,
+                                child: Text('${b.id} — ${b.make} ${b.model} (${b.status})'),
                               ))
                           .toList(),
-                      onChanged: (v) {
-                        setState(() => _bikeId = v);
-                        if (v != null) cubit.openBike(v);
-                      },
+                      onChanged: (v) => v == null ? null : bloc.add(OpenFlaggedBikeEvent(v)),
                     ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: FobSpace.card),
-            if (_bikeId == null)
+            if (state.bikeId == null)
               const Text('Select a flagged bike to log maintenance.', style: FobText.body)
             else
               Card(
@@ -95,8 +77,7 @@ class _FlaggedBikeViewState extends State<_FlaggedBikeView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Bike ${state.bikeId} — maintenance events logged: ${state.maintenanceEventCount}',
-                          style: FobText.body),
+                      Text('Bike ${state.bikeId} — maintenance events logged: ${state.maintenanceEventCount}', style: FobText.body),
                       const SizedBox(height: FobSpace.field),
                       AppField(label: 'Maintenance note', controller: noteCtrl, key: const Key('maintenance-note-field')),
                       const SizedBox(height: FobSpace.row),
@@ -105,7 +86,10 @@ class _FlaggedBikeViewState extends State<_FlaggedBikeView> {
                         label: 'Log maintenance event',
                         kind: AppButtonKind.secondary,
                         loading: state.saving,
-                        onPressed: () => cubit.logMaintenance(noteCtrl.text),
+                        onPressed: () {
+                          bloc.add(LogMaintenanceEvent(noteCtrl.text));
+                          noteCtrl.clear();
+                        },
                       ),
                       const SizedBox(height: FobSpace.block),
                       if (!state.canClear && !state.cleared)
@@ -119,7 +103,7 @@ class _FlaggedBikeViewState extends State<_FlaggedBikeView> {
                         label: 'Clear to service',
                         kind: AppButtonKind.primary,
                         loading: state.saving,
-                        onPressed: state.canClear ? () => cubit.clearToService() : null,
+                        onPressed: state.canClear ? () => bloc.add(const ClearToServiceEvent()) : null,
                       ),
                       if (state.cleared)
                         const Padding(

@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../bloc/add_bike_cubit.dart';
-import '../theme/tokens.dart';
-import '../widgets/app_button.dart';
-import '../widgets/app_field.dart';
+
+import '../../../../injection_container.dart';
+import '../../../../theme/tokens.dart';
+import '../../../../widgets/app_button.dart';
+import '../../../../widgets/app_field.dart';
+import '../bloc/add_bike_bloc.dart';
 
 /// A12 — Add bike (UXD-10 duplicate guard).
-class AddBikeScreen extends StatelessWidget {
-  const AddBikeScreen({super.key});
+class AddBikePage extends StatelessWidget {
+  const AddBikePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => AddBikeCubit(context.read())..loadExisting(),
+    return BlocProvider<AddBikeBloc>(
+      create: (_) => sl<AddBikeBloc>()..add(const LoadExistingBikesEvent()),
       child: const _AddBikeView(),
     );
   }
@@ -29,10 +31,17 @@ class _AddBikeViewState extends State<_AddBikeView> {
   final labelCtrl = TextEditingController();
 
   @override
+  void dispose() {
+    idCtrl.dispose();
+    labelCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AddBikeCubit, AddBikeState>(
+    return BlocBuilder<AddBikeBloc, AddBikeState>(
       builder: (context, state) {
-        final cubit = context.read<AddBikeCubit>();
+        final bloc = context.read<AddBikeBloc>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -50,7 +59,7 @@ class _AddBikeViewState extends State<_AddBikeView> {
                       hint: 'FOB-001',
                       controller: idCtrl,
                       errorText: state.duplicateError,
-                      onChanged: cubit.checkId,
+                      onChanged: (v) => bloc.add(CheckBikeIdEvent(v)),
                     ),
                     const SizedBox(height: FobSpace.field),
                     AppField(label: 'Label', controller: labelCtrl),
@@ -61,7 +70,7 @@ class _AddBikeViewState extends State<_AddBikeView> {
                       kind: AppButtonKind.primary,
                       loading: state.saving,
                       onPressed: state.canAdd && idCtrl.text.isNotEmpty
-                          ? () => cubit.addBike(idCtrl.text, labelCtrl.text)
+                          ? () => bloc.add(SubmitBikeEvent(idCtrl.text, labelCtrl.text))
                           : null,
                     ),
                     if (state.added)

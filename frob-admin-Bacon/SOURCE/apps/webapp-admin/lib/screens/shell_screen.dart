@@ -7,9 +7,9 @@ import '../features/payments/presentation/pages/payments_page.dart';
 import '../features/enquiries/presentation/pages/enquiries_page.dart';
 import 'calendar_screen.dart';
 import 'scheduler_screen.dart';
-import 'bike_allocation_screen.dart';
-import 'add_bike_screen.dart';
-import 'flagged_bike_screen.dart';
+import '../features/fleet/presentation/pages/bike_allocation_page.dart';
+import '../features/fleet/presentation/pages/add_bike_page.dart';
+import '../features/fleet/presentation/pages/flagged_bike_page.dart';
 import 'new_booking_screen.dart';
 import 'booking_browser_screen.dart';
 import '../features/comms/presentation/pages/alerts_page.dart';
@@ -18,10 +18,10 @@ import '../features/comms/presentation/pages/audit_page.dart';
 import '../features/comms/presentation/pages/publish_page.dart';
 import '../features/safety/presentation/pages/incidents_page.dart';
 import '../features/safety/presentation/pages/hazards_page.dart';
-import 'equipment_screen.dart';
-import 'fleet_readiness_screen.dart';
-import 'bikes_screen.dart';
-import 'compliance_screen.dart';
+import '../features/fleet/presentation/pages/equipment_page.dart';
+import '../features/fleet/presentation/pages/fleet_readiness_page.dart';
+import '../features/fleet/presentation/pages/bikes_page.dart';
+import '../features/fleet/presentation/pages/compliance_page.dart';
 import 'tours_screen.dart';
 
 const kNavGroups = [
@@ -86,7 +86,7 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/scheduler':
         return const SchedulerScreen();
       case '/bike-allocation':
-        return const BikeAllocationScreen();
+        return const BikeAllocationPage();
       case '/alerts':
         return const AlertsPage();
       case '/deliverability':
@@ -100,17 +100,17 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/hazards':
         return const HazardsPage();
       case '/fleet-readiness':
-        return const FleetReadinessScreen();
+        return const FleetReadinessPage();
       case '/bikes':
-        return const BikesScreen();
+        return const BikesPage();
       case '/add-bike':
-        return const AddBikeScreen();
+        return const AddBikePage();
       case '/equipment':
-        return const EquipmentScreen();
+        return const EquipmentPage();
       case '/flagged-bike':
-        return const FlaggedBikeScreen();
+        return const FlaggedBikePage();
       case '/compliance':
-        return const ComplianceScreen();
+        return const CompliancePage();
       case '/payments':
         return const PaymentsPage();
       default:

@@ -36,6 +36,18 @@ import 'features/comms/domain/repositories/comms_repository.dart';
 import 'features/comms/domain/usecases/comms_usecases.dart';
 import 'features/comms/presentation/bloc/publish_bloc.dart';
 
+import 'features/fleet/data/datasources/fleet_remote_data_source.dart';
+import 'features/fleet/data/repositories/fleet_repository_impl.dart';
+import 'features/fleet/domain/repositories/fleet_repository.dart';
+import 'features/fleet/domain/usecases/fleet_usecases.dart';
+import 'features/fleet/presentation/bloc/bikes_bloc.dart';
+import 'features/fleet/presentation/bloc/equipment_bloc.dart';
+import 'features/fleet/presentation/bloc/compliance_bloc.dart';
+import 'features/fleet/presentation/bloc/readiness_bloc.dart';
+import 'features/fleet/presentation/bloc/add_bike_bloc.dart';
+import 'features/fleet/presentation/bloc/bike_allocation_bloc.dart';
+import 'features/fleet/presentation/bloc/flagged_bike_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -59,6 +71,35 @@ void configureDependencies() {
   _registerEnquiries();
   _registerSafety();
   _registerComms();
+  _registerFleet();
+}
+
+void _registerFleet() {
+  sl.registerLazySingleton<FleetRemoteDataSource>(() => FleetRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<FleetRepository>(() => FleetRepositoryImpl(sl()));
+  // use cases
+  sl.registerLazySingleton(() => GetFleet(sl()));
+  sl.registerLazySingleton(() => GetBike(sl()));
+  sl.registerLazySingleton(() => AddBike(sl()));
+  sl.registerLazySingleton(() => GetFleetReadiness(sl()));
+  sl.registerLazySingleton(() => GetAvailableBikes(sl()));
+  sl.registerLazySingleton(() => SetBikeAssignments(sl()));
+  sl.registerLazySingleton(() => LogMaintenance(sl()));
+  sl.registerLazySingleton(() => SetBikeStatus(sl()));
+  sl.registerLazySingleton(() => GetEquipment(sl()));
+  sl.registerLazySingleton(() => AddEquipment(sl()));
+  sl.registerLazySingleton(() => GetCompliance(sl()));
+  sl.registerLazySingleton(() => RenewCompliance(sl()));
+  sl.registerLazySingleton(() => GetDepartureOptions(sl()));
+  // blocs
+  sl.registerFactory(() => BikesBloc(getFleet: sl(), getBike: sl()));
+  sl.registerFactory(() => EquipmentBloc(getEquipment: sl(), addEquipment: sl()));
+  sl.registerFactory(() => ComplianceBloc(getCompliance: sl(), renewCompliance: sl()));
+  sl.registerFactory(() => ReadinessBloc(sl()));
+  sl.registerFactory(() => AddBikeBloc(getFleet: sl(), addBike: sl()));
+  sl.registerFactory(() => BikeAllocationBloc(
+      getDepartureOptions: sl(), getAvailableBikes: sl(), setBikeAssignments: sl()));
+  sl.registerFactory(() => FlaggedBikeBloc(getFleet: sl(), logMaintenance: sl(), setBikeStatus: sl()));
 }
 
 void _registerComms() {

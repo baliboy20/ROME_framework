@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
-import '../models/models.dart';
-import '../theme/tokens.dart';
-import 'app_button.dart';
+
+import '../../../../theme/tokens.dart';
+import '../../../../widgets/app_button.dart';
+import '../../domain/entities/bike.dart';
 
 /// TransferList — Available/Assigned lists + move controls + coverage counter (UXD-09).
 /// Under-provisioning is a non-blocking warning. Out-of-service / overlapping bikes
 /// are disabled with an inline reason and cannot be moved.
 class TransferList extends StatelessWidget {
-  final List<BikeRow> available;
-  final List<BikeRow> assigned;
+  final List<Bike> available;
+  final List<Bike> assigned;
   final int ridersNeeded;
-  final void Function(BikeRow) onAssign;
-  final void Function(BikeRow) onUnassign;
+  final void Function(Bike) onAssign;
+  final void Function(Bike) onUnassign;
 
   const TransferList({
     super.key,
@@ -54,7 +55,7 @@ class TransferList extends StatelessWidget {
     );
   }
 
-  Widget _list(String title, List<BikeRow> items, {required bool isAssignedList}) {
+  Widget _list(String title, List<Bike> items, {required bool isAssignedList}) {
     return Container(
       decoration: BoxDecoration(
         border: Border.all(color: FobColors.hairline),
@@ -73,7 +74,7 @@ class TransferList extends StatelessWidget {
               child: Text('No available bikes for this slot — check the fleet.', style: FobText.body),
             ),
           ...items.map((b) {
-            final disabled = !isAssignedList && (b.outOfService || b.busyOverlap);
+            final disabled = !isAssignedList && !b.assignable;
             final reason = b.outOfService
                 ? 'out of service — choose another'
                 : b.busyOverlap
