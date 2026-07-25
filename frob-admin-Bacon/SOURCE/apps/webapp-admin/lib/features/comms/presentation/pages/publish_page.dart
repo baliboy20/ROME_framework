@@ -40,8 +40,8 @@ class _PublishView extends StatelessWidget {
         final loaded = state is PublishLoaded ? state : null;
         final pages = loaded?.snapshot.pages ?? const <ContentPage>[];
         final quality = loaded?.snapshot.quality ?? const <QualityItem>[];
-        return SingleChildScrollView(
-          child: Column(
+        // Scrolling is provided by the route scaffold (see app_router).
+        return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Publish & content quality', style: FobText.pageTitle),
@@ -95,7 +95,6 @@ class _PublishView extends StatelessWidget {
                 ),
               ),
             ],
-          ),
         );
       },
     );

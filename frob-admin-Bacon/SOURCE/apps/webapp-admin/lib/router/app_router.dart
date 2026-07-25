@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../theme/tokens.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/pages/sign_in_page.dart';
 import '../features/bookings/presentation/pages/booking_browser_page.dart';
@@ -79,8 +80,23 @@ CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
   );
 }
 
-GoRoute _shellRoute(String path, Widget page) =>
-    GoRoute(path: path, pageBuilder: (context, state) => _animatedPage(state, page));
+/// Each route owns its scroll viewport and max-width frame, so the ShellRoute
+/// Navigator lays out with bounded height (no unbounded-height Navigator/Overlay)
+/// and pages become independently scrollable.
+Widget _pageScaffold(Widget page) => SingleChildScrollView(
+      padding: const EdgeInsets.all(FobSpace.gutter),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1160),
+          child: page,
+        ),
+      ),
+    );
+
+GoRoute _shellRoute(String path, Widget page) => GoRoute(
+      path: path,
+      pageBuilder: (context, state) => _animatedPage(state, _pageScaffold(page)),
+    );
 
 /// The app router. Pass the app-wide [AuthBloc] so the redirect can gate the
 /// shell without reaching into the widget tree.

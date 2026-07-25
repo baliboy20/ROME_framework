@@ -32,8 +32,8 @@ class _ReadinessView extends StatelessWidget {
           return Text(state.message, style: FobText.body);
         }
         final readiness = (state as ReadinessLoaded).readiness;
-        return SingleChildScrollView(
-          child: Column(
+        // Scrolling is provided by the route scaffold (see app_router).
+        return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('Fleet & equipment readiness', style: FobText.pageTitle),
@@ -75,7 +75,6 @@ class _ReadinessView extends StatelessWidget {
                       .toList(),
                 ),
             ],
-          ),
         );
       },
     );

@@ -84,15 +84,10 @@ class AdminShell extends StatelessWidget {
                     ],
                   ),
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(FobSpace.gutter),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 1160),
-                      child: child,
-                    ),
-                  ),
-                ),
+                // Bounded content region. Each route provides its own scroll
+                // viewport (see app_router) so the ShellRoute Navigator is never
+                // given unbounded height.
+                Expanded(child: child),
               ],
             ),
           ),
