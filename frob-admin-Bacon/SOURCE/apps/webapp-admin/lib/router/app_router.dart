@@ -42,23 +42,40 @@ class _BlocRefresh extends ChangeNotifier {
   }
 }
 
-/// A fade-through + gentle upward slide for content-region page changes.
-/// Honours the platform "reduce motion" setting (instant swap when set).
+/// Sequenced fade-through for content-region page changes: the outgoing page
+/// fades fully out over the first half of the transition, then the incoming
+/// page fades in over the second half — the two are never visible at the same
+/// time. Honours the platform "reduce motion" setting (instant swap when set).
 CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 260),
-    reverseTransitionDuration: const Duration(milliseconds: 200),
+    transitionDuration: const Duration(milliseconds: 340),
+    reverseTransitionDuration: const Duration(milliseconds: 340),
     child: child,
-    transitionsBuilder: (context, animation, secondary, child) {
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
       if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
-      final curved = CurvedAnimation(parent: animation, curve: Curves.easeOutCubic);
-      return FadeTransition(
-        opacity: curved,
-        child: SlideTransition(
-          position: Tween<Offset>(begin: const Offset(0, 0.02), end: Offset.zero).animate(curved),
-          child: child,
-        ),
+
+      // Incoming page: invisible until the halfway point, then fades in.
+      final fadeIn = CurvedAnimation(parent: animation, curve: const Interval(0.5, 1.0, curve: Curves.easeOut));
+      // Outgoing page (covered by a push): fully out by the halfway point.
+      final fadeOutWhenCovered = Tween<double>(begin: 1.0, end: 0.0).animate(
+        CurvedAnimation(parent: secondaryAnimation, curve: const Interval(0.0, 0.5, curve: Curves.easeIn)),
+      );
+
+      return AnimatedBuilder(
+        animation: Listenable.merge([fadeIn, fadeOutWhenCovered]),
+        child: child,
+        builder: (_, inner) {
+          final opacity = (fadeIn.value * fadeOutWhenCovered.value).clamp(0.0, 1.0);
+          return Opacity(
+            opacity: opacity,
+            child: Transform.translate(
+              // subtle rise as the incoming page fades in
+              offset: Offset(0, (1 - fadeIn.value) * 6),
+              child: inner,
+            ),
+          );
+        },
       );
     },
   );
