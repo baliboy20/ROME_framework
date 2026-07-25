@@ -5,8 +5,8 @@ import '../theme/tokens.dart';
 import '../widgets/tree_nav.dart';
 import '../features/payments/presentation/pages/payments_page.dart';
 import '../features/enquiries/presentation/pages/enquiries_page.dart';
-import 'calendar_screen.dart';
-import 'scheduler_screen.dart';
+import '../features/scheduling/presentation/pages/calendar_page.dart';
+import '../features/scheduling/presentation/pages/scheduler_page.dart';
 import '../features/fleet/presentation/pages/bike_allocation_page.dart';
 import '../features/fleet/presentation/pages/add_bike_page.dart';
 import '../features/fleet/presentation/pages/flagged_bike_page.dart';
@@ -22,7 +22,7 @@ import '../features/fleet/presentation/pages/equipment_page.dart';
 import '../features/fleet/presentation/pages/fleet_readiness_page.dart';
 import '../features/fleet/presentation/pages/bikes_page.dart';
 import '../features/fleet/presentation/pages/compliance_page.dart';
-import 'tours_screen.dart';
+import '../features/scheduling/presentation/pages/tours_page.dart';
 
 const kNavGroups = [
   NavGroup('Bookings & payments', [
@@ -80,11 +80,11 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/booking-browser':
         return const BookingBrowserScreen();
       case '/tours':
-        return const ToursScreen();
+        return const ToursPage();
       case '/calendar':
-        return const CalendarScreen();
+        return const CalendarPage();
       case '/scheduler':
-        return const SchedulerScreen();
+        return const SchedulerPage();
       case '/bike-allocation':
         return const BikeAllocationPage();
       case '/alerts':
@@ -114,7 +114,7 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/payments':
         return const PaymentsPage();
       default:
-        return const CalendarScreen();
+        return const CalendarPage();
     }
   }
 

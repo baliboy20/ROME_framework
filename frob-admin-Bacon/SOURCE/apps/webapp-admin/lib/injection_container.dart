@@ -48,6 +48,14 @@ import 'features/fleet/presentation/bloc/add_bike_bloc.dart';
 import 'features/fleet/presentation/bloc/bike_allocation_bloc.dart';
 import 'features/fleet/presentation/bloc/flagged_bike_bloc.dart';
 
+import 'features/scheduling/data/datasources/scheduling_remote_data_source.dart';
+import 'features/scheduling/data/repositories/scheduling_repository_impl.dart';
+import 'features/scheduling/domain/repositories/scheduling_repository.dart';
+import 'features/scheduling/domain/usecases/scheduling_usecases.dart';
+import 'features/scheduling/presentation/bloc/tours_bloc.dart';
+import 'features/scheduling/presentation/bloc/calendar_bloc.dart';
+import 'features/scheduling/presentation/bloc/scheduler_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -72,6 +80,25 @@ void configureDependencies() {
   _registerSafety();
   _registerComms();
   _registerFleet();
+  _registerScheduling();
+}
+
+void _registerScheduling() {
+  sl.registerLazySingleton<SchedulingRemoteDataSource>(() => SchedulingRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<SchedulingRepository>(() => SchedulingRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => GetCalendar(sl()));
+  sl.registerLazySingleton(() => GetDeparture(sl()));
+  sl.registerLazySingleton(() => GetTours(sl()));
+  sl.registerLazySingleton(() => SaveTour(sl()));
+  sl.registerLazySingleton(() => DeleteTour(sl()));
+  sl.registerLazySingleton(() => GetDepartures(sl()));
+  sl.registerLazySingleton(() => GetGuides(sl()));
+  sl.registerLazySingleton(() => SaveDeparture(sl()));
+  sl.registerLazySingleton(() => CancelDeparture(sl()));
+  sl.registerFactory(() => ToursBloc(sl()));
+  sl.registerFactory(() => CalendarBloc(sl()));
+  sl.registerFactory(() => SchedulerBloc(
+      getDepartures: sl(), getGuides: sl(), getTours: sl(), saveDeparture: sl(), cancelDeparture: sl()));
 }
 
 void _registerFleet() {

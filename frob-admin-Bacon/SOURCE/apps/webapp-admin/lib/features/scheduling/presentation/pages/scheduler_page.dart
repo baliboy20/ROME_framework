@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../api/api_client.dart';
-import '../bloc/scheduler_cubit.dart';
-import '../theme/tokens.dart';
-import '../widgets/app_button.dart';
-import '../widgets/app_field.dart';
-import '../widgets/app_modal.dart';
+
+import '../../../../injection_container.dart';
+import '../../../../theme/tokens.dart';
+import '../../../../widgets/app_button.dart';
+import '../../../../widgets/app_field.dart';
+import '../../../../widgets/app_modal.dart';
+import '../bloc/scheduler_bloc.dart';
 
 /// A18 — Scheduler. Capacity guard (UXD-05), fan-out confirms (UXD-03/04),
-/// no-guide non-blocking note (UXD-06). FINDING-001: real date/time/guide
-/// inputs + an "edit existing departure" picker (was hard-coded create-only).
-class SchedulerScreen extends StatelessWidget {
-  const SchedulerScreen({super.key});
+/// no-guide non-blocking note (UXD-06).
+class SchedulerPage extends StatelessWidget {
+  const SchedulerPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (ctx) => SchedulerCubit(context.read())..startCreate(),
+    return BlocProvider<SchedulerBloc>(
+      create: (_) => sl<SchedulerBloc>()..add(const LoadSchedulerEvent()),
       child: const _SchedulerView(),
     );
   }
@@ -33,66 +33,35 @@ class _SchedulerViewState extends State<_SchedulerView> {
   final timeCtrl = TextEditingController(text: '09:30');
   final capacityCtrl = TextEditingController(text: '10');
 
-  List<Map<String, dynamic>> _departures = [];
-  List<Map<String, dynamic>> _guides = [];
-  List<Map<String, dynamic>> _tours = [];
-  String? _editingId;
-  String? _guideId;
-  String? _tourId;
-
-  ApiClient get _api => context.read<ApiClient>();
-
   @override
-  void initState() {
-    super.initState();
-    _loadLookups();
-  }
-
-  Future<void> _loadLookups() async {
-    try {
-      final d = await _api.getDepartures();
-      final g = await _api.getGuides();
-      final t = await _api.getAdminTours();
-      if (!mounted) return;
-      setState(() {
-        _departures = d.cast<Map<String, dynamic>>();
-        _guides = g.cast<Map<String, dynamic>>();
-        _tours = t.cast<Map<String, dynamic>>();
-      });
-    } catch (_) {}
-  }
-
-  void _selectForEdit(String? id) {
-    final cubit = context.read<SchedulerCubit>();
-    if (id == null) {
-      cubit.startCreate();
-      setState(() {
-        _editingId = null;
-        _guideId = null;
-      });
-      return;
-    }
-    final dep = _departures.firstWhere((d) => d['id'].toString() == id, orElse: () => {});
-    if (dep.isEmpty) return;
-    final booked = (dep['confirmed_count'] as num?)?.toInt() ?? 0;
-    final cap = (dep['capacity'] as num?)?.toInt() ?? 10;
-    final gid = dep['guide_id']?.toString();
-    cubit.startEdit(capacity: cap, currentBooked: booked, hasGuide: gid != null);
-    setState(() {
-      _editingId = id;
-      _guideId = gid;
-      capacityCtrl.text = cap.toString();
-      _tourId = dep['tour_id']?.toString();
-      dateCtrl.text = dep['date']?.toString() ?? '';
-      timeCtrl.text = dep['time']?.toString() ?? '';
-    });
+  void dispose() {
+    dateCtrl.dispose();
+    timeCtrl.dispose();
+    capacityCtrl.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SchedulerCubit, SchedulerState>(
+    return BlocConsumer<SchedulerBloc, SchedulerState>(
+      // When an existing departure is picked for edit, sync the text fields.
+      listenWhen: (prev, curr) => prev.editingId != curr.editingId,
+      listener: (context, state) {
+        if (state.isEdit) {
+          final dep = state.departures.where((d) => d.id == state.editingId).firstOrNull;
+          if (dep != null) {
+            dateCtrl.text = dep.date;
+            timeCtrl.text = dep.time;
+            capacityCtrl.text = dep.capacity.toString();
+          }
+        } else {
+          dateCtrl.clear();
+          timeCtrl.text = '09:30';
+          capacityCtrl.text = '10';
+        }
+      },
       builder: (context, state) {
-        final cubit = context.read<SchedulerCubit>();
+        final bloc = context.read<SchedulerBloc>();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -106,16 +75,16 @@ class _SchedulerViewState extends State<_SchedulerView> {
                     const Text('Edit existing: ', style: FobText.body),
                     const SizedBox(width: 8),
                     DropdownButton<String?>(
-                      value: _editingId,
+                      value: state.editingId,
                       hint: const Text('New departure'),
                       items: [
                         const DropdownMenuItem<String?>(value: null, child: Text('New departure')),
-                        ..._departures.map((d) => DropdownMenuItem<String?>(
-                              value: d['id'].toString(),
-                              child: Text('${d['tour_id']} · ${d['date']} ${d['time']}'),
+                        ...state.departures.map((d) => DropdownMenuItem<String?>(
+                              value: d.id,
+                              child: Text('${d.tourId} · ${d.date} ${d.time}'),
                             )),
                       ],
-                      onChanged: _selectForEdit,
+                      onChanged: (v) => bloc.add(SelectDepartureForEditEvent(v)),
                     ),
                   ],
                 ),
@@ -129,9 +98,6 @@ class _SchedulerViewState extends State<_SchedulerView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!state.isEdit) ...[
-                      // Real tour dropdown (was free-text — could schedule
-                      // against a non-existent tour_id). Only bookable
-                      // (published) tours are offered for scheduling.
                       Row(
                         children: [
                           const Text('Tour: ', style: FobText.body),
@@ -140,16 +106,13 @@ class _SchedulerViewState extends State<_SchedulerView> {
                             child: DropdownButton<String?>(
                               key: const Key('scheduler-tour-dropdown'),
                               isExpanded: true,
-                              value: _tourId,
+                              value: state.tourId,
                               hint: const Text('Select a tour'),
                               items: [
-                                for (final t in _tours.where((t) => t['status'] == 'published'))
-                                  DropdownMenuItem<String?>(
-                                    value: t['id'].toString(),
-                                    child: Text('${t['name'] ?? t['id']}'),
-                                  ),
+                                for (final t in state.publishedTours)
+                                  DropdownMenuItem<String?>(value: t.id, child: Text(t.name.isEmpty ? t.id : t.name)),
                               ],
-                              onChanged: (v) => setState(() => _tourId = v),
+                              onChanged: (v) => bloc.add(SetTourEvent(v)),
                             ),
                           ),
                         ],
@@ -166,7 +129,7 @@ class _SchedulerViewState extends State<_SchedulerView> {
                       controller: capacityCtrl,
                       keyboardType: TextInputType.number,
                       errorText: state.capacityError,
-                      onChanged: (v) => cubit.setCapacity(int.tryParse(v) ?? 0),
+                      onChanged: (v) => bloc.add(SetCapacityEvent(int.tryParse(v) ?? 0)),
                     ),
                     const SizedBox(height: FobSpace.field),
                     Row(
@@ -174,19 +137,13 @@ class _SchedulerViewState extends State<_SchedulerView> {
                         const Text('Guide: ', style: FobText.body),
                         const SizedBox(width: 8),
                         DropdownButton<String?>(
-                          value: _guideId,
+                          value: state.guideId,
                           hint: const Text('None'),
                           items: [
                             const DropdownMenuItem<String?>(value: null, child: Text('None')),
-                            ..._guides.map((g) => DropdownMenuItem<String?>(
-                                  value: g['id'].toString(),
-                                  child: Text(g['name']?.toString() ?? g['id'].toString()),
-                                )),
+                            ...state.guides.map((g) => DropdownMenuItem<String?>(value: g.id, child: Text(g.name))),
                           ],
-                          onChanged: (v) {
-                            setState(() => _guideId = v);
-                            cubit.setHasGuide(v != null);
-                          },
+                          onChanged: (v) => bloc.add(SetGuideEvent(v)),
                         ),
                       ],
                     ),
@@ -209,15 +166,15 @@ class _SchedulerViewState extends State<_SchedulerView> {
                           label: 'Save',
                           kind: AppButtonKind.primary,
                           loading: state.saving,
-                          onPressed: state.canSave ? () => _saveWithFanOutConfirm(context, cubit, state) : null,
+                          onPressed: state.canSave ? () => _saveWithConfirm(context, bloc, state) : null,
                         ),
-                        if (state.isEdit && _editingId != null) ...[
+                        if (state.isEdit && state.editingId != null) ...[
                           const SizedBox(width: 12),
                           AppButton(
                             key: const Key('cancel-departure-button'),
                             label: 'Cancel departure',
                             kind: AppButtonKind.danger,
-                            onPressed: () => _cancelWithConfirm(context, cubit),
+                            onPressed: () => _cancelWithConfirm(context, bloc),
                           ),
                         ],
                       ],
@@ -237,11 +194,9 @@ class _SchedulerViewState extends State<_SchedulerView> {
     );
   }
 
-  Future<void> _saveWithFanOutConfirm(BuildContext context, SchedulerCubit cubit, SchedulerState state) async {
-    if (!state.isEdit && (_tourId == null || _tourId!.isEmpty)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Select a tour to schedule against.')),
-      );
+  Future<void> _saveWithConfirm(BuildContext context, SchedulerBloc bloc, SchedulerState state) async {
+    if (!state.isEdit && (state.tourId == null || state.tourId!.isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Select a tour to schedule against.')));
       return;
     }
     if (state.isEdit && state.currentBooked > 0) {
@@ -256,16 +211,10 @@ class _SchedulerViewState extends State<_SchedulerView> {
       );
       if (proceed != true) return;
     }
-    await cubit.save(
-      tourId: _tourId ?? '',
-      date: dateCtrl.text,
-      time: timeCtrl.text,
-      guideId: _guideId,
-      departureId: _editingId,
-    );
+    bloc.add(SaveDepartureFormEvent(date: dateCtrl.text, time: timeCtrl.text));
   }
 
-  Future<void> _cancelWithConfirm(BuildContext context, SchedulerCubit cubit) async {
+  Future<void> _cancelWithConfirm(BuildContext context, SchedulerBloc bloc) async {
     final proceed = await showFobModal<bool>(
       context: context,
       blocking: true,
@@ -276,9 +225,7 @@ class _SchedulerViewState extends State<_SchedulerView> {
         danger: true,
       ),
     );
-    if (proceed == true && _editingId != null) {
-      await cubit.cancelDeparture(_editingId!);
-    }
+    if (proceed == true) bloc.add(const CancelDepartureFormEvent());
   }
 }
 
