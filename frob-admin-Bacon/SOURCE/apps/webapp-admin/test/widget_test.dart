@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:fob_webapp_admin/injection_container.dart';
 import 'package:fob_webapp_admin/main.dart';
 
 void main() {
+  setUp(() async {
+    await sl.reset();
+    configureDependencies();
+  });
+
   testWidgets('App boots to the sign-in gate (A1)', (WidgetTester tester) async {
     await tester.pumpWidget(const FobAdminApp());
     await tester.pump();

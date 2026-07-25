@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../bloc/auth_cubit.dart';
 import '../theme/tokens.dart';
 import '../widgets/tree_nav.dart';
-import 'payments_screen.dart';
+import '../features/payments/presentation/pages/payments_page.dart';
 import 'enquiries_screen.dart';
 import 'calendar_screen.dart';
 import 'scheduler_screen.dart';
@@ -112,7 +112,7 @@ class _ShellScreenState extends State<ShellScreen> {
       case '/compliance':
         return const ComplianceScreen();
       case '/payments':
-        return const PaymentsScreen();
+        return const PaymentsPage();
       default:
         return const CalendarScreen();
     }

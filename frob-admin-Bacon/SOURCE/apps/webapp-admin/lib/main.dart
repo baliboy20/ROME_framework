@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'api/api_client.dart';
 import 'bloc/auth_cubit.dart';
+import 'core/session/session_store.dart';
+import 'injection_container.dart';
 import 'screens/shell_screen.dart';
 import 'screens/sign_in_screen.dart';
 import 'theme/tokens.dart';
 
 void main() {
+  configureDependencies();
   runApp(const FobAdminApp());
 }
 
@@ -19,7 +22,7 @@ class FobAdminApp extends StatelessWidget {
     return RepositoryProvider<ApiClient>(
       create: (_) => ApiClient(),
       child: BlocProvider<AuthCubit>(
-        create: (ctx) => AuthCubit(ctx.read<ApiClient>()),
+        create: (ctx) => AuthCubit(ctx.read<ApiClient>(), session: sl<SessionStore>()),
         child: MaterialApp(
           title: 'FOB Booking Admin',
           debugShowCheckedModeBanner: false,

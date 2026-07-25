@@ -1,0 +1,64 @@
+import 'package:get_it/get_it.dart';
+import 'package:http/http.dart' as http;
+
+import 'core/network/api_result.dart';
+import 'core/session/session_store.dart';
+
+import 'features/payments/data/datasources/payment_remote_data_source.dart';
+import 'features/payments/data/repositories/payment_repository_impl.dart';
+import 'features/payments/domain/repositories/payment_repository.dart';
+import 'features/payments/domain/usecases/get_payments.dart';
+import 'features/payments/domain/usecases/refund_booking.dart';
+import 'features/payments/presentation/bloc/payments_bloc.dart';
+
+import 'features/bookings/data/datasources/booking_remote_data_source.dart';
+import 'features/bookings/data/repositories/booking_repository_impl.dart';
+import 'features/bookings/domain/repositories/booking_repository.dart';
+import 'features/bookings/domain/usecases/get_booking_detail.dart';
+
+/// Service locator. `main()` calls [configureDependencies] once at startup.
+/// Registration order: external → core → per-feature (data → domain → bloc).
+/// Each feature adds one `_register<Feature>()` block as it is migrated.
+final GetIt sl = GetIt.instance;
+
+void configureDependencies() {
+  // ---- external -----------------------------------------------------------
+  sl.registerLazySingleton<http.Client>(() => http.Client());
+
+  // ---- core ---------------------------------------------------------------
+  sl.registerLazySingleton<SessionStore>(() => SessionStore());
+  sl.registerLazySingleton<ApiHttp>(() => ApiHttp(
+        httpClient: sl(),
+        baseUrl: kApiBaseUrl,
+        tokenProvider: () => sl<SessionStore>().token,
+      ));
+
+  // ---- features -----------------------------------------------------------
+  _registerBookings();
+  _registerPayments();
+}
+
+void _registerBookings() {
+  sl.registerLazySingleton<BookingRemoteDataSource>(
+      () => BookingRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<BookingRepository>(
+      () => BookingRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => GetBookingDetail(sl()));
+}
+
+void _registerPayments() {
+  // data
+  sl.registerLazySingleton<PaymentRemoteDataSource>(
+      () => PaymentRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<PaymentRepository>(
+      () => PaymentRepositoryImpl(sl()));
+  // domain
+  sl.registerLazySingleton(() => GetPayments(sl()));
+  sl.registerLazySingleton(() => RefundBooking(sl()));
+  // presentation — factory: a fresh Bloc per screen mount
+  sl.registerFactory(() => PaymentsBloc(getPayments: sl(), refundBooking: sl()));
+}
+
+/// Base URL for the api-worker, overridable via --dart-define=API_BASE_URL=...
+const String kApiBaseUrl =
+    String.fromEnvironment('API_BASE_URL', defaultValue: 'http://localhost:8787');
