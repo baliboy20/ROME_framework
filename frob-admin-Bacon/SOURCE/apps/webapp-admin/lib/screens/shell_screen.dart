@@ -10,8 +10,8 @@ import '../features/scheduling/presentation/pages/scheduler_page.dart';
 import '../features/fleet/presentation/pages/bike_allocation_page.dart';
 import '../features/fleet/presentation/pages/add_bike_page.dart';
 import '../features/fleet/presentation/pages/flagged_bike_page.dart';
-import 'new_booking_screen.dart';
-import 'booking_browser_screen.dart';
+import '../features/bookings/presentation/pages/new_booking_page.dart';
+import '../features/bookings/presentation/pages/booking_browser_page.dart';
 import '../features/comms/presentation/pages/alerts_page.dart';
 import '../features/comms/presentation/pages/deliverability_page.dart';
 import '../features/comms/presentation/pages/audit_page.dart';
@@ -74,11 +74,11 @@ class _ShellScreenState extends State<ShellScreen> {
   Widget _content() {
     switch (activeRoute) {
       case '/new-booking':
-        return const NewBookingScreen();
+        return const NewBookingPage();
       case '/enquiries':
         return const EnquiriesPage();
       case '/booking-browser':
-        return const BookingBrowserScreen();
+        return const BookingBrowserPage();
       case '/tours':
         return const ToursPage();
       case '/calendar':

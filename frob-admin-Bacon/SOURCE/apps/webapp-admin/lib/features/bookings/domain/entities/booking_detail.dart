@@ -7,6 +7,9 @@ class BookingDetail extends Equatable {
   final String status;
   final int partySize;
   final int priceTotalPence;
+  final String? tourId;
+  final String? date;
+  final String? departureId;
   final List<Attendee> attendees;
   final EmergencyContact? emergencyContact;
   final Consent consent;
@@ -18,6 +21,9 @@ class BookingDetail extends Equatable {
     required this.status,
     required this.partySize,
     required this.priceTotalPence,
+    this.tourId,
+    this.date,
+    this.departureId,
     required this.attendees,
     required this.emergencyContact,
     required this.consent,
@@ -34,8 +40,10 @@ class BookingDetail extends Equatable {
   }
 
   @override
-  List<Object?> get props =>
-      [id, status, partySize, priceTotalPence, attendees, emergencyContact, consent, statusHistory, paymentAttempts];
+  List<Object?> get props => [
+        id, status, partySize, priceTotalPence, tourId, date, departureId,
+        attendees, emergencyContact, consent, statusHistory, paymentAttempts,
+      ];
 }
 
 enum AttendeeRole { leader, coLeader, attendee }
@@ -43,12 +51,14 @@ enum AttendeeRole { leader, coLeader, attendee }
 class Attendee extends Equatable {
   final String name;
   final AttendeeRole role;
-  const Attendee({required this.name, required this.role});
+  final String ageBand;
+  final String? notes;
+  const Attendee({required this.name, required this.role, this.ageBand = '18+', this.notes});
 
   bool get isLeader => role == AttendeeRole.leader;
 
   @override
-  List<Object?> get props => [name, role];
+  List<Object?> get props => [name, role, ageBand, notes];
 }
 
 class EmergencyContact extends Equatable {

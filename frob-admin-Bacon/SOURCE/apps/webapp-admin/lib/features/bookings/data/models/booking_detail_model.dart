@@ -9,6 +9,9 @@ class BookingDetailModel extends BookingDetail {
     required super.status,
     required super.partySize,
     required super.priceTotalPence,
+    super.tourId,
+    super.date,
+    super.departureId,
     required super.attendees,
     required super.emergencyContact,
     required super.consent,
@@ -29,9 +32,17 @@ class BookingDetailModel extends BookingDetail {
       status: booking['status']?.toString() ?? '',
       partySize: (booking['party_size'] as num?)?.toInt() ?? 0,
       priceTotalPence: (booking['price_total_pence'] as num?)?.toInt() ?? 0,
+      tourId: booking['tour_id']?.toString(),
+      date: booking['date']?.toString(),
+      departureId: booking['departure_id']?.toString(),
       attendees: attendees.map((a) {
         final m = (a as Map).cast<String, dynamic>();
-        return Attendee(name: m['name']?.toString() ?? '', role: _role(m));
+        return Attendee(
+          name: m['name']?.toString() ?? '',
+          role: _role(m),
+          ageBand: m['age_band']?.toString() ?? '18+',
+          notes: m['notes']?.toString(),
+        );
       }).toList(),
       emergencyContact: ec == null
           ? null

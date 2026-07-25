@@ -15,6 +15,9 @@ import 'features/bookings/data/datasources/booking_remote_data_source.dart';
 import 'features/bookings/data/repositories/booking_repository_impl.dart';
 import 'features/bookings/domain/repositories/booking_repository.dart';
 import 'features/bookings/domain/usecases/get_booking_detail.dart';
+import 'features/bookings/domain/usecases/booking_usecases.dart';
+import 'features/bookings/presentation/bloc/bookings_bloc.dart';
+import 'features/bookings/presentation/bloc/new_booking_bloc.dart';
 
 import 'features/enquiries/data/datasources/enquiry_remote_data_source.dart';
 import 'features/enquiries/data/repositories/enquiry_repository_impl.dart';
@@ -168,6 +171,14 @@ void _registerBookings() {
   sl.registerLazySingleton<BookingRepository>(
       () => BookingRepositoryImpl(sl()));
   sl.registerLazySingleton(() => GetBookingDetail(sl()));
+  sl.registerLazySingleton(() => GetBookings(sl()));
+  sl.registerLazySingleton(() => GetBookingDepartures(sl()));
+  sl.registerLazySingleton(() => CreateBooking(sl()));
+  sl.registerLazySingleton(() => CreateProvisionalBooking(sl()));
+  sl.registerLazySingleton(() => UpdateBooking(sl()));
+  sl.registerLazySingleton(() => TransitionBooking(sl()));
+  sl.registerFactory(() => BookingsBloc(getBookings: sl(), getBookingDetail: sl(), transitionBooking: sl()));
+  sl.registerFactory(() => NewBookingBloc(getDepartures: sl(), createBooking: sl(), createProvisionalBooking: sl()));
 }
 
 void _registerPayments() {
