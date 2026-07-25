@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/models.dart';
+import 'status_types.dart';
 import '../theme/tokens.dart';
 
 /// Status pill for any status string (booking browser, notices, etc.),

@@ -1,4 +1,4 @@
-import '../../../../models/models.dart' show StatusPillState;
+import '../../../../widgets/status_types.dart' show StatusPillState;
 import '../../domain/entities/payment.dart';
 
 /// Presentation-layer mapping: domain [PaymentStatus] → the UI [StatusPillState]

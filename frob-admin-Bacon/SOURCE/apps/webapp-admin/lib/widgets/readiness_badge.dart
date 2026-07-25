@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/models.dart';
+import 'status_types.dart';
 import '../theme/tokens.dart';
 
 /// ReadinessBadge — ✓/~/✗ sub-state pill (UXD-07). Text label always present,
