@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FOB Prototype — Index</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f5ef;color:#243320;margin:0}
+  .wrap{max-width:980px;margin:0 auto;padding:48px 24px 80px}
+  h1{font-size:2rem;margin-bottom:4px}
+  p.lead{color:#5a6b57;margin-top:0}
+  .flow{background:#fff;border-radius:12px;box-shadow:0 1px 2px rgba(36,51,32,.08);padding:24px;margin-bottom:24px;border-left:6px solid #5a9962}
+  .flow.admin{border-left-color:#ff2d9b}
+  .flow.guide{border-left-color:#ff7a1a}
+  .flow h2{margin:0 0 4px;font-size:1.3rem}
+  .flow .track{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:#8a8778;font-weight:700;margin-bottom:10px}
+  .screens{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+  .screens a{background:#f0f7f1;color:#3f7347;text-decoration:none;padding:7px 12px;border-radius:20px;font-size:.8rem;font-weight:600}
+  .flow.admin .screens a{background:#ffe4f1;color:#b83072}
+  .flow.guide .screens a{background:#fff1e2;color:#c2610a}
+  .subgroup{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:#8a8778;font-weight:700;margin-top:14px}
+  .meta{font-size:.85rem;color:#5a6b57}
+  .badge{display:inline-block;background:#243320;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:4px;margin-left:8px;vertical-align:middle}
+  .uxis-badge{display:inline-block;background:#ff2d9b;color:#fff;font-size:.7rem;padding:2px 8px;border-radius:4px;margin-left:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="proto-banner">T2 CLICKABLE PROTOTYPE — throwaway validation artifact, not the deliverable <a href="#footer">details ↓</a></div>
+<div class="wrap">
+  <h1>Friends on Bikes — UI/UX Prototype<span class="badge">T2</span><span class="uxis-badge">High-fidelity handoff</span></h1>
+  <p class="lead">Reena · P3.5 · dispatch reena-P3.5. Static, clickable, no backend. Three app faces, two design tracks. Admin (A1–A20) and guide (G1–G13) flows implement the sponsor's final <code>design-handoff</code> tokens/components and the updated <code>FOB-UXIS.md</code>/<code>FOB-Guide-App-UXIS.md</code> behavioural specs — every nav-map surface is a real page.</p>
+
+  <div class="flow">
+    <div class="track">Track A — Forest · Syne / DM Sans</div>
+    <h2>1. Customer booking journey</h2>
+    <p class="meta">Mobile-first. Tour browse → detail → departure pick → booking form → embedded checkout (mock) → confirmation. (Unchanged by the UXIS upgrade — out of its scope.)</p>
+    <div class="screens">
+      <a href="customer-catalogue.html">W11 Catalogue</a>
+      <a href="customer-detail.html">W12 Tour detail</a>
+      <a href="customer-selection.html">W5 Date/party select</a>
+      <a href="customer-attendees.html">W6 Attendee details</a>
+      <a href="customer-review.html">W7 Review + waiver</a>
+      <a href="customer-payment.html">W8 Payment</a>
+      <a href="customer-confirmation.html">W9 Confirmation</a>
+      <a href="customer-hub.html">W10/W16 Tour hub</a>
+    </div>
+  </div>
+
+  <div class="flow admin">
+    <div class="track">Track B — Parchment · Playfair / Plus Jakarta / mono</div>
+    <h2>2. Owner admin console (A1–A20, wide desktop)</h2>
+    <p class="meta">Single persistent shell (collapsible tree nav, UXD-18) + content swap. Every A-surface in the UXIS nav map is reachable below.</p>
+
+    <div class="subgroup">Gate</div>
+    <div class="screens"><a href="admin-signin.html">A1 Sign in</a></div>
+
+    <div class="subgroup">Bookings &amp; payments</div>
+    <div class="screens">
+      <a href="admin-new-booking.html">A7 New booking</a>
+      <a href="admin-payments.html">A8 Payments &amp; refunds — UXD-01</a>
+      <a href="admin-enquiries.html">A9 Enquiries — UXD-12</a>
+    </div>
+
+    <div class="subgroup">Scheduling</div>
+    <div class="screens">
+      <a href="admin-calendar.html">A17 Departure calendar — UXD-07/08</a>
+      <a href="admin-scheduler.html">A18 Scheduler — UXD-03/04/05/06</a>
+      <a href="admin-bike-allocation.html">A20 Bike allocation — UXD-09</a>
+      <a href="admin-booking-browser.html">A19 Booking browser</a>
+    </div>
+
+    <div class="subgroup">Alerts &amp; records</div>
+    <div class="screens">
+      <a href="admin-alerts.html">A4 Owner alerts</a>
+      <a href="admin-deliverability.html">A3 Deliverability</a>
+      <a href="admin-audit.html">A5 Audit log</a>
+    </div>
+
+    <div class="subgroup">Content</div>
+    <div class="screens"><a href="admin-publish-quality.html">A6 Publish &amp; quality</a></div>
+
+    <div class="subgroup">Safety</div>
+    <div class="screens">
+      <a href="admin-incidents.html">A10 Incidents</a>
+      <a href="admin-hazard-log.html">A11 Hazard log</a>
+    </div>
+
+    <div class="subgroup">Fleet &amp; equipment</div>
+    <div class="screens">
+      <a href="admin-fleet-readiness.html">A14 Fleet readiness</a>
+      <a href="admin-add-bike.html">A12 Add bike — UXD-10</a>
+      <a href="admin-equipment.html">A13 Equipment</a>
+      <a href="admin-flagged-bike.html">A15 Flagged-bike — UXD-11</a>
+      <a href="admin-compliance.html">A16 Compliance</a>
+    </div>
+  </div>
+
+  <div class="flow guide">
+    <div class="track">Track B — Parchment · PWA, mobile/tablet</div>
+    <h2>3. Guide day-of operations (G1–G13)</h2>
+    <p class="meta">G1 is implicit (device identity on every request). G2 home links every playbook step, during-tour and after-tour surface below.</p>
+
+    <div class="subgroup">Tour-day home</div>
+    <div class="screens"><a href="guide-playbook.html">G2 Playbook home</a></div>
+
+    <div class="subgroup">Pre-departure playbook</div>
+    <div class="screens">
+      <a href="guide-checklist.html">G3 Kit checklist — UXD-13</a>
+      <a href="guide-bike-inspection.html">G4 Bike inspection — UXD-13/14</a>
+      <a href="guide-risk.html">G5 Risk assessment — UXD-15</a>
+      <a href="guide-checkin.html">G6 Rider check-in — UXD-16</a>
+      <a href="guide-briefing.html">G7 Safety briefing — UXD-15</a>
+      <a href="guide-complete.html">G8 Sign-off summary — UXD-17</a>
+    </div>
+
+    <div class="subgroup">During the tour</div>
+    <div class="screens">
+      <a href="guide-midtour.html">G9 Mid-tour event logger</a>
+      <a href="guide-emergency.html">G10 Emergency/incident logger</a>
+    </div>
+
+    <div class="subgroup">After the tour</div>
+    <div class="screens">
+      <a href="guide-postride.html">G11 Post-ride review — UXD-19</a>
+      <a href="guide-incident.html">G12 Incident report</a>
+      <a href="guide-hazard.html">G13 Hazard observation</a>
+    </div>
+  </div>
+
+  <p id="footer" class="meta" style="margin-top:40px">Self-contained, no external assets/fonts/network calls. Websafe font stacks approximate Syne/DM Sans (Track A) and Playfair Display/Plus Jakarta Sans/mono (Track B). See README.md for the full UXIS surface → UXD coverage table.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+{
+  "name": "charlie",
+  "version": "1.0.0",
+  "description": "Frontend/Application Developer robot for ROME Generation phase",
+  "type": "robot",
+  "robot": {
+    "identity": "Charlie",
+    "role": "Frontend / Application Developer",
+    "phases": ["P5-generation"],
+    "capabilities": [
+      "Screen/page implementation",
+      "Component development",
+      "API integration",
+      "State management (BLoC, Provider, Riverpod)",
+      "Form validation",
+      "Navigation flows",
+      "Accessibility implementation",
+      "UI testing",
+      "Application documentation",
+      "Flutter coding standards enforcement",
+      "Flutter library selection and integration",
+      "Domain-Driven Design architecture",
+      "Error handling patterns (Result types, sealed classes)",
+      "Parse Server integration",
+      "Stripe payment integration",
+      "Platform-adaptive UI (iOS, Android, web, desktop)",
+      "Performance optimization for large datasets",
+      "Build configuration and deployment",
+      "Theming and design systems",
+      "Responsive layout design",
+      "CI/CD pipeline setup"
+    ]
+  },
+  "modes": [
+    "P5-generation"
+  ],
+  "provides": {
+    "robot": "charlie",
+    "modes": ["P5-generation"],
+    "skills": [
+      "generate-ui-screens",
+      "generate-ui-components"
+    ],
+    "expertPacks": ["expert_flutter"]
+  },
+  "mcpServers": {
+    "activity-log-file": {
+      "enabled": true,
+      "required": true,
+      "description": "Activity logging for traceability"
+    },
+    "Seez": {
+      "enabled": true,
+      "required": false,
+      "description": "Interactive UI for user feedback"
+    }
+  },
+  "plugins": ["Context7"],
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P5-generation.md": "P5 frontend/application implementation mode",
+    "skills/generate-ui-screens/SKILL.md": "Generate UI screens skill",
+    "skills/generate-ui-components/SKILL.md": "Generate UI components skill"
+  },
+  "hooks": {
+    "SessionStart": {
+      "enabled": true,
+      "script": "hooks/SessionStart.sh"
+    }
+  }
+}

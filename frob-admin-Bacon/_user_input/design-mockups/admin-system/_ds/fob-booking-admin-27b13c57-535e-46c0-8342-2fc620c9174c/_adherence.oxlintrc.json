@@ -1,0 +1,305 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/Components/Button/**",
+              "components/Components/Card/**",
+              "components/Components/DataTable/**",
+              "components/Components/Field/**",
+              "components/Components/FilterChip/**",
+              "components/Components/Modal/**",
+              "components/Components/StatusPill/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Playfair Display|Plus Jakarta Sans))/i]",
+        "message": "Font not provided by the design system. Available: Playfair Display, Plus Jakarta Sans."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|disabled|onClick|style|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, disabled, onClick, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|secondary|ghost|danger)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'secondary' | 'ghost' | 'danger'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:md|sm|row)$/]",
+        "message": "<Button> size must be one of 'md' | 'sm' | 'row'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|elevation|pad|style|children|key|ref|className|style|children)$/]",
+        "message": "<Card> doesn't accept that prop. Declared props: label, elevation, pad, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Card'] > JSXAttribute[name.name='elevation'] > Literal[value!=/^(?:none|console|email|modal)$/]",
+        "message": "<Card> elevation must be one of 'none' | 'console' | 'email' | 'modal'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataTableColumn'] > JSXAttribute > JSXIdentifier[name!=/^(?:key|label|align|mono|money|width|wrap|render|key|ref|className|style|children)$/]",
+        "message": "<DataTableColumn> doesn't accept that prop. Declared props: key, label, align, mono, money, width, wrap, render."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DataTableColumn'] > JSXAttribute[name.name='align'] > Literal[value!=/^(?:left|right|center)$/]",
+        "message": "<DataTableColumn> align must be one of 'left' | 'right' | 'center'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Field'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|hint|value|money|editable|onChange|placeholder|style|key|ref|className|style|children)$/]",
+        "message": "<Field> doesn't accept that prop. Declared props: label, hint, value, money, editable, onChange, placeholder, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='FilterChip'] > JSXAttribute > JSXIdentifier[name!=/^(?:active|onClick|style|children|key|ref|className|style|children)$/]",
+        "message": "<FilterChip> doesn't accept that prop. Declared props: active, onClick, style, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Modal'] > JSXAttribute > JSXIdentifier[name!=/^(?:open|onClose|width|theme|children|key|ref|className|style|children)$/]",
+        "message": "<Modal> doesn't accept that prop. Declared props: open, onClose, width, theme, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Modal'] > JSXAttribute[name.name='theme'] > Literal[value!=/^(?:light|console)$/]",
+        "message": "<Modal> theme must be one of 'light' | 'console'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatusPill'] > JSXAttribute > JSXIdentifier[name!=/^(?:status|label|style|key|ref|className|style|children)$/]",
+        "message": "<StatusPill> doesn't accept that prop. Declared props: status, label, style."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatusPill'] > JSXAttribute[name.name='status'] > Literal[value!=/^(?:succeeded|requires_payment|refunded|failed|no_show|draft)$/]",
+        "message": "<StatusPill> status must be one of 'succeeded' | 'requires_payment' | 'refunded' | 'failed' | 'no_show' | 'draft'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Button": {
+        "replaces": []
+      },
+      "Card": {
+        "replaces": []
+      },
+      "DataTableColumn": {
+        "replaces": []
+      },
+      "Field": {
+        "replaces": []
+      },
+      "FilterChip": {
+        "replaces": []
+      },
+      "Modal": {
+        "replaces": []
+      },
+      "StatusPill": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent-cyan",
+      "--accent-lime",
+      "--accent-orange",
+      "--accent-pink",
+      "--body",
+      "--body-lo",
+      "--console-text",
+      "--cyan-text-dark",
+      "--cyan-text-light",
+      "--email-ink",
+      "--email-paper",
+      "--font-mono",
+      "--font-sans",
+      "--font-serif",
+      "--gradient-brand",
+      "--ink",
+      "--lime-text-light",
+      "--line-base",
+      "--orange-text-light",
+      "--overlay-blur",
+      "--overlay-scrim",
+      "--overlay-scrim-dark",
+      "--panel",
+      "--paper-hi",
+      "--pill-ink",
+      "--pink-text-dark",
+      "--pink-text-light",
+      "--plum-bg",
+      "--plum-hero",
+      "--plum-panel",
+      "--plum-tint-1",
+      "--radius-button",
+      "--radius-card",
+      "--radius-field",
+      "--radius-pill",
+      "--radius-round",
+      "--radius-table",
+      "--shadow-console",
+      "--shadow-email",
+      "--shadow-inline",
+      "--shadow-modal",
+      "--space-block",
+      "--space-card",
+      "--space-field",
+      "--space-gutter",
+      "--space-inline",
+      "--space-row",
+      "--surface-bg",
+      "--surface-bg-lo",
+      "--surface-card",
+      "--surface-rail",
+      "--surface-raised",
+      "--text-body",
+      "--text-faint",
+      "--text-label",
+      "--text-link",
+      "--text-link-hover",
+      "--text-muted",
+      "--text-price",
+      "--text-strong",
+      "--tracking-label",
+      "--tx",
+      "--tx-base",
+      "--tx32",
+      "--tx40",
+      "--tx50",
+      "--tx60",
+      "--tx75",
+      "--type-body",
+      "--type-button",
+      "--type-display",
+      "--type-h2",
+      "--type-label",
+      "--type-price",
+      "--type-surface",
+      "--type-ui",
+      "--wb03",
+      "--wb05",
+      "--wb09",
+      "--wb12",
+      "--wb16"
+    ],
+    "tokenKinds": {
+      "--accent-pink": "color",
+      "--accent-lime": "color",
+      "--accent-cyan": "color",
+      "--accent-orange": "color",
+      "--pink-text-light": "font",
+      "--pink-text-dark": "font",
+      "--cyan-text-light": "font",
+      "--cyan-text-dark": "font",
+      "--lime-text-light": "font",
+      "--orange-text-light": "font",
+      "--pill-ink": "color",
+      "--gradient-brand": "other",
+      "--plum-bg": "color",
+      "--plum-panel": "other",
+      "--plum-hero": "color",
+      "--plum-tint-1": "color",
+      "--paper-hi": "color",
+      "--panel": "color",
+      "--body": "color",
+      "--body-lo": "color",
+      "--ink": "color",
+      "--email-paper": "color",
+      "--email-ink": "color",
+      "--console-text": "font",
+      "--surface-bg": "color",
+      "--surface-bg-lo": "color",
+      "--surface-card": "color",
+      "--surface-raised": "color",
+      "--surface-rail": "color",
+      "--text-strong": "font",
+      "--text-body": "font",
+      "--text-muted": "font",
+      "--text-faint": "font",
+      "--text-label": "font",
+      "--text-price": "font",
+      "--text-link": "font",
+      "--text-link-hover": "font",
+      "--font-serif": "font",
+      "--font-sans": "font",
+      "--font-mono": "font",
+      "--type-display": "font",
+      "--type-h2": "font",
+      "--type-surface": "font",
+      "--type-price": "font",
+      "--type-body": "font",
+      "--type-ui": "font",
+      "--type-button": "font",
+      "--type-label": "font",
+      "--tracking-label": "font",
+      "--space-inline": "spacing",
+      "--space-row": "spacing",
+      "--space-field": "spacing",
+      "--space-card": "spacing",
+      "--space-block": "spacing",
+      "--space-gutter": "spacing",
+      "--radius-pill": "radius",
+      "--radius-field": "radius",
+      "--radius-button": "radius",
+      "--radius-table": "radius",
+      "--radius-card": "radius",
+      "--radius-round": "radius",
+      "--shadow-console": "shadow",
+      "--shadow-email": "shadow",
+      "--shadow-modal": "shadow",
+      "--shadow-inline": "shadow",
+      "--overlay-scrim": "color",
+      "--overlay-scrim-dark": "color",
+      "--overlay-blur": "other",
+      "--tx-base": "other",
+      "--line-base": "other",
+      "--tx": "color",
+      "--tx75": "color",
+      "--tx60": "color",
+      "--tx50": "color",
+      "--tx40": "color",
+      "--tx32": "color",
+      "--wb16": "color",
+      "--wb12": "color",
+      "--wb09": "color",
+      "--wb05": "color",
+      "--wb03": "color"
+    },
+    "fontFamilies": [
+      "Playfair Display",
+      "Plus Jakarta Sans"
+    ]
+  }
+}

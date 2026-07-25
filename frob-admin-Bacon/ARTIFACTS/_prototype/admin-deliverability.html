@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A3 · Deliverability — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A3 Deliverability status &middot; governed by UXC defaults (no UXD record) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <div class="stub-card">
+        <div class="event-log-row"><span>Confirmation emails (E1)</span><span class="status-pill lime">delivering</span></div>
+        <div class="event-log-row"><span>Owner daily digest (A9)</span><span class="status-pill lime">delivering</span></div>
+        <div class="event-log-row"><span>Change notices (E5)</span><span class="status-pill orange">1 bounce — flagged, fallback to A4</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a3', 'A3 · ALERTS & RECORDS', 'Deliverability', 'Email delivery status across all outbound channels. An unreachable channel is recorded here, never silently lost.');</script>
+</body>
+</html>

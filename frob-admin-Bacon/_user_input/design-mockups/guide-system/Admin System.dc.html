@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/fonts/fonts.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/elevation.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/alpha-ladder.css">
+  <link rel="stylesheet" href="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/styles.css">
+  <script src="_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/_ds_bundle.js"></script>
+  <style>
+    html,body{margin:0;background:var(--surface-bg-lo);}
+    *{box-sizing:border-box;}
+    a{color:var(--text-link);text-decoration:none;}
+    a:hover{color:var(--text-link-hover);}
+    ::-webkit-scrollbar{width:11px;height:11px;}
+    ::-webkit-scrollbar-thumb{background:var(--wb16);border-radius:8px;border:3px solid transparent;background-clip:content-box;}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--surface-bg-lo);font-family:var(--font-sans);color:var(--text-body)">
+
+  <!-- ===== A1 / A2 — Operator sign-in gate (idempotent sign-out lands here) ===== -->
+  <sc-if value="{{ showGate }}" hint-placeholder-val="{{ true }}">
+    <div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px;background:radial-gradient(120% 120% at 50% 0%, var(--surface-bg) 0%, var(--surface-bg-lo) 70%)">
+      <div style="width:400px;max-width:100%">
+        <div style="text-align:center;margin-bottom:26px">
+          <div style="font:700 26px var(--font-serif);color:var(--text-strong);letter-spacing:-.01em">Friends on Bikes</div>
+          <div style="font:600 10px var(--font-mono);letter-spacing:.18em;text-transform:uppercase;color:var(--text-label);margin-top:6px">Back-office console</div>
+        </div>
+        <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" pad="{{ 24 }}" hint-size="100%,auto">
+          <sc-if value="{{ signedOutNotice }}" hint-placeholder-val="{{ false }}">
+            <div style="background:rgba(34,211,238,.12);border:1px solid rgba(34,211,238,.3);border-radius:var(--radius-field);padding:10px 13px;margin-bottom:16px;font:500 12.5px var(--font-sans);color:var(--cyan-text-light)">You've been signed out. Sign in again to continue.</div>
+          </sc-if>
+          <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:16px">Operator sign-in</div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-field)">
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Operator email" value="{{ email }}" editable="{{ true }}" on-change="{{ setEmail }}" hint-size="100%,64px"></x-import>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Password" value="{{ pw }}" editable="{{ true }}" on-change="{{ setPw }}" hint-size="100%,64px"></x-import>
+          </div>
+          <div style="margin-top:20px">
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" on-click="{{ signIn }}" style="{{ fullWidthBtn }}" hint-size="100%,44px">Sign in</x-import>
+          </div>
+          <p style="margin:16px 0 0;font:500 11.5px var(--font-sans);color:var(--text-faint);text-align:center">One operator session — reused everywhere in the console (A8 payments included). Sign-out is idempotent.</p>
+        </x-import>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== SHELL ===== -->
+  <sc-if value="{{ signedIn }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;min-height:100vh">
+
+      <!-- sidebar -->
+      <aside style="{{ asideStyle }}">
+        <div style="{{ navHeaderStyle }}">
+          <div style="{{ brandFullStyle }}">
+            <div style="font:700 17px var(--font-serif);color:var(--text-strong);letter-spacing:-.01em">Friends on Bikes</div>
+            <div style="font:600 10px var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--text-label);margin-top:4px">Back office</div>
+          </div>
+          <div style="{{ brandMarkStyle }}">
+            <div style="font:700 17px var(--font-serif);color:var(--text-strong)">FOB</div>
+          </div>
+          <div onClick="{{ toggleNav }}" title="Collapse menu" style="width:26px;height:26px;flex:none;border-radius:8px;background:var(--wb05);border:1px solid var(--wb12);display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 14px var(--font-sans);color:var(--text-muted)">{{ navToggleGlyph }}</div>
+        </div>
+        <nav style="flex:1;overflow:auto;padding:16px 12px">
+          <sc-for list="{{ navGroups }}" as="g" hint-placeholder-count="5">
+            <div style="margin-bottom:10px">
+              <div onClick="{{ g.onToggle }}" style="{{ g.headerStyle }}">
+                <span style="{{ g.chevronStyle }}">{{ g.chevron }}</span>
+                <span style="{{ g.headerTextStyle }}">{{ g.title }}</span>
+              </div>
+              <div style="{{ g.childStyle }}">
+                <div style="{{ g.childWrapStyle }}">
+                  <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="3">
+                    <div onClick="{{ it.onClick }}" title="{{ it.title }}" style="{{ it.style }}">
+                      <span style="{{ it.codeStyle }}">{{ it.code }}</span>
+                      <span style="{{ it.labelStyle }}">{{ it.label }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </nav>
+        <div style="{{ navFooterStyle }}">
+          <div style="width:34px;height:34px;flex:none;border-radius:50%;background:var(--gradient-brand);display:flex;align-items:center;justify-content:center;font:700 13px var(--font-sans);color:var(--pill-ink)">{{ operatorInitial }}</div>
+          <div style="{{ footerTextStyle }}">
+            <div style="font:600 12.5px var(--font-sans);color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ operatorName }}</div>
+            <div style="font:500 10px var(--font-mono);letter-spacing:.04em;color:var(--text-muted)">Owner</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- main -->
+      <main style="flex:1;display:flex;flex-direction:column;min-width:0;background:var(--surface-bg-lo)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 26px;border-bottom:1px solid var(--wb12);background:var(--surface-bg);position:sticky;top:0;z-index:5">
+          <div style="font:500 11.5px var(--font-mono);letter-spacing:.05em;color:var(--text-muted)">PC / iMac · wide-screen console</div>
+          <div style="display:flex;align-items:center;gap:14px">
+            <div style="font:500 12.5px var(--font-sans);color:var(--text-body)">{{ operatorName }} · Owner</div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" size="sm" on-click="{{ signOut }}" hint-size="auto,34px">Sign out</x-import>
+          </div>
+        </div>
+
+        <div style="flex:1;overflow:auto;padding:30px 36px 70px">
+          <div style="max-width:1160px">
+
+          <!-- A8 — Payment & refund management -->
+          <sc-if value="{{ isA8 }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:22px">
+              <div>
+                <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A8 · Payments</div>
+                <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Payment &amp; refund management</h1>
+                <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Every booking's payment state and cumulative refund total. Refunds use your operator session — no separate admin key.</p>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+              <sc-for list="{{ payFilters }}" as="f" hint-placeholder-count="6">
+                <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ f.active }}" on-click="{{ f.onClick }}" hint-size="auto,32px">{{ f.label }}</x-import>
+              </sc-for>
+              <div style="flex:1"></div>
+              <div style="font:500 12px var(--font-mono);color:var(--text-muted)">{{ payCount }} shown</div>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ payCols }}" rows="{{ payRowsView }}" on-row-click="{{ openPayment }}" get-row-key="{{ rowKey }}" hint-size="100%,360px"></x-import>
+          </sc-if>
+
+          <!-- A7 — Booking creation -->
+          <sc-if value="{{ isA7 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A7 · New booking</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Booking creation</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">One form, two entry points. Enquiry &rarr; booking sends a payment link at an agreed price; provisional holds a seat you configure per booking — no defaults.</p>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ a7modeEnquiry }}" on-click="{{ setA7Enquiry }}" hint-size="auto,32px">From enquiry</x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ a7modeProvisional }}" on-click="{{ setA7Provisional }}" hint-size="auto,32px">Provisional / pay-later</x-import>
+            </div>
+            <div style="display:grid;grid-template-columns:340px 1fr;gap:22px;align-items:start">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="ENQUIRY · ENQ-2001" hint-size="100%,auto">
+                <div style="display:flex;flex-direction:column;gap:13px">
+                  <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Prospect</div><div style="font:600 14px var(--font-sans);color:var(--text-strong)">Marie Dupont</div><div style="font:500 11px var(--font-mono);color:var(--cyan-text-light)">PROSPECT-2001</div></div>
+                  <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Request</div><div style="font:500 13px var(--font-sans);color:var(--text-body)">Group ride, 8 people, weekend in August. Asked about private-guide option.</div></div>
+                  <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Contact</div><div style="font:500 13px var(--font-sans);color:var(--text-body)">marie@example.com</div></div>
+                </div>
+              </x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="BOOKING DETAILS" hint-size="100%,auto">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-field)">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Tour" value="{{ a7tour }}" editable="{{ true }}" on-change="{{ setA7tour }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Departure" value="{{ a7dep }}" editable="{{ true }}" on-change="{{ setA7dep }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Party size" hint="{{ a7capHint }}" value="{{ a7party }}" editable="{{ true }}" on-change="{{ setA7party }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Agreed price" hint="★ standard £45.00" value="{{ a7price }}" money="{{ true }}" editable="{{ true }}" on-change="{{ setA7price }}" hint-size="100%,64px"></x-import>
+                </div>
+                <sc-if value="{{ a7modeEnquiry }}" hint-placeholder-val="{{ true }}">
+                  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--wb09)">
+                    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Payment link" value="pay.fob.co.uk/bk/new · sent on create" hint-size="100%,64px"></x-import>
+                    <div style="margin-top:16px"><x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" on-click="{{ noop }}" hint-size="auto,42px">Create &amp; send payment link</x-import></div>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ a7modeProvisional }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--wb09)">
+                    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--space-field)">
+                      <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Hold duration" value="{{ a7hold }}" editable="{{ true }}" on-change="{{ setA7hold }}" placeholder="e.g. 72 hours" hint-size="100%,64px"></x-import>
+                      <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Deposit" value="{{ a7deposit }}" money="{{ true }}" editable="{{ true }}" on-change="{{ setA7deposit }}" placeholder="£0.00" hint-size="100%,64px"></x-import>
+                      <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Reminder cadence" value="{{ a7cadence }}" editable="{{ true }}" on-change="{{ setA7cadence }}" placeholder="e.g. 48h, 12h" hint-size="100%,64px"></x-import>
+                    </div>
+                    <p style="margin:11px 0 16px;font:500 11.5px var(--font-sans);color:var(--text-faint)">No defaults — hold, deposit and cadence are set per booking, every time.</p>
+                    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" on-click="{{ noop }}" hint-size="auto,42px">Create provisional hold</x-import>
+                  </div>
+                </sc-if>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A9 — Enquiry management -->
+          <sc-if value="{{ isA9 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A9 · Enquiries</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Enquiry management</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Owner alerts arrive in a daily digest. Overdue enquiries stay visibly flagged — no auto-email is sent to the prospect. Spam sits on its own tab with no alert.</p>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:16px">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ enqAll }}" on-click="{{ setEnqAll }}" hint-size="auto,32px">Open</x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ enqOverdue }}" on-click="{{ setEnqOverdue }}" hint-size="auto,32px">Overdue</x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ enqSpam }}" on-click="{{ setEnqSpam }}" hint-size="auto,32px">Spam</x-import>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ enqCols }}" rows="{{ enqRowsView }}" get-row-key="{{ rowKey }}" hint-size="100%,300px"></x-import>
+          </sc-if>
+
+          <!-- A4 — Owner alert inbox -->
+          <sc-if value="{{ isA4 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A4 · Alerts</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Owner alert inbox</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Everything that needs William. When a channel (WhatsApp/SMS) is unreachable, the alert is recorded here as a fallback.</p>
+            </div>
+            <sc-if value="{{ a4Empty }}" hint-placeholder-val="{{ false }}">
+              <div style="border:1px dashed var(--wb16);border-radius:var(--radius-card);padding:44px;text-align:center;font:500 14px var(--font-sans);color:var(--text-muted)">No pending alerts — you're all caught up.</div>
+            </sc-if>
+            <sc-if value="{{ a4HasAlerts }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <sc-for list="{{ a4Alerts }}" as="a" hint-placeholder-count="4">
+                  <div style="display:flex;align-items:center;gap:16px;background:var(--surface-card);border:1px solid var(--wb12);border-radius:var(--radius-card);padding:15px 18px">
+                    <span style="{{ a.dot }}"></span>
+                    <div style="flex:1;min-width:0">
+                      <div style="font:600 13.5px var(--font-sans);color:var(--text-strong)">{{ a.alert }}</div>
+                      <div style="font:500 11px var(--font-mono);color:var(--text-muted);margin-top:3px">{{ a.meta }}</div>
+                    </div>
+                    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" size="row" on-click="{{ a.ack }}" hint-size="auto,30px">Acknowledge</x-import>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <!-- A3 — Deliverability status -->
+          <sc-if value="{{ isA3 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A3 · Deliverability</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Deliverability status</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Bounced and complaint addresses. Empty until the first bounce is recorded.</p>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ deliverCols }}" rows="{{ deliverRows }}" get-row-key="{{ rowKey }}" hint-size="100%,240px"></x-import>
+          </sc-if>
+
+          <!-- A5 — Audit log viewer -->
+          <sc-if value="{{ isA5 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A5 · Audit</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Audit log viewer</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Read-only. Incomplete entries (missing actor or subject) are shown flagged, never hidden.</p>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ auditCols }}" rows="{{ auditRows }}" get-row-key="{{ rowKey }}" hint-size="100%,300px"></x-import>
+          </sc-if>
+
+          <!-- A6 — Manual publish + content-quality -->
+          <sc-if value="{{ isA6 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A6 · Content</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Publish &amp; content quality</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Publishing is manual only — nothing goes live automatically. The quality panel flags incomplete or unindexed content.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="MANUAL PUBLISH" hint-size="100%,auto">
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <sc-for list="{{ a6Pages }}" as="p" hint-placeholder-count="3">
+                    <div style="display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--wb09)">
+                      <div style="flex:1"><div style="font:600 13px var(--font-sans);color:var(--text-strong)">{{ p.title }}</div><div style="font:500 11px var(--font-mono);color:var(--text-muted)">{{ p.path }}</div></div>
+                      <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" size="row" on-click="{{ noop }}" hint-size="auto,30px">Publish</x-import>
+                    </div>
+                  </sc-for>
+                </div>
+                <p style="margin:12px 0 0;font:500 11.5px var(--font-sans);color:var(--text-faint)">No automatic publish — William triggers each one.</p>
+              </x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="CONTENT QUALITY" hint-size="100%,auto">
+                <div style="display:flex;flex-direction:column;gap:11px">
+                  <sc-for list="{{ a6Flags }}" as="q" hint-placeholder-count="3">
+                    <div style="display:flex;gap:11px;align-items:flex-start">
+                      <span style="{{ q.dot }}"></span>
+                      <div><div style="font:600 13px var(--font-sans);color:var(--text-strong)">{{ q.title }}</div><div style="font:500 11.5px var(--font-sans);color:var(--text-muted);margin-top:2px">{{ q.detail }}</div></div>
+                    </div>
+                  </sc-for>
+                </div>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A10 — Incident review & insurer dispatch -->
+          <sc-if value="{{ isA10 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A10 · Incidents</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Incident review &amp; insurer dispatch</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Review guide-submitted incidents and move them through the insurer workflow. Dispatch format is not yet confirmed by William — the send step is a stub.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:300px 1fr;gap:22px;align-items:start">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ incCols }}" rows="{{ incRows }}" get-row-key="{{ rowKey }}" hint-size="100%,200px"></x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="INCIDENT · INC-001" hint-size="100%,auto">
+                <div style="font:600 15px var(--font-sans);color:var(--text-strong);margin-bottom:3px">Rider fall — Hidden City, 1 Aug 2026</div>
+                <div style="font:500 11.5px var(--font-mono);color:var(--text-muted);margin-bottom:16px">Reported by Emma (DEV-EMMA-01) · minor, no hospitalisation</div>
+                <div style="display:flex;align-items:center;gap:0;margin-bottom:18px">
+                  <sc-for list="{{ incSteps }}" as="s" hint-placeholder-count="4">
+                    <div style="{{ s.style }}">{{ s.label }}</div>
+                  </sc-for>
+                </div>
+                <p style="font:500 13px var(--font-sans);color:var(--text-body);margin:0 0 18px">Grazing to left forearm after front-wheel slide on gravel. First aid administered on-site by guide; rider completed the tour.</p>
+                <div style="display:flex;gap:10px">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="secondary" on-click="{{ noop }}" hint-size="auto,40px">Mark reviewed</x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" disabled="{{ true }}" on-click="{{ noop }}" hint-size="auto,40px">Dispatch to insurer — format TBC</x-import>
+                </div>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A11 — Hazard log review & approval -->
+          <sc-if value="{{ isA11 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A11 · Hazards</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Hazard log review &amp; approval</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Guide-reported hazards, deduped by street name — a repeat bumps "last confirmed" rather than creating a new entry.</p>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ hazardCols }}" rows="{{ hazardRows }}" get-row-key="{{ rowKey }}" hint-size="100%,240px"></x-import>
+          </sc-if>
+
+          <!-- A14 — Fleet & equipment readiness -->
+          <sc-if value="{{ isA14 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A14 · Fleet</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Fleet &amp; equipment readiness</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Aggregated status at a glance. Alerts are surfaced here, never buried.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px">
+              <sc-for list="{{ fleetCounts }}" as="c" hint-placeholder-count="4">
+                <div style="background:var(--surface-card);border:1px solid var(--wb12);border-radius:var(--radius-card);padding:18px 18px 16px">
+                  <div style="font:700 34px var(--font-serif);color:var(--text-strong);line-height:1">{{ c.n }}</div>
+                  <div style="display:flex;align-items:center;gap:7px;margin-top:9px"><span style="{{ c.dot }}"></span><span style="font:600 11.5px var(--font-sans);color:var(--text-muted)">{{ c.label }}</span></div>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font:600 11px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-label);margin-bottom:10px">Active alerts</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <sc-for list="{{ fleetAlerts }}" as="a" hint-placeholder-count="3">
+                <div style="display:flex;align-items:center;gap:14px;background:var(--surface-card);border:1px solid var(--wb12);border-radius:var(--radius-card);padding:13px 16px">
+                  <span style="{{ a.dot }}"></span>
+                  <div style="flex:1"><span style="font:600 13px var(--font-sans);color:var(--text-strong)">{{ a.id }}</span> <span style="font:500 13px var(--font-sans);color:var(--text-body)">— {{ a.msg }}</span></div>
+                  <span style="font:500 11px var(--font-mono);color:var(--text-muted)">{{ a.tag }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <!-- A12 — Add bike -->
+          <sc-if value="{{ isA12 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A12 · Fleet</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Add bike</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Register a bike by identifier. Duplicates are blocked and the next sequential id is suggested. No photo capture.</p>
+            </div>
+            <div style="max-width:560px">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="NEW BIKE" hint-size="100%,auto">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-field)">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Identifier" value="{{ a12id }}" editable="{{ true }}" on-change="{{ setA12id }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Type" value="{{ a12type }}" editable="{{ true }}" on-change="{{ setA12type }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Frame size" value="{{ a12size }}" editable="{{ true }}" on-change="{{ setA12size }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Notes" value="{{ a12notes }}" editable="{{ true }}" on-change="{{ setA12notes }}" placeholder="Optional" hint-size="100%,64px"></x-import>
+                </div>
+                <sc-if value="{{ a12dup }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;background:rgba(255,122,26,.1);border:1px solid rgba(255,122,26,.32);border-radius:var(--radius-field);padding:10px 13px;font:500 12.5px var(--font-sans);color:var(--orange-text-light)">{{ a12id }} is already in use — next available is <strong>{{ a12suggest }}</strong>.</div>
+                </sc-if>
+                <sc-if value="{{ a12added }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;background:rgba(198,255,63,.16);border:1px solid rgba(198,255,63,.4);border-radius:var(--radius-field);padding:10px 13px;font:500 12.5px var(--font-sans);color:var(--lime-text-light)">Bike {{ a12id }} added to the fleet.</div>
+                </sc-if>
+                <div style="margin-top:18px"><x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" disabled="{{ a12dup }}" on-click="{{ a12add }}" hint-size="auto,42px">Add bike</x-import></div>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A13 — Add/replace equipment -->
+          <sc-if value="{{ isA13 }}" hint-placeholder-val="{{ false }}">
+            <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:18px">
+              <div>
+                <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A13 · Equipment</div>
+                <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Add / replace equipment</h1>
+                <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Line-by-line entry with a description per item. A logged helmet impact retires it immediately, whatever its review state.</p>
+              </div>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="secondary" on-click="{{ noop }}" hint-size="auto,40px">Add line</x-import>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ equipCols }}" rows="{{ equipRows }}" get-row-key="{{ rowKey }}" hint-size="100%,260px"></x-import>
+          </sc-if>
+
+          <!-- A15 — Flagged-bike maintenance -->
+          <sc-if value="{{ isA15 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:20px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A15 · Maintenance</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Flagged-bike maintenance</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Where a flagged bike is cleared back to service — after at least one logged maintenance event. External repairs are handled off-system.</p>
+            </div>
+            <div style="max-width:760px">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="BIKE · FOB-001" hint-size="100%,auto">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px">
+                  <div>
+                    <div style="font:600 15px var(--font-sans);color:var(--text-strong)">City hybrid · frame M</div>
+                    <div style="font:500 11.5px var(--font-mono);color:var(--text-muted);margin-top:2px">Flagged 18 Jul 2026 by Emma</div>
+                  </div>
+                  <span style="{{ a15StatusChip }}">{{ a15StatusLabel }}</span>
+                </div>
+                <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--text-label);margin-bottom:9px">Maintenance events</div>
+                <div style="display:flex;flex-direction:column;gap:0;margin-bottom:16px">
+                  <sc-for list="{{ a15Events }}" as="e" hint-placeholder-count="2">
+                    <div style="display:flex;gap:14px;padding:11px 0;border-bottom:1px solid var(--wb09)">
+                      <div style="font:500 11.5px var(--font-mono);color:var(--text-muted);width:120px;flex:none">{{ e.date }}</div>
+                      <div style="font:500 13px var(--font-sans);color:var(--text-body)">{{ e.event }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="display:flex;gap:10px">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="secondary" on-click="{{ a15AddEvent }}" hint-size="auto,40px">Log maintenance event</x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" disabled="{{ a15CantClear }}" on-click="{{ a15Clear }}" hint-size="auto,40px">Clear to service</x-import>
+                </div>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A16 — Compliance review & renewal -->
+          <sc-if value="{{ isA16 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A16 · Compliance</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Compliance review &amp; renewal</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Alerts fire on-event only (no recurring digest) — this view is how you check current state between them.</p>
+            </div>
+            <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ complianceCols }}" rows="{{ complianceRows }}" get-row-key="{{ rowKey }}" hint-size="100%,260px"></x-import>
+          </sc-if>
+
+          <!-- A17 — Departure calendar -->
+          <sc-if value="{{ isA17 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A17 · Scheduling</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Departure calendar</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Every scheduled departure over the range — how full each is and whether it's ready to run. Readiness = scheduled · guide · bikes.</p>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px">
+              <div style="display:inline-flex;background:var(--wb05);border:1px solid var(--wb12);border-radius:var(--radius-round);padding:3px">
+                <div onClick="{{ setA17List }}" style="{{ a17listTabStyle }}">List</div>
+                <div onClick="{{ setA17Cal }}" style="{{ a17calTabStyle }}">Calendar</div>
+              </div>
+            </div>
+
+            <sc-if value="{{ a17isList }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px">
+                <sc-for list="{{ a17ranges }}" as="r" hint-placeholder-count="3">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ r.active }}" on-click="{{ r.onClick }}" hint-size="auto,32px">{{ r.label }}</x-import>
+                </sc-for>
+              </div>
+              <sc-if value="{{ a17Empty }}" hint-placeholder-val="{{ false }}">
+                <div style="border:1px dashed var(--wb16);border-radius:var(--radius-card);padding:44px;text-align:center;font:500 14px var(--font-sans);color:var(--text-muted)">No departures scheduled in this range.</div>
+              </sc-if>
+              <sc-if value="{{ a17Has }}" hint-placeholder-val="{{ true }}">
+                <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ a17cols }}" rows="{{ a17rows }}" on-row-click="{{ openDep }}" hint-size="100%,320px"></x-import>
+              </sc-if>
+            </sc-if>
+
+            <sc-if value="{{ a17isCal }}" hint-placeholder-val="{{ false }}">
+              <div style="font:600 15px var(--font-serif);color:var(--text-strong);margin-bottom:12px">August 2026</div>
+              <div style="background:var(--surface-card);border:1px solid var(--wb12);border-radius:var(--radius-card);overflow:hidden">
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--wb12);background:var(--wb03)">
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Sun</div>
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Mon</div>
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Tue</div>
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Wed</div>
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Thu</div>
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Fri</div>
+                  <div style="font:600 10px var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-label);padding:9px 8px">Sat</div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(7,1fr)">
+                  <sc-for list="{{ a17cells }}" as="c" hint-placeholder-count="42">
+                    <div style="{{ c.cellStyle }}">
+                      <div style="font:600 11px var(--font-mono);color:var(--text-muted);margin-bottom:5px">{{ c.day }}</div>
+                      <sc-for list="{{ c.deps }}" as="d" hint-placeholder-count="0">
+                        <div onClick="{{ d.onClick }}" style="{{ d.style }}">
+                          <div style="font:600 11px var(--font-sans);color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ d.label }}</div>
+                          <div style="font:500 9.5px var(--font-mono);color:var(--text-muted)">{{ d.sub }}</div>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+          </sc-if>
+
+          <!-- A18 — Departure scheduler -->
+          <sc-if value="{{ isA18 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A18 · Scheduling</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Departure scheduler</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Create, edit or cancel a bookable departure. Capacity is capped at 10; a departure with no guide is marked not ready to run.</p>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:18px">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ a18isCreate }}" on-click="{{ setA18Create }}" hint-size="auto,32px">Create new</x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.FilterChip" active="{{ a18isEdit }}" on-click="{{ setA18Edit }}" hint-size="auto,32px">Edit existing</x-import>
+            </div>
+            <div style="max-width:640px">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="DEPARTURE" hint-size="100%,auto">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-field)">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Tour" value="{{ a18tour }}" editable="{{ true }}" on-change="{{ setA18tour }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Capacity" hint="max 10" value="{{ a18cap }}" editable="{{ true }}" on-change="{{ setA18cap }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Date" value="{{ a18date }}" editable="{{ true }}" on-change="{{ setA18date }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Time" value="{{ a18time }}" editable="{{ true }}" on-change="{{ setA18time }}" hint-size="100%,64px"></x-import>
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Guide (optional)" value="{{ a18guide }}" editable="{{ true }}" on-change="{{ setA18guide }}" placeholder="Leave empty = not ready to run" hint-size="100%,64px"></x-import>
+                </div>
+                <sc-if value="{{ a18hasCapErr }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;background:rgba(255,122,26,.1);border:1px solid rgba(255,122,26,.32);border-radius:var(--radius-field);padding:10px 13px;font:500 12.5px var(--font-sans);color:var(--orange-text-light)">{{ a18capErr }}</div>
+                </sc-if>
+                <sc-if value="{{ a18noGuide }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;background:var(--wb03);border:1px solid var(--wb09);border-radius:var(--radius-field);padding:10px 13px;font:500 12.5px var(--font-sans);color:var(--text-muted)">No guide assigned — this departure will be marked <strong>not ready to run</strong> on the calendar.</div>
+                </sc-if>
+                <sc-if value="{{ a18isEdit }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;display:flex;align-items:center;gap:8px;font:500 12.5px var(--font-sans);color:var(--text-body)"><span style="width:8px;height:8px;border-radius:50%;background:var(--accent-cyan)"></span> {{ a18booked }} riders already booked — a date/time change will notify them.</div>
+                </sc-if>
+                <sc-if value="{{ a18done }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;background:rgba(198,255,63,.16);border:1px solid rgba(198,255,63,.4);border-radius:var(--radius-field);padding:10px 13px;font:500 12.5px var(--font-sans);color:var(--lime-text-light)">Departure saved.</div>
+                </sc-if>
+                <div style="margin-top:20px;display:flex;justify-content:space-between;align-items:center;gap:12px">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" disabled="{{ a18hasCapErr }}" on-click="{{ a18save }}" hint-size="auto,42px">Save departure</x-import>
+                  <sc-if value="{{ a18isEdit }}" hint-placeholder-val="{{ false }}">
+                    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="danger" on-click="{{ a18cancelDep }}" hint-size="auto,42px">Cancel departure</x-import>
+                  </sc-if>
+                </div>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A20 — Bike allocation -->
+          <sc-if value="{{ isA20 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A20 · Scheduling</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Bike allocation</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Assign specific bikes to a departure so the guide finds them ready. Under-provisioning is allowed but flagged.</p>
+            </div>
+            <div style="background:var(--surface-card);border:1px solid var(--wb12);border-radius:var(--radius-card);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;gap:20px">
+              <div>
+                <div style="font:600 15px var(--font-sans);color:var(--text-strong)">Hidden City · 1 August 2026, 10:00</div>
+                <div style="font:500 11.5px var(--font-mono);color:var(--text-muted);margin-top:3px">DEP-HID-2026-08-01-1000 · 2 riders · guide Emma</div>
+              </div>
+              <div style="text-align:right">
+                <div style="font:700 22px var(--font-serif);color:{{ a20coverColor }}">{{ a20coveredText }}</div>
+                <sc-if value="{{ a20under }}" hint-placeholder-val="{{ false }}">
+                  <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--orange-text-light);margin-top:3px">Under-provisioned</div>
+                </sc-if>
+              </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start">
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="AVAILABLE BIKES" hint-size="100%,auto">
+                <sc-if value="{{ a20availEmpty }}" hint-placeholder-val="{{ false }}">
+                  <div style="padding:20px;text-align:center;font:500 13px var(--font-sans);color:var(--text-muted)">No available bikes for this slot — check the fleet.</div>
+                </sc-if>
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ a20avail }}" as="b" hint-placeholder-count="4">
+                    <div style="{{ b.rowStyle }}">
+                      <div style="flex:1"><span style="font:600 13px var(--font-mono);color:var(--text-strong)">{{ b.id }}</span><span style="{{ b.reasonStyle }}">{{ b.reason }}</span></div>
+                      <div onClick="{{ b.onClick }}" style="{{ b.btnStyle }}">+</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </x-import>
+              <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="ASSIGNED TO THIS DEPARTURE" hint-size="100%,auto">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ a20assignedV }}" as="b" hint-placeholder-count="2">
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(198,255,63,.1);border:1px solid rgba(198,255,63,.3);border-radius:var(--radius-field)">
+                      <div style="flex:1"><span style="font:600 13px var(--font-mono);color:var(--text-strong)">{{ b.id }}</span></div>
+                      <div onClick="{{ b.onClick }}" style="width:26px;height:26px;flex:none;border-radius:50%;background:var(--wb09);color:var(--text-body);display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 15px var(--font-sans)">−</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </x-import>
+            </div>
+          </sc-if>
+
+          <!-- A19 — Booking browser -->
+          <sc-if value="{{ isA19 }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-bottom:18px">
+              <div style="font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label);margin-bottom:7px">A19 · Scheduling</div>
+              <h1 style="margin:0;font:600 27px var(--font-serif);color:var(--text-strong)">Booking browser</h1>
+              <p style="margin:7px 0 0;font:500 13px var(--font-sans);color:var(--text-muted);max-width:660px">Find any booking and read its full record. Read-only — editing routes to booking creation, payments, or the customer's own manage-booking. Card numbers are never stored or shown.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:minmax(440px,480px) 1fr;gap:20px;align-items:start">
+              <div>
+                <div style="margin-bottom:12px">
+                  <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Search bookings" value="{{ a19query }}" editable="{{ true }}" on-change="{{ setA19query }}" placeholder="Reference, name, email, tour or status" hint-size="100%,64px"></x-import>
+                </div>
+                <x-import component-from-global-scope="FOBBookingAdmin_27b13c.DataTable" columns="{{ a19cols }}" rows="{{ a19list }}" on-row-click="{{ a19select }}" get-row-key="{{ rowKey }}" hint-size="100%,320px"></x-import>
+              </div>
+              <sc-if value="{{ a19hasDetail }}" hint-placeholder-val="{{ true }}">
+                <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Card" label="BOOKING RECORD" hint-size="100%,auto">
+                  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px">
+                    <div>
+                      <div style="font:600 18px var(--font-serif);color:var(--text-strong)">{{ a19customer }}</div>
+                      <div style="font:500 11.5px var(--font-mono);color:var(--cyan-text-light);margin-top:2px">{{ a19ref }} · {{ a19email }}</div>
+                      <div style="font:500 12.5px var(--font-sans);color:var(--text-muted);margin-top:4px">{{ a19tour }} · {{ a19date }}</div>
+                    </div>
+                    <div style="text-align:right">
+                      <div style="font:600 20px var(--font-serif);color:var(--text-price)">{{ a19total }}</div>
+                      <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted);margin-top:4px">{{ a19statusLabel }}</div>
+                    </div>
+                  </div>
+
+                  <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--text-label);margin-bottom:9px">Attendees</div>
+                  <div style="display:flex;flex-direction:column;margin-bottom:16px">
+                    <sc-for list="{{ a19attendees }}" as="p" hint-placeholder-count="2">
+                      <div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--wb09)">
+                        <div style="flex:1;font:600 13px var(--font-sans);color:var(--text-strong)">{{ p.name }}</div>
+                        <div style="width:70px;font:500 12px var(--font-sans);color:var(--text-muted)">{{ p.age }}</div>
+                        <div style="flex:1.3;font:500 12.5px var(--font-sans);color:var(--text-body)">{{ p.notes }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+
+                  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+                    <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:4px">Emergency contact</div><div style="font:500 13px var(--font-sans);color:var(--text-body)">{{ a19emergency }}</div></div>
+                    <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:4px">Payment</div><div style="font:500 13px var(--font-sans);color:var(--text-body)">{{ a19payref }}</div><div style="font:500 11px var(--font-sans);color:var(--text-faint);margin-top:2px">Card number never stored.</div></div>
+                    <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:4px">Waiver</div><div style="font:500 13px var(--font-sans);color:var(--text-body)">{{ a19waiver }}</div></div>
+                    <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:4px">T&amp;C · Marketing</div><div style="font:500 13px var(--font-sans);color:var(--text-body)">{{ a19tc }}</div><div style="font:500 12px var(--font-sans);color:var(--text-muted);margin-top:2px">{{ a19marketing }}</div></div>
+                  </div>
+
+                  <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--text-label);margin-bottom:9px">Status history</div>
+                  <div style="display:flex;flex-direction:column;gap:0">
+                    <sc-for list="{{ a19history }}" as="h" hint-placeholder-count="2">
+                      <div style="display:flex;gap:14px;padding:7px 0">
+                        <div style="font:500 11px var(--font-mono);color:var(--text-muted);width:96px;flex:none">{{ h.when }}</div>
+                        <div style="font:500 12.5px var(--font-sans);color:var(--text-body)">{{ h.label }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                </x-import>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Refund modal (A8) -->
+    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Modal" open="{{ refundOpen }}" on-close="{{ closeModal }}" width="{{ 460 }}" hint-size="0,0">
+      <div style="padding:24px 26px">
+        <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--text-label);margin-bottom:8px">Refund · {{ refundId }}</div>
+        <h3 style="margin:0 0 4px;font:600 22px var(--font-serif);color:var(--text-strong)">Issue refund</h3>
+        <p style="margin:0 0 18px;font:500 12.5px var(--font-sans);color:var(--text-muted)">{{ refundRoute }} · {{ refundCustomer }}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-field);margin-bottom:14px">
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Paid" value="{{ refundPaid }}" money="{{ true }}" hint-size="100%,64px"></x-import>
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Refunded so far" value="{{ refundSoFar }}" money="{{ true }}" hint-size="100%,64px"></x-import>
+        </div>
+        <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Field" label="Refund amount" value="{{ refundAmt }}" money="{{ true }}" editable="{{ true }}" on-change="{{ setRefundAmt }}" placeholder="£0.00" hint-size="100%,64px"></x-import>
+        <div style="margin-top:12px;background:var(--wb03);border:1px solid var(--wb09);border-radius:var(--radius-field);padding:11px 13px;font:500 12.5px var(--font-sans);color:var(--text-body)">Cumulative refunded after this: <strong style="font:600 15px var(--font-serif);color:var(--text-price)">{{ refundCumulative }}</strong></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px">
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" on-click="{{ closeModal }}" hint-size="auto,40px">Cancel</x-import>
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" on-click="{{ confirmRefund }}" hint-size="auto,40px">{{ refundBtnLabel }}</x-import>
+        </div>
+      </div>
+    </x-import>
+
+    <!-- A18 date/time-change guard -->
+    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Modal" open="{{ schedNotifyOpen }}" on-close="{{ closeModal }}" width="{{ 440 }}" hint-size="0,0">
+      <div style="padding:24px 26px">
+        <h3 style="margin:0 0 8px;font:600 21px var(--font-serif);color:var(--text-strong)">Confirm change</h3>
+        <p style="margin:0 0 22px;font:500 13.5px var(--font-sans);color:var(--text-body)">This will notify <strong>{{ a18booked }} customers</strong> of the change. Continue?</p>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" on-click="{{ closeModal }}" hint-size="auto,40px">Back</x-import>
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" on-click="{{ a18confirmSave }}" hint-size="auto,40px">Notify &amp; save</x-import>
+        </div>
+      </div>
+    </x-import>
+
+    <!-- A18 cancel guard -->
+    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Modal" open="{{ schedCancelOpen }}" on-close="{{ closeModal }}" width="{{ 460 }}" hint-size="0,0">
+      <div style="padding:24px 26px">
+        <h3 style="margin:0 0 8px;font:600 21px var(--font-serif);color:var(--text-strong)">Cancel this departure?</h3>
+        <p style="margin:0 0 22px;font:500 13.5px var(--font-sans);color:var(--text-body)">This will offer <strong>refund / rebook / credit</strong> to the <strong>{{ a18booked }} customers</strong> already booked. The remediation flow runs behind the scenes.</p>
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" on-click="{{ closeModal }}" hint-size="auto,40px">Keep departure</x-import>
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="danger" on-click="{{ a18confirmCancel }}" hint-size="auto,40px">Cancel departure</x-import>
+        </div>
+      </div>
+    </x-import>
+
+    <!-- A17 departure detail -->
+    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Modal" open="{{ depOpen }}" on-close="{{ closeDep }}" width="{{ 600 }}" hint-size="0,0">
+      <div style="padding:24px 26px;max-height:78vh;overflow:auto">
+        <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--text-label);margin-bottom:8px">Departure</div>
+        <h3 style="margin:0 0 4px;font:600 22px var(--font-serif);color:var(--text-strong)">{{ depTour }}</h3>
+        <p style="margin:0 0 20px;font:500 12.5px var(--font-sans);color:var(--text-muted)">{{ depWhen }} · guide {{ depGuide }} · {{ depFill }}</p>
+        <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.1em;color:var(--text-label);margin-bottom:10px">Bookings &amp; participants</div>
+        <sc-if value="{{ depNoBookings }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:18px;text-align:center;font:500 13px var(--font-sans);color:var(--text-muted);background:var(--wb03);border-radius:var(--radius-field)">No bookings on this departure yet.</div>
+        </sc-if>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <sc-for list="{{ depBookings }}" as="b" hint-placeholder-count="2">
+            <div style="border:1px solid var(--wb12);border-radius:var(--radius-field);padding:13px 15px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:9px">
+                <div style="font:600 13.5px var(--font-sans);color:var(--text-strong)">{{ b.customer }}</div>
+                <div style="font:500 11px var(--font-mono);color:var(--cyan-text-light)">{{ b.ref }} · {{ b.count }}</div>
+              </div>
+              <div style="display:flex;flex-wrap:wrap;gap:7px">
+                <sc-for list="{{ b.participants }}" as="p" hint-placeholder-count="2">
+                  <div onClick="{{ p.onClick }}" style="cursor:pointer;display:flex;align-items:center;gap:7px;padding:6px 11px;background:var(--wb05);border:1px solid var(--wb12);border-radius:var(--radius-round);font:500 12.5px var(--font-sans);color:var(--text-body)">
+                    <span style="font:600 12.5px var(--font-sans);color:var(--text-strong)">{{ p.name }}</span>
+                    <span style="font:500 10.5px var(--font-mono);color:var(--text-muted)">{{ p.age }}</span>
+                    <span style="font:600 13px var(--font-sans);color:var(--text-faint)">›</span>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <p style="margin:16px 0 0;font:500 11.5px var(--font-sans);color:var(--text-faint)">Click a participant to view their details.</p>
+      </div>
+    </x-import>
+
+    <!-- A17 participant detail -->
+    <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Modal" open="{{ partOpen }}" on-close="{{ closePart }}" width="{{ 440 }}" hint-size="0,0">
+      <div style="padding:24px 26px">
+        <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.12em;color:var(--text-label);margin-bottom:8px">Participant · {{ partRef }}</div>
+        <h3 style="margin:0 0 20px;font:600 21px var(--font-serif);color:var(--text-strong)">{{ partName }}</h3>
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Age band</div><div style="font:500 13.5px var(--font-sans);color:var(--text-body)">{{ partAge }}</div></div>
+          <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Requirements / notes</div><div style="font:500 13.5px var(--font-sans);color:var(--text-body)">{{ partNotes }}</div></div>
+          <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Emergency contact</div><div style="font:500 13.5px var(--font-sans);color:var(--text-body)">{{ partEmergency }}</div></div>
+          <div><div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:3px">Consent</div><div style="font:500 13.5px var(--font-sans);color:var(--text-body)">{{ partConsent }}</div></div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;margin-top:22px">
+          <x-import component-from-global-scope="FOBBookingAdmin_27b13c.Button" variant="ghost" on-click="{{ closePart }}" hint-size="auto,40px">Back to departure</x-import>
+        </div>
+      </div>
+    </x-import>
+
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;defaultScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;a8&quot;,&quot;options&quot;:[&quot;a8&quot;,&quot;a7&quot;,&quot;a9&quot;,&quot;a17&quot;,&quot;a18&quot;,&quot;a20&quot;,&quot;a19&quot;,&quot;a4&quot;,&quot;a3&quot;,&quot;a5&quot;,&quot;a6&quot;,&quot;a10&quot;,&quot;a11&quot;,&quot;a14&quot;,&quot;a12&quot;,&quot;a13&quot;,&quot;a15&quot;,&quot;a16&quot;],&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;startSignedIn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Demo&quot;},&quot;operatorName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;William&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Demo&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      signedIn: props.startSignedIn ?? false,
+      signedOutNotice: false,
+      screen: props.defaultScreen || 'a8',
+      email: 'william@friendsonbikes.co.uk',
+      pw: '••••••••••',
+      payFilter: 'all',
+      enqTab: 'open',
+      a7mode: 'enquiry',
+      a7tour: 'Hidden City', a7dep: '1 August 2026, 10:00', a7party: '2', a7price: '£45.00',
+      a7hold: '', a7deposit: '', a7cadence: '',
+      a12id: 'FOB-014', a12type: 'City hybrid', a12size: 'M', a12notes: '', a12added: false,
+      a15Status: 'flagged',
+      a15Events: [
+        { date: '18 Jul 2026', event: 'Flagged — rear brake spongy (Emma, DEV-EMMA-01)' }
+      ],
+      navCollapsed: false, navOpen: {},
+      a17range: 'month', a17view: 'list', a17dep: null, a17part: null,
+      a18mode: 'create', a18tour: 'Hidden City', a18date: '1 August 2026', a18time: '10:00',
+      a18cap: '10', a18guide: '', a18booked: 6, a18done: false,
+      a19query: '', a19sel: 'BK-1001',
+      a20Assigned: ['FOB-001'],
+      modal: null, refundRow: null, refundAmt: '',
+      payRows: [
+        { id:'BK-1001', route:'Hidden City · 1 Aug', customer:'Tom Whitfield', amount:'£45.00', refunded:'£0.00', status:'succeeded' },
+        { id:'BK-1002', route:'Riverside Loop · 3 Aug', customer:'Priya Shah', amount:'£180.00', refunded:'£0.00', status:'succeeded' },
+        { id:'BK-1003', route:'Hidden City · 8 Aug', customer:'James Okafor', amount:'£90.00', refunded:'£90.00', status:'refunded' },
+        { id:'BK-1004', route:'Corporate group · 12 Aug', customer:'Lena Fischer', amount:'£450.00', refunded:'£0.00', status:'requires_payment' },
+        { id:'BK-1005', route:'Hidden City · 15 Aug', customer:'Sam Boyd', amount:'£45.00', refunded:'£0.00', status:'failed' },
+        { id:'BK-1006', route:'Hidden City · 1 Aug', customer:'Grace Miller', amount:'£45.00', refunded:'£0.00', status:'no_show' },
+        { id:'BK-1007', route:'Riverside Loop · 20 Aug', customer:'Daniel Cho', amount:'£135.00', refunded:'£45.00', status:'succeeded' },
+        { id:'BK-1008', route:'Hidden City · 22 Aug', customer:'Aisha Rahman', amount:'£90.00', refunded:'£0.00', status:'succeeded' }
+      ],
+      a4Alerts: [
+        { id:'AL-01', sev:'high', alert:'Low feedback — FB-1002 rated 2★', meta:'post-tour · email · 2h ago' },
+        { id:'AL-02', sev:'high', alert:'Safety-significant change — severe allergy added to BK-1002', meta:'W17 · email · 5h ago' },
+        { id:'AL-03', sev:'med', alert:'Rider refused check-in (intoxication) — BK-1006, refund for William', meta:'guide G6 · email · 1d ago' },
+        { id:'AL-04', sev:'med', alert:'Enquiry overdue — ENQ-2001 (Marie Dupont)', meta:'A9 · daily digest · 1d ago' },
+        { id:'AL-05', sev:'low', alert:'WhatsApp channel unreachable — recorded here as fallback', meta:'system · fallback · 2d ago' }
+      ],
+      hazardRows: [
+        { loc:'Mill Lane', type:'Pothole cluster', by:'Emma', count:'×3', last:'20 Jul 2026', status:'pending' },
+        { loc:'Canal towpath', type:'Loose gravel', by:'Emma', count:'×1', last:'18 Jul 2026', status:'pending' },
+        { loc:'Bridge Street', type:'Roadworks', by:'William', count:'×2', last:'15 Jul 2026', status:'approved' }
+      ]
+    };
+  }
+
+  get DS(){ return window.FOBBookingAdmin_27b13c || {}; }
+  noop = () => {};
+
+  chip(label, hue){
+    const hues = {
+      pink:   { background:'rgba(255,45,155,.12)', color:'var(--pink-text-light)' },
+      lime:   { background:'rgba(198,255,63,.20)', color:'var(--lime-text-light)' },
+      cyan:   { background:'rgba(34,211,238,.14)', color:'var(--cyan-text-light)' },
+      orange: { background:'rgba(255,122,26,.14)', color:'var(--orange-text-light)' },
+      neutral:{ background:'var(--wb09)', color:'var(--text-muted)' }
+    };
+    return React.createElement('span', { style: Object.assign({
+      display:'inline-block', padding:'3px 10px', borderRadius:'var(--radius-round)',
+      font:'600 10px var(--font-mono)', letterSpacing:'.05em', textTransform:'uppercase', whiteSpace:'nowrap'
+    }, hues[hue] || hues.neutral) }, label);
+  }
+  dot(hue){
+    const c = { high:'var(--accent-pink)', med:'var(--accent-orange)', low:'var(--wb16)',
+      pink:'var(--accent-pink)', lime:'var(--accent-lime)', cyan:'var(--accent-cyan)', orange:'var(--accent-orange)', neutral:'var(--wb16)' };
+    return `display:inline-block;width:9px;height:9px;flex:none;border-radius:50%;background:${c[hue]||c.neutral}`;
+  }
+  stacked(title, id){
+    return React.createElement('div', null,
+      React.createElement('div', { style:{ font:'600 13.5px var(--font-sans)', color:'var(--text-strong)' } }, title),
+      React.createElement('div', { style:{ font:'500 11px var(--font-mono)', color:'var(--cyan-text-light)', marginTop:'2px' } }, id));
+  }
+  money(v){ return React.createElement('span', { style:{ font:'600 14px var(--font-serif)', color:'var(--text-price)' } }, v); }
+  muted(v){ return React.createElement('span', { style:{ font:'500 12.5px var(--font-sans)', color:'var(--text-muted)' } }, v); }
+
+  go = (id) => () => this.setState({ screen:id, modal:null });
+  signIn = () => this.setState({ signedIn:true, signedOutNotice:false });
+  signOut = () => this.setState({ signedIn:false, signedOutNotice:true });
+  set = (k) => (e) => this.setState({ [k]: e.target.value });
+
+  openPayment = (row) => this.setState({ modal:'refund', refundRow:row, refundAmt:'' });
+  closeModal = () => this.setState({ modal:null, refundRow:null, refundAmt:'' });
+  confirmRefund = () => {
+    const { refundRow, refundAmt, payRows } = this.state;
+    if(!refundRow) return;
+    const add = parseFloat(String(refundAmt).replace(/[^0-9.]/g,'')) || 0;
+    const rows = payRows.map(r => {
+      if(r.id !== refundRow.id) return r;
+      const prev = parseFloat(r.refunded.replace(/[^0-9.]/g,'')) || 0;
+      return Object.assign({}, r, { refunded:'£'+(prev+add).toFixed(2), status:'refunded' });
+    });
+    this.setState({ payRows:rows, modal:null, refundRow:null, refundAmt:'' });
+  };
+
+  ack = (a) => () => this.setState(s => ({ a4Alerts: s.a4Alerts.filter(x => x.id !== a.id) }));
+  approveHazard = (h) => () => this.setState(s => ({ hazardRows: s.hazardRows.map(x => x===h ? Object.assign({},x,{status:'approved'}) : x) }));
+
+  a12add = () => { if(!this.a12dup()) this.setState({ a12added:true }); };
+  a12dup = () => {
+    const existing = Array.from({length:13}, (_,i) => 'FOB-'+String(i+1).padStart(3,'0'));
+    return existing.includes((this.state.a12id||'').trim().toUpperCase());
+  };
+  a15AddEvent = () => this.setState(s => ({
+    a15Events: [{ date:'21 Jul 2026', event:'Rear brake pads replaced & cable bled — road-tested (William)' }, ...s.a15Events]
+  }));
+  a15Clear = () => this.setState({ a15Status:'in_service' });
+
+  rdyBadge(label, state){
+    const on = state===true, partial = state==='partial';
+    const bg = on ? 'rgba(198,255,63,.20)' : partial ? 'rgba(255,122,26,.14)' : 'var(--wb05)';
+    const col = on ? 'var(--lime-text-light)' : partial ? 'var(--orange-text-light)' : 'var(--text-faint)';
+    const mark = on ? '✓' : partial ? '~' : '✗';
+    return React.createElement('span', { style:{ font:'600 9.5px var(--font-mono)', letterSpacing:'.03em', textTransform:'uppercase', padding:'2px 7px', borderRadius:'var(--radius-round)', background:bg, color:col, whiteSpace:'nowrap' } }, label+' '+mark);
+  }
+  a20assign = (id) => this.setState(s => ({ a20Assigned:[...s.a20Assigned, id] }));
+  a20unassign = (id) => this.setState(s => ({ a20Assigned: s.a20Assigned.filter(x => x!==id) }));
+  a18save = () => { if(this.state.a18mode==='edit' && this.state.a18booked>0){ this.setState({ modal:'schedNotify' }); } else { this.setState({ a18done:true }); } };
+  a18confirmSave = () => this.setState({ modal:null, a18done:true });
+  a18cancelDep = () => this.setState({ modal:'schedCancel' });
+  a18confirmCancel = () => this.setState({ modal:null, a18done:false, a18mode:'create', a18guide:'', a18booked:0 });
+  a19select = (b) => this.setState({ a19sel:b.ref });
+  openDep = (d) => this.setState({ a17dep:d });
+  closeDep = () => this.setState({ a17dep:null });
+  openPart = (p, ref) => this.setState({ a17part:Object.assign({}, p, { ref }) });
+  closePart = () => this.setState({ a17part:null });
+  toggleGroup = (t) => this.setState(st => ({ navOpen: Object.assign({}, st.navOpen, { [t]: st.navOpen[t]===false }) }));
+
+  renderVals(){
+    const s = this.state, DS = this.DS;
+    const screen = s.screen;
+    const opName = this.props.operatorName || 'William';
+
+    // nav
+    const labels = { a3:'Deliverability', a4:'Owner alerts', a5:'Audit log', a6:'Publish & quality',
+      a7:'New booking', a8:'Payments & refunds', a9:'Enquiries', a10:'Incidents', a11:'Hazard log',
+      a12:'Add bike', a13:'Equipment', a14:'Fleet readiness', a15:'Flagged-bike', a16:'Compliance',
+      a17:'Departure calendar', a18:'Scheduler', a19:'Booking browser', a20:'Bike allocation' };
+    const collapsed = s.navCollapsed;
+    const navItem = (id) => {
+      const active = screen === id;
+      return { code:id.toUpperCase(), label:labels[id], onClick:this.go(id),
+        title: collapsed ? labels[id] : '',
+        style: {
+          display:'flex', alignItems:'center', gap: collapsed ? '0' : '10px',
+          justifyContent: collapsed ? 'center' : 'flex-start',
+          padding: collapsed ? '9px 0' : '8px 12px', marginBottom:'2px',
+          borderRadius:'10px', cursor:'pointer',
+          font: active ? '600 13px var(--font-sans)' : '500 13px var(--font-sans)',
+          color: active ? 'var(--text-strong)' : 'var(--text-body)',
+          background: active ? 'var(--wb12)' : 'transparent'
+        },
+        codeStyle:{ font:'600 9px var(--font-mono)', opacity:.55, width: collapsed ? 'auto' : '20px', flex:'none' },
+        labelStyle: collapsed ? { display:'none' } : { flex:1 } };
+    };
+    const groupsDef = [
+      ['Bookings & payments', ['a7','a8','a9']],
+      ['Scheduling', ['a17','a18','a20','a19']],
+      ['Alerts & records', ['a4','a3','a5']],
+      ['Content', ['a6']],
+      ['Safety', ['a10','a11']],
+      ['Fleet & equipment', ['a14','a12','a13','a15','a16']]
+    ];
+    const navGroups = groupsDef.map(([title, ids]) => {
+      const open = s.navOpen[title] !== false;
+      const hasActive = ids.indexOf(screen) >= 0;
+      return {
+        title,
+        headerStyle: collapsed ? { display:'none' } : { display:'flex', alignItems:'center', gap:'7px', padding:'5px 10px', marginBottom:'2px', borderRadius:'8px', cursor:'pointer', userSelect:'none' },
+        headerTextStyle: { font:'600 9.5px var(--font-mono)', letterSpacing:'.14em', textTransform:'uppercase', color: hasActive ? 'var(--text-muted)' : 'var(--text-faint)', flex:1 },
+        chevron: open ? '▾' : '▸',
+        chevronStyle: { font:'8px var(--font-mono)', color:'var(--text-faint)', width:'9px', flex:'none', transition:'transform .15s' },
+        onToggle: () => this.toggleGroup(title),
+        childStyle: (collapsed || open) ? { display:'block' } : { display:'none' },
+        childWrapStyle: collapsed ? {} : { marginLeft:'15px', paddingLeft:'9px', borderLeft:'1px solid var(--wb09)' },
+        items: ids.map(navItem)
+      };
+    });
+
+    // A8 payments
+    const payFilterDefs = [
+      { key:'all', label:'All' }, { key:'requires_payment', label:'Requires payment' },
+      { key:'succeeded', label:'Succeeded' }, { key:'refunded', label:'Refunded' },
+      { key:'failed', label:'Failed' }, { key:'no_show', label:'No-show' }
+    ];
+    const payFilters = payFilterDefs.map(f => ({ label:f.label, active:s.payFilter===f.key, onClick:()=>this.setState({payFilter:f.key}) }));
+    const payRowsView = s.payFilter==='all' ? s.payRows : s.payRows.filter(r => r.status===s.payFilter);
+    const payCols = [
+      { key:'route', label:'Booking', width:'1.6fr', render:r=>this.stacked(r.route, r.id) },
+      { key:'customer', label:'Customer', width:'1fr' },
+      { key:'amount', label:'Paid', width:'.9fr', align:'right', money:true },
+      { key:'refunded', label:'Refunded', width:'.9fr', align:'right', render:r=>this.money(r.refunded) },
+      { key:'status', label:'Status', width:'1.1fr', render:r=>React.createElement(DS.StatusPill,{status:r.status}) },
+      { key:'action', label:'', width:'.8fr', align:'right', render:r=>
+        r.status==='succeeded'
+          ? React.createElement(DS.Button,{size:'row',onClick:(e)=>{e.stopPropagation();this.openPayment(r);}},'Refund')
+          : React.createElement(DS.Button,{size:'row',variant:'ghost',onClick:(e)=>{e.stopPropagation();this.openPayment(r);}},'View') }
+    ];
+
+    // A9 enquiries
+    const enqAllRows = [
+      { id:'ENQ-2001', prospect:'Marie Dupont', ref:'PROSPECT-2001', type:'Group ride', party:'8', received:'19 Jul 2026', status:'overdue', tab:'open' },
+      { id:'ENQ-2002', prospect:'Northgate Ltd', ref:'PROSPECT-2002', type:'Corporate', party:'14', received:'20 Jul 2026', status:'new', tab:'open' },
+      { id:'ENQ-2003', prospect:'Sarah Lindqvist', ref:'SAVE-2001', type:'Private', party:'3', received:'21 Jul 2026', status:'new', tab:'open' },
+      { id:'ENQ-2004', prospect:'—', ref:'—', type:'“cheap seo backlinks”', party:'—', received:'21 Jul 2026', status:'spam', tab:'spam' },
+      { id:'ENQ-2005', prospect:'—', ref:'—', type:'“crypto partnership”', party:'—', received:'20 Jul 2026', status:'spam', tab:'spam' }
+    ];
+    const enqRowsView = s.enqTab==='overdue' ? enqAllRows.filter(r=>r.status==='overdue')
+      : s.enqTab==='spam' ? enqAllRows.filter(r=>r.tab==='spam')
+      : enqAllRows.filter(r=>r.tab==='open');
+    const enqCols = [
+      { key:'prospect', label:'Prospect', width:'1.4fr', render:r=>this.stacked(r.prospect, r.id) },
+      { key:'type', label:'Type', width:'1.3fr' },
+      { key:'party', label:'Party', width:'.5fr' },
+      { key:'received', label:'Received', width:'.9fr', render:r=>this.muted(r.received) },
+      { key:'status', label:'Status', width:'.9fr', render:r=>
+        r.status==='overdue' ? this.chip('overdue','orange') : r.status==='spam' ? this.chip('spam','neutral') : this.chip('new','cyan') }
+    ];
+
+    // A3 deliverability
+    const deliverRows = [
+      { addr:'grace@example.com', type:'bounce', reason:'mailbox full', last:'21 Jul 2026', count:'3' },
+      { addr:'old@corp.example', type:'bounce', reason:'no such user', last:'19 Jul 2026', count:'1' },
+      { addr:'reports@isp.example', type:'complaint', reason:'marked as spam', last:'18 Jul 2026', count:'1' }
+    ];
+    const deliverCols = [
+      { key:'addr', label:'Address', width:'1.6fr' },
+      { key:'type', label:'Type', width:'.7fr', render:r=>this.chip(r.type, r.type==='complaint'?'pink':'orange') },
+      { key:'reason', label:'Reason', width:'1.2fr', render:r=>this.muted(r.reason) },
+      { key:'last', label:'Last event', width:'.9fr', render:r=>this.muted(r.last) },
+      { key:'count', label:'Count', width:'.4fr', align:'right' }
+    ];
+
+    // A5 audit
+    const auditRows = [
+      { time:'21 Jul, 14:22', actor:'William', action:'refund.issued', subject:'BK-1003 · £90.00', result:'ok' },
+      { time:'21 Jul, 11:08', actor:'William', action:'booking.created', subject:'BK-1008', result:'ok' },
+      { time:'21 Jul, 09:15', actor:'system', action:'email.bounced', subject:'grace@example.com', result:'recorded' },
+      { time:'20 Jul, 18:40', actor:'—', action:'hazard.confirmed', subject:'Mill Lane', result:'flagged' },
+      { time:'20 Jul, 16:02', actor:'Emma', action:'bike.flagged', subject:'FOB-001', result:'ok' }
+    ];
+    const auditCols = [
+      { key:'time', label:'Time', width:'.9fr', render:r=>React.createElement('span',{style:{font:'500 12px var(--font-mono)',color:'var(--text-muted)'}},r.time) },
+      { key:'actor', label:'Actor', width:'.8fr', render:r=> r.actor==='—' ? this.chip('missing actor','orange') : r.actor },
+      { key:'action', label:'Action', width:'1.1fr', render:r=>React.createElement('span',{style:{font:'500 12px var(--font-mono)',color:'var(--text-body)'}},r.action) },
+      { key:'subject', label:'Subject', width:'1.3fr' },
+      { key:'result', label:'Result', width:'.9fr', render:r=> r.result==='flagged' ? this.chip('incomplete','orange') : this.chip(r.result,'lime') }
+    ];
+
+    // A6 content
+    const a6Pages = [
+      { title:'Hidden City tour', path:'/tours/hidden-city' },
+      { title:'Riverside Loop tour', path:'/tours/riverside-loop' },
+      { title:'August seasonal landing', path:'/summer-2026' }
+    ];
+    const a6Flags = [
+      { dot:this.dot('orange'), title:'Incomplete tour content', detail:'“Corporate group” tour is missing a meeting point and hero image.' },
+      { dot:this.dot('orange'), title:'Published but unindexed', detail:'P2 index has 2 published pages not yet in the sitemap.' },
+      { dot:this.dot('cyan'), title:'Missing meta description', detail:'/tours/riverside-loop — served, flagged, not blocking.' }
+    ];
+
+    // A10 incidents
+    const incRows = [
+      { id:'INC-001', when:'1 Aug 2026', status:'reviewed' },
+      { id:'INC-002', when:'28 Jul 2026', status:'submitted' }
+    ];
+    const incCols = [
+      { key:'id', label:'Incident', width:'1fr', render:r=>this.stacked(r.when, r.id) },
+      { key:'status', label:'Stage', width:'1fr', render:r=>this.chip(r.status, r.status==='reviewed'?'lime':'cyan') }
+    ];
+    const incStages = ['submitted','insurer_ack','reviewed','closed'];
+    const incCurrent = 2;
+    const incSteps = incStages.map((label,i)=>({
+      label: label + (i<incStages.length-1 ? '  →' : ''),
+      style: {
+        font:'600 10.5px var(--font-mono)', letterSpacing:'.03em', padding:'6px 12px', marginRight:'6px', borderRadius:'var(--radius-round)',
+        background: i<=incCurrent ? 'rgba(34,211,238,.14)' : 'var(--wb05)',
+        color: i<=incCurrent ? 'var(--cyan-text-light)' : 'var(--text-faint)'
+      }
+    }));
+
+    // A11 hazards
+    const hazardCols = [
+      { key:'loc', label:'Location', width:'1.1fr', render:r=>React.createElement('span',{style:{font:'600 13.5px var(--font-sans)',color:'var(--text-strong)'}},r.loc) },
+      { key:'type', label:'Hazard', width:'1.1fr' },
+      { key:'by', label:'Reported by', width:'.8fr', render:r=>this.muted(r.by) },
+      { key:'count', label:'Reports', width:'.5fr' },
+      { key:'last', label:'Last confirmed', width:'.9fr', render:r=>this.muted(r.last) },
+      { key:'status', label:'', width:'1fr', align:'right', render:r=>
+        r.status==='approved' ? this.chip('approved','lime')
+          : React.createElement(DS.Button,{size:'row',onClick:this.approveHazard(r)},'Approve') }
+    ];
+
+    // A12
+    const a12dup = this.a12dup();
+
+    // A13 equipment
+    const equipRows = [
+      { id:'HEL-014', type:'Helmet', desc:'Medium, matte black', cond:'Impact reported', status:'retired' },
+      { id:'HEL-015', type:'Helmet', desc:'Large, white', cond:'Good', status:'in_service' },
+      { id:'LCK-006', type:'D-lock', desc:'Steel U-lock + key', cond:'Good', status:'in_service' },
+      { id:'LGT-021', type:'Light set', desc:'Front/rear USB', cond:'Battery worn', status:'flagged' }
+    ];
+    const equipCols = [
+      { key:'id', label:'Item', width:'.9fr', mono:true },
+      { key:'type', label:'Type', width:'.8fr' },
+      { key:'desc', label:'Description', width:'1.6fr', render:r=>this.muted(r.desc) },
+      { key:'cond', label:'Condition', width:'1fr' },
+      { key:'status', label:'Status', width:'.9fr', render:r=>
+        r.status==='retired' ? this.chip('retired','neutral') : r.status==='flagged' ? this.chip('flagged','orange') : this.chip('in service','lime') }
+    ];
+
+    // A14 fleet
+    const fleetCounts = [
+      { n:'11', label:'In service', dot:this.dot('lime') },
+      { n:'2', label:'Flagged', dot:this.dot('orange') },
+      { n:'1', label:'Awaiting service', dot:this.dot('cyan') },
+      { n:'1', label:'Retired', dot:this.dot('neutral') }
+    ];
+    const fleetAlerts = [
+      { id:'FOB-001', msg:'flagged — rear brake, awaiting maintenance clear (A15)', dot:this.dot('orange'), tag:'bike' },
+      { id:'HEL-014', msg:'retired on impact — remove from kit', dot:this.dot('pink'), tag:'equipment' },
+      { id:'LGT-021', msg:'light set battery worn — replace before next tour', dot:this.dot('orange'), tag:'equipment' }
+    ];
+
+    // A15
+    const a15Cleared = s.a15Status === 'in_service';
+    const a15StatusChip = 'display:inline-block;padding:5px 13px;border-radius:var(--radius-round);font:600 11px var(--font-mono);letter-spacing:.05em;text-transform:uppercase;' +
+      (a15Cleared ? 'background:rgba(198,255,63,.20);color:var(--lime-text-light)' : 'background:rgba(255,122,26,.14);color:var(--orange-text-light)');
+
+    // A16 compliance
+    const complianceRows = [
+      { item:'Public liability insurance', ref:'PLI-2026', renew:'12 Aug 2026', days:'22 days', status:'ok' },
+      { item:'First-aid cert — Emma', ref:'FA-EMMA', renew:'28 Jul 2026', days:'7 days', status:'due' },
+      { item:'DBS check — Emma', ref:'DBS-EMMA', renew:'2 Jul 2026', days:'19 days overdue', status:'overdue' },
+      { item:'Cycle fleet inspection', ref:'FLEET-Q3', renew:'1 Sep 2026', days:'42 days', status:'ok' }
+    ];
+    const complianceCols = [
+      { key:'item', label:'Item', width:'1.6fr', render:r=>this.stacked(r.item, r.ref) },
+      { key:'renew', label:'Renews', width:'1fr' },
+      { key:'days', label:'', width:'1fr', render:r=>React.createElement('span',{style:{font:'500 12px var(--font-mono)',color: r.status==='overdue'?'var(--orange-text-light)':'var(--text-muted)'}},r.days) },
+      { key:'status', label:'Status', width:'.8fr', align:'right', render:r=>
+        r.status==='ok' ? this.chip('current','lime') : r.status==='due' ? this.chip('due soon','cyan') : this.chip('overdue','orange') }
+    ];
+
+    // ---- Scheduling (A17–A20) ----
+    const P = (name, age, notes, emergency, consent) => ({ name, age, notes, emergency, consent });
+    const departures = [
+      { id:'DEP-HID-0801-1000', tour:'Hidden City', day:1, time:'10:00', when:'1 Aug 2026, 10:00', guide:'Emma', booked:6, cap:10, bikes:'partial', range:'week',
+        bookings:[
+          { ref:'BK-1001', customer:'Tom Whitfield', participants:[
+            P('Tom Whitfield','Adult','—','Dana Whitfield · 07700 900112','Waiver & T&C accepted 20 Jul 2026'),
+            P('Jo Whitfield','Adult','Vegetarian lunch','Dana Whitfield · 07700 900112','Waiver & T&C accepted 20 Jul 2026') ] },
+          { ref:'BK-1010', customer:'Grace Miller', participants:[
+            P('Grace Miller','Adult','Prefers a step-through frame','Paul Miller · 07700 900550','Waiver & T&C accepted 21 Jul 2026') ] },
+          { ref:'BK-1011', customer:'Ravi Patel', participants:[
+            P('Ravi Patel','Adult','—','Sunita Patel · 07700 900771','Waiver & T&C accepted 19 Jul 2026'),
+            P('Sunita Patel','Adult','Mild asthma — carries inhaler','Ravi Patel · 07700 900772','Waiver & T&C accepted 19 Jul 2026') ] },
+          { ref:'BK-1012', customer:'Chloe Adams', participants:[
+            P('Chloe Adams','Adult','—','Mark Adams · 07700 900913','Waiver & T&C accepted 21 Jul 2026') ] }
+        ] },
+      { id:'DEP-HID-0801-1400', tour:'Hidden City', day:1, time:'14:00', when:'1 Aug 2026, 14:00', guide:null, booked:2, cap:10, bikes:'none', range:'week',
+        bookings:[
+          { ref:'BK-1013', customer:'Marcus Bell', participants:[
+            P('Marcus Bell','Adult','—','Elena Bell · 07700 900204','Waiver & T&C accepted 20 Jul 2026'),
+            P('Elena Bell','Adult','—','Marcus Bell · 07700 900205','Waiver & T&C accepted 20 Jul 2026') ] }
+        ] },
+      { id:'DEP-RIV-0803-1000', tour:'Riverside Loop', day:3, time:'10:00', when:'3 Aug 2026, 10:00', guide:'Emma', booked:8, cap:10, bikes:'ok', range:'week',
+        bookings:[
+          { ref:'BK-1002', customer:'Priya Shah', participants:[
+            P('Priya Shah','Adult','Severe nut allergy — carries EpiPen','Anil Shah · 07700 900431','Waiver & T&C accepted 19 Jul 2026'),
+            P('Rohan Shah','12–15','—','Priya Shah · 07700 900430','Waiver & T&C accepted 19 Jul 2026'),
+            P('Meera Shah','Adult','—','Anil Shah · 07700 900431','Waiver & T&C accepted 19 Jul 2026'),
+            P('Dev Shah','Adult','—','Anil Shah · 07700 900431','Waiver & T&C accepted 19 Jul 2026') ] },
+          { ref:'BK-1014', customer:'Owen Clarke', participants:[
+            P('Owen Clarke','Adult','—','Beth Clarke · 07700 900612','Waiver & T&C accepted 18 Jul 2026'),
+            P('Beth Clarke','Adult','Knee injury — gentle pace','Owen Clarke · 07700 900613','Waiver & T&C accepted 18 Jul 2026') ] },
+          { ref:'BK-1015', customer:'Nadia Haddad', participants:[
+            P('Nadia Haddad','Adult','—','Sami Haddad · 07700 900820','Waiver & T&C accepted 20 Jul 2026'),
+            P('Sami Haddad','16–17','—','Nadia Haddad · 07700 900821','Waiver & T&C accepted 20 Jul 2026') ] }
+        ] },
+      { id:'DEP-HID-0808-1000', tour:'Hidden City', day:8, time:'10:00', when:'8 Aug 2026, 10:00', guide:'Emma', booked:4, cap:10, bikes:'ok', range:'month',
+        bookings:[
+          { ref:'BK-1016', customer:'Fiona Reid', participants:[
+            P('Fiona Reid','Adult','—','Ian Reid · 07700 900330','Waiver & T&C accepted 17 Jul 2026'),
+            P('Ian Reid','Adult','—','Fiona Reid · 07700 900331','Waiver & T&C accepted 17 Jul 2026') ] },
+          { ref:'BK-1017', customer:'George Osei', participants:[
+            P('George Osei','Adult','—','Ama Osei · 07700 900447','Waiver & T&C accepted 16 Jul 2026'),
+            P('Ama Osei','Adult','Vegetarian lunch','George Osei · 07700 900448','Waiver & T&C accepted 16 Jul 2026') ] }
+        ] },
+      { id:'DEP-COR-0812-0930', tour:'Corporate group', day:12, time:'09:30', when:'12 Aug 2026, 09:30', guide:null, booked:0, cap:10, bikes:'none', range:'month', bookings:[] }
+    ];
+    const a17rows = departures.filter(d => s.a17range==='week' ? d.range==='week' : true);
+    const readinessCell = (d) => {
+      const guideOk = !!d.guide, bikesOk = d.bikes==='ok', allOk = guideOk && bikesOk;
+      const hue = allOk ? 'var(--accent-lime)' : (!guideOk || d.bikes==='none') ? 'var(--accent-orange)' : 'var(--accent-cyan)';
+      return React.createElement('div', { style:{ display:'flex', alignItems:'center', gap:'6px', flexWrap:'wrap' } },
+        React.createElement('span', { style:{ width:'9px', height:'9px', flex:'none', borderRadius:'50%', background:hue } }),
+        this.rdyBadge('guide', guideOk),
+        this.rdyBadge('bikes', d.bikes==='ok' ? true : d.bikes==='partial' ? 'partial' : false));
+    };
+    const a17cols = [
+      { key:'tour', label:'Departure', width:'1.4fr', render:d=>this.stacked(d.tour, d.when) },
+      { key:'guide', label:'Guide', width:'.8fr', render:d=> d.guide ? d.guide : this.chip('no guide','orange') },
+      { key:'fill', label:'Filled', width:'.55fr', wrap:true, render:d=>React.createElement('span',{style:{font:'600 14px var(--font-serif)',whiteSpace:'nowrap',color: d.booked>=d.cap?'var(--pink-text-light)':'var(--text-strong)'}}, d.booked+'/'+d.cap) },
+      { key:'readiness', label:'Readiness', width:'1.2fr', wrap:true, render:readinessCell },
+      { key:'actions', label:'', width:'1.05fr', align:'right', render:d=>React.createElement('div',{style:{display:'flex',gap:'6px',justifyContent:'flex-end'}},
+          React.createElement(DS.Button,{size:'row',variant:'ghost',onClick:(e)=>{e.stopPropagation();this.setState({screen:'a18',a18mode:'edit',a18tour:d.tour,a18time:(d.when.split(', ')[1]||'10:00'),a18booked:d.booked,a18cap:String(d.cap),a18guide:d.guide||'',a18done:false});}},'Edit'),
+          React.createElement(DS.Button,{size:'row',onClick:(e)=>{e.stopPropagation();this.setState({screen:'a20'});}},'Bikes')) }
+    ];
+    const depHue = (d) => (!!d.guide && d.bikes==='ok') ? 'lime' : (!d.guide || d.bikes==='none') ? 'orange' : 'cyan';
+    const depHueVar = { lime:'var(--accent-lime)', orange:'var(--accent-orange)', cyan:'var(--accent-cyan)' };
+    const depTint = { lime:'rgba(198,255,63,.16)', orange:'rgba(255,122,26,.13)', cyan:'rgba(34,211,238,.13)' };
+    const depInk = { lime:'var(--lime-text-light)', orange:'var(--orange-text-light)', cyan:'var(--cyan-text-light)' };
+    const a17ranges = [
+      { label:'This week', active:s.a17range==='week', onClick:()=>this.setState({a17range:'week'}) },
+      { label:'This month', active:s.a17range==='month', onClick:()=>this.setState({a17range:'month'}) },
+      { label:'All', active:s.a17range==='all', onClick:()=>this.setState({a17range:'all'}) }
+    ];
+    // calendar grid — August 2026
+    const calFirst = new Date(2026,7,1).getDay();
+    const calDim = new Date(2026,8,0).getDate();
+    const byDay = {};
+    departures.forEach(d => { (byDay[d.day] = byDay[d.day] || []).push(d); });
+    const a17cells = [];
+    for(let i=0;i<42;i++){
+      const day = i - calFirst + 1;
+      const inMonth = day>=1 && day<=calDim;
+      const deps = inMonth ? (byDay[day]||[]).map(dep => {
+        const hue = depHue(dep);
+        return { label:dep.tour, sub:dep.time+' · '+dep.booked+'/'+dep.cap, onClick:()=>this.openDep(dep),
+          style:'cursor:pointer;padding:5px 7px;border-radius:7px;background:'+depTint[hue]+';border-left:3px solid '+depHueVar[hue]+';margin-bottom:4px' };
+      }) : [];
+      a17cells.push({ key:'c'+i, day: inMonth ? String(day) : '', deps,
+        cellStyle:'min-height:96px;padding:7px 8px;border-right:1px solid var(--wb09);border-bottom:1px solid var(--wb09);'+(inMonth?'':'background:var(--wb03)') });
+    }
+
+    // departure detail + participant modals
+    const dd = s.a17dep;
+    const depBookings = dd ? dd.bookings.map(b => ({
+      ref:b.ref, customer:b.customer, count:b.participants.length+(b.participants.length===1?' rider':' riders'),
+      participants:b.participants.map(p => ({ name:p.name, age:p.age, onClick:()=>this.openPart(p, b.ref) }))
+    })) : [];
+    const pp = s.a17part;
+
+    // A18 scheduler
+    const a18capN = parseInt(s.a18cap,10)||0;
+    const a18capErr = a18capN>10 ? 'A departure can hold at most 10 riders.'
+      : (s.a18mode==='edit' && a18capN < s.a18booked) ? s.a18booked+' riders are already booked — capacity can’t go below that.'
+      : '';
+
+    // A19 booking browser
+    const bookingsBrowse = [
+      { ref:'BK-1001', customer:'Tom Whitfield', email:'tom@example.com', tour:'Hidden City', date:'1 Aug 2026', status:'confirmed', total:'£90.00',
+        emergency:'Dana Whitfield · 07700 900112', payref:'stripe · pi_3PxE7dK · £90.00 captured', waiver:'Accepted 20 Jul 2026, 18:22', tc:'Accepted 20 Jul 2026, 18:22', marketing:'Opted in — 20 Jul 2026',
+        attendees:[ {name:'Tom Whitfield', age:'Adult', notes:'—'}, {name:'Jo Whitfield', age:'Adult', notes:'Vegetarian lunch'} ],
+        history:[ {when:'20 Jul, 18:22', label:'Booking confirmed — payment captured'}, {when:'20 Jul, 18:20', label:'Waiver & T&C accepted'}, {when:'20 Jul, 18:15', label:'Created from booking flow'} ] },
+      { ref:'BK-1002', customer:'Priya Shah', email:'priya@example.com', tour:'Riverside Loop', date:'3 Aug 2026', status:'confirmed', total:'£180.00',
+        emergency:'Anil Shah · 07700 900431', payref:'stripe · pi_3PxF1aQ · £180.00 captured', waiver:'Accepted 19 Jul 2026, 09:04', tc:'Accepted 19 Jul 2026, 09:04', marketing:'Not opted in',
+        attendees:[ {name:'Priya Shah', age:'Adult', notes:'Severe nut allergy — carries EpiPen'}, {name:'Rohan Shah', age:'12–15', notes:'—'}, {name:'Meera Shah', age:'Adult', notes:'—'}, {name:'Dev Shah', age:'Adult', notes:'—'} ],
+        history:[ {when:'19 Jul, 09:04', label:'Booking confirmed'}, {when:'19 Jul, 09:00', label:'Created from booking flow'} ] },
+      { ref:'BK-1004', customer:'Lena Fischer', email:'lena@corp.example', tour:'Corporate group', date:'12 Aug 2026', status:'provisional', total:'£450.00',
+        emergency:'Karl Fischer · +49 170 0000000', payref:'awaiting payment — link sent, not captured', waiver:'Pending', tc:'Pending', marketing:'Not opted in',
+        attendees:[ {name:'Lena Fischer', age:'Adult', notes:'Lead booker — final headcount TBC'} ],
+        history:[ {when:'21 Jul, 11:08', label:'Provisional hold created by William'} ] }
+    ];
+    const a19q = s.a19query.trim().toLowerCase();
+    const a19list = bookingsBrowse.filter(b => !a19q || (b.ref+' '+b.customer+' '+b.email+' '+b.tour+' '+b.status).toLowerCase().indexOf(a19q)>=0);
+    const a19cols = [
+      { key:'customer', label:'Customer', width:'1.2fr', render:b=>this.stacked(b.customer, b.ref) },
+      { key:'tour', label:'Tour · date', width:'1.1fr', render:b=>this.stacked(b.tour, b.date) },
+      { key:'status', label:'Status', width:'.9fr', render:b=> b.status==='confirmed'?this.chip('confirmed','lime'):this.chip('provisional','cyan') },
+      { key:'total', label:'Total', width:'.75fr', align:'right', money:true }
+    ];
+    const a19d = bookingsBrowse.find(b=>b.ref===s.a19sel) || null;
+
+    // A20 bike allocation
+    const a20riders = 2;
+    const a20avail = [
+      {id:'FOB-002',status:'ok'},{id:'FOB-003',status:'ok'},{id:'FOB-005',status:'ok'},
+      {id:'FOB-009',status:'oos',reason:'out of service — choose another'},
+      {id:'FOB-004',status:'busy',reason:'already out on another tour at that time'}
+    ].filter(b=>!s.a20Assigned.includes(b.id)).map(b=>{
+      const ok = b.status==='ok';
+      return {
+        id:b.id, ok, reason: b.reason ? ' — '+b.reason : '',
+        onClick: ok ? ()=>this.a20assign(b.id) : this.noop,
+        rowStyle:'display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--wb12);border-radius:var(--radius-field);'+(ok?'background:var(--surface-card)':'background:var(--wb03);opacity:.75'),
+        reasonStyle: b.reason ? 'font:500 11.5px var(--font-sans);color:var(--orange-text-light)' : 'display:none',
+        btnStyle: ok
+          ? 'width:26px;height:26px;flex:none;border-radius:50%;background:var(--gradient-brand);color:var(--pill-ink);display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 16px var(--font-sans)'
+          : 'width:26px;height:26px;flex:none;border-radius:50%;background:var(--wb05);color:var(--text-faint);display:flex;align-items:center;justify-content:center;font:600 16px var(--font-sans)'
+      };
+    });
+    const a20assignedV = s.a20Assigned.map(id=>({ id, onClick:()=>this.a20unassign(id) }));
+    const a20covered = s.a20Assigned.length;
+
+    // refund modal
+    const rr = s.refundRow || {};
+    const prevRefund = parseFloat((rr.refunded||'£0').replace(/[^0-9.]/g,'')) || 0;
+    const addNow = parseFloat(String(s.refundAmt).replace(/[^0-9.]/g,'')) || 0;
+    const refundCumulative = '£'+(prevRefund+addNow).toFixed(2);
+
+    return {
+      // shell
+      showGate: !s.signedIn, signedIn: s.signedIn, signedOutNotice: s.signedOutNotice,
+      navGroups, operatorName: opName, operatorInitial: opName.charAt(0),
+      navCollapsed: collapsed, toggleNav: () => this.setState(st => ({ navCollapsed: !st.navCollapsed })),
+      navToggleGlyph: collapsed ? '»' : '«',
+      asideStyle: 'width:'+(collapsed ? '68px' : '248px')+';flex:none;background:var(--surface-rail);border-right:1px solid var(--wb12);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;transition:width .18s ease',
+      brandFullStyle: collapsed ? 'display:none' : 'display:block',
+      brandMarkStyle: collapsed ? 'display:block' : 'display:none',
+      navHeaderStyle: 'padding:'+(collapsed ? '20px 0 16px' : '22px 20px 16px')+';border-bottom:1px solid var(--wb09);display:flex;align-items:center;gap:10px;justify-content:'+(collapsed ? 'center' : 'space-between'),
+      footerTextStyle: collapsed ? 'display:none' : 'flex:1;min-width:0',
+      navFooterStyle: 'padding:14px 16px;border-top:1px solid var(--wb09);display:flex;align-items:center;gap:11px;justify-content:'+(collapsed ? 'center' : 'flex-start'),
+      signIn:this.signIn, signOut:this.signOut,
+      email:s.email, pw:s.pw, setEmail:this.set('email'), setPw:this.set('pw'),
+      fullWidthBtn:{ width:'100%' }, noop:this.noop, rowKey:(r)=>r.id||r.time||r.addr||r.loc||r.item||r.prospect,
+      // screen flags
+      isA3:screen==='a3', isA4:screen==='a4', isA5:screen==='a5', isA6:screen==='a6',
+      isA7:screen==='a7', isA8:screen==='a8', isA9:screen==='a9', isA10:screen==='a10',
+      isA11:screen==='a11', isA12:screen==='a12', isA13:screen==='a13', isA14:screen==='a14',
+      isA15:screen==='a15', isA16:screen==='a16',
+      isA17:screen==='a17', isA18:screen==='a18', isA19:screen==='a19', isA20:screen==='a20',
+      // A17
+      a17cols, a17rows, a17ranges, a17Empty:a17rows.length===0, a17Has:a17rows.length>0, openDep:this.openDep,
+      a17isList:s.a17view==='list', a17isCal:s.a17view==='calendar',
+      setA17List:()=>this.setState({a17view:'list'}), setA17Cal:()=>this.setState({a17view:'calendar'}),
+      a17listTabStyle:'cursor:pointer;padding:6px 16px;border-radius:var(--radius-round);font:600 12.5px var(--font-sans);'+(s.a17view==='list'?'background:var(--surface-card);color:var(--text-strong);box-shadow:0 1px 2px rgba(0,0,0,.08)':'color:var(--text-muted)'),
+      a17calTabStyle:'cursor:pointer;padding:6px 16px;border-radius:var(--radius-round);font:600 12.5px var(--font-sans);'+(s.a17view==='calendar'?'background:var(--surface-card);color:var(--text-strong);box-shadow:0 1px 2px rgba(0,0,0,.08)':'color:var(--text-muted)'),
+      a17cells,
+      depOpen:!!dd, closeDep:this.closeDep,
+      depTour:dd&&dd.tour, depWhen:dd&&dd.when, depGuide:dd?(dd.guide||'No guide assigned'):'',
+      depFill:dd?(dd.booked+'/'+dd.cap+' booked'):'', depBookings, depNoBookings: !!dd && dd.bookings.length===0,
+      partOpen:!!pp, closePart:this.closePart,
+      partRef:pp&&pp.ref, partName:pp&&pp.name, partAge:pp&&pp.age, partNotes:pp&&pp.notes, partEmergency:pp&&pp.emergency, partConsent:pp&&pp.consent,
+      // A18
+      a18mode:s.a18mode, a18isCreate:s.a18mode==='create', a18isEdit:s.a18mode==='edit',
+      setA18Create:()=>this.setState({a18mode:'create',a18done:false,a18guide:'',a18booked:0}),
+      setA18Edit:()=>this.setState({a18mode:'edit',a18done:false,a18booked:6}),
+      a18tour:s.a18tour, a18date:s.a18date, a18time:s.a18time, a18cap:s.a18cap, a18guide:s.a18guide, a18booked:s.a18booked,
+      setA18tour:this.set('a18tour'), setA18date:this.set('a18date'), setA18time:this.set('a18time'),
+      setA18cap:(e)=>this.setState({a18cap:e.target.value,a18done:false}), setA18guide:this.set('a18guide'),
+      a18capErr, a18hasCapErr:!!a18capErr, a18noGuide:!s.a18guide, a18done:s.a18done,
+      a18save:this.a18save, a18cancelDep:this.a18cancelDep,
+      schedNotifyOpen:s.modal==='schedNotify', schedCancelOpen:s.modal==='schedCancel',
+      a18confirmSave:this.a18confirmSave, a18confirmCancel:this.a18confirmCancel,
+      // A19
+      a19query:s.a19query, setA19query:this.set('a19query'), a19cols, a19list, a19select:this.a19select,
+      a19hasDetail:!!a19d, a19ref:a19d&&a19d.ref, a19customer:a19d&&a19d.customer, a19email:a19d&&a19d.email,
+      a19tour:a19d&&a19d.tour, a19date:a19d&&a19d.date, a19total:a19d&&a19d.total,
+      a19statusLabel:a19d?(a19d.status==='confirmed'?'Confirmed':'Provisional'):'',
+      a19emergency:a19d&&a19d.emergency, a19payref:a19d&&a19d.payref, a19waiver:a19d&&a19d.waiver, a19tc:a19d&&a19d.tc, a19marketing:a19d&&a19d.marketing,
+      a19attendees:(a19d&&a19d.attendees)||[], a19history:(a19d&&a19d.history)||[],
+      // A20
+      a20avail, a20assignedV, a20covered, a20riders,
+      a20coveredText:a20covered+' of '+a20riders+' riders covered', a20under:a20covered<a20riders,
+      a20coverColor: a20covered>=a20riders ? 'var(--lime-text-light)' : 'var(--orange-text-light)',
+      a20availEmpty:a20avail.filter(b=>b.ok).length===0,
+      // A8
+      payFilters, payRowsView, payCount:payRowsView.length, payCols, openPayment:this.openPayment,
+      // A7
+      a7modeEnquiry:s.a7mode==='enquiry', a7modeProvisional:s.a7mode==='provisional',
+      setA7Enquiry:()=>this.setState({a7mode:'enquiry'}), setA7Provisional:()=>this.setState({a7mode:'provisional'}),
+      a7tour:s.a7tour, a7dep:s.a7dep, a7party:s.a7party, a7price:s.a7price, a7hold:s.a7hold, a7deposit:s.a7deposit, a7cadence:s.a7cadence,
+      a7capHint:(10-(parseInt(s.a7party,10)||0))+' of 10 left',
+      setA7tour:this.set('a7tour'), setA7dep:this.set('a7dep'), setA7party:this.set('a7party'), setA7price:this.set('a7price'),
+      setA7hold:this.set('a7hold'), setA7deposit:this.set('a7deposit'), setA7cadence:this.set('a7cadence'),
+      // A9
+      enqAll:s.enqTab==='open', enqOverdue:s.enqTab==='overdue', enqSpam:s.enqTab==='spam',
+      setEnqAll:()=>this.setState({enqTab:'open'}), setEnqOverdue:()=>this.setState({enqTab:'overdue'}), setEnqSpam:()=>this.setState({enqTab:'spam'}),
+      enqCols, enqRowsView,
+      // A4
+      a4Alerts: s.a4Alerts.map(a=>({ alert:a.alert, meta:a.meta, dot:this.dot(a.sev), ack:this.ack(a) })),
+      a4Empty: s.a4Alerts.length===0, a4HasAlerts: s.a4Alerts.length>0,
+      // A3 / A5
+      deliverCols, deliverRows, auditCols, auditRows,
+      // A6
+      a6Pages, a6Flags,
+      // A10
+      incCols, incRows, incSteps,
+      // A11
+      hazardCols, hazardRows:s.hazardRows,
+      // A12
+      a12id:s.a12id, a12type:s.a12type, a12size:s.a12size, a12notes:s.a12notes,
+      setA12id:(e)=>this.setState({a12id:e.target.value,a12added:false}), setA12type:this.set('a12type'), setA12size:this.set('a12size'), setA12notes:this.set('a12notes'),
+      a12dup, a12suggest:'FOB-014', a12added:s.a12added && !a12dup, a12add:this.a12add,
+      // A13
+      equipCols, equipRows,
+      // A14
+      fleetCounts, fleetAlerts,
+      // A15
+      a15Events:s.a15Events, a15AddEvent:this.a15AddEvent, a15Clear:this.a15Clear,
+      a15CantClear: a15Cleared || s.a15Events.length<1,
+      a15StatusChip, a15StatusLabel: a15Cleared ? 'in service' : 'flagged',
+      // A16
+      complianceCols, complianceRows,
+      // refund modal
+      refundOpen:s.modal==='refund', closeModal:this.closeModal, confirmRefund:this.confirmRefund,
+      refundId:rr.id, refundRoute:rr.route, refundCustomer:rr.customer, refundPaid:rr.amount, refundSoFar:rr.refunded,
+      refundAmt:s.refundAmt, setRefundAmt:this.set('refundAmt'), refundCumulative,
+      refundBtnLabel: addNow>0 ? 'Refund £'+addNow.toFixed(2) : 'Issue refund'
+    };
+  }
+}
+</script>
+</body>
+</html>

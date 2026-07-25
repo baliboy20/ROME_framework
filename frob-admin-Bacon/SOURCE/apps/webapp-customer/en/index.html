@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal], [data-cascade] { opacity: 1 !important; transform: none !important; clip-path: none !important; filter: none !important; }
+    [data-kenburns] { animation: none !important; }
+  }
+  a { color: inherit; text-decoration: none; }
+  @keyframes lbtKenburns {
+    0%   { transform: scale(1.04) translate(0, 0); }
+    100% { transform: scale(1.13) translate(-1.5%, -1%); }
+  }
+</style>
+  <style>section{scroll-margin-top:96px}</style>
+</helmet>
+<div style="font-family: 'Instrument Sans', 'Helvetica Neue', Arial, sans-serif; color: #1a1916; background: #f6f4ee; -webkit-font-smoothing: antialiased; overflow-x: hidden;">
+
+  <nav id="lbt-nav" style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: 26px 48px; background: transparent; transition: background .4s ease, box-shadow .4s ease, padding .4s ease; backdrop-filter: blur(0px);">
+    <a href="#" style="display: flex; align-items: center;">
+      <img src="/en/img/logo.webp" alt="Friends on Bikes" style="height:58px;width:auto;display:block;" />
+    </a>
+    <div style="display: flex; align-items: center; gap: 40px;">
+      <a href="#tours" style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: rgba(246,244,238,.9);" style-hover="{{ navLinkHover }}">Our Tours</a>
+      <a href="#" style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: rgba(246,244,238,.9);" style-hover="{{ navLinkHover }}">About</a>
+      <a href="#" style="font-size: 13px; letter-spacing: .16em; text-transform: uppercase; color: rgba(246,244,238,.9);" style-hover="{{ navLinkHover }}">Contact</a>
+      <div style="display: flex; align-items: center; gap: 9px; font-size: 12px; letter-spacing: .12em; color: rgba(246,244,238,.5);">
+        <a href="#" style="color: #f6f4ee;">EN</a><span style="opacity:.5;">|</span><a href="#" style-hover="{{ navLinkHover }}">FR</a><span style="opacity:.5;">|</span><a href="#" style-hover="{{ navLinkHover }}">ES</a>
+      </div>
+      <a href="http://localhost:5174/" style="padding: 13px 26px; border-radius: 0; background: {{ accent }}; color: #fff; font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;" style-hover="{{ btnHover }}">Book Now</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <header style="position: relative; min-height: 92vh; display: flex; align-items: center; padding: 244px 48px 90px; overflow: hidden;">
+    <div id="lbt-hero-img" style="position: absolute; inset: -12% 0; background: #2a2b26 url('uploads/img-home-hero-barbican-cyclists.png') center/cover no-repeat; will-change: transform;"></div>
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(20,20,17,.35) 0%, rgba(20,20,17,.55) 60%, rgba(20,20,17,.78) 100%);"></div>
+    <div style="position: relative; max-width: 760px; color: #f6f4ee;">
+      <p data-reveal style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-transform: uppercase; letter-spacing: .22em; font-size: 13px; margin: 0 0 22px; color: rgba(246,244,238,.85);">Guided cycling tours · Barbican, London</p>
+      <h1 data-reveal data-reveal-delay="90" style="opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(44px, 6.5vw, 88px); line-height: 1.02; letter-spacing: -0.02em; margin: 0;">See London<br>Like a Local</h1>
+      <p data-reveal data-reveal-delay="200" style="opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; font-size: clamp(17px, 2vw, 21px); line-height: 1.5; max-width: 540px; margin: 26px 0 38px; color: rgba(246,244,238,.9);">Intimate guided cycling tours from the Barbican — for those who want to discover the city, not just photograph it.</p>
+      <div data-reveal data-reveal-delay="320" style="opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; display: flex; flex-wrap: wrap; gap: 16px;">
+        <a href="http://localhost:5174/" style="padding: 16px 32px; border-radius: 0; background: {{ accent }}; color: #fff; font-weight: 600; font-size: 15px; letter-spacing: .04em;" style-hover="{{ btnHover }}">Book a Tour →</a>
+        <a href="#tours" style="padding: 16px 32px; border-radius: 0; border: 1px solid rgba(246,244,238,.5); color: #f6f4ee; font-weight: 500; font-size: 15px; letter-spacing: .04em;" style-hover="{{ ghostHover }}">Explore Our Tours</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- STATS -->
+  <section style="background: #1a1916; color: #f6f4ee; padding: 56px 40px;">
+    <div style="max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+      <sc-for list="{{ stats }}" as="stat" hint-placeholder-count="4">
+        <div data-reveal data-reveal-delay="{{ stat.delay }}" style="opacity:0; transform: translateY(22px); transition: opacity .6s ease, transform .6s ease; text-align: center;">
+          <div data-count="{{ stat.value }}" data-count-decimals="{{ stat.decimals }}" data-count-suffix="{{ stat.suffix }}" style="font-family: 'Newsreader', serif; font-size: clamp(38px, 5vw, 60px); line-height: 1; color: {{ accent }};">{{ stat.display }}</div>
+          <div style="margin-top: 12px; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: rgba(246,244,238,.7);">{{ stat.label }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div data-reveal style="opacity:0; transition: opacity .8s ease; max-width: 1100px; margin: 40px auto 0; padding-top: 28px; border-top: 1px solid rgba(246,244,238,.14); display: flex; flex-wrap: wrap; justify-content: center; gap: 40px; font-size: 14px; color: rgba(246,244,238,.7);">
+      <span>★ 5.0 TripAdvisor</span>
+      <span>★ 5.0 Google</span>
+      <span>Featured in Time Out London</span>
+    </div>
+  </section>
+
+  <!-- ROUTES -->
+  <section style="padding: 110px 40px; max-width: 1200px; margin: 0 auto;">
+    <p data-reveal style="opacity:0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; text-align: center; text-transform: uppercase; letter-spacing: .22em; font-size: 13px; color: {{ accent }}; margin: 0 0 16px;">Our Routes</p>
+    <h2 data-reveal data-reveal-delay="80" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-align: center; font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(32px, 4.5vw, 52px); letter-spacing: -0.02em; margin: 0 auto; max-width: 720px; line-height: 1.08;">Three Ways to Discover London</h2>
+    <p data-reveal data-reveal-delay="160" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-align: center; font-size: 18px; color: #5a584f; max-width: 620px; margin: 20px auto 60px; line-height: 1.5;">Choose your adventure. Three carefully crafted routes, each revealing a different side of the city.</p>
+    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 44px;">
+      <sc-for list="{{ tours }}" as="tour" hint-placeholder-count="3">
+        <a href="{{ tour.href }}" data-tour-card data-reveal data-reveal-cascade data-reveal-delay="{{ tour.delay }}" style="opacity:0; transform: translateY(52px) scale(.96); transition: opacity .95s cubic-bezier(.16,1,.3,1), transform .95s cubic-bezier(.16,1,.3,1), box-shadow .45s ease; display: flex; flex-direction: column; background: #faf8f2; border: 1px solid rgba(26,25,22,.09); border-radius: 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(26,25,22,.04);" style-hover="{{ cardHover }}">
+          <div style="position: relative; aspect-ratio: 4/5; background: #e6e2d8; overflow: hidden;">
+            <img data-cascade data-reveal-clip data-kenburns data-t="img" src="{{ tour.img }}" alt="{{ tour.name }}" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; clip-path: inset(0 0 100% 0); filter: blur(14px); animation: lbtKenburns 22s ease-in-out infinite alternate; transition: opacity 1s ease, clip-path 1.3s cubic-bezier(.16,1,.3,1), filter 1.1s ease;" />
+            <span data-cascade style="opacity:0; transform: translateY(-8px); transition: opacity .6s ease, transform .6s cubic-bezier(.16,1,.3,1); position: absolute; top: 18px; left: 18px; padding: 8px 15px; background: rgba(20,20,17,.4); backdrop-filter: blur(6px); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;" data-t="badge">{{ tour.badge }}</span>
+          </div>
+          <div style="padding: 28px 28px 30px; display: flex; flex-direction: column; flex: 1;">
+            <div data-cascade style="opacity:0; transform: translateY(16px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); display: flex; gap: 13px; font-size: 12px; letter-spacing: .13em; text-transform: uppercase; color: #8a8778; margin-bottom: 16px;">
+              <span data-t="duration">{{ tour.duration }}</span><span style="opacity:.35;">/</span><span>Max 10</span><span style="opacity:.35;">/</span><span data-t="level">{{ tour.level }}</span>
+            </div>
+            <h3 data-cascade style="opacity:0; transform: translateY(16px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); font-family: 'Newsreader', serif; font-weight: 500; font-size: 31px; margin: 0 0 14px; letter-spacing: -0.015em; line-height: 1.04;" data-t="name">{{ tour.name }}</h3>
+            <p data-cascade style="opacity:0; transform: translateY(16px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); font-size: 15px; line-height: 1.6; color: #5a584f; margin: 0 0 24px;" data-t="desc">{{ tour.desc }}</p>
+            <div data-cascade style="opacity:0; transform: translateY(16px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); margin-bottom: 28px;">
+              <div style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #a8a495; margin-bottom: 9px;">Route Highlights</div>
+              <div style="font-size: 14.5px; line-height: 1.75; color: #4a483f;" data-t="highlights">{{ tour.highlights }}</div>
+            </div>
+            <div data-cascade style="opacity:0; transform: translateY(16px); transition: opacity .7s cubic-bezier(.16,1,.3,1), transform .7s cubic-bezier(.16,1,.3,1); margin-top: auto; display: flex; align-items: baseline; justify-content: space-between; padding-top: 20px; border-top: 1px solid #dcd7c9;">
+              <div><span style="font-family: 'Newsreader', serif; font-size: 33px; letter-spacing: -0.01em;" data-t="price">{{ tour.price }}</span><span style="font-size: 13px; letter-spacing: .04em; color: #8a8778;"> / per person</span></div>
+              <span style="font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: {{ accent }};">Book →</span>
+            </div>
+          </div>
+        </a>
+      </sc-for>
+    </div>
+    <p data-reveal style="opacity:0; transition: opacity .7s ease; text-align: center; margin: 48px 0 0; font-size: 15px; color: #5a584f;">All tours depart from Barbican Centre, Silk Street. Groups of 10-20? <a href="#" style="color: {{ accent }}; font-weight: 600;">Ask about private tours →</a></p>
+  </section>
+
+  <!-- PROMISE -->
+  <section style="background: #efece3; padding: 110px 40px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <p data-reveal style="opacity:0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; text-align: center; text-transform: uppercase; letter-spacing: .22em; font-size: 13px; color: {{ accent }}; margin: 0 0 16px;">Our Promise</p>
+      <h2 data-reveal data-reveal-delay="80" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-align: center; font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(32px, 4.5vw, 52px); letter-spacing: -0.02em; margin: 0 auto; max-width: 760px; line-height: 1.08;">The London Bike Tours Difference</h2>
+      <p data-reveal data-reveal-delay="160" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-align: center; font-size: 18px; color: #5a584f; max-width: 660px; margin: 20px auto 60px; line-height: 1.5;">We're not a franchise. We're two locals who live and work in the Barbican, and we've designed every route ourselves.</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px;">
+        <sc-for list="{{ promises }}" as="p" hint-placeholder-count="6">
+          <div data-reveal data-reveal-delay="{{ p.delay }}" style="opacity:0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease, box-shadow .4s ease, transform .4s ease; background-color: #f4f1e8; background-image: repeating-linear-gradient(45deg, rgba(26,25,22,.022) 0, rgba(26,25,22,.022) 1px, transparent 1px, transparent 9px), radial-gradient(120% 90% at 20% 0%, rgba(255,255,255,.55) 0%, rgba(255,255,255,0) 55%); border: 1px solid rgba(26,25,22,.07); border-radius: 4px; padding: 46px 40px; box-shadow: 0 1px 2px rgba(26,25,22,.03);" style-hover="{{ tileHover }}">
+            <div style="width: 46px; height: 46px; border-radius: 3px; background: {{ accent }}; display: flex; align-items: center; justify-content: center; color: #fff; font-family: 'Newsreader', serif; font-size: 22px; margin-bottom: 24px;">{{ p.num }}</div>
+            <h3 style="font-family: 'Newsreader', serif; font-weight: 500; font-size: 23px; margin: 0 0 13px; letter-spacing: -0.01em;">{{ p.title }}</h3>
+            <p style="font-size: 15px; line-height: 1.62; color: #5a584f; margin: 0;">{{ p.body }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section style="padding: 110px 40px; max-width: 1200px; margin: 0 auto;">
+    <p data-reveal style="opacity:0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; text-align: center; text-transform: uppercase; letter-spacing: .22em; font-size: 13px; color: {{ accent }}; margin: 0 0 16px;">The Process</p>
+    <h2 data-reveal data-reveal-delay="80" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-align: center; font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(32px, 4.5vw, 52px); letter-spacing: -0.02em; margin: 0 auto 60px; line-height: 1.08;">Booking Takes Under Three Minutes</h2>
+    <div style="position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px;">
+      <div id="lbt-line" style="position: absolute; top: 27px; left: 8%; height: 2px; background: {{ accent }}; width: 0; transition: width 1.1s cubic-bezier(.22,1,.36,1);"></div>
+      <sc-for list="{{ steps }}" as="step" hint-placeholder-count="4">
+        <div data-reveal data-reveal-delay="{{ step.delay }}" style="opacity:0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; position: relative; text-align: center;">
+          <div style="width: 54px; height: 54px; border-radius: 50%; background: {{ accent }}; color: #fff; font-family: 'Newsreader', serif; font-size: 24px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; position: relative; z-index: 2;">{{ step.num }}</div>
+          <h3 style="font-family: 'Newsreader', serif; font-weight: 500; font-size: 21px; margin: 0 0 10px;">{{ step.title }}</h3>
+          <p style="font-size: 14px; line-height: 1.6; color: #5a584f; margin: 0;">{{ step.body }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section style="background: #1a1916; color: #f6f4ee; padding: 110px 40px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+      <p data-reveal style="opacity:0; transform: translateY(16px); transition: opacity .6s ease, transform .6s ease; text-align: center; text-transform: uppercase; letter-spacing: .22em; font-size: 13px; color: {{ accent }}; margin: 0 0 16px;">Guest Reviews</p>
+      <h2 data-reveal data-reveal-delay="80" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; text-align: center; font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(32px, 4.5vw, 52px); letter-spacing: -0.02em; margin: 0 0 12px; line-height: 1.08;">What Our Guests Say</h2>
+      <p data-reveal data-reveal-delay="160" style="opacity:0; transition: opacity .7s ease; text-align: center; font-size: 15px; color: rgba(246,244,238,.6); margin: 0 auto 60px;">★ 5.0 — Based on reviews across TripAdvisor and Google</p>
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;">
+        <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="3">
+          <div data-reveal data-reveal-delay="{{ r.delay }}" style="opacity:0; transform: translateY(28px) scale(.97); transition: opacity .7s ease, transform .7s ease; background: rgba(246,244,238,.05); border: 1px solid rgba(246,244,238,.1); border-radius: 18px; padding: 34px;">
+            <div style="color: {{ accent }}; font-size: 15px; margin-bottom: 18px;">★★★★★</div>
+            <p style="font-family: 'Newsreader', serif; font-size: 20px; line-height: 1.5; margin: 0 0 26px;">"{{ r.quote }}"</p>
+            <div style="display: flex; align-items: center; gap: 14px;">
+              <div style="width: 44px; height: 44px; border-radius: 50%; background: {{ accent }}; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600;">{{ r.initials }}</div>
+              <div>
+                <div style="font-weight: 600; font-size: 15px;">{{ r.name }}</div>
+                <div style="font-size: 13px; color: rgba(246,244,238,.55);">{{ r.meta }}</div>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="padding: 120px 40px; text-align: center; background: {{ accent }}; color: #fff;">
+    <h2 data-reveal style="opacity:0; transform: translateY(24px); transition: opacity .8s ease, transform .8s ease; font-family: 'Newsreader', serif; font-weight: 500; font-size: clamp(34px, 5vw, 60px); letter-spacing: -0.02em; margin: 0 auto; max-width: 760px; line-height: 1.06;">Ready to See London Differently?</h2>
+    <p data-reveal data-reveal-delay="120" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; font-size: 19px; margin: 24px auto 40px; max-width: 560px; color: rgba(255,255,255,.9); line-height: 1.5;">Join one of our small-group tours and discover the city from behind the handlebars.</p>
+    <a data-reveal data-reveal-delay="240" href="http://localhost:5174/" style="opacity:0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; display: inline-block; padding: 18px 42px; border-radius: 0; background: #fff; color: #1a1916; font-weight: 600; font-size: 16px; letter-spacing: .04em;" style-hover="{{ ctaHover }}">Book Your Tour →</a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background: #14130f; color: rgba(246,244,238,.6); padding: 70px 40px 40px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;">
+      <div>
+        <div style="font-family: 'Newsreader', serif; font-size: 22px; color: #f6f4ee; margin-bottom: 16px;">London Bike Tours</div>
+        <p style="font-size: 14px; line-height: 1.6; margin: 0 0 16px; max-width: 260px;">Guided cycling tours from the heart of the City. Barbican Centre, Silk Street, London EC2Y 8DS</p>
+      </div>
+      <div>
+        <div style="color: #f6f4ee; font-size: 14px; font-weight: 600; margin-bottom: 16px;">Explore</div>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+          <a href="#tours/hidden-city" style-hover="{{ footHover }}">The Hidden City</a>
+          <a href="#tours/icons-and-insights" style-hover="{{ footHover }}">Icons & Insights</a>
+          <a href="#tours/golden-hour-city" style-hover="{{ footHover }}">Golden Hour City</a>
+          <a href="#" style-hover="{{ footHover }}">Gift Vouchers</a>
+        </div>
+      </div>
+      <div>
+        <div style="color: #f6f4ee; font-size: 14px; font-weight: 600; margin-bottom: 16px;">Company</div>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+          <a href="#" style-hover="{{ footHover }}">About Us</a>
+          <a href="#" style-hover="{{ footHover }}">FAQ</a>
+          <a href="#" style-hover="{{ footHover }}">Contact</a>
+          <a href="http://localhost:5174/" style-hover="{{ footHover }}">Book a Tour</a>
+        </div>
+      </div>
+      <div>
+        <div style="color: #f6f4ee; font-size: 14px; font-weight: 600; margin-bottom: 16px;">Legal</div>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+          <a href="#" style-hover="{{ footHover }}">Privacy Policy</a>
+          <a href="#" style-hover="{{ footHover }}">Terms & Conditions</a>
+          <a href="#" style-hover="{{ footHover }}">Cancellation Policy</a>
+        </div>
+      </div>
+    </div>
+    <div style="max-width: 1200px; margin: 48px auto 0; padding-top: 24px; border-top: 1px solid rgba(246,244,238,.1); font-size: 13px;">© 2026 London Bike Tours Ltd. All rights reserved.</div>
+  </footer>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:900},&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#3f6b3f&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;options&quot;:[&quot;#3f6b3f&quot;,&quot;#1a1916&quot;,&quot;#a8582f&quot;,&quot;#2f5d8a&quot;]}}">
+class Component extends DCLogic {
+  renderVals() {
+    const accent = this.props.accent ?? '#3f6b3f';
+    const linkHover = { color: accent };
+    return {
+      accent,
+      linkHover,
+      navLinkHover: { color: '#ffffff' },
+      btnHover: { transform: 'translateY(-2px)', filter: 'brightness(1.08)' },
+      ghostHover: { background: 'rgba(246,244,238,.12)' },
+      cardHover: { transform: 'translateY(-8px)', boxShadow: '0 22px 50px rgba(26,25,22,.14)' },
+      tileHover: { transform: 'translateY(-4px)', boxShadow: '0 14px 30px rgba(26,25,22,.09)' },
+      ctaHover: { transform: 'translateY(-2px)' },
+      footHover: { color: '#f6f4ee' },
+      stats: [
+        { value: 500, decimals: 0, suffix: '+', display: '500+', label: 'Cyclists Guided', delay: 0 },
+        { value: 5, decimals: 1, suffix: '', display: '5.0', label: 'Star Rated', delay: 90 },
+        { value: 10, decimals: 0, suffix: '', display: '10', label: 'Max Per Group', delay: 180 },
+        { value: 90, decimals: 0, suffix: '', display: '90', label: 'Min Experience', delay: 270 },
+      ],
+      tours: [
+        {
+          name: 'The Hidden City', href: 'http://localhost:5174/?tour=hidden-city',
+          img: '/en/img/hero.png',
+          badge: 'Most Popular', badgeBg: '#3f6b3f', badgeColor: '#fff',
+          duration: '90 min', level: 'Easy', price: '£45', delay: 0, imgDelay: 160,
+          highlights: "Postman's Park  ·  Bleeding Heart Yard  ·  Cloth Fair  ·  Charterhouse Square",
+          desc: 'Discover secret corners and hidden alleyways of London that most visitors never see.',
+          stops: ["Postman's Park", 'Bleeding Heart Yard', 'Cloth Fair', 'Charterhouse Square'],
+        },
+        {
+          name: 'Icons & Insights', href: 'http://localhost:5174/?tour=icons-and-insights',
+          img: '/en/img/hero.png',
+          badge: 'First Timers', badgeBg: '#fff', badgeColor: '#1a1916',
+          duration: '120 min', level: 'Moderate', price: '£45', delay: 100, imgDelay: 260,
+          highlights: "Tower of London  ·  St Paul's Cathedral  ·  Westminster  ·  Buckingham Palace",
+          desc: "London's greatest landmarks connected by bike — the ultimate first-timer tour.",
+          stops: ['Tower of London', "St Paul's Cathedral", 'Westminster', 'Buckingham Palace'],
+        },
+        {
+          name: 'Golden Hour City', href: 'http://localhost:5174/?tour=golden-hour-city',
+          img: '/en/img/hero.png',
+          badge: 'Summer Only', badgeBg: '#fff', badgeColor: '#1a1916',
+          duration: '150 min', level: 'Moderate', price: '£55', delay: 200, imgDelay: 360,
+          highlights: "Thames Embankment  ·  St Paul's at dusk  ·  Millennium Bridge  ·  South Bank at sunset",
+          desc: 'London at its most magical — a summer evening ride along the Thames as the sun sets.',
+          stops: ['Thames Embankment', "St Paul's at dusk", 'Millennium Bridge', 'South Bank at sunset'],
+        },
+      ],
+      promises: [
+        { num: '1', title: 'Max 10 Guests', body: 'Your guide knows your name and can answer every question. We will never take more than 10 riders on an open tour.', delay: 0 },
+        { num: '2', title: 'Genuinely Local Routes', body: 'We live in the Barbican. The City is our daily commute — we know every alley, hidden garden and shortcut the coach tours can\u2019t reach.', delay: 80 },
+        { num: '3', title: 'Premium Bikes', body: 'Quality hybrid bikes, maintained daily before every departure.', delay: 160 },
+        { num: '4', title: 'Everything Included', body: 'Bike, helmet, hi-vis vest and printed route map — all included. No hidden fees, ever.', delay: 0 },
+        { num: '5', title: 'Flexible Cancellation', body: 'Cancel more than 48 hours before your tour for a full refund. Secure payment by Stripe.', delay: 80 },
+        { num: '6', title: 'All Abilities Welcome', body: 'Flat, traffic-calmed routes with quality bikes maintained daily. Ages 12 and up.', delay: 160 },
+      ],
+      steps: [
+        { num: '1', title: 'Choose Your Tour', body: 'Pick from three routes: a 90-minute hidden gem ride, a two-hour landmark tour, or a golden hour evening adventure.', delay: 0 },
+        { num: '2', title: 'Select Your Date', body: 'Our live calendar shows real-time availability. See exactly which dates and times are open.', delay: 120 },
+        { num: '3', title: 'Pay Securely', body: 'Card, Apple Pay or Google Pay — all secured by Stripe. Your booking reference arrives within 60 seconds.', delay: 240 },
+        { num: '4', title: 'Show Up & Explore', body: 'Meet us at the Barbican Centre, Silk Street, 10 minutes before your tour. We take care of the rest.', delay: 360 },
+      ],
+      reviews: [
+        { quote: 'The absolute highlight of our London trip. Our guide knew every hidden corner and the small group made it feel like a private tour.', initials: 'SM', name: 'Sarah M.', meta: 'Boston · TripAdvisor', delay: 0 },
+        { quote: "We've done bike tours in eight different cities and this was by far the best. The routes avoid traffic and the stories bring everything to life.", initials: 'TE', name: 'Tom & Ellie', meta: 'Edinburgh · Google', delay: 120 },
+        { quote: "I've lived in London 20 years and still discovered places I'd never seen. A completely new perspective on the city I thought I knew.", initials: 'MK', name: 'Margaret K.', meta: 'Melbourne · TripAdvisor', delay: 240 },
+      ],
+    };
+  }
+
+  componentDidMount() {
+    try { this._setup(); } catch(e) { document.title = 'ERR: ' + (e && e.message); }
+  }
+  _setup() {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const revealEls = Array.from(document.querySelectorAll('[data-reveal]'));
+
+    if (reduce) {
+      revealEls.forEach(el => { el.style.opacity = '1'; el.style.transform = 'none'; });
+      const l0 = document.getElementById('lbt-line'); if (l0) l0.style.width = '84%';
+      return;
+    }
+
+    const animateCount = (el) => {
+      const target = parseFloat(el.getAttribute('data-count'));
+      const decimals = parseInt(el.getAttribute('data-count-decimals') || '0', 10);
+      const suffix = el.getAttribute('data-count-suffix') || '';
+      const dur = 1400;
+      const start = performance.now();
+      const tick = (now) => {
+        const t = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = (target * eased).toFixed(decimals) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toFixed(decimals) + suffix;
+      };
+      requestAnimationFrame(tick);
+    };
+
+    const reveal = (el) => {
+      if (el._revealed) return;
+      el._revealed = true;
+      const delay = parseInt(el.getAttribute('data-reveal-delay') || '0', 10);
+      setTimeout(() => {
+        el.style.opacity = '1';
+        if (!el.hasAttribute('data-kenburns')) el.style.transform = 'none';
+        if (el.hasAttribute('data-reveal-clip')) el.style.clipPath = 'inset(0 0 0% 0)';
+        const counter = el.querySelector('[data-count]');
+        if (counter) animateCount(counter);
+        if (el.hasAttribute('data-reveal-cascade')) {
+          const kids = el.querySelectorAll('[data-cascade]');
+          kids.forEach((c, i) => {
+            setTimeout(() => {
+              c.style.opacity = '1';
+              if (!c.hasAttribute('data-kenburns')) c.style.transform = 'none';
+              if (c.hasAttribute('data-reveal-clip')) c.style.clipPath = 'inset(0 0 0% 0)';
+              c.style.filter = 'none';
+            }, 140 + i * 130);
+          });
+        }
+      }, delay);
+    };
+
+    const line = document.getElementById('lbt-line');
+    const heroImg = document.getElementById('lbt-hero-img');
+    const nav = document.getElementById('lbt-nav');
+    const scroller = this._scrollParent(revealEls[0]);
+
+    // getBoundingClientRect is reliably viewport-relative here even when the
+    // preview iframe confuses IntersectionObserver, so drive reveals manually.
+    const check = () => {
+      const vh = window.innerHeight || document.documentElement.clientHeight;
+      const trigger = vh * 0.88;
+      revealEls.forEach(el => {
+        if (el._revealed) return;
+        const top = el.getBoundingClientRect().top;
+        if (top < trigger) reveal(el);
+      });
+      if (line && !line._drawn && line.getBoundingClientRect().top < trigger) {
+        line._drawn = true;
+        requestAnimationFrame(() => { line.style.width = '84%'; });
+      }
+      const y = (scroller ? scroller.scrollTop : (window.scrollY || document.documentElement.scrollTop)) || 0;
+      if (heroImg) heroImg.style.transform = `translateY(${y * 0.28}px)`;
+      if (nav) {
+        const on = y > 60;
+        nav.style.background = on ? 'rgba(20,19,17,.82)' : 'transparent';
+        nav.style.boxShadow = on ? '0 1px 0 rgba(246,244,238,.08)' : 'none';
+        nav.style.backdropFilter = on ? 'blur(12px)' : 'blur(0px)';
+        nav.style.padding = on ? '16px 48px' : '26px 48px';
+      }
+    };
+
+    let ticking = false;
+    this._onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { check(); ticking = false; });
+    };
+    this._targets = [window, document, scroller].filter(Boolean);
+    this._targets.forEach(t => t.addEventListener('scroll', this._onScroll, { passive: true }));
+    window.addEventListener('resize', this._onScroll, { passive: true });
+    check();
+    // Safety re-checks in case layout/scale settles after first paint.
+    setTimeout(check, 250);
+    setTimeout(check, 800);
+  }
+
+  _scrollParent(el) {
+    let node = el && el.parentElement;
+    while (node && node !== document.body) {
+      const oy = getComputedStyle(node).overflowY;
+      if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight + 4) return node;
+      node = node.parentElement;
+    }
+    return null;
+  }
+
+  componentWillUnmount() {
+    if (this._onScroll && this._targets) {
+      this._targets.forEach(t => t.removeEventListener('scroll', this._onScroll));
+      window.removeEventListener('resize', this._onScroll);
+    }
+  }
+}
+</script>
+
+<script>
+(function(){
+  var API="http://localhost:8787";
+  function money(p){return "£"+Math.round(p/100);}
+  function patch(){
+    var cards=document.querySelectorAll("[data-tour-card]");
+    if(!cards.length){return setTimeout(patch,150);}
+    fetch(API+"/tours").then(function(r){return r.json();}).then(function(d){
+      var byId={}; (d.tours||[]).forEach(function(t){byId[t.id]=t;});
+      cards.forEach(function(a){
+        var m=(a.getAttribute("href")||"").match(/tour=([^&]+)/); if(!m)return;
+        var t=byId[m[1]]; if(!t)return;
+        var set=function(sel,val){var e=a.querySelector(sel); if(e&&val!=null)e.textContent=val;};
+        set("[data-t=name]",t.name);
+        set("[data-t=badge]",t.badge||"");
+        set("[data-t=duration]",t.duration_min+" min");
+        set("[data-t=level]",t.difficulty);
+        set("[data-t=desc]",t.tagline);
+        set("[data-t=price]",money(t.price_pence));
+        set("[data-t=highlights]",(t.route_highlights||[]).join("  ·  "));
+        var im=a.querySelector("[data-t=img]"); if(im&&t.hero_image){im.src=t.hero_image;}
+        var im=a.querySelector("[data-t=img]"); if(im&&t.hero_image){im.src=t.hero_image;}
+      });
+    }).catch(function(){});
+  }
+  if(document.readyState!=="loading")setTimeout(patch,400);
+  else document.addEventListener("DOMContentLoaded",function(){setTimeout(patch,400);});
+})();
+</script>
+</body>
+</html>

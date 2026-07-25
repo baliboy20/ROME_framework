@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G9 · Mid-tour event logger — Guide App</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — G9 Mid-tour event logger &middot; CategoryChips (design-handoff component) + note <a href="index.html">index</a></div>
+<div class="guide-frame">
+  <div id="header-mount"></div>
+  <div class="guide-content">
+    <p class="body-text" style="font-size:13.5px">Pick a category, add a short note.</p>
+    <div class="category-chips" id="catChips">
+      <button class="cchip selected" onclick="selectCategory(this,'Rest stop')">Rest stop</button>
+      <button class="cchip" onclick="selectCategory(this,'Mechanical')">Mechanical</button>
+      <button class="cchip" onclick="selectCategory(this,'Route change')">Route change</button>
+      <button class="cchip" onclick="selectCategory(this,'Weather')">Weather</button>
+      <button class="cchip" onclick="selectCategory(this,'Other')">Other</button>
+    </div>
+    <div class="dup-guard-row">
+      <div class="a-field" style="flex:1;margin-bottom:0"><label>Note</label><input id="f-event" placeholder="e.g. Short rest stop, regrouped fine"></div>
+      <button class="g-small-btn" onclick="logEvent()">Log</button>
+    </div>
+    <div class="g-log-list" id="eventLog" style="margin-top:14px"></div>
+    <a class="g-btn g-btn-secondary" href="guide-playbook.html">Back to playbook</a>
+  </div>
+</div>
+<script src="guide-shell.js"></script>
+<script>
+renderGuideHeader('guide-playbook.html', 'G9 · LOG', 'Mid-tour event logger');
+var category = 'Rest stop';
+function selectCategory(btn, val){
+  document.querySelectorAll('#catChips .cchip').forEach(function(c){ c.classList.remove('selected'); });
+  btn.classList.add('selected');
+  category = val;
+}
+var events = [];
+function render(){
+  var html = '';
+  events.forEach(function(e){ html += '<div class="event-log-row"><span><span class="mono" style="color:var(--text-muted)">[' + e.cat + ']</span> ' + e.note + '</span><span class="mono">now</span></div>'; });
+  document.getElementById('eventLog').innerHTML = html || '<div class="event-log-row" style="color:var(--text-faint)"><span>No events logged yet.</span><span></span></div>';
+}
+function logEvent(){
+  var v = document.getElementById('f-event').value.trim();
+  if (!v) return;
+  events.unshift({ cat: category, note: v });
+  document.getElementById('f-event').value = '';
+  render();
+}
+render();
+</script>
+</body>
+</html>

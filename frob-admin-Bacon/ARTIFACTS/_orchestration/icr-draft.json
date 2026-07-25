@@ -1,0 +1,45 @@
+{
+  "intent": "greenfield",
+  "qualityVerdict": "SUFFICIENT",
+  "as_is_required": false,
+  "prototype": { "enabled": true },
+  "inputs": [
+    { "form": "spec", "location": "raw-requirements/FOB-TSPEC-001_Technical_Spec.md", "quality_score": 0.98, "issues": [], "reliability": "Reliable" },
+    { "form": "docs", "location": "raw-requirements/ governance+analysis+module-specs+decision-records (Reliable)", "quality_score": 0.92, "issues": ["module-prefixed REQ IDs vs AORDL REQ-### regex — P1 tooling decision"], "reliability": "Reliable" },
+    { "form": "docs", "location": "raw-requirements/ derived design set v0.9 (Data_Dictionary, Surface_Journey_Coverage, Operational_Workflows, Architecture_Allocation, Journey_Index)", "quality_score": 0.85, "issues": ["PROPOSED v0.9"], "reliability": "PROPOSED", "sponsorAuthorized": true },
+    { "form": "docs", "location": "raw-requirements/ 3 Claude Design handovers (non-normative)", "quality_score": 0.8, "issues": ["visual paste-sets"], "reliability": "PROPOSED", "sponsorAuthorized": true }
+  ],
+  "clarifications": [],
+  "infraConstraints": {
+    "hosting": "Cloudflare account exists; prod D1+KV namespaces for friendsonbikes.uk exist; staging namespaces to be created (TDR-11).",
+    "payments": "Stripe Embedded Checkout, test/GBP, implemented (TDR-06).",
+    "email": "Postmark APPROVED for v1 (TDR-09).",
+    "sms": "Twilio configured; orchestration direct-vs-Knock OPEN (TDR-10 / D-NOTIF-1); interim direct Twilio.",
+    "weather": "Met Office DataHub via Worker proxy (TDR-17).",
+    "transit": "TfL Unified API, use street field (TDR-17).",
+    "canonicalRepo": "admin-rome (has CI); rome-dev superseded (TDR-12) — to be provided.",
+    "localDev": "Wrangler against local D1, no in-memory substitute (TDR-12).",
+    "avoid": ["Durable Objects", "Cloudflare Queues", "AI Gateway", "Vectorize", "Workers AI", "Cloudflare Access", "SendGrid", "MailChannels"],
+    "procurement": "Apple Developer account for mobile-guide iOS distribution not yet obtained."
+  },
+  "tdrs": [
+    {"id":"TDR-01","status":"APPROVED","scope":"stack","decision":"Cloudflare-native: Workers (Hono) for APIs, Pages for frontends, D1 (UK) for data, KV for sessions/tokens, R2 for objects, Cron Triggers for scheduled jobs.","binds":["P3","P4","P5"]},
+    {"id":"TDR-02","status":"APPROVED","scope":"stack","decision":"Do NOT use Durable Objects, Cloudflare Queues, AI Gateway, Vectorize, Workers AI, or Cloudflare Access.","binds":["P3","P4"]},
+    {"id":"TDR-03","status":"APPROVED","scope":"data","decision":"Persistence is Cloudflare D1 (UK); all access goes through the core-data-access layer plus a run-once, in-order migration runner.","binds":["P3","P4","P5"]},
+    {"id":"TDR-04","status":"APPROVED","scope":"data","decision":"Money is stored as integer pence; timestamps are ISO-8601 UTC.","binds":["P5"]},
+    {"id":"TDR-05","status":"APPROVED","scope":"pattern","decision":"Idempotency (webhooks, cron sends, checkout-session creation) uses a D1 store keyed by the provider event/idempotency key (INSERT OR IGNORE) — not KV, not a queue.","binds":["P5"]},
+    {"id":"TDR-06","status":"APPROVED","scope":"vendor","decision":"Payments use Stripe Embedded Checkout (ui_mode:'embedded'); fulfilment driven strictly by the checkout.session.completed webhook, never the return page; cumulative refunds read from charge.amount_refunded.","binds":["P3","P5"]},
+    {"id":"TDR-07","status":"APPROVED","scope":"pattern","decision":"Auth is JWT (Web Crypto HS256, 1h) plus KV sessions for Customer (signed link) and Owner; Guides authenticate by X-Device-ID validated per guide. No Cloudflare Access.","binds":["P3","P5"]},
+    {"id":"TDR-08","status":"APPROVED","scope":"pattern","decision":"Departure capacity is enforced by an atomic D1 transactional decrement of held/confirmed counts — NOT Durable Objects, NOT held_until+sweep.","binds":["P3","P5"]},
+    {"id":"TDR-09","status":"APPROVED","scope":"vendor","decision":"Outbound transactional email is Postmark for v1.","binds":["P4","P5"]},
+    {"id":"TDR-10","status":"PROPOSED","scope":"vendor","decision":"SMS/WhatsApp delivery: direct Twilio vs Knock-orchestrated Twilio — undecided (D-NOTIF-1). Interim: direct Twilio, no orchestration lock-in.","binds":["P4"]},
+    {"id":"TDR-11","status":"APPROVED","scope":"deployment","decision":"Deploy to Cloudflare Pages (customer/admin/editor) + Workers (API) on friendsonbikes.uk; prod D1+KV namespaces exist; staging namespaces to be created; secrets set via Wrangler.","binds":["P4"]},
+    {"id":"TDR-12","status":"APPROVED","scope":"dev-env","decision":"Canonical source repo is admin-rome (carries CI); rome-dev is spurious/superseded (DR-1). Local dev runs Wrangler against a local D1 — no in-memory substitute.","binds":["P4","P5"]},
+    {"id":"TDR-13","status":"APPROVED","scope":"stack","decision":"webapp-customer is vanilla static HTML/CSS/JS + Flutter Web island widgets, per-locale static dirs (en/fr/es); webapp-admin/webapp-editor are full Flutter Web SPAs; mobile-guide is Flutter iOS-native (primary) plus Flutter Web PWA (fallback).","binds":["P3","P5"]},
+    {"id":"TDR-14","status":"APPROVED","scope":"pattern","decision":"Static publish is manual-only (operator-triggered rebuild of the customer site); no automated on-content-change trigger.","binds":["P3","P5"]},
+    {"id":"TDR-15","status":"APPROVED","scope":"dependency","decision":"Design system = forest-palette CSS tokens + Syne (display) / DM Sans (body), self-hosted variable woff2; every customer surface renders from it; a Flutter component library is to-build.","binds":["P3","P5"]},
+    {"id":"TDR-16","status":"APPROVED","scope":"dependency","decision":"The guide app (mobile-guide/GMT) stack is flutter_map + CyclOSM tiles + FMTC offline caching + sembast persistence + flutter_bloc + go_router + GetIt; offline-critical once a tour starts.","binds":["P3","P5"]},
+    {"id":"TDR-17","status":"APPROVED","scope":"vendor","decision":"Advisory APIs: Met Office DataHub (forecast, free tier, via a Worker proxy so the JWT never ships to the browser) and TfL Unified API (use the street field — road is often null); both read-only, informational at v1.","binds":["P4","P5"]}
+  ],
+  "notes": "Corrected re-stage adds FOB-TSPEC-001 (Reliable) → 17 TDRs mechanically extracted, no carrier downgrade (16 APPROVED, 1 PROPOSED TDR-10 SMS). Design set PROPOSED-but-sponsor-authorized. Known P1 tooling decision: module-prefixed REQ IDs vs AORDL REQ-### regex. Carried gaps: DR-B8/F1/F6 unauthored REQs; UJ-TOUR-08 no REQ; DR-F8/F9 undriven states; interim-default open decisions."
+}

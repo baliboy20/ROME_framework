@@ -1,0 +1,176 @@
+# FOB api-worker — Cloudflare Worker (Hono + Zod)
+# satisfies: TDR-01 (Workers/Pages/D1-UK/KV/R2/Cron), TDR-11 (deploy target friendsonbikes.uk)
+# Co-deploys core-data-access (library, TDR-03) and cron-workers (TDR-01 Cron) in this same bundle.
+#
+# REFERENCE ONLY: conventions adapted from _user_input/reference/stripe-poc/SOURCE/worker/wrangler.toml.
+# No app code, ids, or secrets are copied — all ids below are PLACEHOLDERS for P5/ops to replace.
+
+name = "fob-api-worker"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# ---------------------------------------------------------------------------
+# Top-level [vars] = shared non-secret defaults. Real values are overridden
+# per-environment below; secrets are NEVER set here — see .dev.vars.example
+# and "wrangler secret put" (TDR-11: secrets via Wrangler).
+# ---------------------------------------------------------------------------
+[vars]
+ALLOWED_ORIGIN = "http://localhost:5173"
+STRIPE_MODE = "test"
+NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
+
+# ---------------------------------------------------------------------------
+# D1 (UK region) — satisfies: TDR-01, TDR-03. Bound as `DB`; all persistence
+# flows through core-data-access (single access pattern + run-once in-order
+# migration runner). database_id values below are PLACEHOLDERS.
+# ---------------------------------------------------------------------------
+[[d1_databases]]
+binding = "DB"
+database_name = "fob-d1-dev"
+database_id = "<dev-d1-id>"
+
+# ---------------------------------------------------------------------------
+# KV — satisfies: TDR-01, TDR-07 (JWT/KV session), TDR-05 (idempotency store
+# convention; primary idempotency for webhooks/bookings lives in D1 per
+# TDR-05, this KV namespace backs short-lived request-level idempotency
+# caching only). Namespace ids below are PLACEHOLDERS.
+# ---------------------------------------------------------------------------
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "<dev-kv-sessions-id>"
+
+[[kv_namespaces]]
+binding = "IDEMPOTENCY"
+id = "<dev-kv-idempotency-id>"
+
+# ---------------------------------------------------------------------------
+# R2 — satisfies: TDR-01. Static assets / uploaded objects (e.g. published
+# HTML bundles pushed by the manual publish flow, TDR-14).
+# ---------------------------------------------------------------------------
+[[r2_buckets]]
+binding = "ASSETS"
+bucket_name = "fob-assets-dev"
+
+# ---------------------------------------------------------------------------
+# Cron Triggers — satisfies: TDR-01 (Cron), realizes `cron-workers` component
+# (architecture.md §2, §4.4; component-specs.md#cron-workers).
+#   gdpr-cleanup          03:00 UTC daily  -> CNA04
+#   send-reminders        08:00 UTC daily  -> TOUR02 (T-1 reminders)
+#   send-review-requests  09:00 UTC daily  -> POST02 (T+24h review requests)
+#   compliance-check      daily (04:00 UTC)-> FLEET07
+# Additional scheduled jobs (abandonment sweep BOOK09, weather TOUR03,
+# no-show TOUR10) share these same trigger slots; the Worker's scheduled()
+# handler dispatches by time-of-day — see SOURCE/worker/migrations/README.md
+# and P5 cron-workers implementation notes.
+# ---------------------------------------------------------------------------
+[triggers]
+crons = [
+  "0 3 * * *",
+  "0 8 * * *",
+  "0 9 * * *",
+  "0 4 * * *"
+]
+
+# ===========================================================================
+# [env.staging]
+# satisfies: TDR-11 — prod D1+KV already exist; STAGING namespaces are
+# "to be created" (see infra-impact-brief.md). Do NOT deploy to staging
+# until database_id / kv id placeholders below are replaced with real ids.
+# ===========================================================================
+[env.staging]
+name = "fob-api-worker-staging"
+
+[env.staging.vars]
+ALLOWED_ORIGIN = "https://staging.friendsonbikes.uk"
+STRIPE_MODE = "test"
+NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "fob-d1-staging"
+database_id = "<staging-d1-id-TO-BE-CREATED>"
+
+[[env.staging.kv_namespaces]]
+binding = "SESSIONS"
+id = "<staging-kv-sessions-id-TO-BE-CREATED>"
+
+[[env.staging.kv_namespaces]]
+binding = "IDEMPOTENCY"
+id = "<staging-kv-idempotency-id-TO-BE-CREATED>"
+
+[[env.staging.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "fob-assets-staging"
+
+[env.staging.triggers]
+crons = [
+  "0 3 * * *",
+  "0 8 * * *",
+  "0 9 * * *",
+  "0 4 * * *"
+]
+
+# ===========================================================================
+# [env.production]
+# satisfies: TDR-11 — deploy target friendsonbikes.uk. Sponsor states prod
+# D1 + KV namespaces ALREADY EXIST; ops must replace the placeholder ids
+# below with the real production ids before first production deploy. Never
+# commit real ids/secrets here — placeholders only, per repo secret-scan
+# policy.
+# ===========================================================================
+[env.production]
+name = "fob-api-worker"
+routes = [
+  { pattern = "friendsonbikes.uk/api/*", zone_name = "friendsonbikes.uk" }
+]
+
+[env.production.vars]
+ALLOWED_ORIGIN = "https://friendsonbikes.uk"
+STRIPE_MODE = "live"
+NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "fob-d1-prod"
+database_id = "<prod-d1-id>"
+
+[[env.production.kv_namespaces]]
+binding = "SESSIONS"
+id = "<prod-kv-sessions-id>"
+
+[[env.production.kv_namespaces]]
+binding = "IDEMPOTENCY"
+id = "<prod-kv-idempotency-id>"
+
+[[env.production.r2_buckets]]
+binding = "ASSETS"
+bucket_name = "fob-assets-prod"
+
+[env.production.triggers]
+crons = [
+  "0 3 * * *",
+  "0 8 * * *",
+  "0 9 * * *",
+  "0 4 * * *"
+]
+
+# ---------------------------------------------------------------------------
+# Local dev server (DEV-4/TDR-12: local dev = Wrangler + local D1)
+# ---------------------------------------------------------------------------
+[dev]
+port = 8787
+local_protocol = "http"
+
+# ---------------------------------------------------------------------------
+# Secrets — satisfies: TDR-11 (secrets via Wrangler, never in this file):
+#   wrangler secret put STRIPE_SECRET_KEY       [--env staging|production]
+#   wrangler secret put STRIPE_WEBHOOK_SECRET   [--env staging|production]
+#   wrangler secret put JWT_SECRET              [--env staging|production]
+#   wrangler secret put POSTMARK_TOKEN          [--env staging|production]
+#   wrangler secret put MET_OFFICE_KEY          [--env staging|production]
+#   wrangler secret put TFL_APP_KEY             [--env staging|production]
+# Local dev secrets go in SOURCE/worker/.dev.vars (gitignored) — copy from
+# .dev.vars.example and fill with your own test/sandbox values, never real
+# production secrets.
+# ---------------------------------------------------------------------------

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/colors.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/typography.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/spacing.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/alpha-ladder.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/styles.css">
+</helmet>
+<div onClick="{{ toggle }}" style="{{ rowStyle }}">
+  <div style="{{ boxStyle }}">{{ mark }}</div>
+  <div style="flex:1;min-width:0">
+    <div style="font:600 14px var(--font-sans);color:var(--text-strong)">{{ label }}</div>
+    <sc-if value="{{ hasSub }}" hint-placeholder-val="{{ false }}">
+      <div style="font:500 11px var(--font-mono);color:var(--text-muted);margin-top:2px">{{ sub }}</div>
+    </sc-if>
+  </div>
+  <sc-if value="{{ hasChip }}" hint-placeholder-val="{{ false }}">
+    <span style="{{ chipStyle }}">{{ chip }}</span>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:320,&quot;height&quot;:52},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;First-aid kit&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;sub&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;chip&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;checked&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;onChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(checked: boolean) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  renderVals(){
+    const controlled = this.props.checked != null;
+    const checked = controlled ? this.props.checked : (this.state.checked ?? false);
+    const onChange = this.props.onChange;
+    const chip = this.props.chip;
+    return {
+      label: this.props.label ?? 'Checklist item',
+      sub: this.props.sub, hasSub: !!this.props.sub,
+      chip, hasChip: !!chip,
+      mark: checked ? '✓' : '',
+      toggle: () => { const next = !checked; if(!controlled) this.setState({ checked:next }); if(onChange) onChange(next); },
+      rowStyle:'display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius-field);cursor:pointer;background:var(--surface-card);border:1px solid '+(checked?'rgba(198,255,63,.4)':'var(--wb12)'),
+      boxStyle:'width:24px;height:24px;flex:none;border-radius:7px;display:flex;align-items:center;justify-content:center;font:700 13px var(--font-sans);'+(checked?'background:var(--accent-lime);color:var(--pill-ink)':'background:var(--wb05);border:1px solid var(--wb16);color:transparent'),
+      chipStyle:'display:inline-block;padding:3px 9px;border-radius:var(--radius-round);font:600 9.5px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;background:var(--wb09);color:var(--text-muted)'
+    };
+  }
+}
+</script>
+</body>
+</html>

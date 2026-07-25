@@ -1,0 +1,31 @@
+ID: REQ-PRE05
+Actor: Owner
+Intent: update enquiry
+Preconditions:
+  - An enquiry exists in open or acknowledged status
+Conditions:
+  - The reply is sent via the prospect's stated preferred channel, not the Owner's choice
+Postconditions:
+  - The enquiry moves to responded, with the response time recorded against its target
+Outcomes:
+  - Owner sees the enquiry marked responded, with response performance visible as on time or overdue
+Invariants:
+  - An enquiry's response time is never earlier than its creation time
+NonFunctional:
+  Reliability:
+    - Overdue enquiries remain visible until responded, never silently dropped from view
+Errors:
+  - error: None declared
+    message: Not applicable — the reply itself happens off-system; this requirement only covers the status update.
+    httpCode: 200
+    userAction: None
+ScopeBoundary:
+  InScope:
+    - Marking an enquiry responded
+  OutOfScope:
+    - Automating the reply content itself
+OpenQuestions:
+  - question: None
+    status: RESOLVED
+    resolution: No open questions for this requirement
+CopilotMode: STRICT

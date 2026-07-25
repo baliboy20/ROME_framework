@@ -1,0 +1,30 @@
+ID: REQ-TOUR07
+Actor: System
+Intent: submit cancellation-notice
+Preconditions:
+  - the Owner has cancelled a confirmed booking's tour, for reasons such as weather, guide illness, or force majeure
+Conditions:
+  - the notice states the reason and available remediation options
+  - the notice is sent via every available channel given the urgency
+Postconditions:
+  - the notice is sent
+  - if a remediation choice is required, it is now pending
+Outcomes:
+  - Customer is informed of the cancellation through every relevant channel
+Invariants:
+  - a cancellation notice is sent through every channel available for the booking, not just one
+NonFunctional:
+  Reliability:
+    - delivery reaches the customer even if one channel fails
+Errors: []
+ScopeBoundary:
+  InScope:
+    - cancellation notification
+  OutOfScope:
+    - the remediation choice itself
+    - the underlying cancellation decision, made by the Owner off-system
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: "D-TOUR-5 closed: choose-your-own remediation of refund/rebook/credit"
+CopilotMode: STRICT

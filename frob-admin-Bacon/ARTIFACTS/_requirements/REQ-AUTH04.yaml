@@ -1,0 +1,41 @@
+ID: REQ-AUTH04
+Actor: SystemSessionGuard
+Intent: reject expired-session
+
+Preconditions:
+  - a request presents a session token
+
+Conditions:
+  - a session older than its 1-hour lifetime is expired
+
+Postconditions:
+  - an expired session grants no access
+  - the actor must re-establish a session
+
+Outcomes:
+  - Customer or Owner is asked to sign in again when their session has expired
+  - no operator or booking action proceeds under an expired session
+
+Invariants:
+  - no action ever proceeds under an expired session
+
+NonFunctional:
+  Security:
+    - expiry is enforced independently of any value asserted by the requester
+
+Errors:
+  - error: "expired session presented"
+    message: "Your session has expired — please sign in again"
+    httpCode: 401
+    userAction: "Sign in again to establish a new session"
+
+ScopeBoundary:
+  InScope:
+    - expiry enforcement and re-authentication prompt
+  OutOfScope:
+    - silent refresh
+    - sliding expiry
+
+OpenQuestions: []
+
+CopilotMode: STRICT

@@ -1,0 +1,33 @@
+ID: REQ-BOOK16
+Actor: Owner
+Intent: transition booking-status
+Preconditions:
+  - a booking exists
+Conditions:
+  - the Owner selects one of a constrained set of valid transitions for the booking's current status, never an arbitrary status value
+  - each transition runs the same side-effects its equivalent automatic path already enforces (e.g. confirming a provisional booking behaves like REQ-BOOK05's payment-triggered confirmation for capacity purposes; cancelling runs the same capacity-release and refund-eligibility logic as REQ-BOOK07)
+Postconditions:
+  - the booking's status reflects the completed transition, with all of that transition's normal side-effects applied (capacity released/held, refund flagged if applicable)
+Outcomes:
+  - Owner sees the new status reflected immediately
+  - departure capacity accounting and payment/refund state stay consistent with the new status
+Invariants:
+  - a status transition never bypasses the capacity or refund side-effects its equivalent automatic path would apply
+  - only a defined, valid transition is ever permitted, never a free-form status write
+NonFunctional:
+  Reliability:
+    - the same atomic capacity guarantees applied to the automatic paths (REQ-BOOK01/05/07/09) apply to an Owner-triggered transition
+Errors:
+  - error: the requested transition is not valid from the booking's current status
+    message: this status change isn't allowed
+ScopeBoundary:
+  InScope:
+    - Owner-side transitions between the booking's defined statuses (draft, confirmed, provisionally-confirmed, cancelled, abandoned), constrained to a valid-transition set
+  OutOfScope:
+    - a free-form status field
+    - inventing new statuses beyond the five already defined on bookings.status
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: no open questions remain for this requirement, closed by DR-B12c
+CopilotMode: STRICT

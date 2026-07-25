@@ -1,0 +1,29 @@
+name = "poc-embedded-checkout-fob-worker"
+main = "src/index.ts"
+compatibility_date = "2025-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+STRIPE_MODE = "test"
+# NOTE: this is toggled between the local dev origin and the deployed Pages origin depending on
+# whether you're about to run `wrangler dev` or `wrangler deploy` — this project deploys to a
+# single (default/unnamed) Wrangler environment, so there's no per-environment var split. See
+# README "Deploying" section. Currently set for: LOCAL DEV. Before `wrangler deploy`, change to
+# "https://stripe-embedded-checkout-poc.pages.dev" (the live deployed Pages origin).
+ALLOWED_ORIGIN = "http://localhost:5173"
+RESEND_FROM_EMAIL = "payments@friendsonbikes.uk"
+
+# Secrets (set via `wrangler secret put`):
+#   STRIPE_SECRET_KEY
+#   STRIPE_WEBHOOK_SECRET
+#   RESEND_API_KEY
+#   ADMIN_API_KEY
+
+[[d1_databases]]
+binding = "DB"
+database_name = "poc-embedded-checkout-fob"
+database_id = "b16f0dbd-2880-459b-8a89-e713587ece03"
+
+[dev]
+port = 8788
+local_protocol = "http"

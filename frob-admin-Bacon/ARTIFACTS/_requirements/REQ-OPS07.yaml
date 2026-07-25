@@ -1,0 +1,47 @@
+ID: REQ-OPS07
+
+Actor: Guide
+
+Intent: submit departure-signoff
+
+Preconditions:
+  - the kit check, bike inspection, risk assessment, all rider check-ins, and the briefing are each complete
+
+Conditions:
+  - any outstanding flag from a prior step blocks this sign-off
+
+Postconditions:
+  - the tour is marked ready to depart
+  - a tour-readiness record is saved
+
+Outcomes:
+  - Guide has confirmed every operational gate passed before departure
+  - the tour is handed over to the navigation journey's live tracking start
+
+Invariants:
+  - the tour never proceeds to live tracking while any prior gate is unresolved
+
+NonFunctional:
+  Reliability:
+    - the readiness summary reflects the current state of every prior gate, not a cached one
+
+Errors:
+  - error: "an outstanding flag exists"
+    message: "An outstanding flag remains, such as a failed bike, an uncleared rider, a missing kit item, or an unconfirmed briefing. Sign-off is blocked."
+    httpCode: 409
+    userAction: "Resolve the outstanding flag before signing off"
+  - error: "departure is significantly delayed"
+    message: "Departure is more than 30 minutes past the planned start. Confirm a shortened route or contact the Owner about cancellation."
+    httpCode: 409
+    userAction: "Confirm a shortened route, or contact the Owner about cancellation"
+
+ScopeBoundary:
+  InScope:
+    - aggregated final gate
+    - readiness record
+  OutOfScope:
+    - the navigation journey's own tour-start and location activation
+
+OpenQuestions: []
+
+CopilotMode: STRICT

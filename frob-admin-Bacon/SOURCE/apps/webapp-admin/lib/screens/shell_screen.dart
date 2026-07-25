@@ -1,0 +1,168 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/auth_cubit.dart';
+import '../theme/tokens.dart';
+import '../widgets/tree_nav.dart';
+import 'payments_screen.dart';
+import 'enquiries_screen.dart';
+import 'calendar_screen.dart';
+import 'scheduler_screen.dart';
+import 'bike_allocation_screen.dart';
+import 'add_bike_screen.dart';
+import 'flagged_bike_screen.dart';
+import 'new_booking_screen.dart';
+import 'booking_browser_screen.dart';
+import 'alerts_screen.dart';
+import 'deliverability_screen.dart';
+import 'audit_screen.dart';
+import 'publish_screen.dart';
+import 'incidents_screen.dart';
+import 'hazards_screen.dart';
+import 'equipment_screen.dart';
+import 'fleet_readiness_screen.dart';
+import 'bikes_screen.dart';
+import 'compliance_screen.dart';
+
+const kNavGroups = [
+  NavGroup('Bookings & payments', [
+    NavLeaf('A7', 'New booking', '/new-booking'),
+    NavLeaf('A8', 'Payments & refunds', '/payments'),
+    NavLeaf('A9', 'Enquiries', '/enquiries'),
+    NavLeaf('A19', 'Booking browser', '/booking-browser'),
+  ]),
+  NavGroup('Scheduling', [
+    NavLeaf('A17', 'Departure calendar', '/calendar'),
+    NavLeaf('A18', 'Scheduler', '/scheduler'),
+    NavLeaf('A20', 'Bike allocation', '/bike-allocation'),
+  ]),
+  NavGroup('Alerts & records', [
+    NavLeaf('A4', 'Owner alerts', '/alerts'),
+    NavLeaf('A3', 'Deliverability', '/deliverability'),
+    NavLeaf('A5', 'Audit log', '/audit'),
+  ]),
+  NavGroup('Content', [
+    NavLeaf('A6', 'Publish & content', '/publish'),
+  ]),
+  NavGroup('Safety', [
+    NavLeaf('A10', 'Incidents', '/incidents'),
+    NavLeaf('A11', 'Hazard log', '/hazards'),
+  ]),
+  NavGroup('Fleet & equipment', [
+    NavLeaf('A14', 'Fleet readiness', '/fleet-readiness'),
+    NavLeaf('A21', 'Bikes', '/bikes'),
+    NavLeaf('A12', 'Add bike', '/add-bike'),
+    NavLeaf('A13', 'Equipment', '/equipment'),
+    NavLeaf('A15', 'Flagged bike', '/flagged-bike'),
+    NavLeaf('A16', 'Compliance', '/compliance'),
+  ]),
+];
+
+/// Console shell — persistent TreeNav + top bar + swapping content region
+/// (UXC-NAV-3, UXD-18).
+class ShellScreen extends StatefulWidget {
+  const ShellScreen({super.key});
+
+  @override
+  State<ShellScreen> createState() => _ShellScreenState();
+}
+
+class _ShellScreenState extends State<ShellScreen> {
+  String activeRoute = '/calendar';
+
+  Widget _content() {
+    switch (activeRoute) {
+      case '/new-booking':
+        return const NewBookingScreen();
+      case '/enquiries':
+        return const EnquiriesScreen();
+      case '/booking-browser':
+        return const BookingBrowserScreen();
+      case '/calendar':
+        return const CalendarScreen();
+      case '/scheduler':
+        return const SchedulerScreen();
+      case '/bike-allocation':
+        return const BikeAllocationScreen();
+      case '/alerts':
+        return const AlertsScreen();
+      case '/deliverability':
+        return const DeliverabilityScreen();
+      case '/audit':
+        return const AuditScreen();
+      case '/publish':
+        return const PublishScreen();
+      case '/incidents':
+        return const IncidentsScreen();
+      case '/hazards':
+        return const HazardsScreen();
+      case '/fleet-readiness':
+        return const FleetReadinessScreen();
+      case '/bikes':
+        return const BikesScreen();
+      case '/add-bike':
+        return const AddBikeScreen();
+      case '/equipment':
+        return const EquipmentScreen();
+      case '/flagged-bike':
+        return const FlaggedBikeScreen();
+      case '/compliance':
+        return const ComplianceScreen();
+      case '/payments':
+        return const PaymentsScreen();
+      default:
+        return const CalendarScreen();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: FobColors.surfaceBg,
+      body: Row(
+        children: [
+          TreeNav(
+            groups: kNavGroups,
+            activeRoute: activeRoute,
+            onSelect: (r) => setState(() => activeRoute = r),
+          ),
+          Expanded(
+            child: Column(
+              children: [
+                Container(
+                  height: 56,
+                  padding: const EdgeInsets.symmetric(horizontal: FobSpace.card),
+                  decoration: const BoxDecoration(
+                    color: FobColors.surfaceCard,
+                    border: Border(bottom: BorderSide(color: FobColors.hairline)),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(activeRoute.replaceFirst('/', '').toUpperCase(), style: FobText.microLabel),
+                      const Spacer(),
+                      const Text('William · Owner', style: FobText.body),
+                      const SizedBox(width: 12),
+                      TextButton(
+                        key: const Key('signout-button'),
+                        onPressed: () => context.read<AuthCubit>().signOut(),
+                        child: const Text('Sign out'),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(FobSpace.gutter),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1160),
+                      child: _content(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

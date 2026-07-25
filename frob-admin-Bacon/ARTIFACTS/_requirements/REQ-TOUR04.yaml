@@ -1,0 +1,39 @@
+ID: REQ-TOUR04
+Actor: Customer
+Intent: update booking-details
+Preconditions:
+  - a confirmed booking exists
+  - the Customer is authenticated
+Conditions:
+  - only non-financial fields are editable, such as attendee names, ages, dietary needs, allergies, emergency contact, and mobility notes
+  - date and party size are never editable here
+Postconditions:
+  - the booking's non-financial details are updated
+  - a safety-significant change alerts the Owner
+Outcomes:
+  - Customer sees their correction reflected immediately in the tour hub
+  - Guide sees the updated detail before it matters
+Invariants:
+  - a financial field such as date, party size, or price is never editable through this requirement
+NonFunctional:
+  Reliability:
+    - an update is visible in the tour hub and to the Guide before the tour begins
+Errors:
+  - error: Customer attempts to change date or party size
+    message: Date and party size changes must be made through booking modification.
+    httpCode: 200
+    userAction: Use the booking modification path to change date or party size
+  - error: the change is safety-significant, such as a severe allergy added, accessibility flagged, or a minor added
+    message: The update was accepted and the Owner has been alerted for follow-up.
+    httpCode: 200
+    userAction: No action needed; the Owner will follow up
+ScopeBoundary:
+  InScope:
+    - self-service non-financial detail correction
+  OutOfScope:
+    - financial changes, which route to booking
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: "D-TOUR-4 closed: safety-significant alerts Owner"
+CopilotMode: STRICT

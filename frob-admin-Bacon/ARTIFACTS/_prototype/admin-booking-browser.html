@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A19 · Booking browser — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A19 Booking browser &middot; governed by UXC defaults (read-only; UXC-CMP-4 provider refs only) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+
+      <div class="a-field" style="max-width:420px"><label>Search bookings</label><input value="" placeholder="Reference, name, email, tour or status"></div>
+
+      <table class="a-table">
+        <thead><tr><th>Booking</th><th>Customer</th><th>Tour</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">BK-1001</td><td>Tom Baker</td><td>Hidden City</td><td><span class="status-pill lime">succeeded</span></td></tr>
+        </tbody>
+      </table>
+
+      <div class="a-card" style="margin-top:20px;max-width:640px">
+        <div class="eyebrow">BK-1001</div>
+        <div class="card-title serif">Tom Baker</div>
+        <div class="mono" style="font-size:11.5px;color:var(--cyan-text-light);margin-top:2px">BK-1001 · tom.baker@example.com</div>
+        <div class="mono" style="font-size:12.5px;color:var(--text-muted);margin-top:4px">Hidden City · 1 Aug 2026, 10:00</div>
+        <div class="money-val" style="margin-top:10px">£90.00</div>
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+        <div class="a-field"><label>Payment</label><div>pi_3P···F00X (provider reference) — card number never stored.</div></div>
+        <div class="a-field"><label>Waiver</label><div>Accepted 20 Jul 2026</div></div>
+        <div class="a-field"><label>Emergency contact</label><div>Jane Baker · +44 7700 900123</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a19', 'A19 · SCHEDULING', 'Booking browser', 'Search any booking by reference, customer, tour, date or status. Read-only — edits route to A7/A8.');</script>
+</body>
+</html>

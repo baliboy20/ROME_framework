@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A11 · Hazard log — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A11 Hazard log review &middot; governed by UXC defaults (dedupes by street) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <table class="a-table">
+        <thead><tr><th>Hazard</th><th>Street</th><th>Reports</th></tr></thead>
+        <tbody>
+          <tr><td>Pothole</td><td>Riverside Walk</td><td>3</td></tr>
+          <tr><td>Loose drain cover</td><td>Market Street</td><td>1</td></tr>
+        </tbody>
+      </table>
+      <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:14px">Reports dedupe by street — repeat sightings increment the count rather than creating duplicates.</p>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a11', 'A11 · SAFETY', 'Hazard log review', 'Hazards guides log via G13, reviewed here and deduped by street.');</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/colors.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/typography.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/alpha-ladder.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/styles.css">
+</helmet>
+<div style="display:flex;gap:8px">
+  <sc-for list="{{ stars }}" as="s" hint-placeholder-count="5">
+    <div onClick="{{ s.onClick }}" style="{{ s.style }}">★</div>
+  </sc-for>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:200,&quot;height&quot;:48},&quot;value&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:3,&quot;min&quot;:0,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;count&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:5,&quot;min&quot;:3,&quot;max&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;onChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(n: number) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = { hover: 0 };
+  renderVals(){
+    const count = Number(this.props.count ?? 5);
+    const value = this.state.value != null ? this.state.value : Number(this.props.value ?? 0);
+    const onChange = this.props.onChange;
+    const stars = [];
+    for(let n=1;n<=count;n++){
+      stars.push({
+        onClick: () => { this.setState({ value:n }); if(onChange) onChange(n); },
+        style:'cursor:pointer;font-size:26px;line-height:1;transition:color .12s;color:'+(value>=n?'var(--accent-orange)':'var(--wb16)')
+      });
+    }
+    return { stars };
+  }
+}
+</script>
+</body>
+</html>

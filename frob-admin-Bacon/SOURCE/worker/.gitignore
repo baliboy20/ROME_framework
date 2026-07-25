@@ -1,0 +1,11 @@
+# Local dev secrets — never commit (real JWT/Stripe/Postmark values live here)
+.dev.vars
+
+# Wrangler local state (D1/KV/R2 miniflare, caches)
+.wrangler/
+
+# Build output
+dist/
+
+# Deps
+node_modules/

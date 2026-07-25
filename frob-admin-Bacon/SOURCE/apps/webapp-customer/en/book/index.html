@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book your tour — Friends on Bikes</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://friendsonbikes.uk/en/book/">
+<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+<header class="f-nav">
+  <a class="wordmark" href="../index.html">Friends on Bikes</a>
+  <nav>
+    <a href="../tours/index.html">Tours</a>
+    <a href="../saved.html">Saved tours</a>
+    <a href="../hub.html">Manage booking</a>
+  </nav>
+</header>
+<main class="f-wrap narrow">
+  <h1>Book your tour</h1>
+  <p class="muted">Select your date, add attendees and pay securely — all on this page, no redirects.</p>
+
+  <!--
+    Flutter Web island mount point (TDR-13). Covers W4-W10 (selection,
+    attendees, consent, review, payment, confirmation) as a single
+    stateful island so state (selected date/slot/party) persists across
+    the flow without full-page navigation. Talks to api-worker
+    (BOOK01-05) and mounts Stripe Embedded Checkout (BOOK04, TDR-06)
+    for the payment step.
+  -->
+  <div id="booking-island" class="island-mount" data-island="booking" data-island-base="/book/flutter/">
+    <div class="island-noscript" role="status">
+      <p><strong>Booking requires JavaScript.</strong></p>
+      <p>Please enable JavaScript to select a date, add attendees and pay for
+      your tour, or call us to book by phone.</p>
+    </div>
+  </div>
+</main>
+<footer class="f-footer">Friends on Bikes</footer>
+<script src="../island-loader.js" defer></script>
+</body>
+</html>

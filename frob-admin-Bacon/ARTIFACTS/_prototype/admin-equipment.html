@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A13 · Equipment — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A13 Add/replace equipment &middot; governed by UXC defaults (line-by-line, no bulk, no photo) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <table class="a-table">
+        <thead><tr><th>Item</th><th>Type</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="mono">HEL-014</td><td>Helmet</td><td><span class="status-pill lime">in_service</span></td></tr>
+          <tr><td class="mono">HEL-009</td><td>Helmet</td><td><span class="status-pill orange">retired — impact</span></td></tr>
+        </tbody>
+      </table>
+      <button class="a-btn a-btn-primary" style="margin-top:16px">Add/replace item</button>
+      <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:10px">Helmet impact → immediate retirement. Line-by-line only; no bulk edit, no photo capture.</p>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a13', 'A13 · FLEET & EQUIPMENT', 'Equipment', 'Helmets and safety equipment, one line at a time.');</script>
+</body>
+</html>

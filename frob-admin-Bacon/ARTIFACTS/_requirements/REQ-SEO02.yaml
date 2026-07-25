@@ -1,0 +1,41 @@
+ID: REQ-SEO02
+Actor: SystemContentPublisher
+Intent: create crawlable-index
+
+Preconditions:
+  - one or more public locations are published
+
+Conditions:
+  - the index lists every currently-published crawlable location
+
+Postconditions:
+  - an up-to-date index of crawlable locations is available to crawlers
+
+Outcomes:
+  - a search crawler discovers all published locations from one index
+
+Invariants:
+  - the index lists exactly the currently-published crawlable locations
+
+NonFunctional:
+  Reliability:
+    - the index reflects the latest publication within the rebuild cycle
+
+Errors:
+  - error: "a location is published but absent from the index"
+    message: "This location is missing from the crawlable index and has been flagged for review"
+    httpCode: 200
+    userAction: "Owner should review and correct the index gap"
+
+ScopeBoundary:
+  InScope:
+    - an index of crawlable public locations
+  OutOfScope:
+    - per-crawler customisation
+
+OpenQuestions:
+  - question: "Is the index rebuild trigger automated or manual?"
+    status: RESOLVED
+    resolution: "Manual-only publish trigger; the index behaviour is unaffected by this choice (Decision Record DR-10)."
+
+CopilotMode: STRICT

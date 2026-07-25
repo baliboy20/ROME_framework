@@ -1,0 +1,42 @@
+ID: REQ-FLEET03
+
+Actor: Owner
+
+Intent: view fleet-readiness
+
+Preconditions:
+  - at least one asset exists
+
+Conditions:
+  - the view reflects current status counts of bikes by status and equipment by type and status
+  - the view surfaces alerts for failed inspections, items expiring within 30 days, and approaching compliance dates
+
+Postconditions:
+  - the Owner has seen current fleet readiness
+
+Outcomes:
+  - Owner can judge whether the fleet meets tomorrow's tour needs
+
+Invariants:
+  - critical alerts, including a compliance lapse, no in-date helmets, or most bikes flagged, are never hidden or buried
+
+NonFunctional:
+  Reliability:
+    - the view reflects the current state, or clearly timestamps when it does not
+
+Errors:
+  - error: "fleet data is stale"
+    message: "Fleet readiness data may be out of date — last synced at the time shown"
+    httpCode: 200
+    userAction: "Refresh the view or note the sync timestamp shown"
+
+ScopeBoundary:
+  InScope:
+    - read-only fleet and equipment status
+    - readiness alerts
+  OutOfScope:
+    - acting on an alert
+
+OpenQuestions: []
+
+CopilotMode: STRICT

@@ -1,0 +1,35 @@
+ID: REQ-BOOK13
+Actor: Owner
+Intent: cancel departure
+Preconditions:
+  - a departure exists
+  - Owner is in an operator session
+Conditions:
+  - the departure is marked cancelled and unbookable, and its held-plus-confirmed capacity is released
+  - per-booking remediation, such as refund, rebook, or credit, for bookings on it is performed by a separate operator-cancellation flow
+  - this requirement performs the departure-level change only
+Postconditions:
+  - the departure is cancelled and accepts no new bookings
+  - its capacity is released
+Outcomes:
+  - Owner sees the departure removed from the bookable schedule
+  - bookings on it are handed to the operator-cancellation remediation flow
+Invariants:
+  - a cancelled departure never accepts a new booking
+NonFunctional:
+  Reliability:
+    - cancelling the departure and releasing its capacity is atomic
+Errors:
+  - error: none blocking at the departure level
+    message: a failed per-booking remediation is handled and flagged by the operator-cancellation flow, not this requirement
+ScopeBoundary:
+  InScope:
+    - departure-level cancellation and capacity release
+  OutOfScope:
+    - the per-booking remediation itself, orchestrated by a separate flow
+    - partial cancellation, which reduces capacity via REQ-BOOK12
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: departure lifecycle ownership resolved by DR-BO1
+CopilotMode: STRICT

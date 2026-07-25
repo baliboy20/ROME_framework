@@ -1,0 +1,52 @@
+ID: REQ-OPS03
+
+Actor: Guide
+
+Intent: submit bike-inspection
+
+Preconditions:
+  - bikes assigned to today's tour exist and are read from the fleet record of bike condition and status
+
+Conditions:
+  - each bike is checked against five roadworthiness points
+  - any failed check triggers the fleet flagging capability, removing that bike from service for the day
+
+Postconditions:
+  - every assigned bike is recorded as passed or flagged
+  - a declaration is signed once all bikes are processed
+
+Outcomes:
+  - Guide has a per-bike record of roadworthiness, with any failures excluded from today's tour
+  - Owner can see which bikes are out of service
+
+Invariants:
+  - a failed bike is never assigned to a tour
+  - the declaration is never signed while any bike's status is unresolved
+
+NonFunctional:
+  Security:
+    - each check is timestamped
+
+Errors:
+  - error: "a bike fails with no replacement available"
+    message: "This bike failed inspection and no replacement is available. Party size will be reduced."
+    httpCode: 409
+    userAction: "Confirm the reduced party size and continue the inspection"
+  - error: "a bike was previously flagged for service and not yet cleared"
+    message: "This bike is still flagged for service and cannot be assigned to today's tour."
+    httpCode: 409
+    userAction: "Select a different bike or wait for the flag to be cleared"
+
+ScopeBoundary:
+  InScope:
+    - per-bike roadworthiness check
+    - declaration
+    - flagging call to the fleet record
+  OutOfScope:
+    - bike repair
+    - bike clearance
+    - bike status ownership
+
+OpenQuestions: []
+
+CopilotMode: STRICT

@@ -1,0 +1,49 @@
+ID: REQ-OPS12
+
+Actor: Owner
+
+Intent: approve incident-report
+
+Preconditions:
+  - a formal incident report exists
+
+Conditions:
+  - the Owner may add notes or request more information before approving
+
+Postconditions:
+  - the report is approved and dispatched to the insurer within the statutory 24-hour window
+  - status is tracked through to closure
+
+Outcomes:
+  - Owner has dispatched the report and can track its status from submitted through insurer acknowledgement, review, and closure
+
+Invariants:
+  - an incident's status only ever advances forward through submitted, insurer-acknowledged, reviewed, and closed
+
+NonFunctional:
+  Reliability:
+    - dispatch happens within the statutory 24-hour window from the incident
+
+Errors:
+  - error: "the insurer responds with questions"
+    message: "The insurer has requested more information. Add the requested information and resubmit."
+    httpCode: 409
+    userAction: "Add the requested information and resubmit"
+  - error: "the incident reveals a systemic risk"
+    message: "This incident indicates a systemic risk. A full risk-assessment review has been triggered."
+    httpCode: 202
+    userAction: "Follow up on the triggered risk-assessment review"
+
+ScopeBoundary:
+  InScope:
+    - insurer dispatch
+    - status tracking
+  OutOfScope:
+    - the insurer's own review process
+
+OpenQuestions:
+  - question: "What incident-report format does the PLI insurer require?"
+    status: OPEN
+    resolution: "Deferred and stubbed with a conservative internal record until the insurer's required format is supplied; dispatch mechanics remain placeholder until then."
+
+CopilotMode: STRICT

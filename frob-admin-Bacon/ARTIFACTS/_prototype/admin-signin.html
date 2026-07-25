@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A1 · Sign in — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+<style>.signin-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center}</style>
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A1 Sign-in gate (public, no session) &middot; A2 sign-out lands here idempotently <a href="index.html">index</a></div>
+<div class="signin-wrap">
+  <div class="a-card" style="width:360px;text-align:center">
+    <div class="wordmark serif" style="font-size:1.4rem">Friends on Bikes</div>
+    <div class="eyebrow" style="margin:4px 0 22px">BACK OFFICE</div>
+    <div class="a-field" style="text-align:left"><label>Operator email</label><input value="william@friendsonbikes.example"></div>
+    <div class="a-field" style="text-align:left"><label>Password</label><input type="password" value="••••••••"></div>
+    <a class="a-btn a-btn-primary" href="admin-payments.html" style="width:100%;justify-content:center;margin-top:8px">Sign in</a>
+    <p style="margin:16px 0 0;font:500 11.5px var(--font-sans);color:var(--text-faint)">One operator session — reused everywhere in the console, A8 payments included. Sign-out is idempotent.</p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+ID: REQ-BOOK05
+Actor: SystemScheduler
+Intent: update booking
+Preconditions:
+  - the payment provider reports that a booking's payment attempt succeeded
+Conditions:
+  - the provider's event identifier is checked against the idempotency store before processing
+  - the booking transitions to confirmed exactly once regardless of how many times the provider reports the same event
+Postconditions:
+  - the booking is confirmed
+  - the held capacity becomes permanently allocated
+Outcomes:
+  - Customer receives their confirmation
+  - Owner sees the booking as confirmed and its capacity allocated
+Invariants:
+  - a booking is confirmed at most once per payment
+  - capacity is decremented exactly once per confirmed booking
+NonFunctional:
+  Reliability:
+    - confirmation is correct under repeated, out-of-order, or non-delivery of the provider's report
+Errors:
+  - error: the same provider event identifier is reported again
+    message: recorded as a duplicate; the original confirmation stands and no second confirmation occurs
+  - error: the provider's report never arrives
+    message: the booking stays in the draft state until a reconciliation sweep detects the underlying payment succeeded and confirms it
+ScopeBoundary:
+  InScope:
+    - provider-report-driven, idempotent confirmation
+  OutOfScope:
+    - treating the customer's post-payment landing view as the fulfilment signal, which is explicitly never authoritative
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: no open questions remain for this requirement
+CopilotMode: STRICT

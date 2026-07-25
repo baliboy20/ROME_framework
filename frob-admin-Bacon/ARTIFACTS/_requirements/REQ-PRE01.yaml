@@ -1,0 +1,34 @@
+ID: REQ-PRE01
+Actor: Prospect
+Intent: view tour-catalogue
+Preconditions:
+  - One or more tours exist with status published
+Conditions:
+  - Catalogue reflects only currently-published tours
+  - Optional filters for theme, duration, time of day, and suitability narrow the list
+Postconditions:
+  - The Prospect sees the current published catalogue, filtered per their choices
+Outcomes:
+  - Prospect identifies one or more tours of interest
+  - Prospect can proceed to inspect a tour or submit an enquiry if nothing matches
+Invariants:
+  - The catalogue never shows an unpublished or archived tour
+NonFunctional:
+  Performance:
+    - Catalogue content is available on first load
+Errors:
+  - error: No tours match the applied filters
+    message: No tours match your filters. Reset filters or submit an enquiry instead.
+    httpCode: 200
+    userAction: Reset filters or proceed to submit an enquiry
+ScopeBoundary:
+  InScope:
+    - Filtered listing of published tours
+  OutOfScope:
+    - Personalised ranking
+    - Paid placement
+OpenQuestions:
+  - question: None
+    status: RESOLVED
+    resolution: No open questions for this requirement
+CopilotMode: STRICT

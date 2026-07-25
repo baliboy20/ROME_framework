@@ -1,0 +1,44 @@
+ID: REQ-NOTIF03
+Actor: SystemNotificationDispatcher
+Intent: reject duplicate-send
+
+Preconditions:
+  - a send is attempted carrying an idempotency key that has already been processed
+
+Conditions:
+  - a key is honoured once
+  - a repeat within the retention window is a duplicate
+
+Postconditions:
+  - the duplicate is not delivered
+  - the original send stands
+
+Outcomes:
+  - Customer receives exactly one message for one event despite retries
+
+Invariants:
+  - at most one delivery per idempotency key
+
+NonFunctional:
+  Reliability:
+    - retried jobs and repeated provider callbacks never double-send
+
+Errors:
+  - error: "idempotency-key store unavailable"
+    message: "Delivery pending"
+    httpCode: 202
+    userAction: "No action needed — the send is held rather than risked as a duplicate"
+
+ScopeBoundary:
+  InScope:
+    - idempotent send suppression
+  OutOfScope:
+    - exactly-once delivery across multiple providers
+    - cross-region deduplication
+
+OpenQuestions:
+  - question: "Where should the idempotency-key store live?"
+    status: RESOLVED
+    resolution: "Reuse the existing webhook-events durable-storage pattern (Decision Record DR-8)."
+
+CopilotMode: STRICT

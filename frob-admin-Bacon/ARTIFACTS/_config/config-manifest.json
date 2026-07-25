@@ -1,0 +1,72 @@
+{
+  "phase": "P4",
+  "agent": "lucien-P4",
+  "components": [
+    "webapp-customer",
+    "webapp-admin",
+    "webapp-editor",
+    "mobile-guide",
+    "api-worker",
+    "core-data-access",
+    "cron-workers"
+  ],
+  "bindings": {
+    "d1": {
+      "binding": "DB",
+      "region": "UK",
+      "accessPattern": "core-data-access only (single access pattern + run-once in-order migration runner)",
+      "environments": {
+        "dev": "local Wrangler D1 (miniflare), database_name fob-d1-dev",
+        "staging": "database_name fob-d1-staging, id TO BE CREATED",
+        "production": "database_name fob-d1-prod, id ALREADY EXISTS (sponsor-provisioned) — placeholder in wrangler.toml to be replaced by ops"
+      }
+    },
+    "kv": {
+      "namespaces": ["SESSIONS", "IDEMPOTENCY"],
+      "environments": {
+        "dev": "placeholder ids, local Wrangler KV",
+        "staging": "TO BE CREATED",
+        "production": "ALREADY EXISTS (sponsor-provisioned) — placeholder ids to be replaced by ops"
+      }
+    },
+    "r2": {
+      "binding": "ASSETS",
+      "buckets": ["fob-assets-dev", "fob-assets-staging", "fob-assets-prod"]
+    },
+    "cron": {
+      "triggers": [
+        { "name": "gdpr-cleanup", "schedule": "0 3 * * *", "req": "CNA04" },
+        { "name": "send-reminders", "schedule": "0 8 * * *", "req": "TOUR02" },
+        { "name": "send-review-requests", "schedule": "0 9 * * *", "req": "POST02" },
+        { "name": "compliance-check", "schedule": "0 4 * * *", "req": "FLEET07" }
+      ],
+      "note": "Additional scheduled jobs (BOOK09 abandonment sweep, TOUR03 weather, TOUR10 no-show) share these trigger slots; scheduled() handler dispatches by time-of-day (P5)."
+    }
+  },
+  "environments": ["dev", "staging", "production"],
+  "secrets": [
+    "STRIPE_SECRET_KEY",
+    "STRIPE_WEBHOOK_SECRET",
+    "JWT_SECRET",
+    "POSTMARK_TOKEN",
+    "MET_OFFICE_KEY",
+    "TFL_APP_KEY"
+  ],
+  "vendors": {
+    "email": "Postmark",
+    "sms": "Twilio (deferred, D-NOTIF-1 / TDR-10 PROPOSED — interim direct integration, no orchestration lock-in)",
+    "weather": "Met Office DataHub (via Worker proxy, TDR-17)",
+    "transit": "TfL Unified API (via Worker proxy, TDR-17)",
+    "payments": "Stripe Embedded Checkout (TDR-06)"
+  },
+  "devRuntimeDiffers": true,
+  "divergenceNote": "local dev uses Wrangler local D1 + miniflare; prod uses Cloudflare edge D1/KV/R2 — same bindings, different runtime backing",
+  "tdrCitations": [
+    { "tdr": "TDR-01", "artifact": "SOURCE/worker/wrangler.toml" },
+    { "tdr": "TDR-02", "artifact": "SOURCE/worker/wrangler.toml (no DO/Queues/AI Gateway/Vectorize/Workers AI/Access bindings present)" },
+    { "tdr": "TDR-03", "artifact": "SOURCE/worker/migrations/README.md" },
+    { "tdr": "TDR-09", "artifact": "ARTIFACTS/_config/config-manifest.json (vendors.email), SOURCE/worker/.dev.vars.example" },
+    { "tdr": "TDR-11", "artifact": "SOURCE/worker/wrangler.toml ([env.staging]/[env.production], routes)" },
+    { "tdr": "TDR-17", "artifact": "SOURCE/worker/.dev.vars.example (MET_OFFICE_KEY, TFL_APP_KEY)" }
+  ]
+}

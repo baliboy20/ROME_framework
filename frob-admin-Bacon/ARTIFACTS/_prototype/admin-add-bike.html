@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A12 · Add bike — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A12 Add bike &middot; UXD-10 duplicate-id guard + next-sequential suggestion <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+
+      <div class="a-card" style="max-width:520px">
+        <div class="dup-guard-row">
+          <div class="a-field" style="flex:1;margin-bottom:0">
+            <label>Bike identifier</label>
+            <input id="f-bikeid" value="FOB-001" oninput="clearGuard()">
+          </div>
+          <button class="a-btn a-btn-primary" onclick="attemptAdd()">Add bike</button>
+        </div>
+        <div id="add-bike-guard"></div>
+        <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:14px">No photo capture (deliberate scope cut).</p>
+      </div>
+
+      <div class="eyebrow" style="margin-top:26px;margin-bottom:8px">FLEET REGISTER</div>
+      <div id="fleetList" class="g-log-list"></div>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>
+renderAdminShell('a12', 'A12 · FLEET & EQUIPMENT', 'Add bike',
+  'Register a new bike to the fleet. Duplicate identifiers are blocked.');
+
+var fleet = ['FOB-001','FOB-002','FOB-003','FOB-005','FOB-006','FOB-009','FOB-011'];
+function renderFleet(){
+  var html = '';
+  fleet.sort().forEach(function(id){ html += '<div class="event-log-row"><span class="mono">' + id + '</span><span class="status-pill lime">in_service</span></div>'; });
+  document.getElementById('fleetList').innerHTML = html;
+}
+renderFleet();
+
+function nextSuggestion(){
+  var nums = fleet.map(function(id){ return parseInt(id.split('-')[1], 10); });
+  var max = Math.max.apply(null, nums);
+  var next = max + 1;
+  return 'FOB-' + String(next).padStart(3, '0');
+}
+function clearGuard(){ document.getElementById('add-bike-guard').innerHTML = ''; }
+function attemptAdd(){
+  var val = document.getElementById('f-bikeid').value.trim().toUpperCase();
+  var guard = document.getElementById('add-bike-guard');
+  if (!val) return;
+  if (fleet.indexOf(val) !== -1) {
+    guard.innerHTML = '<div class="guard-msg blocked">' + val + ' is already in use — next available is ' + nextSuggestion() + '.</div>';
+    return;
+  }
+  fleet.push(val);
+  renderFleet();
+  guard.innerHTML = '<div class="inline-confirm">' + val + ' added to the fleet.</div>';
+  document.getElementById('f-bikeid').value = nextSuggestion();
+}
+</script>
+</body>
+</html>

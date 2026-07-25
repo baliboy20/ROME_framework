@@ -1,0 +1,38 @@
+ID: REQ-TOUR08
+Actor: Customer
+Intent: submit remediation-choice
+Preconditions:
+  - a cancellation notice is pending a remediation choice
+  - multiple options were offered
+Conditions:
+  - the choice is one of the offered options, full refund, rebook, or credit
+  - the choice triggers the corresponding action in booking
+Postconditions:
+  - the chosen remediation is actioned via booking
+  - the tour hub reflects the outcome
+Outcomes:
+  - Customer sees their choice confirmed and actioned
+Invariants:
+  - a remediation choice is actioned exactly once per cancelled booking
+NonFunctional:
+  Reliability:
+    - the chosen remediation completes even if the customer doesn't return to confirm receipt
+Errors:
+  - error: no choice made within the configured window
+    message: A default remediation has been applied per policy.
+    httpCode: 200
+    userAction: No action needed; the default remediation has been applied
+  - error: rebook chosen but no alternative date available
+    message: No alternative date was available, so a tour credit has been applied with an apology.
+    httpCode: 200
+    userAction: No action needed; a tour credit has been applied
+ScopeBoundary:
+  InScope:
+    - remediation choice and trigger into booking
+  OutOfScope:
+    - the payment and refund mechanics themselves, owned by booking
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: "D-TOUR-5 closed: choose-your-own remediation of refund/rebook/credit"
+CopilotMode: STRICT

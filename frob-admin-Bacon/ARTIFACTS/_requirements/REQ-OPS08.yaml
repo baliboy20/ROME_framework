@@ -1,0 +1,39 @@
+ID: REQ-OPS08
+
+Actor: Guide
+
+Intent: submit issue-log
+
+Preconditions:
+  - the tour is active, handed over from the final pre-departure sign-off
+
+Conditions:
+  - the issue is categorised as mechanical, illness, or early-leave, and the chosen resolution recorded
+  - an issue assessed as an emergency is instead escalated to a preliminary incident record
+
+Postconditions:
+  - the issue and its resolution are logged
+  - the tour manifest reflects any change, such as a rider leaving early
+
+Outcomes:
+  - Owner can see what happened, when, and how it was resolved
+  - the group continues appropriately adjusted
+
+Invariants:
+  - an issue is never left unlogged once resolved
+
+NonFunctional:
+  Reliability:
+    - the issue's location is captured from the Guide's current position at the time
+
+Errors: []
+
+ScopeBoundary:
+  InScope:
+    - non-emergency mid-tour event logging
+  OutOfScope:
+    - emergency response
+
+OpenQuestions: []
+
+CopilotMode: STRICT
