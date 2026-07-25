@@ -32,25 +32,33 @@ class AppButton extends StatelessWidget {
 
     switch (kind) {
       case AppButtonKind.primary:
-        return Opacity(
-          opacity: disabled ? 0.6 : 1,
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: FobColors.gradientBrand,
+        // Disabled state via colour alpha, not an Opacity wrapper (Opacity
+        // forces an offscreen render — banned by the perf guide §4).
+        final grad = disabled
+            ? LinearGradient(
+                begin: FobColors.gradientBrand.begin,
+                end: FobColors.gradientBrand.end,
+                colors: FobColors.gradientBrand.colors
+                    .map((c) => c.withValues(alpha: 0.5))
+                    .toList(),
+              )
+            : FobColors.gradientBrand;
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: grad,
+            borderRadius: BorderRadius.circular(FobRadius.button),
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
               borderRadius: BorderRadius.circular(FobRadius.button),
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(FobRadius.button),
-                onTap: disabled ? null : onPressed,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                  child: DefaultTextStyle(
-                    style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.5),
-                    child: child,
-                  ),
+              onTap: disabled ? null : onPressed,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                child: DefaultTextStyle(
+                  style: const TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13.5),
+                  child: child,
                 ),
               ),
             ),

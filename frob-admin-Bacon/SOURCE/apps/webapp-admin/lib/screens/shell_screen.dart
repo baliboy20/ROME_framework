@@ -22,6 +22,7 @@ import 'equipment_screen.dart';
 import 'fleet_readiness_screen.dart';
 import 'bikes_screen.dart';
 import 'compliance_screen.dart';
+import 'tours_screen.dart';
 
 const kNavGroups = [
   NavGroup('Bookings & payments', [
@@ -29,24 +30,25 @@ const kNavGroups = [
     NavLeaf('A8', 'Payments & refunds', '/payments'),
     NavLeaf('A9', 'Enquiries', '/enquiries'),
     NavLeaf('A19', 'Booking browser', '/booking-browser'),
-  ]),
+  ], hue: FobColors.pink),
   NavGroup('Scheduling', [
+    NavLeaf('A22', 'Tours & routes', '/tours'),
     NavLeaf('A17', 'Departure calendar', '/calendar'),
     NavLeaf('A18', 'Scheduler', '/scheduler'),
     NavLeaf('A20', 'Bike allocation', '/bike-allocation'),
-  ]),
+  ], hue: FobColors.cyan),
   NavGroup('Alerts & records', [
     NavLeaf('A4', 'Owner alerts', '/alerts'),
     NavLeaf('A3', 'Deliverability', '/deliverability'),
     NavLeaf('A5', 'Audit log', '/audit'),
-  ]),
+  ], hue: FobColors.orange),
   NavGroup('Content', [
     NavLeaf('A6', 'Publish & content', '/publish'),
-  ]),
+  ], hue: FobColors.cyan),
   NavGroup('Safety', [
     NavLeaf('A10', 'Incidents', '/incidents'),
     NavLeaf('A11', 'Hazard log', '/hazards'),
-  ]),
+  ], hue: FobColors.orange),
   NavGroup('Fleet & equipment', [
     NavLeaf('A14', 'Fleet readiness', '/fleet-readiness'),
     NavLeaf('A21', 'Bikes', '/bikes'),
@@ -54,7 +56,7 @@ const kNavGroups = [
     NavLeaf('A13', 'Equipment', '/equipment'),
     NavLeaf('A15', 'Flagged bike', '/flagged-bike'),
     NavLeaf('A16', 'Compliance', '/compliance'),
-  ]),
+  ], hue: FobColors.lime),
 ];
 
 /// Console shell — persistent TreeNav + top bar + swapping content region
@@ -77,6 +79,8 @@ class _ShellScreenState extends State<ShellScreen> {
         return const EnquiriesScreen();
       case '/booking-browser':
         return const BookingBrowserScreen();
+      case '/tours':
+        return const ToursScreen();
       case '/calendar':
         return const CalendarScreen();
       case '/scheduler':

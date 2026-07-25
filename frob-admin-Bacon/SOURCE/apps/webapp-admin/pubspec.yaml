@@ -29,9 +29,12 @@ flutter:
   # FINDING-003: bundle the parchment mockup fonts the theme references
   # (Playfair Display serif for titles/price; Plus Jakarta Sans for body).
   fonts:
-    - family: Playfair Display
+    # Source Serif 4 (variable) — titles + money. Replaces Playfair Display
+    # (TDR-15 design-system update): upright lining figures fix currency
+    # legibility in tables; tabular widths keep money columns aligned.
+    - family: Source Serif 4
       fonts:
-        - asset: assets/fonts/PlayfairDisplay.ttf
+        - asset: assets/fonts/SourceSerif4.ttf
     - family: Plus Jakarta Sans
       fonts:
         - asset: assets/fonts/PlusJakartaSans.ttf

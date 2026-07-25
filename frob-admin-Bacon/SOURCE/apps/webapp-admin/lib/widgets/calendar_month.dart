@@ -57,8 +57,11 @@ class CalendarMonth extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('$day', style: const TextStyle(fontSize: 11, color: FobColors.textMuted)),
-                  ...events.take(2).map((e) => GestureDetector(
+                  ...events.take(2).map((e) => InkWell(
+                        // InkWell (not GestureDetector) so web gets a click
+                        // cursor + hover highlight on day chips.
                         onTap: () => onChipTap(e),
+                        borderRadius: BorderRadius.circular(FobRadius.pill),
                         child: Container(
                           margin: const EdgeInsets.only(top: 2),
                           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),

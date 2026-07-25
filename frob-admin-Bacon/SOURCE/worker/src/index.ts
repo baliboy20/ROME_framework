@@ -20,6 +20,7 @@ import { fleet } from "./routes/fleet";
 import { posttour } from "./routes/posttour";
 import { backoffice } from "./routes/backoffice";
 import { adminLists } from "./routes/admin-lists";
+import { toursAdmin } from "./routes/tours-admin";
 import { handleScheduled } from "./cron/handlers";
 
 const app = new Hono<{ Bindings: Env }>();
@@ -57,6 +58,7 @@ app.route("/", fleet);
 app.route("/", posttour);
 app.route("/", backoffice);
 app.route("/", adminLists);
+app.route("/", toursAdmin);
 
 app.notFound((c) => c.json({ error: "not_found" }, 404));
 

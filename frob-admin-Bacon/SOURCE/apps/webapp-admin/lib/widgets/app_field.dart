@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/tokens.dart';
 
-/// Field — labelled form field. `money` uses Playfair. UXC-FRM-1: format
+/// Field — labelled form field. `money` uses the serif (Source Serif 4). UXC-FRM-1: format
 /// validation fires on blur; required-field validation on submit attempt.
 class AppField extends StatelessWidget {
   final String label;

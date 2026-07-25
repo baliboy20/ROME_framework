@@ -58,6 +58,7 @@ class FobDataTable<T> extends StatelessWidget {
         ),
         ...rows.map((r) => InkWell(
               onTap: onRowTap == null ? null : () => onRowTap!(r),
+              hoverColor: FobColors.surfaceBgLo, // clearer web hover affordance
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                 decoration: const BoxDecoration(

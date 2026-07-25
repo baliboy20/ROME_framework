@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import '../models/models.dart';
 import '../theme/tokens.dart';
 
-/// Solid pill for any status string (booking browser, notices, etc.),
+/// Status pill for any status string (booking browser, notices, etc.),
 /// following the parchment handoff (.status-pill): mono uppercase,
-/// radius-round, solid accent fill. Text + hue, never colour alone.
+/// radius-round, pale accent-tint fill. Text + hue, never colour alone.
 class PillLabel extends StatelessWidget {
   final String text;
   final Color background;
@@ -16,34 +16,19 @@ class PillLabel extends StatelessWidget {
     required this.foreground,
   });
 
-  /// Map a raw booking/payment status string to the fixed parchment hue.
-  static PillLabel forStatus(String status) {
-    final s = status.toLowerCase();
-    Color bg;
-    Color fg;
-    if (s.contains('confirm') && !s.contains('provision')) {
-      bg = FobColors.lime;
-      fg = FobColors.pillInk;
-    } else if (s.contains('provision') || s.contains('draft')) {
-      bg = FobColors.cyan;
-      fg = FobColors.pillInk;
-    } else if (s.contains('cancel') || s.contains('fail')) {
-      bg = FobColors.pink;
-      fg = Colors.white;
-    } else if (s.contains('refund') || s.contains('abandon')) {
-      bg = FobColors.orange;
-      fg = Colors.white;
-    } else {
-      bg = FobColors.surfaceBgLo;
-      fg = FobColors.textMuted;
-    }
-    return PillLabel(text: status, background: bg, foreground: fg);
-  }
+  /// Build from a pale-tint accent hue (mockup `hues` map).
+  factory PillLabel.hue(FobHue hue, String text) =>
+      PillLabel(text: text, background: hue.background, foreground: hue.foreground);
+
+  /// Map a raw booking/payment status string to the fixed parchment hue
+  /// (single source: [FobStatusHue.forStatus]).
+  static PillLabel forStatus(String status) => PillLabel.hue(FobStatusHue.forStatus(status), status);
 
   @override
   Widget build(BuildContext context) {
+    // mockup pill: 3px 10px, radius-round, mono 10px/600, .05em, uppercase.
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 11, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(FobRadius.round),
@@ -53,7 +38,7 @@ class PillLabel extends StatelessWidget {
         style: TextStyle(
           fontFamily: FobText.mono,
           fontSize: 10,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w600,
           letterSpacing: 0.5,
           color: foreground,
         ),
@@ -67,26 +52,24 @@ class StatusPill extends StatelessWidget {
   final StatusPillState status;
   const StatusPill({super.key, required this.status});
 
-  (Color, Color) get _tones {
+  FobHue get _hue {
     switch (status) {
       case StatusPillState.succeeded:
-        return (FobColors.lime, FobColors.pillInk);
+        return FobHue.lime; // settled
       case StatusPillState.refunded:
-        return (FobColors.cyan, FobColors.pillInk);
+        return FobHue.cyan; // money-back / info
       case StatusPillState.requiresPayment:
-        return (FobColors.orange, Colors.white);
+        return FobHue.orange; // warning
       case StatusPillState.failed:
-        return (FobColors.pink, Colors.white);
+        return FobHue.pink; // needs action
       case StatusPillState.noShow:
-        return (FobColors.surfaceBgLo, FobColors.textMuted);
       case StatusPillState.draft:
-        return (const Color(0x1733322A), FobColors.textMuted);
+        return FobHue.neutral;
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final (bg, fg) = _tones;
-    return PillLabel(text: statusLabel(status), background: bg, foreground: fg);
+    return PillLabel.hue(_hue, statusLabel(status));
   }
 }

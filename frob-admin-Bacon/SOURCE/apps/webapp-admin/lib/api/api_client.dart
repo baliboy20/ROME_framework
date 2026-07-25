@@ -39,7 +39,8 @@ class ApiClient {
     String msg = r.body;
     try {
       final j = jsonDecode(r.body);
-      msg = j['error']?.toString() ?? r.body;
+      // Prefer the human-readable `message` if present, else the `error` code.
+      msg = j['message']?.toString() ?? j['error']?.toString() ?? r.body;
     } catch (_) {}
     throw ApiException(r.statusCode, msg);
   }
@@ -235,6 +236,32 @@ class ApiClient {
     final r = await _http.post(_u('/admin/bookings/$id/transition'),
         headers: _headers, body: jsonEncode({'transition': transition}));
     return await _decode(r) as Map<String, dynamic>;
+  }
+
+  // A22 tour/route catalogue (REQ-TOUR-CAT prototype, DR-B13)
+  Future<List<dynamic>> getAdminTours() async {
+    // Cache-bust: a bare GET /admin/tours can be served from the browser's
+    // HTTP cache, so a refetch after create/edit would show a stale list.
+    final uri = _u('/admin/tours').replace(
+      queryParameters: {'_': DateTime.now().millisecondsSinceEpoch.toString()},
+    );
+    final r = await _http.get(uri, headers: _headers);
+    return _list(await _decode(r), 'tours');
+  }
+
+  Future<Map<String, dynamic>> createTour(Map<String, dynamic> body) async {
+    final r = await _http.post(_u('/admin/tours'), headers: _headers, body: jsonEncode(body));
+    return await _decode(r) as Map<String, dynamic>;
+  }
+
+  Future<Map<String, dynamic>> updateTour(String id, Map<String, dynamic> body) async {
+    final r = await _http.patch(_u('/admin/tours/$id'), headers: _headers, body: jsonEncode(body));
+    return await _decode(r) as Map<String, dynamic>;
+  }
+
+  Future<void> deleteTour(String id) async {
+    final r = await _http.delete(_u('/admin/tours/$id'), headers: _headers);
+    await _decode(r);
   }
 
   // A13 equipment (FLEET02)

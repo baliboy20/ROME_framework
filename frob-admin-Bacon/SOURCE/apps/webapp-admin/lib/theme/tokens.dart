@@ -32,12 +32,54 @@ class FobColors {
   static const textLinkHover = Color(0xFFFF2D9B);
 
   static const hairline = Color(0x1A33322A); // ~wb09
+  static const hairlineWarm = Color(0xFFF2EDDF); // warm parchment divider line
+  static const error = Color(0xFFC2334D); // destructive / error text (parchment-tuned red)
 
   static const gradientBrand = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [pink, orange],
   );
+
+  // Chip / status-pill hues — low-alpha accent tint + readable `-text-light`
+  // accent colour (mockup `hues` map). NOT solid saturated fills.
+  static const wb09 = Color(0x1733322A); // ~9% ink on parchment
+}
+
+/// A chip/pill hue: pale accent-tinted background + readable accent text.
+class FobHue {
+  final Color background;
+  final Color foreground;
+  const FobHue(this.background, this.foreground);
+
+  static const pink = FobHue(Color(0x1FFF2D9B), FobColors.pinkText); // ~12%
+  static const lime = FobHue(Color(0x33C6FF3F), FobColors.limeText); // ~20%
+  static const cyan = FobHue(Color(0x2422D3EE), FobColors.cyanText); // ~14%
+  static const orange = FobHue(Color(0x24FF7A1A), FobColors.orangeText); // ~14%
+  static const neutral = FobHue(FobColors.wb09, FobColors.textMuted);
+}
+
+/// Single source of truth mapping a status (booking / tour / payment) to its
+/// pill hue — replaces the per-screen switch statements (theme-guide §4).
+class FobStatusHue {
+  FobStatusHue._();
+
+  /// Booking + generic status strings (confirmed/draft/cancelled/refunded…).
+  static FobHue forStatus(String status) {
+    final s = status.toLowerCase();
+    if (s.contains('confirm') && !s.contains('provision')) return FobHue.lime; // settled
+    if (s.contains('provision') || s.contains('draft')) return FobHue.cyan; // info
+    if (s.contains('cancel') || s.contains('fail')) return FobHue.pink; // needs action
+    if (s.contains('refund') || s.contains('abandon')) return FobHue.orange; // warning
+    return FobHue.neutral;
+  }
+
+  /// Tour catalogue status (published/draft/archived).
+  static FobHue forTour(String status) => switch (status) {
+        'published' => FobHue.lime,
+        'archived' => FobHue.neutral,
+        _ => FobHue.orange, // draft
+      };
 }
 
 class FobSpace {
@@ -52,28 +94,42 @@ class FobSpace {
 
 class FobRadius {
   FobRadius._();
-  static const field = 9.0;
-  static const button = 11.0;
-  static const table = 12.0;
-  static const card = 16.0;
-  static const round = 20.0;
+  // Cupertino-softened from DS defaults (TDR-15 update).
+  static const field = 10.0;
+  static const button = 12.0;
+  static const table = 16.0;
+  static const card = 18.0;
+  static const round = 20.0; // status pills
+  static const pill = 8.0;
 }
 
 class FobText {
   FobText._();
 
-  // Playfair Display — titles and money only.
-  static const serif = 'Playfair Display';
+  // Source Serif 4 — titles and money only (TDR-15 update; upright lining
+  // figures, replaces Playfair Display).
+  static const serif = 'Source Serif 4';
   // Plus Jakarta Sans — functional text.
   static const sans = 'Plus Jakarta Sans';
   // monospace — ids, codes, micro-labels.
   static const mono = 'monospace';
 
+  // Lining + tabular figures — applied to every serif style (titles + money)
+  // so currency reads with upright, column-aligned digits (the design-system
+  // reason Source Serif 4 replaced Playfair). Sans figures are already lining.
+  static const liningFigures = [
+    FontFeature.enable('lnum'),
+    FontFeature.enable('tnum'),
+  ];
+
   static const pageTitle = TextStyle(
     fontFamily: serif,
-    fontSize: 27,
+    fontSize: 30,
     fontWeight: FontWeight.w600,
+    letterSpacing: -0.63, // -0.021em at 30px
+    height: 1.14,
     color: FobColors.textStrong,
+    fontFeatures: liningFigures,
   );
 
   static const cardTitle = TextStyle(
@@ -98,22 +154,17 @@ class FobText {
     color: FobColors.textLabel,
   );
 
-  // Playfair Display's default figures are old-style/proportional (elegant
-  // but hard to scan in a table of amounts) — request lining + tabular
-  // figures (lnum/tnum) so digits align and read like plain numerals while
-  // keeping the serif's editorial character. Silently no-ops if the loaded
-  // font/browser doesn't support the feature.
-  static const moneyFontFeatures = [
-    FontFeature.enable('lnum'),
-    FontFeature.enable('tnum'),
-  ];
+  // Retained alias (Source Serif 4 has native lining figures; the feature
+  // request keeps tabular alignment in money columns). Kept so existing
+  // call sites (`FobText.moneyFontFeatures`) compile unchanged.
+  static const moneyFontFeatures = liningFigures;
 
   static const money = TextStyle(
     fontFamily: serif,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: FobColors.textPrice,
-    fontFeatures: moneyFontFeatures,
+    fontFeatures: liningFigures,
   );
 }
 
@@ -141,6 +192,23 @@ ThemeData buildFobTheme() {
         borderRadius: BorderRadius.circular(FobRadius.card),
         side: const BorderSide(color: FobColors.hairline),
       ),
+    ),
+    // Parchment dialog surface app-wide — every AlertDialog inherits the card
+    // shape/colour + serif title, keeping raw dialogs on-brand without
+    // restructuring each one.
+    dialogTheme: DialogThemeData(
+      backgroundColor: FobColors.surfaceCard,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(FobRadius.card)),
+      titleTextStyle: const TextStyle(
+        fontFamily: FobText.serif,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+        color: FobColors.textStrong,
+        fontFeatures: FobText.liningFigures,
+      ),
+      contentTextStyle: FobText.body,
     ),
   );
 }

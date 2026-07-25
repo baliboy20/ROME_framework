@@ -10,6 +10,7 @@ import '../widgets/app_modal.dart';
 import '../widgets/filter_chip_row.dart';
 import '../widgets/fob_data_table.dart';
 import '../widgets/status_pill.dart';
+import '../widgets/fob_primitives.dart';
 
 String formatMoney(int pence) => '£${(pence / 100).toStringAsFixed(2)}';
 
@@ -441,8 +442,8 @@ class _BookingDetailModalState extends State<_BookingDetailModal> {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(child: _kv('WAIVER', _ts(consent['waiver_accepted_at']))),
-                    Expanded(child: _kv('TERMS', _ts(consent['terms_accepted_at']))),
+                    Expanded(child: FobKeyValue('WAIVER', _ts(consent['waiver_accepted_at']))),
+                    Expanded(child: FobKeyValue('TERMS', _ts(consent['terms_accepted_at']))),
                   ],
                 ),
                 const SizedBox(height: 12),
@@ -463,15 +464,6 @@ class _BookingDetailModalState extends State<_BookingDetailModal> {
       ],
     );
   }
-
-  Widget _kv(String label, String value) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: FobText.microLabel),
-          const SizedBox(height: 3),
-          Text(value, style: FobText.body),
-        ],
-      );
 
   Widget _hist(String label, dynamic ts) {
     if (ts == null) return const SizedBox.shrink();

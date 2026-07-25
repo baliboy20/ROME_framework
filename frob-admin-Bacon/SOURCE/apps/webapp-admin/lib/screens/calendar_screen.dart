@@ -7,6 +7,7 @@ import '../models/models.dart';
 import '../theme/tokens.dart';
 import '../widgets/app_modal.dart';
 import '../widgets/status_pill.dart';
+import '../widgets/fob_primitives.dart';
 import '../widgets/filter_chip_row.dart';
 import '../widgets/fob_data_table.dart';
 import '../widgets/readiness_badge.dart';
@@ -126,6 +127,21 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
         _ => b.isEmpty ? '' : b,
       };
 
+  static String _monthName(int m) => const [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ][(m - 1).clamp(0, 11)];
+
+  // UXD-08: second overlay — participant detail (age band, requirements,
+  // emergency contact, consent). Emergency contact + consent are per-booking.
+  void _openParticipant(Map<String, dynamic> booking, Map<String, dynamic> participant) {
+    showFobModal(
+      context: context,
+      blocking: false,
+      builder: (ctx) => _ParticipantOverlay(bookingId: '${booking['id']}', participant: participant),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final d = widget.departure;
@@ -139,11 +155,14 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('${d.dateTime.day}/${d.dateTime.month}/${d.dateTime.year}'
-              '${dep['time'] != null ? ' · ${dep['time']}' : ''}', style: FobText.microLabel),
+          Text('DEPARTURE', style: FobText.microLabel),
           const SizedBox(height: 4),
-          Text(d.tourName, style: const TextStyle(fontFamily: FobText.serif, fontSize: 20, fontWeight: FontWeight.w600, color: FobColors.textStrong)),
-          const SizedBox(height: 6),
+          Text(d.tourName, style: const TextStyle(fontFamily: FobText.serif, fontSize: 22, fontWeight: FontWeight.w600, color: FobColors.textStrong)),
+          const SizedBox(height: 3),
+          Text('${d.dateTime.day} ${_monthName(d.dateTime.month)} ${d.dateTime.year}'
+              '${dep['time'] != null ? ' · ${dep['time']}' : ''}',
+              style: const TextStyle(fontFamily: FobText.mono, fontSize: 11, color: FobColors.textMuted)),
+          const SizedBox(height: 8),
           Row(
             children: [
               Text('${d.bookedCount}/${d.capacity} booked', style: FobText.body),
@@ -152,7 +171,7 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
                   style: TextStyle(fontSize: 12.5, color: dep['guide_name'] != null ? FobColors.textMuted : FobColors.orangeText)),
             ],
           ),
-          const Padding(padding: EdgeInsets.symmetric(vertical: 14), child: Divider(height: 1, color: Color(0xFFF2EDDF))),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 14), child: Divider(height: 1, color: FobColors.hairlineWarm)),
           Text('BOOKINGS', style: FobText.microLabel),
           const SizedBox(height: 8),
           if (_loading)
@@ -170,8 +189,14 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
                         .map((p) => (p as Map).cast<String, dynamic>())
                         .where((p) => p['booking_id'] == m['id'])
                         .toList();
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 14),
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: FobColors.surfaceRaised,
+                        borderRadius: BorderRadius.circular(FobRadius.field),
+                        border: Border.all(color: FobColors.hairlineWarm),
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -184,13 +209,31 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
                               PillLabel.forStatus('${m['status'] ?? ''}'),
                             ],
                           ),
-                          const SizedBox(height: 4),
-                          ...ppl.map((p) => Padding(
-                                padding: const EdgeInsets.only(left: 2, top: 2),
-                                child: Text(
-                                  '· ${p['name']}  ${_ageBand('${p['age_band'] ?? ''}')}'
-                                  '${p['notes'] != null ? '  — ${p['notes']}' : ''}',
-                                  style: const TextStyle(fontSize: 12.5, color: FobColors.textBody),
+                          const SizedBox(height: 8),
+                          // Tappable participant rows → participant detail overlay.
+                          ...ppl.map((p) => InkWell(
+                                borderRadius: BorderRadius.circular(FobRadius.field),
+                                onTap: () => _openParticipant(m, p),
+                                child: Container(
+                                  margin: const EdgeInsets.only(top: 4),
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: FobColors.surfaceCard,
+                                    borderRadius: BorderRadius.circular(FobRadius.field),
+                                    border: Border.all(color: FobColors.hairlineWarm),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text('${p['name']}',
+                                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: FobColors.textStrong)),
+                                      ),
+                                      Text(_ageBand('${p['age_band'] ?? ''}'),
+                                          style: const TextStyle(fontSize: 12, color: FobColors.textMuted)),
+                                      const SizedBox(width: 6),
+                                      const Icon(Icons.chevron_right, size: 16, color: FobColors.textFaint),
+                                    ],
+                                  ),
                                 ),
                               )),
                         ],
@@ -200,6 +243,105 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
                 ),
               ),
             ),
+        ],
+      ),
+    );
+  }
+}
+
+/// UXD-08 second overlay — read-only participant detail. Age band +
+/// requirements come from the participant row; emergency contact + consent are
+/// per-booking, fetched via GET /admin/bookings/:id.
+class _ParticipantOverlay extends StatefulWidget {
+  final String bookingId;
+  final Map<String, dynamic> participant;
+  const _ParticipantOverlay({required this.bookingId, required this.participant});
+
+  @override
+  State<_ParticipantOverlay> createState() => _ParticipantOverlayState();
+}
+
+class _ParticipantOverlayState extends State<_ParticipantOverlay> {
+  Map<String, dynamic>? _booking;
+  bool _loading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _load();
+  }
+
+  Future<void> _load() async {
+    try {
+      final d = await context.read<ApiClient>().getBooking(widget.bookingId);
+      if (mounted) setState(() { _booking = d; _loading = false; });
+    } catch (_) {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  String _ageBand(String b) => switch (b) {
+        '18+' => 'Adult',
+        '60+' => 'Adult 60+',
+        '12-17' => '12–17',
+        'under-12' => 'Under 12',
+        _ => b.isEmpty ? '—' : b,
+      };
+
+  String _ts(dynamic iso) {
+    if (iso == null) return 'Not recorded';
+    final dt = DateTime.tryParse('$iso');
+    if (dt == null) return '$iso';
+    return '${dt.day} ${_DepartureOverlayState._monthName(dt.month)} ${dt.year}';
+  }
+
+  Widget _kv(String label, String value) => FobKeyValue(label, value, bottomGap: 12);
+
+  @override
+  Widget build(BuildContext context) {
+    final p = widget.participant;
+    final ec = (_booking?['emergency_contact'] as Map?)?.cast<String, dynamic>() ?? {};
+    final consent = (_booking?['consent'] as Map?)?.cast<String, dynamic>() ?? {};
+    final role = '${p['contact_role'] ?? (p['is_lead_booker'] == 1 ? 'leader' : 'attendee')}';
+
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 420, maxHeight: 520),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('PARTICIPANT', style: FobText.microLabel),
+          const SizedBox(height: 4),
+          Text('${p['name'] ?? ''}',
+              style: const TextStyle(fontFamily: FobText.serif, fontSize: 20, fontWeight: FontWeight.w600, color: FobColors.textStrong)),
+          const SizedBox(height: 3),
+          Text(role == 'leader' ? 'Leader (main contact)' : role == 'co-leader' ? 'Co-leader' : 'Attendee',
+              style: const TextStyle(fontFamily: FobText.mono, fontSize: 11, color: FobColors.textMuted)),
+          const Padding(padding: EdgeInsets.symmetric(vertical: 14), child: Divider(height: 1, color: FobColors.hairlineWarm)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: _kv('AGE BAND', _ageBand('${p['age_band'] ?? ''}'))),
+              Expanded(child: _kv('REQUIREMENTS', p['notes'] == null || '${p['notes']}'.isEmpty ? 'None noted' : '${p['notes']}')),
+            ],
+          ),
+          if (_loading)
+            const Padding(padding: EdgeInsets.all(12), child: Center(child: CircularProgressIndicator()))
+          else ...[
+            _kv('EMERGENCY CONTACT (booking)',
+                (ec['name'] == null) ? 'Not recorded' : '${ec['name']} · ${ec['phone'] ?? ''}${ec['relationship'] != null ? ' (${ec['relationship']})' : ''}'),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: _kv('WAIVER', _ts(consent['waiver_accepted_at']))),
+                Expanded(child: _kv('TERMS', _ts(consent['terms_accepted_at']))),
+              ],
+            ),
+          ],
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Close')),
+          ),
         ],
       ),
     );

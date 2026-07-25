@@ -4,6 +4,7 @@ import '../api/api_client.dart';
 import '../models/models.dart';
 import '../theme/tokens.dart';
 import '../widgets/status_pill.dart';
+import '../widgets/fob_primitives.dart';
 
 /// A19 — Booking browser (BO05/BO06). Master-detail per the parchment mockup:
 /// a compact results list on the left, a full booking-record card on the right.
@@ -151,7 +152,7 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
           ),
         ),
         const SizedBox(height: FobSpace.card),
-        _card(
+        FobCard(
           padding: EdgeInsets.zero,
           child: _loading
               ? const Padding(padding: EdgeInsets.all(28), child: Center(child: CircularProgressIndicator()))
@@ -175,7 +176,7 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: active ? FobColors.surfaceBgLo : null,
-          border: last ? null : const Border(bottom: BorderSide(color: Color(0xFFF2EDDF))),
+          border: last ? null : const Border(bottom: BorderSide(color: FobColors.hairlineWarm)),
         ),
         child: Row(
           children: [
@@ -214,7 +215,7 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
 
   Widget _recordColumn() {
     if (_detailLoading || _detail == null) {
-      return _card(
+      return FobCard(
         child: SizedBox(
           height: 260,
           child: Center(
@@ -234,7 +235,7 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
     final hist = (d['status_history'] as Map?)?.cast<String, dynamic>() ?? {};
     final pay = payments.isNotEmpty ? (payments.first as Map).cast<String, dynamic>() : null;
 
-    return _card(
+    return FobCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -290,8 +291,8 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
               ),
             ],
           ),
-          _divider(),
-          _sectionLabel('ATTENDEES'),
+          const FobDivider(),
+          FobSectionLabel('ATTENDEES'),
           ...attendees.map((a) {
             final m = (a as Map).cast<String, dynamic>();
             return Padding(
@@ -306,13 +307,13 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
               ),
             );
           }),
-          _divider(),
+          const FobDivider(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _kv('EMERGENCY CONTACT', '${ec['name'] ?? '—'} · ${ec['phone'] ?? ''}')),
+              Expanded(child: FobKeyValue('EMERGENCY CONTACT', '${ec['name'] ?? '—'} · ${ec['phone'] ?? ''}')),
               Expanded(
-                child: _kv(
+                child: FobKeyValue(
                   'PAYMENT',
                   pay == null
                       ? '—'
@@ -326,12 +327,12 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _kv('WAIVER', _ts(consent['waiver_accepted_at']))),
-              Expanded(child: _kv('T&C · MARKETING', _ts(consent['terms_accepted_at']))),
+              Expanded(child: FobKeyValue('WAIVER', _ts(consent['waiver_accepted_at']))),
+              Expanded(child: FobKeyValue('T&C · MARKETING', _ts(consent['terms_accepted_at']))),
             ],
           ),
-          _divider(),
-          _sectionLabel('STATUS HISTORY'),
+          const FobDivider(),
+          FobSectionLabel('STATUS HISTORY'),
           _histRow(hist['created_at'], 'Created from booking flow'),
           _histRow(hist['confirmed_at'], 'Booking confirmed'),
           _histRow(hist['cancelled_at'], 'Booking cancelled'),
@@ -415,40 +416,6 @@ class _BookingBrowserScreenState extends State<BookingBrowserScreen> {
   }
 
   // ---- helpers -----------------------------------------------------------
-
-  Widget _card({required Widget child, EdgeInsets padding = const EdgeInsets.all(24)}) => Container(
-        width: double.infinity,
-        padding: padding,
-        decoration: BoxDecoration(
-          color: FobColors.surfaceCard,
-          borderRadius: BorderRadius.circular(FobRadius.card),
-          border: Border.all(color: FobColors.hairline),
-        ),
-        child: child,
-      );
-
-  Widget _divider() => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Divider(height: 1, color: Color(0xFFF2EDDF)),
-      );
-
-  Widget _sectionLabel(String s) => Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Text(s, style: FobText.microLabel),
-      );
-
-  Widget _kv(String label, String value, {String? sub}) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: FobText.microLabel),
-          const SizedBox(height: 5),
-          Text(value, style: FobText.body),
-          if (sub != null) ...[
-            const SizedBox(height: 2),
-            Text(sub, style: const TextStyle(fontSize: 11, color: FobColors.textFaint)),
-          ],
-        ],
-      );
 
   Widget _histRow(dynamic ts, String label) {
     if (ts == null) return const SizedBox.shrink();
@@ -662,7 +629,7 @@ class _EditBookingDialogState extends State<_EditBookingDialog> {
               for (var i = 0; i < _rows.length; i++) _attendeeEditRow(i),
               if (_error != null) ...[
                 const SizedBox(height: 8),
-                Text(_error!, style: const TextStyle(color: Colors.red, fontSize: 12.5)),
+                Text(_error!, style: const TextStyle(color: FobColors.error, fontSize: 12.5)),
               ],
             ],
           ),

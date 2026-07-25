@@ -11,7 +11,9 @@ class NavLeaf {
 class NavGroup {
   final String title;
   final List<NavLeaf> leaves;
-  const NavGroup(this.title, this.leaves);
+  /// Accent dot beside the group title (mockup groups are hue-coded).
+  final Color hue;
+  const NavGroup(this.title, this.leaves, {this.hue = FobColors.textFaint});
 }
 
 /// TreeNav — collapsible grouped tree nav; collapses to a 68px icon rail.
@@ -86,7 +88,7 @@ class _TreeNavState extends State<TreeNav> {
               margin: const EdgeInsets.fromLTRB(16, 8, 16, 18),
               padding: const EdgeInsets.only(top: 16),
               decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: Color(0xFFE6E1D2))),
+                border: Border(top: BorderSide(color: FobColors.hairlineWarm)),
               ),
               child: Row(
                 children: [
@@ -131,9 +133,14 @@ class _TreeNavState extends State<TreeNav> {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               child: Row(
                 children: [
-                  Icon(open ? Icons.expand_more : Icons.chevron_right, size: 14, color: FobColors.textMuted),
-                  const SizedBox(width: 4),
-                  Text(g.title.toUpperCase(), style: FobText.microLabel),
+                  Container(
+                    width: 6,
+                    height: 6,
+                    decoration: BoxDecoration(color: g.hue, shape: BoxShape.circle),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(g.title.toUpperCase(), style: FobText.microLabel)),
+                  Icon(open ? Icons.expand_more : Icons.chevron_right, size: 13, color: FobColors.textFaint),
                 ],
               ),
             ),
@@ -141,44 +148,45 @@ class _TreeNavState extends State<TreeNav> {
         if (collapsed || open)
           ...g.leaves.map((leaf) {
             final active = widget.activeRoute == leaf.route;
-            return Tooltip(
-              message: leaf.label,
-              child: InkWell(
-                borderRadius: BorderRadius.circular(10),
-                onTap: () => widget.onSelect(leaf.route),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 2, left: 4, right: 4),
-                  decoration: BoxDecoration(
-                    color: active ? FobColors.surfaceBgLo : null,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: collapsed ? 0 : 12, vertical: 8),
-                  child: collapsed
-                      ? Center(
-                          child: Text(leaf.code,
+            final item = InkWell(
+              borderRadius: BorderRadius.circular(10),
+              onTap: () => widget.onSelect(leaf.route),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 2, left: 4, right: 4),
+                decoration: BoxDecoration(
+                  // Active item = pale-pink tint (mockup), not grey.
+                  color: active ? FobHue.pink.background : null,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                padding: EdgeInsets.symmetric(horizontal: collapsed ? 0 : 12, vertical: 8),
+                child: collapsed
+                    ? Center(
+                        child: Text(leaf.code,
+                            style: TextStyle(
+                                fontFamily: FobText.mono,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: active ? FobColors.pink : FobColors.textMuted)))
+                    : Row(
+                        children: [
+                          Text(leaf.code,
                               style: TextStyle(
                                   fontFamily: FobText.mono,
                                   fontSize: 10,
-                                  fontWeight: FontWeight.w700,
-                                  color: active ? FobColors.pink : FobColors.textMuted)))
-                      : Row(
-                          children: [
-                            Text(leaf.code,
-                                style: TextStyle(
-                                    fontFamily: FobText.mono,
-                                    fontSize: 10,
-                                    color: active ? FobColors.pink : FobColors.textFaint)),
-                            const SizedBox(width: 8),
-                            Text(leaf.label,
-                                style: TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: active ? FontWeight.w700 : FontWeight.w500,
-                                    color: active ? FobColors.textStrong : FobColors.textBody)),
-                          ],
-                        ),
-                ),
+                                  color: active ? FobColors.pink : FobColors.textFaint)),
+                          const SizedBox(width: 8),
+                          Text(leaf.label,
+                              style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                                  color: active ? FobColors.pinkText : FobColors.textBody)),
+                        ],
+                      ),
               ),
             );
+            // Tooltip only in the collapsed icon-rail (label hidden). When
+            // expanded the label is visible, so no redundant tooltip.
+            return collapsed ? Tooltip(message: leaf.label, child: item) : item;
           }),
       ],
     );
@@ -202,9 +210,9 @@ class _RailToggle extends StatelessWidget {
         height: 26,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: const Color(0xFFEFE9D9),
+          color: FobColors.surfaceBgLo,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFE3DDC9)),
+          border: Border.all(color: FobColors.hairlineWarm),
         ),
         child: Icon(collapsed ? Icons.chevron_right : Icons.chevron_left,
             size: 16, color: FobColors.textMuted),

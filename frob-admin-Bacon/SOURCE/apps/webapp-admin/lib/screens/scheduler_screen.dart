@@ -29,15 +29,16 @@ class _SchedulerView extends StatefulWidget {
 }
 
 class _SchedulerViewState extends State<_SchedulerView> {
-  final tourIdCtrl = TextEditingController(text: 'thames-loop');
   final dateCtrl = TextEditingController();
   final timeCtrl = TextEditingController(text: '09:30');
   final capacityCtrl = TextEditingController(text: '10');
 
   List<Map<String, dynamic>> _departures = [];
   List<Map<String, dynamic>> _guides = [];
+  List<Map<String, dynamic>> _tours = [];
   String? _editingId;
   String? _guideId;
+  String? _tourId;
 
   ApiClient get _api => context.read<ApiClient>();
 
@@ -51,10 +52,12 @@ class _SchedulerViewState extends State<_SchedulerView> {
     try {
       final d = await _api.getDepartures();
       final g = await _api.getGuides();
+      final t = await _api.getAdminTours();
       if (!mounted) return;
       setState(() {
         _departures = d.cast<Map<String, dynamic>>();
         _guides = g.cast<Map<String, dynamic>>();
+        _tours = t.cast<Map<String, dynamic>>();
       });
     } catch (_) {}
   }
@@ -79,7 +82,7 @@ class _SchedulerViewState extends State<_SchedulerView> {
       _editingId = id;
       _guideId = gid;
       capacityCtrl.text = cap.toString();
-      tourIdCtrl.text = dep['tour_id']?.toString() ?? '';
+      _tourId = dep['tour_id']?.toString();
       dateCtrl.text = dep['date']?.toString() ?? '';
       timeCtrl.text = dep['time']?.toString() ?? '';
     });
@@ -126,7 +129,31 @@ class _SchedulerViewState extends State<_SchedulerView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (!state.isEdit) ...[
-                      AppField(label: 'Tour', controller: tourIdCtrl),
+                      // Real tour dropdown (was free-text — could schedule
+                      // against a non-existent tour_id). Only bookable
+                      // (published) tours are offered for scheduling.
+                      Row(
+                        children: [
+                          const Text('Tour: ', style: FobText.body),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: DropdownButton<String?>(
+                              key: const Key('scheduler-tour-dropdown'),
+                              isExpanded: true,
+                              value: _tourId,
+                              hint: const Text('Select a tour'),
+                              items: [
+                                for (final t in _tours.where((t) => t['status'] == 'published'))
+                                  DropdownMenuItem<String?>(
+                                    value: t['id'].toString(),
+                                    child: Text('${t['name'] ?? t['id']}'),
+                                  ),
+                              ],
+                              onChanged: (v) => setState(() => _tourId = v),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: FobSpace.field),
                       AppField(label: 'Date (YYYY-MM-DD)', controller: dateCtrl, hint: '2026-08-15'),
                       const SizedBox(height: FobSpace.field),
@@ -211,6 +238,12 @@ class _SchedulerViewState extends State<_SchedulerView> {
   }
 
   Future<void> _saveWithFanOutConfirm(BuildContext context, SchedulerCubit cubit, SchedulerState state) async {
+    if (!state.isEdit && (_tourId == null || _tourId!.isEmpty)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Select a tour to schedule against.')),
+      );
+      return;
+    }
     if (state.isEdit && state.currentBooked > 0) {
       final proceed = await showFobModal<bool>(
         context: context,
@@ -224,7 +257,7 @@ class _SchedulerViewState extends State<_SchedulerView> {
       if (proceed != true) return;
     }
     await cubit.save(
-      tourId: tourIdCtrl.text,
+      tourId: _tourId ?? '',
       date: dateCtrl.text,
       time: timeCtrl.text,
       guideId: _guideId,

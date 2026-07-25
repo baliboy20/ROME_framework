@@ -32,12 +32,13 @@
   <title>fob_webapp_admin</title>
   <link rel="manifest" href="manifest.json">
 
-  <!-- FINDING-003: the parchment theme names Playfair Display + Plus Jakarta
-       Sans but neither was bundled, so Flutter fell back to Roboto. Load them
-       so serif headings / parchment typography render as in the mockup. -->
+  <!-- Parchment typography (TDR-15 design-system update): Source Serif 4
+       (titles + money, upright lining figures) + Plus Jakarta Sans (functional
+       text). Fonts are also bundled as assets (pubspec) — this link is parity
+       for first paint. Playfair Display retired in favour of Source Serif 4. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <!--

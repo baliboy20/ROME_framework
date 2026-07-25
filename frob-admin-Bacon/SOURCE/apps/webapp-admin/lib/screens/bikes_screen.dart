@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../api/api_client.dart';
 import '../theme/tokens.dart';
 import '../widgets/status_pill.dart';
+import '../widgets/fob_primitives.dart';
 
 /// Fleet — Bikes register (master-detail): a list of individual bikes on the
 /// left, the selected bike's full record (spec, maintenance history, assignment
@@ -136,7 +137,7 @@ class _BikesScreenState extends State<BikesScreen> {
           ),
         ),
         const SizedBox(height: FobSpace.card),
-        _card(
+        FobCard(
           padding: EdgeInsets.zero,
           child: _loading
               ? const Padding(padding: EdgeInsets.all(28), child: Center(child: CircularProgressIndicator()))
@@ -157,7 +158,7 @@ class _BikesScreenState extends State<BikesScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: active ? FobColors.surfaceBgLo : null,
-          border: last ? null : const Border(bottom: BorderSide(color: Color(0xFFF2EDDF))),
+          border: last ? null : const Border(bottom: BorderSide(color: FobColors.hairlineWarm)),
         ),
         child: Row(
           children: [
@@ -183,7 +184,7 @@ class _BikesScreenState extends State<BikesScreen> {
 
   Widget _recordColumn() {
     if (_detailLoading || _detail == null) {
-      return _card(
+      return FobCard(
         child: SizedBox(
           height: 240,
           child: Center(
@@ -197,7 +198,7 @@ class _BikesScreenState extends State<BikesScreen> {
     final assignments = (_detail!['assignments'] as List?) ?? const [];
     final routes = _routeList(b['route_eligibility']);
 
-    return _card(
+    return FobCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -221,25 +222,25 @@ class _BikesScreenState extends State<BikesScreen> {
               _bikePill('${b['status']}'),
             ],
           ),
-          _divider(),
+          const FobDivider(),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _kv('SERIAL', '${b['serial_number'] ?? '—'}')),
-              Expanded(child: _kv('PURCHASED', '${b['purchase_date'] ?? '—'}')),
-              Expanded(child: _kv('SPARE', (b['spare'] == 1) ? 'Yes' : 'No')),
+              Expanded(child: FobKeyValue('SERIAL', '${b['serial_number'] ?? '—'}')),
+              Expanded(child: FobKeyValue('PURCHASED', '${b['purchase_date'] ?? '—'}')),
+              Expanded(child: FobKeyValue('SPARE', (b['spare'] == 1) ? 'Yes' : 'No')),
             ],
           ),
           const SizedBox(height: FobSpace.card),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: _kv('LAST INSPECTED', _ts(b['last_inspected_at']))),
-              Expanded(child: _kv('NOTES', '${b['notes'] ?? '—'}')),
+              Expanded(child: FobKeyValue('LAST INSPECTED', _ts(b['last_inspected_at']))),
+              Expanded(child: FobKeyValue('NOTES', '${b['notes'] ?? '—'}')),
             ],
           ),
           const SizedBox(height: FobSpace.card),
-          _sectionLabel('ROUTE ELIGIBILITY'),
+          FobSectionLabel('ROUTE ELIGIBILITY'),
           Wrap(
             spacing: 6,
             runSpacing: 6,
@@ -247,8 +248,8 @@ class _BikesScreenState extends State<BikesScreen> {
                 ? [const Text('—', style: FobText.body)]
                 : routes.map((r) => PillLabel(text: r, background: FobColors.surfaceBgLo, foreground: FobColors.textMuted)).toList(),
           ),
-          _divider(),
-          _sectionLabel('MAINTENANCE HISTORY'),
+          const FobDivider(),
+          FobSectionLabel('MAINTENANCE HISTORY'),
           if (maintenance.isEmpty)
             const Text('No maintenance events logged.', style: FobText.body)
           else
@@ -274,8 +275,8 @@ class _BikesScreenState extends State<BikesScreen> {
                 ),
               );
             }),
-          _divider(),
-          _sectionLabel('ASSIGNMENT HISTORY'),
+          const FobDivider(),
+          FobSectionLabel('ASSIGNMENT HISTORY'),
           if (assignments.isEmpty)
             const Text('Not assigned to any departure.', style: FobText.body)
           else
@@ -339,30 +340,6 @@ class _BikesScreenState extends State<BikesScreen> {
     } catch (_) {}
     return [];
   }
-
-  Widget _card({required Widget child, EdgeInsets padding = const EdgeInsets.all(24)}) => Container(
-        width: double.infinity,
-        padding: padding,
-        decoration: BoxDecoration(
-          color: FobColors.surfaceCard,
-          borderRadius: BorderRadius.circular(FobRadius.card),
-          border: Border.all(color: FobColors.hairline),
-        ),
-        child: child,
-      );
-
-  Widget _divider() => const Padding(padding: EdgeInsets.symmetric(vertical: 16), child: Divider(height: 1, color: Color(0xFFF2EDDF)));
-
-  Widget _sectionLabel(String s) => Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(s, style: FobText.microLabel));
-
-  Widget _kv(String label, String value) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: FobText.microLabel),
-          const SizedBox(height: 5),
-          Text(value, style: FobText.body),
-        ],
-      );
 
   String _ts(dynamic iso) {
     if (iso == null) return '—';
