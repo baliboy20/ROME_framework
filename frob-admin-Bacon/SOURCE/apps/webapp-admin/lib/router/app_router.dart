@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../theme/tokens.dart';
+import '../widgets/deferred_content.dart';
+import '../widgets/skeleton_page.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/pages/sign_in_page.dart';
 import '../features/bookings/presentation/pages/booking_browser_page.dart';
@@ -92,7 +94,12 @@ Widget _pageScaffold(Widget page) => SingleChildScrollView(
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1160),
-          child: page,
+          // Skeleton-first: animate a cheap placeholder during the transition,
+          // then mount the real page (and its data load) once it has settled.
+          child: DeferredContent(
+            placeholder: const SkeletonPage(),
+            builder: (_) => page,
+          ),
         ),
       ),
     );
