@@ -45,41 +45,30 @@ class _BlocRefresh extends ChangeNotifier {
   }
 }
 
-/// Shared-axis horizontal push for content-region page changes. The incoming
-/// page is opaque and slides in from the right, cleanly covering whatever is
-/// behind it (no see-through overlap / collision); the outgoing page slides
-/// left and fades away underneath. Honours the platform "reduce motion" setting.
+/// A plain opacity cross-fade for content-region page changes: the incoming
+/// page fades in while the outgoing fades out. Cheap because the transition
+/// only ever animates the skeleton placeholder (the real page is deferred past
+/// it — see DeferredContent). Honours the platform "reduce motion" setting.
 CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 300),
-    reverseTransitionDuration: const Duration(milliseconds: 260),
+    transitionDuration: const Duration(milliseconds: 240),
+    reverseTransitionDuration: const Duration(milliseconds: 200),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
 
-      // Incoming: enters from the right, decelerating; stays fully opaque.
-      final slideIn = Tween<Offset>(begin: const Offset(0.12, 0), end: Offset.zero)
-          .animate(CurvedAnimation(parent: animation, curve: Curves.easeOutCubic));
-      // Outgoing (covered): drifts left and fades out beneath the incoming page.
-      final slideOut = Tween<Offset>(begin: Offset.zero, end: const Offset(-0.06, 0))
-          .animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeInCubic));
+      final fadeIn = CurvedAnimation(parent: animation, curve: Curves.easeOut);
       final fadeOut = Tween<double>(begin: 1.0, end: 0.0)
           .animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeIn));
 
-      return SlideTransition(
-        position: slideOut,
+      // FadeTransition over a RepaintBoundary composites the fade as a GPU
+      // opacity layer — no per-frame offscreen raster. Each fade is a no-op at 1.0.
+      return FadeTransition(
+        opacity: fadeOut,
         child: FadeTransition(
-          opacity: fadeOut,
-          child: SlideTransition(
-            position: slideIn,
-            // Opaque background so the incoming page fully occludes the outgoing
-            // one as it slides — the two are never blended together.
-            child: ColoredBox(
-              color: FobColors.surfaceBg,
-              child: RepaintBoundary(child: child),
-            ),
-          ),
+          opacity: fadeIn,
+          child: RepaintBoundary(child: child),
         ),
       );
     },

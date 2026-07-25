@@ -86,9 +86,8 @@ class AdminShell extends StatelessWidget {
                 ),
                 // Bounded content region. Each route provides its own scroll
                 // viewport (see app_router) so the ShellRoute Navigator is never
-                // given unbounded height. ClipRect keeps the horizontal page
-                // slide contained within the content area.
-                Expanded(child: ClipRect(child: child)),
+                // given unbounded height.
+                Expanded(child: child),
               ],
             ),
           ),
