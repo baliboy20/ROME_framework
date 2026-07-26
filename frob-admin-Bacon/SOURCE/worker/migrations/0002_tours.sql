@@ -41,6 +41,12 @@ VALUES
    '["Thames Embankment","St Paul''s at dusk","Millennium Bridge","South Bank at sunset"]',
    '/img/tours/golden-hour.png', 'published', 3, '2026-07-22T00:00:00Z');
 
+-- Guides referenced by the seed departures below (FK departures.guide_id →
+-- guides.id; enforced on remote D1). Must exist before the departures insert.
+INSERT OR IGNORE INTO guides (id, name, created_at) VALUES
+  ('g-sam','Sam','2026-07-22T00:00:00Z'),
+  ('g-priya','Priya','2026-07-22T00:00:00Z');
+
 -- Departure reconciliation: real departures under the new tour ids so the
 -- booking flow works against the published catalogue.
 INSERT OR IGNORE INTO departures (id, tour_id, date, time, capacity, held_count, confirmed_count, grace_period_minutes, guide_id, status) VALUES
