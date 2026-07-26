@@ -30,6 +30,9 @@ export interface Env {
   ALLOWED_ORIGIN?: string;
   STRIPE_MODE?: string;
   NOTIFICATIONS_EMAIL_FROM?: string;
+  /** Dev only: when set, the rendered outgoing email is logged to the console
+   *  (Cloudflare Email cannot deliver from local `wrangler dev`). */
+  EMAIL_DEBUG?: string;
   // EML reintegration (DR-7): inbound mail is forwarded here after capture,
   // flagged if spam, never withheld.
   OWNER_PERSONAL_EMAIL?: string;

@@ -82,6 +82,20 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
     references: input.references,
   });
 
+  // Dev aid: Cloudflare Email can't deliver from local `wrangler dev`, so print
+  // the fully-rendered message to the console when EMAIL_DEBUG is set.
+  if (env.EMAIL_DEBUG) {
+    console.log(
+      `\n────────── EMAIL (${result.ok ? "sent" : "delivery_pending"}) ──────────\n` +
+        `To:      ${input.recipient}\n` +
+        `From:    ${env.NOTIFICATIONS_EMAIL_FROM ?? "bookings@friendsonbikes.uk"}\n` +
+        `Subject: ${subject}\n` +
+        (input.inReplyTo ? `In-Reply-To: ${input.inReplyTo}\n` : "") +
+        `─────────────────────────────────────────\n${textBody}\n` +
+        `─────────────────────────────────────────\n`
+    );
+  }
+
   const status = result.ok ? "sent" : "delivery_pending";
   const message: Message = {
     id: messageId,
