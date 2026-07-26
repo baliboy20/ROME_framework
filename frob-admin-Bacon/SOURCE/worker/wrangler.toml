@@ -104,15 +104,15 @@ NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "fob-d1-staging"
-database_id = "<staging-d1-id-TO-BE-CREATED>"
+database_id = "3cc9b810-8f47-424f-beef-b647108c314a"
 
 [[env.staging.kv_namespaces]]
 binding = "SESSIONS"
-id = "<staging-kv-sessions-id-TO-BE-CREATED>"
+id = "7e024dcbbe204e708fe1c20b9d220f81"
 
 [[env.staging.kv_namespaces]]
 binding = "IDEMPOTENCY"
-id = "<staging-kv-idempotency-id-TO-BE-CREATED>"
+id = "a0f1852200e7493d80a18ce4d9538302"
 
 [[env.staging.r2_buckets]]
 binding = "ASSETS"
@@ -131,35 +131,38 @@ crons = [
 
 # ===========================================================================
 # [env.production]
-# satisfies: TDR-11 — deploy target friendsonbikes.uk. Sponsor states prod
-# D1 + KV namespaces ALREADY EXIST; ops must replace the placeholder ids
-# below with the real production ids before first production deploy. Never
-# commit real ids/secrets here — placeholders only, per repo secret-scan
-# policy.
+# satisfies: TDR-11 — deploy target friendsonbikes.uk (API on the
+# api.friendsonbikes.uk subdomain). Real D1/KV ids are committed below —
+# they are opaque resource identifiers, NOT secrets. SECRETS (Stripe/JWT/
+# webhook) are never in this file; set them via `wrangler secret put
+# --env production`. Provisioned on account e6e822db… 2026-07-27.
 # ===========================================================================
 [env.production]
 name = "fob-api-worker"
+# API on its own subdomain (matches the apps' default FOB_API_BASE
+# https://api.friendsonbikes.uk) — keeps the worker's un-prefixed routes intact
+# and never collides with the static site served at the friendsonbikes.uk root.
 routes = [
-  { pattern = "friendsonbikes.uk/api/*", zone_name = "friendsonbikes.uk" }
+  { pattern = "api.friendsonbikes.uk", custom_domain = true }
 ]
 
 [env.production.vars]
 ALLOWED_ORIGIN = "https://friendsonbikes.uk"
-STRIPE_MODE = "live"
+STRIPE_MODE = "test"
 NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
 
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "fob-d1-prod"
-database_id = "<prod-d1-id>"
+database_id = "0675436c-644c-4d88-a2fa-aa16a1352809"
 
 [[env.production.kv_namespaces]]
 binding = "SESSIONS"
-id = "<prod-kv-sessions-id>"
+id = "02bd194530434db19e653b50daa65e82"
 
 [[env.production.kv_namespaces]]
 binding = "IDEMPOTENCY"
-id = "<prod-kv-idempotency-id>"
+id = "352f2a61f8344310aa4ac1da5103a79f"
 
 [[env.production.r2_buckets]]
 binding = "ASSETS"
