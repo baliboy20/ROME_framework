@@ -37,6 +37,9 @@ class ApiHttp {
   Future<dynamic> patch(String path, {Object? body}) => _send(
       () => _http.patch(_u(path), headers: _headers, body: body == null ? null : jsonEncode(body)));
 
+  Future<dynamic> put(String path, {Object? body}) => _send(
+      () => _http.put(_u(path), headers: _headers, body: body == null ? null : jsonEncode(body)));
+
   Future<dynamic> delete(String path) =>
       _send(() => _http.delete(_u(path), headers: _headers));
 

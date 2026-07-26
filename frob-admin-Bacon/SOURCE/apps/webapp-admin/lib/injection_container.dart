@@ -65,6 +65,12 @@ import 'features/auth/domain/repositories/auth_repository.dart';
 import 'features/auth/domain/usecases/auth_usecases.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 
+import 'features/settings/data/datasources/settings_remote_data_source.dart';
+import 'features/settings/data/repositories/settings_repository_impl.dart';
+import 'features/settings/domain/repositories/settings_repository.dart';
+import 'features/settings/domain/usecases/settings_usecases.dart';
+import 'features/settings/presentation/bloc/settings_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -91,6 +97,15 @@ void configureDependencies() {
   _registerFleet();
   _registerScheduling();
   _registerAuth();
+  _registerSettings();
+}
+
+void _registerSettings() {
+  sl.registerLazySingleton<SettingsRemoteDataSource>(() => SettingsRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<SettingsRepository>(() => SettingsRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => GetSettings(sl()));
+  sl.registerLazySingleton(() => UpdateSettings(sl()));
+  sl.registerFactory(() => SettingsBloc(getSettings: sl(), updateSettings: sl()));
 }
 
 void _registerAuth() {

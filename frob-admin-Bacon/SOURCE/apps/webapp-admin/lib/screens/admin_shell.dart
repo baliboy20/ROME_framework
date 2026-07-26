@@ -39,6 +39,9 @@ const kNavGroups = [
     NavLeaf('A15', 'Flagged bike', '/flagged-bike'),
     NavLeaf('A16', 'Compliance', '/compliance'),
   ], hue: FobColors.lime),
+  NavGroup('System', [
+    NavLeaf('A6b', 'Settings', '/settings'),
+  ], hue: FobColors.cyan),
 ];
 
 /// Console shell — persistent TreeNav + top bar wrapping the animated content
