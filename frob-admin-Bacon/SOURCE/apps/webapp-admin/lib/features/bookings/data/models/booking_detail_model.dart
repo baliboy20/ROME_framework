@@ -42,6 +42,8 @@ class BookingDetailModel extends BookingDetail {
           role: _role(m),
           ageBand: m['age_band']?.toString() ?? '18+',
           notes: m['notes']?.toString(),
+          email: m['email']?.toString(),
+          notifyOptedIn: m['notify_opted_in'] == null || m['notify_opted_in'] == 1 || m['notify_opted_in'] == true,
         );
       }).toList(),
       emergencyContact: ec == null

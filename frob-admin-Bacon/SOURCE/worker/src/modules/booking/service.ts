@@ -576,6 +576,8 @@ export interface OwnerEditBookingInput {
     age_band: Participant["age_band"];
     contactRole: ContactRole;
     notes?: string | null;
+    email?: string | null;
+    notifyOptedIn?: boolean;
   }>;
 }
 
@@ -649,6 +651,9 @@ export async function ownerEditBooking(
         is_lead_booker: p.contactRole === "leader" ? 1 : 0,
         contact_role: p.contactRole,
         notes: p.notes ?? null,
+        email: p.email ?? null,
+        // A leader is always notified; a co-leader carries the opt-in (default on).
+        notify_opted_in: p.contactRole === "leader" ? 1 : p.notifyOptedIn === false ? 0 : 1,
       });
     }
     if (newPartySize !== booking.party_size) {

@@ -327,6 +327,11 @@ export interface Participant {
   is_lead_booker: 0 | 1;
   contact_role: ContactRole;
   notes: string | null;
+  // EML reintegration (DR-19 + build-finding): per-person address + notify
+  // opt-in for the recipient fan-out (F-18). Optional on the type so existing
+  // create() callers rely on the DB defaults (email NULL, notify_opted_in 1).
+  email?: string | null;
+  notify_opted_in?: 0 | 1;
 }
 
 export interface Payment {

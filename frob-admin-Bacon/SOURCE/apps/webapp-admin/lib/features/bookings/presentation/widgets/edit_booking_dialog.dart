@@ -27,12 +27,21 @@ class EditBookingDialog extends StatefulWidget {
 }
 
 class _AttendeeRow {
-  _AttendeeRow({required String name, required this.ageBand, required this.contactRole, this.notes})
-      : nameCtrl = TextEditingController(text: name);
+  _AttendeeRow({
+    required String name,
+    required this.ageBand,
+    required this.contactRole,
+    this.notes,
+    String? email,
+    this.notifyOptedIn = true,
+  })  : nameCtrl = TextEditingController(text: name),
+        emailCtrl = TextEditingController(text: email ?? '');
   final TextEditingController nameCtrl;
+  final TextEditingController emailCtrl;
   String ageBand;
   String contactRole;
   String? notes;
+  bool notifyOptedIn;
 }
 
 class _EditBookingDialogState extends State<EditBookingDialog> {
@@ -52,7 +61,14 @@ class _EditBookingDialogState extends State<EditBookingDialog> {
     _rows = widget.booking.attendees.isEmpty
         ? [_AttendeeRow(name: '', ageBand: '18+', contactRole: 'leader')]
         : widget.booking.attendees
-            .map((a) => _AttendeeRow(name: a.name, ageBand: a.ageBand, contactRole: _roleToString(a.role), notes: a.notes))
+            .map((a) => _AttendeeRow(
+                  name: a.name,
+                  ageBand: a.ageBand,
+                  contactRole: _roleToString(a.role),
+                  notes: a.notes,
+                  email: a.email,
+                  notifyOptedIn: a.notifyOptedIn,
+                ))
             .toList();
   }
 
@@ -60,6 +76,7 @@ class _EditBookingDialogState extends State<EditBookingDialog> {
   void dispose() {
     for (final r in _rows) {
       r.nameCtrl.dispose();
+      r.emailCtrl.dispose();
     }
     super.dispose();
   }
@@ -88,7 +105,15 @@ class _EditBookingDialogState extends State<EditBookingDialog> {
     }
     body['participants'] = [
       for (final r in _rows)
-        {'name': r.nameCtrl.text.trim(), 'age_band': r.ageBand, 'contact_role': r.contactRole, 'notes': r.notes},
+        {
+          'name': r.nameCtrl.text.trim(),
+          'age_band': r.ageBand,
+          'contact_role': r.contactRole,
+          'notes': r.notes,
+          if (r.emailCtrl.text.trim().isNotEmpty) 'email': r.emailCtrl.text.trim(),
+          // Notify opt-in only meaningful for co-leaders (a leader is always notified).
+          'notify_opted_in': r.contactRole == 'co-leader' ? r.notifyOptedIn : true,
+        },
     ];
     final result = await sl<UpdateBooking>()(UpdateBookingParams(widget.booking.id, body));
     result.fold(
@@ -154,39 +179,75 @@ class _EditBookingDialogState extends State<EditBookingDialog> {
 
   Widget _attendeeEditRow(int i) {
     final r = _rows[i];
+    final isCoLeader = r.contactRole == 'co-leader';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 3,
-            child: TextField(controller: r.nameCtrl, decoration: const InputDecoration(labelText: 'Name', isDense: true, border: OutlineInputBorder())),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 3,
+                child: TextField(controller: r.nameCtrl, decoration: const InputDecoration(labelText: 'Name', isDense: true, border: OutlineInputBorder())),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: DropdownButtonFormField<String>(
+                  initialValue: r.ageBand,
+                  decoration: const InputDecoration(labelText: 'Age band', isDense: true, border: OutlineInputBorder()),
+                  items: [for (final b in _ageBands) DropdownMenuItem(value: b, child: Text(b))],
+                  onChanged: (v) => setState(() => r.ageBand = v ?? '18+'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                flex: 2,
+                child: DropdownButtonFormField<String>(
+                  initialValue: r.contactRole,
+                  decoration: const InputDecoration(labelText: 'Role', isDense: true, border: OutlineInputBorder()),
+                  items: [for (final role in _contactRoles) DropdownMenuItem(value: role, child: Text(role))],
+                  onChanged: (v) => setState(() => r.contactRole = v ?? 'attendee'),
+                ),
+              ),
+              IconButton(
+                onPressed: _rows.length > 1 ? () => _removeRow(i) : null,
+                icon: const Icon(Icons.close, size: 18),
+                tooltip: 'Remove attendee',
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Expanded(
-            flex: 2,
-            child: DropdownButtonFormField<String>(
-              initialValue: r.ageBand,
-              decoration: const InputDecoration(labelText: 'Age band', isDense: true, border: OutlineInputBorder()),
-              items: [for (final b in _ageBands) DropdownMenuItem(value: b, child: Text(b))],
-              onChanged: (v) => setState(() => r.ageBand = v ?? '18+'),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            flex: 2,
-            child: DropdownButtonFormField<String>(
-              initialValue: r.contactRole,
-              decoration: const InputDecoration(labelText: 'Role', isDense: true, border: OutlineInputBorder()),
-              items: [for (final role in _contactRoles) DropdownMenuItem(value: role, child: Text(role))],
-              onChanged: (v) => setState(() => r.contactRole = v ?? 'attendee'),
-            ),
-          ),
-          IconButton(
-            onPressed: _rows.length > 1 ? () => _removeRow(i) : null,
-            icon: const Icon(Icons.close, size: 18),
-            tooltip: 'Remove attendee',
+          const SizedBox(height: 6),
+          Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: TextField(
+                  controller: r.emailCtrl,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: const InputDecoration(labelText: 'Email (for notifications)', isDense: true, border: OutlineInputBorder()),
+                ),
+              ),
+              const SizedBox(width: 8),
+              // A leader is always notified; only a co-leader carries the opt-in (F-18/DR-19).
+              Expanded(
+                flex: 4,
+                child: isCoLeader
+                    ? SwitchListTile(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        value: r.notifyOptedIn,
+                        title: const Text('Notify this co-leader', style: TextStyle(fontSize: 12.5)),
+                        onChanged: (v) => setState(() => r.notifyOptedIn = v),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(top: 12),
+                        child: Text('Always notified', style: TextStyle(fontSize: 12, color: FobColors.textMuted)),
+                      ),
+              ),
+            ],
           ),
         ],
       ),

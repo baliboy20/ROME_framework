@@ -53,12 +53,21 @@ class Attendee extends Equatable {
   final AttendeeRole role;
   final String ageBand;
   final String? notes;
-  const Attendee({required this.name, required this.role, this.ageBand = '18+', this.notes});
+  final String? email;
+  final bool notifyOptedIn;
+  const Attendee({
+    required this.name,
+    required this.role,
+    this.ageBand = '18+',
+    this.notes,
+    this.email,
+    this.notifyOptedIn = true,
+  });
 
   bool get isLeader => role == AttendeeRole.leader;
 
   @override
-  List<Object?> get props => [name, role, ageBand, notes];
+  List<Object?> get props => [name, role, ageBand, notes, email, notifyOptedIn];
 }
 
 class EmergencyContact extends Equatable {

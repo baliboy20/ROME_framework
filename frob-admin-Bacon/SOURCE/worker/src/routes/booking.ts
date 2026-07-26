@@ -351,6 +351,8 @@ const ownerEditBookingSchema = z.object({
         age_band: z.enum(["under-12", "12-17", "18+", "60+"]),
         contact_role: z.enum(["leader", "co-leader", "attendee"]),
         notes: z.string().nullable().optional(),
+        email: z.string().email().nullable().optional(),
+        notify_opted_in: z.boolean().optional(),
       })
     )
     .min(1)
@@ -370,6 +372,8 @@ bookingRoutes.patch("/admin/bookings/:id", requireOperatorSession, async (c) => 
       age_band: p.age_band,
       contactRole: p.contact_role,
       notes: p.notes,
+      email: p.email,
+      notifyOptedIn: p.notify_opted_in,
     })),
   });
   return respond(c, result);
