@@ -16,7 +16,7 @@ const kNavGroups = [
   NavGroup('Scheduling', [
     NavLeaf('A22', 'Tours & routes', '/tours'),
     NavLeaf('A17', 'Departure calendar', '/calendar'),
-    NavLeaf('A18', 'Scheduler', '/scheduler'),
+    NavLeaf('A18', 'Schedules', '/scheduler'),
     NavLeaf('A20', 'Bike allocation', '/bike-allocation'),
   ], hue: FobColors.cyan),
   NavGroup('Alerts & records', [

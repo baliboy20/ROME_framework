@@ -115,7 +115,7 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 | New booking | A7 | PC | nav | operator session |
 | Enquiries | A9 | PC | nav | operator session |
 | Departure calendar | A17 | PC | nav | operator session · REQ-BO04 |
-| Scheduler | A18 | PC | nav · A17 row/Edit | operator session · REQ-BOOK11/12/13 |
+| Schedules | A18 | PC | nav · A17 row/Edit | operator session · REQ-BOOK11/12/13 |
 | Bike allocation | A20 | PC | nav · A17 "Bikes" | operator session · REQ-BOOK14 |
 | Booking browser | A19 | PC | nav | operator session · REQ-BO05/06 (read-only) |
 | Owner alerts / Deliverability / Audit | A4 / A3 / A5 | PC | nav | operator session |
@@ -170,6 +170,16 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 - **states:** guard-open / cancelled.
 - **rationale:** initiates a downstream money-moving fan-out.
 - **mockup-ref:** `Admin System.dc.html` A18.
+
+#### UXD-04a — Schedules master/detail (A18 layout, 2026-07-26)
+- **surfaces:** A18
+- **trigger:** novel (presentation convention; behaviour of UXD-03/04 unchanged)
+- **overrides:** none — supersedes the earlier dropdown-selector layout
+- **serves:** REQ-BOOK11/12/13 · UJ-BO-02/03
+- **behaviour:** A18 is a **master/detail** screen. The master (left) is a selectable list of scheduled departures (tour · date · time · booked/capacity) plus a **New** (+) control; the detail (right) is the create/edit form for the selected — or new — departure, carrying the capacity guard (UXD-05), the change fan-out confirm (UXD-03) and the cancellation remediation fan-out (UXD-04). Selecting a row pre-fills the form (conforms UXC-NAV-4); New clears it. Renamed from "Scheduler". Cancellation is a notice workflow, never a silent row delete.
+- **states:** list-ready / row-selected(edit) / new(empty form).
+- **rationale:** replaces a dropdown-of-ids selector with a first-class list; unifies read + write in one surface and matches the app's master/detail idiom (A19 booking browser). A17 departure calendar remains the complementary date-oriented view (potential future consolidation, recorded in the build finding).
+- **mockup-ref:** none yet (layout evolution; behaviour mockups A18 unchanged).
 
 #### UXD-05 — Scheduler capacity guards
 - **surfaces:** A18

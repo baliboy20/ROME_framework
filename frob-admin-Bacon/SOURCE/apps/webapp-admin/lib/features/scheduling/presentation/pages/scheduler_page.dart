@@ -6,6 +6,7 @@ import '../../../../theme/tokens.dart';
 import '../../../../widgets/app_button.dart';
 import '../../../../widgets/app_field.dart';
 import '../../../../widgets/app_modal.dart';
+import '../../domain/entities/lookups.dart';
 import '../bloc/scheduler_bloc.dart';
 
 /// A18 — Scheduler. Capacity guard (UXD-05), fan-out confirms (UXD-03/04),
@@ -62,36 +63,35 @@ class _SchedulerViewState extends State<_SchedulerView> {
       },
       builder: (context, state) {
         final bloc = context.read<SchedulerBloc>();
-        return Column(
+        String tourName(String? id) {
+          final t = state.publishedTours.where((t) => t.id == id).firstOrNull;
+          return (t == null || t.name.isEmpty) ? (id ?? '') : t.name;
+        }
+
+        // Master/detail: a selectable list of scheduled departures (master) beside
+        // the create/edit/cancel form for the selected — or new — one (detail).
+        return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(state.isEdit ? 'Edit departure' : 'New departure', style: FobText.pageTitle),
-            const SizedBox(height: FobSpace.card),
-            Card(
-              child: Padding(
-                padding: const EdgeInsets.all(FobSpace.card),
-                child: Row(
-                  children: [
-                    const Text('Edit existing: ', style: FobText.body),
-                    const SizedBox(width: 8),
-                    DropdownButton<String?>(
-                      value: state.editingId,
-                      hint: const Text('New departure'),
-                      items: [
-                        const DropdownMenuItem<String?>(value: null, child: Text('New departure')),
-                        ...state.departures.map((d) => DropdownMenuItem<String?>(
-                              value: d.id,
-                              child: Text('${d.tourId} · ${d.date} ${d.time}'),
-                            )),
-                      ],
-                      onChanged: (v) => bloc.add(SelectDepartureForEditEvent(v)),
-                    ),
-                  ],
-                ),
+            SizedBox(
+              width: 300,
+              child: _SchedulesMaster(
+                departures: state.departures,
+                selectedId: state.editingId,
+                isNew: !state.isEdit,
+                tourName: tourName,
+                onNew: () => bloc.add(const SelectDepartureForEditEvent(null)),
+                onSelect: (id) => bloc.add(SelectDepartureForEditEvent(id)),
               ),
             ),
-            const SizedBox(height: FobSpace.card),
-            Card(
+            const SizedBox(width: 24),
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.zero,
+                children: [
+                  Text(state.isEdit ? 'Edit departure' : 'New departure', style: FobText.pageTitle),
+                  const SizedBox(height: FobSpace.card),
+                  Card(
               child: Padding(
                 padding: const EdgeInsets.all(FobSpace.card),
                 child: Column(
@@ -188,6 +188,9 @@ class _SchedulerViewState extends State<_SchedulerView> {
                 ),
               ),
             ),
+                ],
+              ),
+            ),
           ],
         );
       },
@@ -221,6 +224,81 @@ class _SchedulerViewState extends State<_SchedulerView> {
       builder: (ctx) => const _CancelNoticeDialog(),
     );
     if (notice != null) bloc.add(CancelDepartureFormEvent(notice: notice));
+  }
+}
+
+/// Master pane — the selectable list of scheduled departures + New.
+class _SchedulesMaster extends StatelessWidget {
+  final List<DepartureEditOption> departures;
+  final String? selectedId;
+  final bool isNew;
+  final String Function(String? tourId) tourName;
+  final VoidCallback onNew;
+  final void Function(String? id) onSelect;
+  const _SchedulesMaster({
+    required this.departures,
+    required this.selectedId,
+    required this.isNew,
+    required this.tourName,
+    required this.onNew,
+    required this.onSelect,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text('Schedules', style: FobText.pageTitle),
+            IconButton.filled(
+              onPressed: onNew,
+              icon: const Icon(Icons.add, size: 18),
+              tooltip: 'New departure',
+            ),
+          ],
+        ),
+        const SizedBox(height: 4),
+        const Text('Scheduled departures. Select one to edit or cancel it.',
+            style: TextStyle(fontSize: 12.5, color: FobColors.textMuted, height: 1.4)),
+        const SizedBox(height: FobSpace.card),
+        if (departures.isEmpty)
+          const Text('No departures scheduled yet — add one with +.', style: FobText.body)
+        else
+          ...departures.map((d) {
+            final selected = !isNew && d.id == selectedId;
+            return InkWell(
+              onTap: () => onSelect(d.id),
+              borderRadius: BorderRadius.circular(10),
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: selected ? FobHue.pink.background : FobColors.surfaceCard,
+                  border: Border.all(color: selected ? FobColors.pink : FobColors.hairline),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(tourName(d.tourId),
+                        style: TextStyle(
+                            fontFamily: FobText.serif,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 15,
+                            color: selected ? FobColors.pinkText : FobColors.textStrong)),
+                    const SizedBox(height: 2),
+                    Text('${d.date} · ${d.time}    ·    ${d.confirmedCount}/${d.capacity}',
+                        style: const TextStyle(fontSize: 12, color: FobColors.textMuted)),
+                  ],
+                ),
+              ),
+            );
+          }),
+      ],
+    );
   }
 }
 

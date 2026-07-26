@@ -43,9 +43,9 @@ Every AORDL requirement maps to at least one architecture component, one data en
 | REQ-BOOK08 | webapp-admin + webapp-customer (completion landing) | bookings, participants, messages | POST /admin/bookings (+ DR-B11 completion link → BOOK02/03) |
 | REQ-BOOK09 | cron-workers | bookings, departures | cron abandonment-sweep |
 | REQ-BOOK10 | webapp-admin + webapp-customer (completion landing) | bookings, participants, messages | POST /admin/bookings/provisional (+ DR-B11 completion link → BOOK02/03) |
-| REQ-BOOK11 | webapp-admin | departures | POST /admin/departures |
-| REQ-BOOK12 | webapp-admin | departures | PATCH /admin/departures/:id |
-| REQ-BOOK13 | webapp-admin | departures | POST /admin/departures/:id/cancel |
+| REQ-BOOK11 | webapp-admin (A18 Schedules, master/detail) | departures | POST /admin/departures |
+| REQ-BOOK12 | webapp-admin (A18 Schedules, master/detail) | departures | PATCH /admin/departures/:id |
+| REQ-BOOK13 | webapp-admin (A18 Schedules, master/detail) | departures | POST /admin/departures/:id/cancel |
 | REQ-BOOK14 | webapp-admin | bike_assignments, bikes | POST /admin/departures/:id/bike-assignments |
 | REQ-BOOK15 | webapp-admin (A19) | bookings, participants, departures | PATCH /admin/bookings/:id (owner-assisted edit, DR-B12b; atomic capacity move, TDR-08) |
 | REQ-BOOK16 | webapp-admin (A19) | bookings, departures, payments | POST /admin/bookings/:id/transition (constrained transitions, DR-B12c) |
