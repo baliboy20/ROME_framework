@@ -6,14 +6,21 @@ Preconditions:
 Conditions:
   - a template starts as draft and is not used for sending until published to active
   - publishing requires all required variable/merge fields to be defined
+  - allocating a template to a process = publishing it active for that use_case; the use_case IS the process key (activate-per-use_case model, ratified 2026-07-26)
+  - each use_case declares a merge-field catalogue (the variable names its process supplies); the editor surfaces these and a test-send renders them with sample data
+  - a test send renders THIS template (draft included) with the process's sample data and emails it, tagged, to the Owner or an override address — it is never idempotency-suppressed
+  - removal is archive-by-default: PATCH status:retired (soft, preserves message.template_id references and audit); hard delete is permitted ONLY for an unused draft that no message references
 Postconditions:
   - an email_template exists in draft, distinct from any currently active template for the same use_case
   - on publish, exactly one active template covers the use_case (any prior active one is retired)
+  - a retired template is preserved for audit; a hard-deleted template was an unreferenced draft
 Outcomes:
-  - Owner sees the new template listed as draft and can preview it before publishing
-  - published templates are used by the triggered transactional sends (REQ-NOTIF01 and the module triggers it serves)
+  - Owner sees the new template listed as draft, can preview it, test-send it, and publish (allocate) it to its process
+  - Owner can archive an active/used template or hard-delete an unused draft
+  - published templates are used by the triggered transactional sends (REQ-NOTIF01, REQ-NOTIF11 and the module triggers it serves)
 Invariants:
   - at most one active email_template per use_case at a time
+  - a template referenced by any sent message is never hard-deleted (archive only)
 NonFunctional: {}
 Errors:
   - error: Publish attempted with unfilled required variable fields
@@ -22,7 +29,7 @@ Errors:
     userAction: Fill the required merge fields, then publish
 ScopeBoundary:
   InScope:
-    - creating/editing a draft template, previewing it, publishing to active, retiring a template
+    - creating/editing a draft template, previewing it, test-sending it, publishing (allocating) to active, archiving (retiring), and hard-deleting an unused draft
   OutOfScope:
     - the per-send Explanation Block for cancellations (that is per-send content, not template authoring — REQ-TOUR07)
     - AI/MCP-assisted drafting

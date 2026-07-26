@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Author** | PMA, dispatch `pma-P3` · **Status** PROPOSED |
-| **Coverage** | **84 / 84** REQ IDs mapped to design element(s) (78 baseline + 6 EML-reintegration NOTIF05–10, 2026-07-26) |
+| **Coverage** | **85 / 85** REQ IDs mapped to design element(s) (78 baseline + 6 EML-reintegration NOTIF05–10 + 1 booking-outcome confirmation NOTIF11, 2026-07-26) |
 
 Every AORDL requirement maps to at least one architecture component, one data entity (or KV/idempotency store), and one API route/internal service. "—" means no owned data write (read-only or handoff).
 
@@ -28,7 +28,8 @@ Every AORDL requirement maps to at least one architecture component, one data en
 | REQ-NOTIF07 | api-worker + webapp-admin | email_threads | PATCH /admin/email-threads/:id/link |
 | REQ-NOTIF08 | api-worker + webapp-admin | email_threads, received_emails, message | POST /admin/email-archive/export |
 | REQ-NOTIF09 | api-worker + webapp-admin | message, email_threads | POST /admin/email-threads/:id/reply → send() |
-| REQ-NOTIF10 | api-worker + webapp-admin | email_templates | GET/POST/PATCH /admin/email-templates |
+| REQ-NOTIF10 | api-worker + webapp-admin | email_templates | GET/POST/PATCH/DELETE /admin/email-templates, POST /admin/email-templates/:id/test-send |
+| REQ-NOTIF11 | api-worker (core-notifications) | message, email_templates, bookings, payments | send() ← modules/notifications/booking-outcome (Stripe webhook + reconcile) |
 | REQ-SEO01 | webapp-customer + api-worker | — (reads RCA) | static HTML generation |
 | REQ-SEO02 | webapp-customer | — | sitemap/index generation |
 | REQ-SEO03 | webapp-admin/editor + api-worker | — | POST /publish (manual, TDR-14) |

@@ -1,0 +1,42 @@
+ID: REQ-NOTIF11
+Actor: System
+Intent: send booking-outcome confirmation email
+Preconditions:
+  - a booking has just reached a settled payment position (confirmed by Stripe webhook, or repaired by the reconciliation sweep REQ-BOOK05)
+  - the booking has a lead booker with a contact email
+Conditions:
+  - the confirmation "flavour" is selected from the booking's payment position — amount_paid == 0 → booking_reserved_unpaid; 0 < amount_paid < price_total → booking_deposit_received; amount_paid >= price_total → booking_confirmed_paid
+  - the matching active email_template for that use_case is rendered (REQ-NOTIF10) with the booking's merge data; if no active template exists a built-in plain-text fallback is used so a confirmed booking is never left un-notified
+  - the send is idempotency-keyed per (booking_id, flavour) so webhook redelivery and the reconciliation sweep never double-send, and an unpaid→paid transition still notifies each flavour exactly once
+Postconditions:
+  - exactly one message row exists per (booking, flavour), recording provider, status and (when rendered) template_id — satisfies REQ-NOTIF01
+  - the customer receives the confirmation via email in addition to the on-screen R1 confirmation surface (UXC-FBK-1 two-channel rule)
+Outcomes:
+  - a paid-in-full customer receives their booking confirmation with reference, ride details and meeting point
+  - an owner-created / provisional booking with no payment receives a reserved-awaiting-payment notice carrying the completion link
+Invariants:
+  - a booking outcome is never notified more than once per flavour
+  - no confirmation blocks or fails the booking/payment transaction — dispatch is best-effort and post-commit
+NonFunctional: {}
+Errors:
+  - error: booking has no lead-booker contact email
+    message: (none to customer) — dispatcher returns no_contact_address; no send attempted
+    httpCode: 200
+    userAction: Owner may add a contact email and re-run reconciliation to dispatch
+ScopeBoundary:
+  InScope:
+    - selecting the confirmation flavour from payment position
+    - rendering the allocated template (or fallback) and sending once, idempotently
+    - hooking the Stripe webhook fulfilment path and the reconciliation sweep
+  OutOfScope:
+    - authoring/allocating the templates themselves (REQ-NOTIF10)
+    - reminders (REQ-NOTIF02) and cancellation notices (REQ-TOUR07)
+    - the deposit/partial flavour's own template (dispatcher wired; template authored later — falls back until then)
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      Closes the confirmation-email half of UXC-FBK-1 (the R1 page alone did not satisfy the
+      "page AND email" rule). Flavours and the activate-per-use_case allocation model ratified with
+      sponsor 2026-07-26; deposit template deferred as customer web flow charges in full today.
+CopilotMode: STRICT
