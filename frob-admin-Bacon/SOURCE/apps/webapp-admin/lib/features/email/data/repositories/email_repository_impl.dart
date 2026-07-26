@@ -34,4 +34,12 @@ class EmailRepositoryImpl with RepositoryGuard implements EmailRepository {
   @override
   Future<Result<void>> updateTemplate(String id, Map<String, dynamic> body) =>
       guard(() async => await remote.updateTemplate(id, body));
+
+  @override
+  Future<Result<void>> deleteTemplate(String id) =>
+      guard(() async => await remote.deleteTemplate(id));
+
+  @override
+  Future<Result<String>> testSendTemplate(String id, {String? to}) =>
+      guard(() async => await remote.testSendTemplate(id, to: to));
 }

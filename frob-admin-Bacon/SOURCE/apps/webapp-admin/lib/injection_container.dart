@@ -118,6 +118,8 @@ void _registerEmail() {
   sl.registerLazySingleton(() => ReplyToThread(sl()));
   sl.registerLazySingleton(() => GetTemplates(sl()));
   sl.registerLazySingleton(() => SaveTemplate(sl()));
+  sl.registerLazySingleton(() => DeleteTemplate(sl()));
+  sl.registerLazySingleton(() => TestSendTemplate(sl()));
   sl.registerFactory(() => ArchiveBloc(sl()));
   sl.registerFactory(() => TemplatesBloc(sl()));
 }

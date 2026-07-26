@@ -10,6 +10,8 @@ abstract class EmailRemoteDataSource {
   Future<List<EmailTemplate>> getTemplates();
   Future<void> createTemplate(Map<String, dynamic> body);
   Future<void> updateTemplate(String id, Map<String, dynamic> body);
+  Future<void> deleteTemplate(String id);
+  Future<String> testSendTemplate(String id, {String? to});
 }
 
 class EmailRemoteDataSourceImpl implements EmailRemoteDataSource {
@@ -77,5 +79,19 @@ class EmailRemoteDataSourceImpl implements EmailRemoteDataSource {
   @override
   Future<void> updateTemplate(String id, Map<String, dynamic> body) async {
     await http.patch('/admin/email-templates/$id', body: body);
+  }
+
+  @override
+  Future<void> deleteTemplate(String id) async {
+    await http.delete('/admin/email-templates/$id');
+  }
+
+  @override
+  Future<String> testSendTemplate(String id, {String? to}) async {
+    final data = await http.post(
+      '/admin/email-templates/$id/test-send',
+      body: {if (to != null && to.isNotEmpty) 'to': to},
+    );
+    return (data as Map)['sentTo']?.toString() ?? '';
   }
 }

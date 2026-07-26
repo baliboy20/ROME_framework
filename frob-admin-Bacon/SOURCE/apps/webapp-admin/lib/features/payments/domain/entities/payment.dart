@@ -15,6 +15,10 @@ class Payment extends Equatable {
   final PaymentStatus status;
   final String providerRef;
 
+  /// When money last moved for this booking — the latest payment row's
+  /// timestamp. Null for bookings with no payment yet (drafts).
+  final DateTime? lastPaymentAt;
+
   const Payment({
     required this.bookingId,
     required this.bookingRef,
@@ -23,6 +27,7 @@ class Payment extends Equatable {
     required this.refundedPence,
     required this.status,
     required this.providerRef,
+    this.lastPaymentAt,
   });
 
   Payment copyWith({int? refundedPence, PaymentStatus? status}) => Payment(
@@ -33,9 +38,10 @@ class Payment extends Equatable {
         refundedPence: refundedPence ?? this.refundedPence,
         status: status ?? this.status,
         providerRef: providerRef,
+        lastPaymentAt: lastPaymentAt,
       );
 
   @override
   List<Object?> get props =>
-      [bookingId, bookingRef, customerName, paidPence, refundedPence, status, providerRef];
+      [bookingId, bookingRef, customerName, paidPence, refundedPence, status, providerRef, lastPaymentAt];
 }

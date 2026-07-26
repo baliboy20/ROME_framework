@@ -17,6 +17,16 @@ import '../mappers/payment_status_pill.dart';
 
 String formatMoney(int pence) => '£${(pence / 100).toStringAsFixed(2)}';
 
+/// Compact transaction date for the A8 ledger. '—' when no payment has moved.
+String formatTxnDate(DateTime? dt) {
+  if (dt == null) return '—';
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  final local = dt.toLocal();
+  final hh = local.hour.toString().padLeft(2, '0');
+  final mm = local.minute.toString().padLeft(2, '0');
+  return '${local.day} ${months[local.month - 1]} ${local.year}, $hh:$mm';
+}
+
 /// A8 — Payments & refunds (REQ-BOOK13, UXD-01).
 class PaymentsPage extends StatelessWidget {
   const PaymentsPage({super.key});
@@ -71,6 +81,13 @@ class _PaymentsView extends StatelessWidget {
                     FobColumn(label: 'Booking', flex: 2, render: (r) => Text('${r.bookingRef} · ${r.customerName}', style: FobText.body)),
                     FobColumn(label: 'Paid', render: (r) => Text(formatMoney(r.paidPence), style: FobText.money)),
                     FobColumn(label: 'Refunded', render: (r) => Text(formatMoney(r.refundedPence), style: FobText.money)),
+                    FobColumn(
+                      label: 'Date',
+                      render: (r) => Text(
+                        formatTxnDate(r.lastPaymentAt),
+                        style: const TextStyle(fontFamily: FobText.mono, fontSize: 11.5, color: FobColors.textMuted),
+                      ),
+                    ),
                     FobColumn(label: 'Status', render: (r) => StatusPill(status: r.status.pill)),
                     FobColumn(
                       label: '',

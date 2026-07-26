@@ -11,6 +11,7 @@ class PaymentModel extends Payment {
     required super.refundedPence,
     required super.status,
     required super.providerRef,
+    super.lastPaymentAt,
   });
 
   factory PaymentModel.fromJson(Map<String, dynamic> j) => PaymentModel(
@@ -23,6 +24,7 @@ class PaymentModel extends Payment {
         // booking status, not a payment state.
         status: paymentStatusFromString(j['payment_status']?.toString()),
         providerRef: j['provider_ref']?.toString() ?? '',
+        lastPaymentAt: DateTime.tryParse(j['last_payment_at']?.toString() ?? ''),
       );
 }
 

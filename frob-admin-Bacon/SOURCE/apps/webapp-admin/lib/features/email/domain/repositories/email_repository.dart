@@ -9,4 +9,6 @@ abstract class EmailRepository {
   Future<Result<List<EmailTemplate>>> getTemplates();
   Future<Result<void>> createTemplate(Map<String, dynamic> body);
   Future<Result<void>> updateTemplate(String id, Map<String, dynamic> body);
+  Future<Result<void>> deleteTemplate(String id);
+  Future<Result<String>> testSendTemplate(String id, {String? to});
 }

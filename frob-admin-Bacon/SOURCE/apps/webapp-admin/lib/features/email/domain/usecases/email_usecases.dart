@@ -66,3 +66,25 @@ class SaveTemplateParams {
   final Map<String, dynamic> body;
   const SaveTemplateParams({this.id, required this.body});
 }
+
+/// Hard-delete a template (worker allows only an unused draft; otherwise 409).
+class DeleteTemplate extends UseCase<void, String> {
+  final EmailRepository repository;
+  DeleteTemplate(this.repository);
+  @override
+  Future<Result<void>> call(String id) => repository.deleteTemplate(id);
+}
+
+/// Test-send a template with sample data; returns the recipient it went to.
+class TestSendTemplate extends UseCase<String, TestSendParams> {
+  final EmailRepository repository;
+  TestSendTemplate(this.repository);
+  @override
+  Future<Result<String>> call(TestSendParams p) => repository.testSendTemplate(p.id, to: p.to);
+}
+
+class TestSendParams {
+  final String id;
+  final String? to;
+  const TestSendParams(this.id, {this.to});
+}

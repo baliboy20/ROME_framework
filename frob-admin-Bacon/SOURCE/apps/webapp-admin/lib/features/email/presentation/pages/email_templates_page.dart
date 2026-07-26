@@ -9,7 +9,16 @@ import '../../domain/entities/email_entities.dart';
 import '../../domain/usecases/email_usecases.dart';
 import '../bloc/templates_bloc.dart';
 
-const _useCases = ['booking_confirmation', 'reminder', 'payment_receipt', 'cancellation_notice', 'review_request'];
+const _useCases = [
+  'booking_confirmed_paid',
+  'booking_deposit_received',
+  'booking_reserved_unpaid',
+  'booking_confirmation',
+  'reminder',
+  'payment_receipt',
+  'cancellation_notice',
+  'review_request',
+];
 
 /// REQ-NOTIF10 — email template management.
 class EmailTemplatesPage extends StatelessWidget {
@@ -31,6 +40,97 @@ class _TemplatesView extends StatelessWidget {
     final bloc = context.read<TemplatesBloc>();
     await showDialog<bool>(context: context, builder: (_) => _TemplateEditor(template: template));
     bloc.add(const LoadTemplatesEvent());
+  }
+
+  void _reload(BuildContext context) => context.read<TemplatesBloc>().add(const LoadTemplatesEvent());
+
+  void _toast(BuildContext context, String msg, {bool error = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg), backgroundColor: error ? FobColors.error : null),
+    );
+  }
+
+  /// Allocate = publish active (worker auto-retires the prior active for the use_case).
+  Future<void> _allocate(BuildContext context, EmailTemplate t) async {
+    final r = await sl<SaveTemplate>()(SaveTemplateParams(id: t.id, body: {'status': 'active'}));
+    if (!context.mounted) return;
+    r.fold(
+      (f) => _toast(context, f.message, error: true),
+      (_) { _toast(context, 'Allocated “${t.name}” to ${t.useCase}'); _reload(context); },
+    );
+  }
+
+  /// Archive = retire (soft; preserves history).
+  Future<void> _archive(BuildContext context, EmailTemplate t) async {
+    final r = await sl<SaveTemplate>()(SaveTemplateParams(id: t.id, body: {'status': 'retired'}));
+    if (!context.mounted) return;
+    r.fold(
+      (f) => _toast(context, f.message, error: true),
+      (_) { _toast(context, 'Archived “${t.name}”'); _reload(context); },
+    );
+  }
+
+  /// Hard delete — worker permits only an unused draft (else 409).
+  Future<void> _delete(BuildContext context, EmailTemplate t) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Delete draft?'),
+        content: Text('“${t.name}” will be permanently deleted. This is only possible for an unused draft.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: FobColors.error),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !context.mounted) return;
+    final r = await sl<DeleteTemplate>()(t.id);
+    if (!context.mounted) return;
+    r.fold(
+      (f) => _toast(context, f.message, error: true),
+      (_) { _toast(context, 'Deleted “${t.name}”'); _reload(context); },
+    );
+  }
+
+  Future<void> _testSend(BuildContext context, EmailTemplate t) async {
+    final ctrl = TextEditingController();
+    final send = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: const Text('Send a test'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Renders “${t.name}” with sample data and emails it.',
+                style: const TextStyle(fontSize: 13, color: FobColors.textMuted)),
+            const SizedBox(height: 14),
+            TextField(
+              controller: ctrl,
+              decoration: const InputDecoration(
+                labelText: 'Send to',
+                hintText: 'Leave blank to send to the owner',
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Send test')),
+        ],
+      ),
+    );
+    if (send != true || !context.mounted) return;
+    final r = await sl<TestSendTemplate>()(TestSendParams(t.id, to: ctrl.text.trim()));
+    if (!context.mounted) return;
+    r.fold(
+      (f) => _toast(context, f.message, error: true),
+      (to) => _toast(context, 'Test sent to $to'),
+    );
   }
 
   @override
@@ -87,6 +187,29 @@ class _TemplatesView extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               PillLabel.forStatus(t.status),
+              PopupMenuButton<String>(
+                tooltip: 'Actions',
+                icon: const Icon(Icons.more_horiz, size: 20, color: FobColors.textMuted),
+                onSelected: (v) {
+                  switch (v) {
+                    case 'edit': _openEditor(context, template: t); break;
+                    case 'test': _testSend(context, t); break;
+                    case 'allocate': _allocate(context, t); break;
+                    case 'archive': _archive(context, t); break;
+                    case 'delete': _delete(context, t); break;
+                  }
+                },
+                itemBuilder: (_) => [
+                  const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                  const PopupMenuItem(value: 'test', child: Text('Send a test')),
+                  if (t.status != 'active')
+                    const PopupMenuItem(value: 'allocate', child: Text('Use for this process (publish)')),
+                  if (t.status == 'active')
+                    const PopupMenuItem(value: 'archive', child: Text('Archive')),
+                  if (t.status == 'draft')
+                    const PopupMenuItem(value: 'delete', child: Text('Delete draft', style: TextStyle(color: FobColors.error))),
+                ],
+              ),
             ],
           ),
         ),
