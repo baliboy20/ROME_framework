@@ -29,6 +29,7 @@ const migrationFiles = [
   "0001_init.sql",
   "0003_booking_contact_role.sql",
   "0004_eml_reintegration.sql",
+  "0005_booking_outcome_templates.sql",
 ];
 
 function bindParams(stmt: ReturnType<DatabaseSync["prepare"]>, params: unknown[]) {

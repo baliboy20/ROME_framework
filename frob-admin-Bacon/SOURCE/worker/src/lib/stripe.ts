@@ -109,6 +109,10 @@ export async function createCheckoutSession(
 export interface WebhookResult {
   received: true;
   deduped?: true;
+  /** Set when this event newly confirmed a booking — the route dispatches the
+   *  confirmation email for it (kept out of this lib so stripe.ts stays free of
+   *  the notifications dependency). */
+  confirmedBookingId?: string;
 }
 
 /**
@@ -144,16 +148,17 @@ export async function handleStripeWebhook(
     return { status: 200, body: { received: true, deduped: true } };
   }
 
+  let confirmedBookingId: string | undefined;
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
     if (session.payment_status === "paid") {
-      await fulfilCheckoutSession(db, rawDb, session);
+      confirmedBookingId = (await fulfilCheckoutSession(db, rawDb, session)) ?? undefined;
     }
   }
   // All other event types are recorded (idempotency claimed above) but do
   // not drive fulfilment — satisfies TDR-06's "only checkout.session.completed".
 
-  return { status: 200, body: { received: true } };
+  return { status: 200, body: { received: true, confirmedBookingId } };
 }
 
 /**
@@ -168,12 +173,12 @@ async function fulfilCheckoutSession(
   db: Db,
   rawDb: D1Database,
   session: Stripe.Checkout.Session
-): Promise<void> {
+): Promise<string | null> {
   const payment = await db.payments.getBySessionId(session.id);
-  if (!payment) return; // unknown session — nothing to fulfil
+  if (!payment) return null; // unknown session — nothing to fulfil
 
   const booking = await db.bookings.get(payment.booking_id);
-  if (!booking) return;
+  if (!booking) return null;
 
   if (payment.status !== "succeeded") {
     await db.payments.update(payment.id, { status: "succeeded" });
@@ -186,6 +191,8 @@ async function fulfilCheckoutSession(
       confirmed_at: new Date().toISOString(),
     });
   }
+  // Signal the route to dispatch the confirmation email for this booking.
+  return booking.id;
 }
 
 export interface RefundResult {

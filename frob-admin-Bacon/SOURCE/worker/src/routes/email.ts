@@ -12,6 +12,8 @@ import { createDb } from "../db/client";
 import type { Env } from "../env";
 import { type AuthedVariables, requireOperatorSession } from "../lib/auth";
 import { send } from "../modules/notifications/send";
+import { substituteMergeFields } from "../modules/notifications/templates";
+import { OUTCOME_FIELDS, type BookingFlavour } from "../modules/notifications/booking-outcome";
 
 export const emailRoutes = new Hono<{ Bindings: Env; Variables: AuthedVariables }>();
 
@@ -158,6 +160,11 @@ emailRoutes.post("/admin/email-threads/:id/reply", async (c) => {
 // Email templates (REQ-NOTIF10).
 // ---------------------------------------------------------------------------
 const TEMPLATE_USE_CASES = [
+  // Booking-outcome flavours (dispatched by modules/notifications/booking-outcome).
+  "booking_confirmed_paid",
+  "booking_deposit_received",
+  "booking_reserved_unpaid",
+  // Other transactional processes.
   "booking_confirmation",
   "reminder",
   "payment_receipt",
@@ -237,4 +244,70 @@ emailRoutes.patch("/admin/email-templates/:id", async (c) => {
     .bind(...params)
     .run();
   return c.json({ id, ...parsed.data });
+});
+
+// DELETE — hard-delete is allowed only for an unused draft. Active/retired
+// templates are kept (archive = PATCH status:'retired'), and a template that any
+// sent message references can never be hard-deleted (preserves the audit trail).
+emailRoutes.delete("/admin/email-templates/:id", async (c) => {
+  const id = c.req.param("id");
+  const tmpl = await c.env.DB.prepare(`SELECT id, status FROM email_templates WHERE id = ?`)
+    .bind(id)
+    .first<{ id: string; status: string }>();
+  if (!tmpl) return c.json({ error: "not_found" }, 404);
+  if (tmpl.status !== "draft") {
+    return c.json(
+      { error: "not_deletable", message: "Only a draft can be deleted. Archive (retire) active or used templates instead." },
+      409
+    );
+  }
+  const ref = await c.env.DB.prepare(`SELECT 1 FROM message WHERE template_id = ? LIMIT 1`)
+    .bind(id)
+    .first();
+  if (ref) {
+    return c.json(
+      { error: "referenced", message: "This template has already been used to send email — archive it instead of deleting." },
+      409
+    );
+  }
+  await c.env.DB.prepare(`DELETE FROM email_templates WHERE id = ?`).bind(id).run();
+  return c.json({ id, deleted: true });
+});
+
+// Test send — renders THIS template (even a draft) with the process's sample
+// merge data and emails it, clearly tagged, to the owner (or an override
+// address). Never idempotency-locked: each test should actually send.
+const testSendSchema = z.object({ to: z.string().email().optional() });
+
+emailRoutes.post("/admin/email-templates/:id/test-send", async (c) => {
+  const id = c.req.param("id");
+  const parsed = testSendSchema.safeParse(await c.req.json().catch(() => ({})));
+  if (!parsed.success) {
+    return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
+  }
+  const tmpl = await c.env.DB.prepare(`SELECT * FROM email_templates WHERE id = ?`)
+    .bind(id)
+    .first<{ id: string; use_case: string; subject: string; body: string }>();
+  if (!tmpl) return c.json({ error: "not_found" }, 404);
+
+  const recipient = parsed.data.to ?? c.env.OWNER_PERSONAL_EMAIL ?? c.env.OWNER_EMAIL;
+  if (!recipient) {
+    return c.json({ error: "no_recipient", message: "No owner email is configured; supply a `to` address." }, 422);
+  }
+
+  // Sample data from the process catalogue when the use_case is a booking
+  // flavour; otherwise the tokens simply render blank.
+  const sample = OUTCOME_FIELDS[tmpl.use_case as BookingFlavour]?.sample ?? {};
+  const db = createDb(c.env.DB);
+  const result = await send(db, c.env, {
+    messageType: "owner_alert",
+    recipient,
+    event: `template-test:${id}`,
+    idempotencyKey: `template-test:${id}:${crypto.randomUUID()}`,
+    subject: `[TEST] ${substituteMergeFields(tmpl.subject, sample)}`,
+    textBody:
+      `— This is a test send of the "${tmpl.use_case}" template, with sample data. —\n\n` +
+      substituteMergeFields(tmpl.body, sample),
+  });
+  return c.json({ status: result.status, sentTo: recipient, messageId: result.message?.id ?? null });
 });

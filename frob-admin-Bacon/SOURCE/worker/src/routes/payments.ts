@@ -11,6 +11,7 @@ import { createDb } from "../db/client";
 import { type AuthedVariables, requireCustomerSession, requireOperatorSession } from "../lib/auth";
 import { createCheckoutSession, getStripeClient, handleStripeWebhook, issueRefund } from "../lib/stripe";
 import { confirmCapacity } from "../modules/booking/capacity";
+import { sendBookingOutcome } from "../modules/notifications/booking-outcome";
 
 export const paymentRoutes = new Hono<{ Bindings: Env; Variables: AuthedVariables }>();
 
@@ -73,6 +74,13 @@ paymentRoutes.post("/webhooks/stripe", async (c: AppContext) => {
   const stripe = getStripeClient(c.env.STRIPE_SECRET_KEY);
 
   const result = await handleStripeWebhook(stripe, db, c.env.DB, rawBody, signature, c.env.STRIPE_WEBHOOK_SECRET);
+  // A newly-confirmed booking triggers its outcome email (paid-in-full flavour).
+  // Idempotency-keyed inside the dispatcher, so redelivery never double-sends.
+  const confirmedBookingId =
+    "confirmedBookingId" in result.body ? result.body.confirmedBookingId : undefined;
+  if (confirmedBookingId) {
+    await sendBookingOutcome(db, c.env, confirmedBookingId);
+  }
   return c.json(result.body, result.status as 200);
 });
 
@@ -159,6 +167,8 @@ paymentRoutes.post("/admin/payments/reconcile", requireOperatorSession, async (c
         if (booking && booking.status !== "confirmed") {
           await confirmCapacity(c.env.DB, booking.departure_id, booking.party_size);
           await db.bookings.update(booking.id, { status: "confirmed", confirmed_at: new Date().toISOString() });
+          // Catch-up confirmation email for bookings a missed webhook left pending.
+          await sendBookingOutcome(db, c.env, booking.id);
         }
       }
       repaired.push(row.session_id);

@@ -128,7 +128,9 @@ backoffice.get("/admin/bookings", async (c) => {
            (SELECT session_id FROM payments
               WHERE booking_id = b.id ORDER BY created_at DESC LIMIT 1) AS provider_ref,
            (SELECT status FROM payments
-              WHERE booking_id = b.id ORDER BY created_at DESC LIMIT 1) AS payment_status
+              WHERE booking_id = b.id ORDER BY created_at DESC LIMIT 1) AS payment_status,
+           (SELECT created_at FROM payments
+              WHERE booking_id = b.id ORDER BY created_at DESC LIMIT 1) AS last_payment_at
       FROM bookings b
       JOIN departures d ON d.id = b.departure_id
       ${where}
