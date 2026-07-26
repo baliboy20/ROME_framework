@@ -24,6 +24,10 @@ const kNavGroups = [
     NavLeaf('A3', 'Deliverability', '/deliverability'),
     NavLeaf('A5', 'Audit log', '/audit'),
   ], hue: FobColors.orange),
+  NavGroup('Email', [
+    NavLeaf('A5b', 'Email archive', '/email-archive'),
+    NavLeaf('A5c', 'Templates', '/email-templates'),
+  ], hue: FobColors.pink),
   NavGroup('Content', [
     NavLeaf('A6', 'Publish & content', '/publish'),
   ], hue: FobColors.cyan),

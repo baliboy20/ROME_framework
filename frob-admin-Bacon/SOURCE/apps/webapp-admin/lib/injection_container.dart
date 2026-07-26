@@ -71,6 +71,13 @@ import 'features/settings/domain/repositories/settings_repository.dart';
 import 'features/settings/domain/usecases/settings_usecases.dart';
 import 'features/settings/presentation/bloc/settings_bloc.dart';
 
+import 'features/email/data/datasources/email_remote_data_source.dart';
+import 'features/email/data/repositories/email_repository_impl.dart';
+import 'features/email/domain/repositories/email_repository.dart';
+import 'features/email/domain/usecases/email_usecases.dart';
+import 'features/email/presentation/bloc/archive_bloc.dart';
+import 'features/email/presentation/bloc/templates_bloc.dart';
+
 /// Service locator. `main()` calls [configureDependencies] once at startup.
 /// Registration order: external → core → per-feature (data → domain → bloc).
 /// Each feature adds one `_register<Feature>()` block as it is migrated.
@@ -98,6 +105,20 @@ void configureDependencies() {
   _registerScheduling();
   _registerAuth();
   _registerSettings();
+  _registerEmail();
+}
+
+void _registerEmail() {
+  sl.registerLazySingleton<EmailRemoteDataSource>(() => EmailRemoteDataSourceImpl(sl()));
+  sl.registerLazySingleton<EmailRepository>(() => EmailRepositoryImpl(sl()));
+  sl.registerLazySingleton(() => SearchArchive(sl()));
+  sl.registerLazySingleton(() => GetThread(sl()));
+  sl.registerLazySingleton(() => LinkThread(sl()));
+  sl.registerLazySingleton(() => ReplyToThread(sl()));
+  sl.registerLazySingleton(() => GetTemplates(sl()));
+  sl.registerLazySingleton(() => SaveTemplate(sl()));
+  sl.registerFactory(() => ArchiveBloc(sl()));
+  sl.registerFactory(() => TemplatesBloc(sl()));
 }
 
 void _registerSettings() {

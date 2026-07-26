@@ -29,6 +29,8 @@ import '../features/scheduling/presentation/pages/calendar_page.dart';
 import '../features/scheduling/presentation/pages/scheduler_page.dart';
 import '../features/scheduling/presentation/pages/tours_page.dart';
 import '../features/settings/presentation/pages/settings_page.dart';
+import '../features/email/presentation/pages/email_archive_page.dart';
+import '../features/email/presentation/pages/email_templates_page.dart';
 import '../screens/admin_shell.dart';
 
 /// Bridges a Bloc's state stream to a [Listenable] so GoRouter re-runs its
@@ -146,6 +148,8 @@ GoRouter createRouter(AuthBloc authBloc) {
           _shellRoute('/flagged-bike', const FlaggedBikePage()),
           _shellRoute('/compliance', const CompliancePage()),
           _shellRoute('/settings', const SettingsPage()),
+          _shellRoute('/email-archive', const EmailArchivePage()),
+          _shellRoute('/email-templates', const EmailTemplatesPage()),
         ],
       ),
     ],
