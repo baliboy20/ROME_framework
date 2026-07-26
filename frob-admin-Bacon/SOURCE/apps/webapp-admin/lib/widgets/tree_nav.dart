@@ -31,12 +31,19 @@ class TreeNav extends StatefulWidget {
 
 class _TreeNavState extends State<TreeNav> {
   bool collapsed = false;
+  // Groups start fully collapsed; the owner expands what they need (UXD-18).
   final Set<String> openGroups = {};
 
-  @override
-  void initState() {
-    super.initState();
-    openGroups.addAll(widget.groups.map((g) => g.title));
+  bool get _allExpanded => openGroups.length == widget.groups.length;
+
+  void _toggleAll() {
+    setState(() {
+      if (_allExpanded) {
+        openGroups.clear();
+      } else {
+        openGroups.addAll(widget.groups.map((g) => g.title));
+      }
+    });
   }
 
   @override
@@ -77,6 +84,27 @@ class _TreeNavState extends State<TreeNav> {
               ],
             ),
           ),
+          if (!collapsed)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 12, 4),
+              child: InkWell(
+                key: const Key('nav-expand-all-toggle'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: _toggleAll,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+                  child: Row(
+                    children: [
+                      Icon(_allExpanded ? Icons.unfold_less : Icons.unfold_more,
+                          size: 13, color: FobColors.textFaint),
+                      const SizedBox(width: 8),
+                      Text(_allExpanded ? 'COLLAPSE ALL' : 'EXPAND ALL',
+                          style: FobText.microLabel),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 8),

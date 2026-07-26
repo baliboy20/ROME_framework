@@ -214,6 +214,8 @@ export interface Message {
   provider: string;
   provider_ref: string | null;
   status: MessageStatus;
+  // EML reintegration (REQ-NOTIF10): set when rendered from an email_template.
+  template_id?: string | null;
   created_at: string;
   sent_at: string | null;
 }

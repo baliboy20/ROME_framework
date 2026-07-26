@@ -20,8 +20,12 @@ type AppContext = Context<{ Bindings: Env; Variables: AuthedVariables }>;
 // REQ-BOOK04 — POST /bookings/:id/checkout-session
 // ---------------------------------------------------------------------------
 
+// customerEmail is only a Stripe Checkout *prefill* — Stripe Embedded Checkout
+// collects and validates the real payer email itself. A malformed or missing
+// prefill must therefore never 422 the whole payment: .catch(undefined) drops
+// an invalid value instead of failing the request.
 const checkoutSessionSchema = z.object({
-  customerEmail: z.string().email().optional(),
+  customerEmail: z.string().email().optional().catch(undefined),
 });
 
 paymentRoutes.post("/bookings/:id/checkout-session", requireCustomerSession, async (c: AppContext) => {

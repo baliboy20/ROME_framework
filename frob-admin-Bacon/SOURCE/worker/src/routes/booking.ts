@@ -352,6 +352,7 @@ bookingRoutes.post("/admin/departures/:id/cancel", requireOperatorSession, async
   }
 
   const affected = await db.bookings.listByDeparture(departureId);
+  const departure = await db.departures.get(departureId);
   const result = await service.cancelDeparture(db, c.env.DB, departureId);
   if (!result.ok) return respond(c, result);
 
@@ -380,9 +381,9 @@ bookingRoutes.post("/admin/departures/:id/cancel", requireOperatorSession, async
     await db.bookings.update(b.id, { status: "cancelled", cancelled_at: now });
 
     // Recipient fan-out: leader (always) + opted-in co-leaders (F-18).
-    const recipients = await query<{ email: string }>(
+    const recipients = await query<{ email: string; name: string }>(
       c.env.DB,
-      `SELECT email FROM participants
+      `SELECT email, name FROM participants
         WHERE booking_id = ? AND email IS NOT NULL AND email <> ''
           AND (contact_role = 'leader' OR (contact_role = 'co-leader' AND notify_opted_in = 1))`,
       [b.id]
@@ -391,14 +392,28 @@ bookingRoutes.post("/admin/departures/:id/cancel", requireOperatorSession, async
     if (notice.explanationBlock) bodyLines.push(notice.explanationBlock);
     if (notice.remediation) bodyLines.push(`We can offer: ${notice.remediation}.`);
     if (notice.discountCode) bodyLines.push(`Use code ${notice.discountCode} to rebook.`);
+    const discountLine = notice.discountCode ? `Use code ${notice.discountCode} to rebook.` : "";
     for (const r of recipients) {
       await send(db, c.env, {
         messageType: "transactional",
         recipient: r.email,
         event: `cancellation-notice:${b.id}`,
         idempotencyKey: `cancellation-notice:${b.id}:${r.email}`,
+        // Plain-text fallback if no active cancellation_notice template.
         subject: "Your tour has been cancelled",
         textBody: bodyLines.join("\n\n"),
+        // REQ-NOTIF10: render from the active template when one exists.
+        template: {
+          useCase: "cancellation_notice",
+          vars: {
+            name: r.name ?? "",
+            tour: departure?.tour_id ?? "",
+            date: departure?.date ?? "",
+            explanation: notice.explanationBlock ?? "",
+            remediation: notice.remediation ?? "",
+            discount_line: discountLine,
+          },
+        },
       });
       notified += 1;
     }

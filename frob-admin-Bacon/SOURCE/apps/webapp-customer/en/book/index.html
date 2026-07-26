@@ -2,42 +2,121 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Canonical base for the mounted Flutter island's asset resolution
+     (main.dart.js, assets/, FontManifest, CanvasKit). Every OTHER resource on
+     this page uses an absolute /en/… path, so this base only affects the
+     island — exactly matching how the standalone island build resolves. -->
+<base href="/en/book/flutter/">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book your tour — Friends on Bikes</title>
 <meta name="robots" content="noindex">
+<!-- The booking + payment island reads this to reach the frob admin backend
+     (api-worker). DEV points at the local worker; swap for publish. -->
+<meta name="fob-api-base" content="http://localhost:8787">
 <link rel="canonical" href="https://friendsonbikes.uk/en/book/">
-<link rel="stylesheet" href="../styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<!-- Stripe.js — required by the payment step (interop/stripe_embedded_checkout_interop.dart,
+     window.Stripe(...), BOOK04, TDR-06). Must live on the HOST page since the
+     island is mounted here, not served standalone. -->
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+:root{
+  --cream:#f6f4ee; --cream-hi:#faf8f2; --cream-lo:#efece3; --card:#faf8f2;
+  --ink:#14130f; --ink-2:#1a1916; --body:#4a483f; --muted:#8a8778; --faint:#a8a495; --hairline:#dcd7c9; --green:#3f6b3f;
+  --serif:'Newsreader',Georgia,serif; --sans:'Instrument Sans','Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);color:var(--ink-2);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(20,19,17,.82);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(246,244,238,.08)}
+nav.top img{height:52px;width:auto;display:block}
+.nlinks{display:flex;align-items:center;gap:40px}
+.nlinks a{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,238,.9)}
+.nlinks a:hover{color:#fff}
+/* Page frame */
+.book-head{padding:112px 48px 20px;max-width:1000px;margin:0 auto}
+.book-head .eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:13px;color:var(--green);margin-bottom:14px}
+.book-head h1{font-family:var(--serif);font-weight:500;font-size:clamp(32px,4.5vw,52px);letter-spacing:-.02em;line-height:1.04}
+.book-head p{font-size:16px;line-height:1.55;color:var(--body);max-width:560px;margin-top:14px}
+/* Island container — the Flutter booking+payment flow mounts here */
+.island-wrap{max-width:1000px;margin:0 auto 48px;padding:0 48px}
+/* Viewport-tall so the Flutter island scrolls its own content internally
+   (as it did standalone) — otherwise a tall step like Stripe checkout would
+   overflow a short fixed box. Flutter fills hostElement and handles the scroll. */
+#booking-island{position:relative;height:calc(100vh - 200px);min-height:640px;background:var(--card);border:1px solid rgba(26,25,22,.09);border-radius:8px;overflow:hidden;box-shadow:0 1px 2px rgba(26,25,22,.04)}
+#booking-island flt-glass-pane,#booking-island flutter-view{border-radius:8px}
+.island-noscript{padding:56px 44px;color:var(--body)}
+.island-noscript strong{color:var(--ink-2)}
+/* Skeleton shown until the island hydrates */
+.island-skeleton{position:absolute;inset:0;display:flex;flex-direction:column;gap:16px;padding:44px;pointer-events:none}
+.island-skeleton .bar{background:linear-gradient(90deg,#efece3 0%,#f4f1e8 50%,#efece3 100%);background-size:200% 100%;animation:sk 1.3s ease-in-out infinite;border-radius:6px}
+.island-skeleton .bar.t{height:26px;width:40%}
+.island-skeleton .bar.r{height:64px;width:100%}
+.island-skeleton .bar.h{height:220px;width:100%}
+[data-hydrated="true"] .island-skeleton{display:none}
+@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.island-skeleton .bar{animation:none}}
+footer{background:var(--ink);color:rgba(246,244,238,.6);padding:44px 40px 36px}
+footer .frow{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px}
+footer .brand{font-family:var(--serif);font-size:20px;color:#f6f4ee}
+footer .secure{color:rgba(246,244,238,.5)}
+@media(max-width:700px){.nlinks{display:none}.island-wrap,.book-head{padding-left:24px;padding-right:24px}}
+</style>
 </head>
 <body>
-<header class="f-nav">
-  <a class="wordmark" href="../index.html">Friends on Bikes</a>
-  <nav>
-    <a href="../tours/index.html">Tours</a>
-    <a href="../saved.html">Saved tours</a>
-    <a href="../hub.html">Manage booking</a>
-  </nav>
-</header>
-<main class="f-wrap narrow">
-  <h1>Book your tour</h1>
-  <p class="muted">Select your date, add attendees and pay securely — all on this page, no redirects.</p>
 
-  <!--
-    Flutter Web island mount point (TDR-13). Covers W4-W10 (selection,
-    attendees, consent, review, payment, confirmation) as a single
-    stateful island so state (selected date/slot/party) persists across
-    the flow without full-page navigation. Talks to api-worker
-    (BOOK01-05) and mounts Stripe Embedded Checkout (BOOK04, TDR-06)
-    for the payment step.
-  -->
-  <div id="booking-island" class="island-mount" data-island="booking" data-island-base="/book/flutter/">
-    <div class="island-noscript" role="status">
-      <p><strong>Booking requires JavaScript.</strong></p>
-      <p>Please enable JavaScript to select a date, add attendees and pay for
-      your tour, or call us to book by phone.</p>
-    </div>
+<nav class="top">
+  <a href="/en/"><img src="/en/img/logo.webp" alt="Friends on Bikes"></a>
+  <div class="nlinks">
+    <a href="/en/tours/">Our Tours</a>
+    <a href="/en/saved.html">Saved</a>
+    <a href="/en/hub.html">Manage booking</a>
+    <a href="/en/contact.html">Contact</a>
   </div>
-</main>
-<footer class="f-footer">Friends on Bikes</footer>
-<script src="../island-loader.js" defer></script>
+</nav>
+
+<header class="book-head">
+  <p class="eyebrow">Secure booking</p>
+  <h1>Book your tour</h1>
+  <p>Select your date, add attendees and pay securely — all on this page, no redirects. Payments handled by Stripe.</p>
+</header>
+
+<section class="island-wrap">
+  <!--
+    Flutter Web island mount (TDR-13). Single stateful island covering W4–W10
+    (tour select → date/slot → attendees & consent → review → Stripe payment →
+    confirmation) so state persists across steps without page navigation. It
+    reads fob-api-base above and talks to the frob admin backend (api-worker,
+    BOOK01–05) and mounts Stripe Embedded Checkout for payment (BOOK04).
+    data-island-base is the absolute path the built island assets live at.
+  -->
+  <div id="booking-island" class="island-mount" data-island="booking" data-island-base="/en/book/flutter/">
+    <div class="island-skeleton" aria-hidden="true">
+      <div class="bar t"></div>
+      <div class="bar r"></div>
+      <div class="bar r"></div>
+      <div class="bar h"></div>
+    </div>
+    <noscript>
+      <div class="island-noscript" role="status">
+        <p><strong>Booking requires JavaScript.</strong></p>
+        <p>Please enable JavaScript to select a date, add attendees and pay for
+        your tour, or call us on 020 1234 5678 to book by phone.</p>
+      </div>
+    </noscript>
+  </div>
+</section>
+
+<footer>
+  <div class="frow">
+    <span class="brand">Friends on Bikes</span>
+    <span class="secure">🔒 Secure payments by Stripe · Barbican Centre, Silk Street, London EC2Y 8DS</span>
+  </div>
+</footer>
+
+<script src="/en/island-loader.js" defer></script>
+<script src="/en/consent.js" defer></script>
 </body>
 </html>

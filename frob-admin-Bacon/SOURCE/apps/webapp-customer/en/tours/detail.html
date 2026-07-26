@@ -67,7 +67,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
     <a href="/en/about.html">About</a>
     <a href="/en/contact.html">Contact</a>
     <span class="lang"><a class="on" href="/en/">EN</a> | <a href="#">FR</a> | <a href="#">ES</a></span>
-    <a class="booknow" href="http://localhost:5174/">Book Now</a>
+    <a class="booknow" href="/en/book/">Book Now</a>
   </div>
 </nav>
 
@@ -103,7 +103,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
         <div class="row"><span class="k">Difficulty</span><span id="b-diff"></span></div>
         <div class="row"><span class="k">Departs</span><span>Barbican Centre</span></div>
       </div>
-      <a class="cta" id="cta" href="http://localhost:5174/">Book this tour →</a>
+      <a class="cta" id="cta" href="/en/book/">Book this tour →</a>
       <div class="fine">Free cancellation up to 48 hours before · Secure payment by Stripe</div>
     </div>
   </aside>
@@ -119,7 +119,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
 
 <script>
 (function(){
-  var API="http://localhost:8787", BOOK="http://localhost:5174/";
+  var API="http://localhost:8787", BOOK="/en/book/";
   function q(n){return new URLSearchParams(location.search).get(n);}
   function money(p){return "£"+Math.round(p/100);}
   var id=q("tour")||"hidden-city";
@@ -147,5 +147,6 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
   });
 })();
 </script>
+<script src="/en/consent.js" defer></script>
 </body>
 </html>

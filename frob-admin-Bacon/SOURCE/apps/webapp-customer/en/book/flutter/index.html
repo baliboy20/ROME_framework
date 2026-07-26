@@ -14,7 +14,7 @@
     This is a placeholder for base href that will be replaced by the value of
     the `--base-href` argument provided to `flutter build`.
   -->
-  <base href="/book/">
+  <base href="/en/book/flutter/">
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
@@ -25,7 +25,10 @@
     back to FOB_API_BASE / a default origin if this tag is absent (e.g.
     local `flutter build web` runs outside the static-page shell).
   -->
-  <meta name="fob-api-base" content="https://api.friendsonbikes.uk">
+  <!-- LOCAL DEV: point the standalone island at the local api-worker. The
+       real integrated static page (en/book/) supplies its own meta per env;
+       this file is only used when running the island by itself. -->
+  <meta name="fob-api-base" content="http://localhost:8787">
 
   <!-- Stripe.js — required by interop/stripe_embedded_checkout_interop.dart
        (window.Stripe(...), BOOK04, TDR-06). -->

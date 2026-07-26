@@ -10,6 +10,7 @@
 import type { Db } from "../../db/client";
 import type { Env } from "../../env";
 import { sendCloudflareEmail } from "../../lib/cloudflare-email";
+import { renderTemplate } from "./templates";
 import type { Message, MessageType } from "../../types";
 
 export interface SendInput {
@@ -25,6 +26,12 @@ export interface SendInput {
   references?: string;
   /** Set when the body was rendered from an email_template (REQ-NOTIF10). */
   templateId?: string;
+  /**
+   * When present and an active template exists for the use_case, its rendered
+   * subject/body replace `subject`/`textBody` and the message records the
+   * template_id (REQ-NOTIF10). Falls back to the plain text otherwise.
+   */
+  template?: { useCase: string; vars: Record<string, string> };
   now?: Date;
 }
 
@@ -52,12 +59,25 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
   const now = input.now ?? new Date();
   const messageId = crypto.randomUUID();
 
+  // REQ-NOTIF10: render from the active template when the caller asked for one.
+  let subject = input.subject;
+  let textBody = input.textBody;
+  let templateId = input.templateId ?? null;
+  if (input.template) {
+    const rendered = await renderTemplate(env.DB, input.template.useCase, input.template.vars);
+    if (rendered) {
+      subject = rendered.subject;
+      textBody = rendered.textBody;
+      templateId = rendered.templateId;
+    }
+  }
+
   // DR-18: Cloudflare Email Sending supersedes Postmark.
   const result = await sendCloudflareEmail(env.EMAIL, {
     from: env.NOTIFICATIONS_EMAIL_FROM ?? "bookings@friendsonbikes.uk",
     to: input.recipient,
-    subject: input.subject,
-    textBody: input.textBody,
+    subject,
+    textBody,
     inReplyTo: input.inReplyTo,
     references: input.references,
   });
@@ -72,6 +92,7 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
     provider: "cloudflare-email",
     provider_ref: result.messageId,
     status,
+    template_id: templateId,
     created_at: now.toISOString(),
     sent_at: result.ok ? now.toISOString() : null,
   };

@@ -71,7 +71,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
     <a href="/en/about.html">About</a>
     <a href="/en/contact.html">Contact</a>
     <span class="lang"><a class="on" href="/en/">EN</a> | <a href="#">FR</a> | <a href="#">ES</a></span>
-    <a class="booknow" href="http://localhost:5174/">Book Now</a>
+    <a class="booknow" href="/en/book/">Book Now</a>
   </div>
 </nav>
 
@@ -99,7 +99,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
 
 <script>
 (function(){
-  var API="http://localhost:8787", BOOK="http://localhost:5174/";
+  var API="http://localhost:8787", BOOK="/en/book/";
   function money(p){return "£"+Math.round(p/100);}
   function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");}
   function card(t){
@@ -125,5 +125,6 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
   });
 })();
 </script>
+<script src="/en/consent.js" defer></script>
 </body>
 </html>
