@@ -1,0 +1,36 @@
+ID: REQ-NOTIF10
+Actor: Owner
+Intent: manage email-template
+Preconditions:
+  - a new template use-case exists with no active template covering it, or an active template needs replacing
+Conditions:
+  - a template starts as draft and is not used for sending until published to active
+  - publishing requires all required variable/merge fields to be defined
+Postconditions:
+  - an email_template exists in draft, distinct from any currently active template for the same use_case
+  - on publish, exactly one active template covers the use_case (any prior active one is retired)
+Outcomes:
+  - Owner sees the new template listed as draft and can preview it before publishing
+  - published templates are used by the triggered transactional sends (REQ-NOTIF01 and the module triggers it serves)
+Invariants:
+  - at most one active email_template per use_case at a time
+NonFunctional: {}
+Errors:
+  - error: Publish attempted with unfilled required variable fields
+    message: Complete all required fields before publishing.
+    httpCode: 422
+    userAction: Fill the required merge fields, then publish
+ScopeBoundary:
+  InScope:
+    - creating/editing a draft template, previewing it, publishing to active, retiring a template
+  OutOfScope:
+    - the per-send Explanation Block for cancellations (that is per-send content, not template authoring — REQ-TOUR07)
+    - AI/MCP-assisted drafting
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      New capability supporting all templated transactional sends, from REQ-EML10; email_templates
+      is an EML-reintegration entity (§4, kept — message has no template concept). Source:
+      EML-reintegration-handover/2-eml-spec/EML.md REQ-EML10.
+CopilotMode: STRICT

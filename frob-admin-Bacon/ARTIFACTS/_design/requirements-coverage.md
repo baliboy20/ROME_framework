@@ -3,7 +3,7 @@
 | | |
 |---|---|
 | **Author** | PMA, dispatch `pma-P3` · **Status** PROPOSED |
-| **Coverage** | **78 / 78** REQ IDs mapped to design element(s) |
+| **Coverage** | **84 / 84** REQ IDs mapped to design element(s) (78 baseline + 6 EML-reintegration NOTIF05–10, 2026-07-26) |
 
 Every AORDL requirement maps to at least one architecture component, one data entity (or KV/idempotency store), and one API route/internal service. "—" means no owned data write (read-only or handoff).
 
@@ -19,10 +19,16 @@ Every AORDL requirement maps to at least one architecture component, one data en
 | REQ-CNA03 | api-worker + webapp-admin | audit_log | writeAudit() / GET /admin/audit |
 | REQ-CNA04 | cron-workers | prospects, audit_log | cron gdpr-cleanup |
 | REQ-CNA05 | api-worker | consents | internal consentState() |
-| REQ-NOTIF01 | api-worker + cron-workers | message | internal send() → Postmark |
-| REQ-NOTIF02 | api-worker + webapp-admin | email_events, message | POST /webhooks/postmark |
+| REQ-NOTIF01 | api-worker + cron-workers | message | internal send() → Cloudflare Email (DR-18) |
+| REQ-NOTIF02 | api-worker + webapp-admin | email_events, message | POST /webhooks/email (Cloudflare, DR-18) |
 | REQ-NOTIF03 | api-worker | webhook_events | idempotency guard (TDR-05) |
 | REQ-NOTIF04 | api-worker + webapp-admin | message (owner_alert) | internal ownerAlert() |
+| REQ-NOTIF05 | api-worker (Cloudflare Email Routing handler) + cron | email_threads, received_emails | email() inbound handler + categorisation cascade |
+| REQ-NOTIF06 | api-worker + webapp-admin | email_threads, received_emails, message | GET /admin/email-archive?q= |
+| REQ-NOTIF07 | api-worker + webapp-admin | email_threads | PATCH /admin/email-threads/:id/link |
+| REQ-NOTIF08 | api-worker + webapp-admin | email_threads, received_emails, message | POST /admin/email-archive/export |
+| REQ-NOTIF09 | api-worker + webapp-admin | message, email_threads | POST /admin/email-threads/:id/reply → send() |
+| REQ-NOTIF10 | api-worker + webapp-admin | email_templates | GET/POST/PATCH /admin/email-templates |
 | REQ-SEO01 | webapp-customer + api-worker | — (reads RCA) | static HTML generation |
 | REQ-SEO02 | webapp-customer | — | sitemap/index generation |
 | REQ-SEO03 | webapp-admin/editor + api-worker | — | POST /publish (manual, TDR-14) |

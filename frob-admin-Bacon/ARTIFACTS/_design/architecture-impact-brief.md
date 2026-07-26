@@ -29,7 +29,7 @@ A verified Stripe **Embedded Checkout** PoC is staged at `_user_input/reference/
 |---|---|---|
 | Cloudflare (Workers/Pages/D1/KV/R2/Cron) | Whole platform | no |
 | Stripe (Embedded Checkout) | Money path; verified PoC reference | costly |
-| Postmark (email) | Interim v1 email (TDR-09; PoC's Resend explicitly not used) | costly (D-NOTIF-2 open) |
+| Cloudflare Email Sending/Routing | Email send + inbound routing (DR-18 — supersedes Postmark/TDR-09; the earlier Resend-vs-Postmark rejection predates a validated Cloudflare-native option) | native; D-NOTIF-2 closed by the live-tested EML PoC |
 | Twilio (SMS/WhatsApp) | Channel configured; **PROPOSED, deferred** (TDR-10) | yes |
 | Met Office DataHub + TfL | Advisory reads via Worker proxy (TDR-17) | yes |
 
@@ -43,7 +43,7 @@ A verified Stripe **Embedded Checkout** PoC is staged at `_user_input/reference/
 
 ## Needs the sponsor's confirmation
 1. **TDR-10 (PROPOSED):** SMS/WhatsApp stays **deferred** for v1 (interim direct Twilio, no orchestration).
-2. **Postmark-as-interim** (D-NOTIF-2) stands for v1.
+2. **Cloudflare Email Sending/Routing** (DR-18, EML reintegration) is the v1 email path — supersedes Postmark/TDR-09; D-NOTIF-2 closed. Domain verification (SPF/DKIM/DMARC) + the `remote: true` binding pattern were live-validated in the EML PoC (`EML-reintegration-handover/3-reference-only/CLOUDFLARE-ARCHITECTURE.md`).
 3. **Must-not-invent holes** stay unbuilt: `retired`/`awaiting_external_service` bike states, scheduled-maintenance & certification-gate REQs, on-day paper waiver (DR-B7), abandonment-recovery email (DR-B8), deferred POST journeys, GDPR erasure beyond `prospects`.
 4. **PWA offline-storage trade-off (DEV-2)** acceptable given the quota/eviction caveat.
 

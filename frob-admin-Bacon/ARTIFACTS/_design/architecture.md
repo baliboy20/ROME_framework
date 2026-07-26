@@ -31,7 +31,7 @@ The 78 requirements decompose into **11 REQ-owning modules** — `core-auth` (AU
 | `webapp-admin` | Full Flutter Web SPA (no SEO) | BO (A17–A20), BOOK owner surfaces (A7, A18, A20), FLEET (A12–A16), OPS admin (A10/A11), PRE (A9), NOTIF (A3/A4), CNA (A5), SEO (A6 publish), AUTH (A1/A2), DS | Owner planning/oversight console: departure calendar, booking browser, fleet, enquiries, incident/hazard review, deliverability, publish trigger. |
 | `webapp-editor` | Full Flutter Web SPA (no SEO) | SEO content authoring, DS | Content-authoring surface feeding the static publish (SEO01/02 source content). Thin this run (RCA catalogue is presumed/out of scope); topology-present, publish control shared with `webapp-admin` (A6, SEO03). |
 | `mobile-guide` | Flutter **Web PWA only** (DEV-3 / TDR-13 revised — iOS-native primary dropped) | OPS (G2–G13), AUTH (guide device recognition) | Field playbook app for guides: readiness gates, rider check-in, incident/hazard logging. Offline-critical once a tour starts (TDR-16), served as an installable PWA (no App Store distribution). |
-| `api-worker` | Cloudflare Worker — **Hono + Zod** | Middle/services layer for ALL 78 REQs; owns AUTH middleware, NOTIF send path, Stripe/Postmark webhooks, Met Office/TfL proxies | The single request/business-logic tier at the Cloudflare edge. Every frontend and cron talks to D1/KV only through this Worker. |
+| `api-worker` | Cloudflare Worker — **Hono + Zod** | Middle/services layer for ALL 78 REQs; owns AUTH middleware, NOTIF send path (Cloudflare Email Sending, DR-18), Stripe webhooks, the Cloudflare Email Routing inbound handler (REQ-NOTIF05), Met Office/TfL proxies | The single request/business-logic tier at the Cloudflare edge. Every frontend and cron talks to D1/KV only through this Worker. |
 | `core-data-access` | Library inside `api-worker` (DATA module) | DATA (all D1 tables) | Single D1 access pattern + run-once, in-order migration runner + transaction helper. All persistence flows through it (TDR-03). |
 | `cron-workers` | Cloudflare Cron Triggers (Worker handlers) | CNA04, NOTIF sends, PRE07, BOOK09, TOUR02/03/10, FLEET07, POST02 | Scheduled jobs: `gdpr-cleanup` (03:00), `send-reminders` (08:00), `send-review-requests` (09:00), plus abandonment sweep, weather, no-show, compliance check. |
 
@@ -75,7 +75,7 @@ graph TB
 
   subgraph External vendors
     STRIPE[Stripe Embedded Checkout]
-    POST[Postmark email]
+    POST[Cloudflare Email]
     TW[Twilio SMS/WhatsApp - interim]
     MO[Met Office DataHub]
     TFL[TfL Unified API]
@@ -115,7 +115,7 @@ graph TB
 3. Attendee details (BOOK02), waiver/T&C + marketing consent (BOOK03 → CNA01 write to `consents`).
 4. `POST /bookings/:id/checkout-session` creates a Stripe **Embedded Checkout** session (`ui_mode:'embedded'`), returns client secret; client mounts it (BOOK04, **satisfies: TDR-06**). `payments` row inserted `INSERT OR IGNORE` on `session_id` (**satisfies: TDR-05**).
 5. Fulfilment is driven **only** by the `checkout.session.completed` webhook at `POST /webhooks/stripe` — never the return page (BOOK05, **satisfies: TDR-06**). Idempotency guarded by `webhook_events` D1 store (**satisfies: TDR-05**).
-6. Confirmation email sent via NOTIF01 (Postmark, TDR-09) with an idempotency key.
+6. Confirmation email sent via NOTIF01 (Cloudflare Email Sending, DR-18 — supersedes Postmark/TDR-09) with an idempotency key.
 
 ### 4.2 Guide field flow (OPS, offline-critical)
 `mobile-guide` (Flutter **Web PWA only**, DEV-3) authenticates every request with `X-Device-ID` (AUTH03, **satisfies: TDR-07**). Because the PWA cannot use native-only FMTC/default `sembast`, tiles are cached via a **service worker / Cache-Storage** layer and data persists in **`sembast_web` (IndexedDB)** (DEV-2 / TDR-16 revised — `flutter_map`, CyclOSM, `flutter_bloc`, `go_router`, GetIt retained). It syncs readiness/check-in/incident writes to `api-worker` when connectivity allows. **Offline-mid-tour caveat:** browser storage quota and eviction policies are weaker than native storage — the offline-critical guarantee now depends on pre-caching tiles/data before a tour starts and on the browser not evicting under pressure (surfaced as a risk in the AIB).
@@ -164,6 +164,6 @@ Also honored (bind other phases but reflected here): TDR-04 (money pence / ISO-8
 
 ## 8. Open items surfaced to sponsor (not silent deviations)
 - TDR-10 (PROPOSED): SMS/WhatsApp vendor undecided — interim direct Twilio, no orchestration lock-in. Architecture keeps `message.provider` a plain string, not an enum.
-- D-NOTIF-2: Postmark is interim; a Cloudflare-native email path may supersede.
+- D-NOTIF-2: **CLOSED by DR-18 (EML reintegration, 2026-07-26)** — Cloudflare Email Sending/Routing supersedes Postmark (TDR-09) as the v1 email path, on the strength of the EML PoC's live-tested integration. Inbound routing (REQ-NOTIF05) and the `remote: true` send binding both land in `api-worker`.
 - OPS08 mid-tour event log entity is not yet named in the dictionary (Stage 6a follow-up) — designed here as a `mid_tour_events` table placeholder (see data-dictionary.md note).
 - `retired` / `awaiting_external_service` bike states and scheduled-maintenance/certification-gate REQs have ratified *direction* but no authored REQ — not built (must-not-invent, FOB-TSPEC context).
