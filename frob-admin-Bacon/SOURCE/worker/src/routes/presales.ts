@@ -16,6 +16,7 @@ import type { Env } from "../env";
 import { createDb } from "../db/client";
 import { type AuthedVariables, requireOperatorSession } from "../lib/auth";
 import * as service from "../modules/presales/service";
+import { send } from "../modules/notifications/send";
 
 export const presalesRoutes = new Hono<{ Bindings: Env; Variables: AuthedVariables }>();
 
@@ -111,6 +112,45 @@ presalesRoutes.patch("/admin/enquiries/:id", requireOperatorSession, async (c: A
   const db = createDb(c.env.DB);
   const result = await service.markEnquiryResponded(db, c.req.param("id")!);
   return respond(c, result);
+});
+
+// ---------------------------------------------------------------------------
+// REQ-PRE05 / DR-17 (EML reintegration) — POST /admin/enquiries/:id/reply
+// In-tool, admin-composed email reply. Sends via the shared send() path, then
+// marks the enquiry responded. Non-email channels stay off-system (the client
+// uses PATCH above to mark responded without sending).
+// ---------------------------------------------------------------------------
+const enquiryReplySchema = z.object({ body: z.string().trim().min(1, "Add a reply before sending.") });
+
+presalesRoutes.post("/admin/enquiries/:id/reply", requireOperatorSession, async (c: AppContext) => {
+  const parsed = enquiryReplySchema.safeParse(await c.req.json().catch(() => ({})));
+  if (!parsed.success) {
+    return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
+  }
+  const id = c.req.param("id")!;
+  const row = await c.env.DB.prepare(
+    `SELECT p.email AS email FROM enquiries e JOIN prospects p ON p.id = e.prospect_id WHERE e.id = ?`
+  )
+    .bind(id)
+    .first<{ email: string | null }>();
+  if (!row) return c.json({ error: "not_found" }, 404);
+  if (!row.email) {
+    return c.json(
+      { error: "no_email", message: "This prospect has no email on file — reply on their preferred channel." },
+      409
+    );
+  }
+  const db = createDb(c.env.DB);
+  const result = await send(db, c.env, {
+    messageType: "transactional",
+    recipient: row.email,
+    event: `enquiry-reply:${id}`,
+    idempotencyKey: `enquiry-reply:${crypto.randomUUID()}`,
+    subject: "Re: your enquiry",
+    textBody: parsed.data.body,
+  });
+  await service.markEnquiryResponded(db, id);
+  return c.json({ status: result.status });
 });
 
 // ---------------------------------------------------------------------------

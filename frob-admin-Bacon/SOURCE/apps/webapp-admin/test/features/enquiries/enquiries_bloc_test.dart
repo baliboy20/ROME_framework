@@ -22,6 +22,12 @@ class _FakeRepo implements EnquiryRepository {
     repliedId = id;
     return const Success(null);
   }
+
+  @override
+  Future<Result<String>> sendReply(String id, String body) async {
+    repliedId = id;
+    return const Success('sent');
+  }
 }
 
 Enquiry _e(String id, {bool overdue = false, bool spam = false}) => Enquiry(

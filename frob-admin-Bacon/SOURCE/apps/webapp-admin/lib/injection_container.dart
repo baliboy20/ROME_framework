@@ -24,6 +24,7 @@ import 'features/enquiries/data/repositories/enquiry_repository_impl.dart';
 import 'features/enquiries/domain/repositories/enquiry_repository.dart';
 import 'features/enquiries/domain/usecases/get_enquiries.dart';
 import 'features/enquiries/domain/usecases/reply_enquiry.dart';
+import 'features/enquiries/domain/usecases/send_enquiry_reply.dart';
 import 'features/enquiries/presentation/bloc/enquiries_bloc.dart';
 
 import 'features/safety/data/datasources/safety_remote_data_source.dart';
@@ -214,6 +215,7 @@ void _registerEnquiries() {
   sl.registerLazySingleton<EnquiryRepository>(() => EnquiryRepositoryImpl(sl()));
   sl.registerLazySingleton(() => GetEnquiries(sl()));
   sl.registerLazySingleton(() => ReplyEnquiry(sl()));
+  sl.registerLazySingleton(() => SendEnquiryReply(sl()));
   sl.registerFactory(() => EnquiriesBloc(getEnquiries: sl(), replyEnquiry: sl()));
 }
 

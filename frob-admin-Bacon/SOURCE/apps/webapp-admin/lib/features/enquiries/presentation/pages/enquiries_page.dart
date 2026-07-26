@@ -3,8 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../injection_container.dart';
 import '../../../../theme/tokens.dart';
+import '../../../../widgets/app_button.dart';
+import '../../../../widgets/app_field.dart';
+import '../../../../widgets/app_modal.dart';
 import '../../../../widgets/fob_data_table.dart';
 import '../../domain/entities/enquiry.dart';
+import '../../domain/usecases/send_enquiry_reply.dart';
 import '../bloc/enquiries_bloc.dart';
 
 /// A9 — Enquiries. Open/Overdue/Spam tabs (UXD-12).
@@ -63,6 +67,14 @@ class _EnquiriesView extends StatelessWidget {
                         ),
                       ),
                     ),
+                    FobColumn(
+                      label: '',
+                      render: (e) => AppButton(
+                        kind: AppButtonKind.row,
+                        label: 'Reply',
+                        onPressed: () => _openReply(context, e),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -84,6 +96,96 @@ class _EnquiriesView extends StatelessWidget {
         ),
         child: Text(label, style: TextStyle(fontWeight: isActive ? FontWeight.w700 : FontWeight.w500)),
       ),
+    );
+  }
+
+  void _openReply(BuildContext context, Enquiry e) {
+    final bloc = context.read<EnquiriesBloc>();
+    showFobModal(
+      context: context,
+      blocking: false,
+      builder: (_) => _ReplyModal(
+        enquiry: e,
+        onSent: () => bloc.add(const LoadEnquiriesEvent()),
+      ),
+    );
+  }
+}
+
+/// DR-17 — compose and send an in-tool email reply to an enquiry.
+class _ReplyModal extends StatefulWidget {
+  const _ReplyModal({required this.enquiry, required this.onSent});
+  final Enquiry enquiry;
+  final VoidCallback onSent;
+
+  @override
+  State<_ReplyModal> createState() => _ReplyModalState();
+}
+
+class _ReplyModalState extends State<_ReplyModal> {
+  final _ctrl = TextEditingController();
+  bool _busy = false;
+  String? _error;
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _send() async {
+    final body = _ctrl.text.trim();
+    if (body.isEmpty) {
+      setState(() => _error = 'Add a reply before sending.');
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    final r = await sl<SendEnquiryReply>()(SendReplyParams(widget.enquiry.id, body));
+    if (!mounted) return;
+    r.fold(
+      (f) => setState(() {
+        _busy = false;
+        _error = f.message;
+      }),
+      (_) {
+        widget.onSent();
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Reply — ${widget.enquiry.prospectName}', style: FobText.cardTitle),
+        const SizedBox(height: 4),
+        const Text(
+          'Sent by email from bookings@friendsonbikes.uk and marks the enquiry responded (DR-17). Phone/WhatsApp enquiries are handled off-system.',
+          style: TextStyle(fontSize: 12, color: FobColors.textMuted),
+        ),
+        const SizedBox(height: FobSpace.card),
+        AppField(label: 'Your reply', controller: _ctrl),
+        if (_error != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(_error!, style: const TextStyle(fontSize: 12, color: FobColors.error)),
+          ),
+        const SizedBox(height: FobSpace.block),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            AppButton(label: 'Cancel', kind: AppButtonKind.ghost, onPressed: () => Navigator.of(context).pop()),
+            const SizedBox(width: 8),
+            AppButton(label: 'Send reply', kind: AppButtonKind.primary, loading: _busy, onPressed: _send),
+          ],
+        ),
+      ],
     );
   }
 }

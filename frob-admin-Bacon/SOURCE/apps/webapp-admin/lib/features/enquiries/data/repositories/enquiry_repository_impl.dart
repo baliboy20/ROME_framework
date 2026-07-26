@@ -15,4 +15,8 @@ class EnquiryRepositoryImpl with RepositoryGuard implements EnquiryRepository {
   @override
   Future<Result<void>> replyEnquiry(String id, String status) =>
       guard(() async => await remote.replyEnquiry(id, status));
+
+  @override
+  Future<Result<String>> sendReply(String id, String body) =>
+      guard(() async => await remote.sendReply(id, body));
 }
