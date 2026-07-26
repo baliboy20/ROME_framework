@@ -74,14 +74,14 @@ class _TemplatesView extends StatelessWidget {
   Future<void> _delete(BuildContext context, EmailTemplate t) async {
     final ok = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dctx) => AlertDialog(
         title: const Text('Delete draft?'),
         content: Text('“${t.name}” will be permanently deleted. This is only possible for an unused draft.'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')),
           FilledButton(
             style: FilledButton.styleFrom(backgroundColor: FobColors.error),
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => Navigator.pop(dctx, true),
             child: const Text('Delete'),
           ),
         ],
@@ -100,7 +100,7 @@ class _TemplatesView extends StatelessWidget {
     final ctrl = TextEditingController();
     final send = await showDialog<bool>(
       context: context,
-      builder: (_) => AlertDialog(
+      builder: (dctx) => AlertDialog(
         title: const Text('Send a test'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -119,8 +119,8 @@ class _TemplatesView extends StatelessWidget {
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Send test')),
+          TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')),
+          FilledButton(onPressed: () => Navigator.pop(dctx, true), child: const Text('Send test')),
         ],
       ),
     );
