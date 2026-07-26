@@ -21,7 +21,9 @@ import { posttour } from "./routes/posttour";
 import { backoffice } from "./routes/backoffice";
 import { adminLists } from "./routes/admin-lists";
 import { toursAdmin } from "./routes/tours-admin";
+import { emailRoutes } from "./routes/email";
 import { handleScheduled } from "./cron/handlers";
+import { handleInboundEmail } from "./email/handler";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -59,6 +61,7 @@ app.route("/", posttour);
 app.route("/", backoffice);
 app.route("/", adminLists);
 app.route("/", toursAdmin);
+app.route("/", emailRoutes);
 
 app.notFound((c) => c.json({ error: "not_found" }, 404));
 
@@ -67,5 +70,9 @@ export default {
   // Cron Triggers — satisfies: TDR-01 (Cron), cron-workers component.
   async scheduled(event: ScheduledController, env: Env, ctx: ExecutionContext) {
     ctx.waitUntil(handleScheduled(event, env, ctx));
+  },
+  // Inbound mail (Cloudflare Email Routing) — satisfies: REQ-NOTIF05, DR-18.
+  async email(message: ForwardableEmailMessage, env: Env, ctx: ExecutionContext) {
+    await handleInboundEmail(message, env, ctx);
   },
 };

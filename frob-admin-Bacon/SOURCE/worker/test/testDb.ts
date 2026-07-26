@@ -25,7 +25,11 @@ const migrationsDir = path.join(
 // tour/departure rows that existing fleet/cron/etc. tests don't expect to
 // see, so it's deliberately excluded here (tour-specific tests seed their
 // own departures directly).
-const migrationFiles = ["0001_init.sql", "0003_booking_contact_role.sql"];
+const migrationFiles = [
+  "0001_init.sql",
+  "0003_booking_contact_role.sql",
+  "0004_eml_reintegration.sql",
+];
 
 function bindParams(stmt: ReturnType<DatabaseSync["prepare"]>, params: unknown[]) {
   return params.map((p) => (p === undefined ? null : p));

@@ -89,8 +89,14 @@ describe("REQ-BOOK08 — POST /admin/bookings (DR-B11 completion link)", () => {
   });
 
   it("creates the booking and sends a signed completion link to the customer", async () => {
-    stubPostmarkSuccess();
-    const env = await createTestEnv();
+    const sentEmails: { to: string; raw: string }[] = [];
+    const env = await createTestEnv({
+      EMAIL: {
+        send: async (m: { to: string; raw: string }) => {
+          sentEmails.push({ to: m.to, raw: m.raw });
+        },
+      } as unknown as SendEmail,
+    });
     await seedDeparture(env);
     const token = await operatorToken(env);
 
@@ -112,11 +118,10 @@ describe("REQ-BOOK08 — POST /admin/bookings (DR-B11 completion link)", () => {
     const body = (await res.json()) as { id: string; completionLinkSent: boolean };
     expect(body.completionLinkSent).toBe(true);
 
-    const fetchMock = fetch as unknown as { mock: { calls: unknown[][] } };
-    const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-    const sentBody = JSON.parse(init.body as string) as { HtmlBody: string; To: string };
-    expect(sentBody.To).toBe("tom@example.com");
-    const match = sentBody.HtmlBody.match(/token=([^"&]+)/);
+    // DR-18: the completion link now goes through Cloudflare Email Sending
+    // (env.EMAIL.send), captured here — no Postmark fetch to inspect.
+    expect(sentEmails[0]?.to).toBe("tom@example.com");
+    const match = sentEmails[0]?.raw.match(/token=([^"\s&]+)/);
     expect(match).not.toBeNull();
     const linkedBookingId = await verifyBookingLink(env.JWT_SECRET, decodeURIComponent(match![1]));
     expect(linkedBookingId).toBe(body.id);

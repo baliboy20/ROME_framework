@@ -9,7 +9,7 @@
 
 import type { Db } from "../../db/client";
 import type { Env } from "../../env";
-import { sendPostmarkEmail } from "../../lib/postmark";
+import { sendCloudflareEmail } from "../../lib/cloudflare-email";
 import type { Message, MessageType } from "../../types";
 
 export interface SendInput {
@@ -20,6 +20,11 @@ export interface SendInput {
   subject: string;
   textBody: string;
   htmlBody?: string;
+  /** Threading headers for a reply into an existing thread (REQ-NOTIF09/PRE05). */
+  inReplyTo?: string;
+  references?: string;
+  /** Set when the body was rendered from an email_template (REQ-NOTIF10). */
+  templateId?: string;
   now?: Date;
 }
 
@@ -47,12 +52,14 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
   const now = input.now ?? new Date();
   const messageId = crypto.randomUUID();
 
-  const result = await sendPostmarkEmail(env.POSTMARK_TOKEN, {
+  // DR-18: Cloudflare Email Sending supersedes Postmark.
+  const result = await sendCloudflareEmail(env.EMAIL, {
     from: env.NOTIFICATIONS_EMAIL_FROM ?? "bookings@friendsonbikes.uk",
     to: input.recipient,
     subject: input.subject,
     textBody: input.textBody,
-    htmlBody: input.htmlBody,
+    inReplyTo: input.inReplyTo,
+    references: input.references,
   });
 
   const status = result.ok ? "sent" : "delivery_pending";
@@ -62,7 +69,7 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
     recipient: input.recipient,
     event: input.event,
     idempotency_key: input.idempotencyKey,
-    provider: "postmark",
+    provider: "cloudflare-email",
     provider_ref: result.messageId,
     status,
     created_at: now.toISOString(),

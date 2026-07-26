@@ -19,6 +19,9 @@ compatibility_flags = ["nodejs_compat"]
 ALLOWED_ORIGIN = "http://localhost:5173"
 STRIPE_MODE = "test"
 NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
+# EML reintegration (DR-7): inbound mail is captured, categorised, then
+# forwarded to the Owner's personal address, flagged if spam — never withheld.
+OWNER_PERSONAL_EMAIL = "owner@example.com"
 
 # ---------------------------------------------------------------------------
 # D1 (UK region) — satisfies: TDR-01, TDR-03. Bound as `DB`; all persistence
@@ -51,6 +54,18 @@ id = "<dev-kv-idempotency-id>"
 [[r2_buckets]]
 binding = "ASSETS"
 bucket_name = "fob-assets-dev"
+
+# ---------------------------------------------------------------------------
+# Email Sending — satisfies: DR-18 (Cloudflare Email Sending supersedes
+# Postmark/TDR-09). Bound as `EMAIL`; NOTIF01's send() calls env.EMAIL.send().
+# Inbound (REQ-NOTIF05) uses zone-level Email Routing -> this Worker's email()
+# handler, configured in the Cloudflare dashboard (not here). See
+# EML-reintegration-handover/3-reference-only/CLOUDFLARE-ARCHITECTURE.md.
+# Add `remote = true` to send for real under `wrangler dev` (requires a
+# verified domain); omitted here so local dev simulates the send.
+# ---------------------------------------------------------------------------
+[[send_email]]
+name = "EMAIL"
 
 # ---------------------------------------------------------------------------
 # Cron Triggers — satisfies: TDR-01 (Cron), realizes `cron-workers` component
@@ -103,6 +118,9 @@ id = "<staging-kv-idempotency-id-TO-BE-CREATED>"
 binding = "ASSETS"
 bucket_name = "fob-assets-staging"
 
+[[env.staging.send_email]]
+name = "EMAIL"
+
 [env.staging.triggers]
 crons = [
   "0 3 * * *",
@@ -146,6 +164,10 @@ id = "<prod-kv-idempotency-id>"
 [[env.production.r2_buckets]]
 binding = "ASSETS"
 bucket_name = "fob-assets-prod"
+
+[[env.production.send_email]]
+name = "EMAIL"
+remote = true
 
 [env.production.triggers]
 crons = [

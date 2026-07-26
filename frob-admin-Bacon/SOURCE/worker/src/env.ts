@@ -13,8 +13,14 @@ export interface Env {
   SESSIONS: KVNamespace;
   IDEMPOTENCY: KVNamespace;
   ASSETS: R2Bucket;
+  // Cloudflare Email Sending binding (DR-18, supersedes Postmark/TDR-09).
+  // Optional so tests/local dev without the binding still typecheck; send()
+  // falls back to a logged "delivery_pending" when absent.
+  EMAIL?: SendEmail;
   JWT_SECRET: string;
-  POSTMARK_TOKEN: string;
+  // Legacy Postmark token — retained for backward compatibility only; the
+  // send path now targets EMAIL (DR-18). Optional.
+  POSTMARK_TOKEN?: string;
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   MET_OFFICE_KEY: string;
@@ -24,6 +30,9 @@ export interface Env {
   ALLOWED_ORIGIN?: string;
   STRIPE_MODE?: string;
   NOTIFICATIONS_EMAIL_FROM?: string;
+  // EML reintegration (DR-7): inbound mail is forwarded here after capture,
+  // flagged if spam, never withheld.
+  OWNER_PERSONAL_EMAIL?: string;
   // Base URL of the customer-facing webapp, used to build booking
   // completion links (DR-B11 / REQ-BOOK08 / REQ-BOOK10). Falls back to the
   // local dev customer app port if unset.

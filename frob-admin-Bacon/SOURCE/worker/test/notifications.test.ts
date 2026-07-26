@@ -72,8 +72,10 @@ describe("REQ-NOTIF01 — send() transactional message", () => {
   });
 
   it("marks delivery_pending (not an exception) when the provider rejects the send", async () => {
-    stubPostmarkFailure();
-    const env = await createTestEnv();
+    // DR-18: the provider is now the EMAIL binding; simulate a rejection there.
+    const env = await createTestEnv({
+      EMAIL: { send: async () => { throw new Error("provider rejected"); } } as unknown as SendEmail,
+    });
     const db = createDb(env.DB);
     const result = await send(db, env, {
       messageType: "transactional",
@@ -163,7 +165,7 @@ describe("POST /webhooks/postmark", () => {
       "/webhooks/postmark",
       {
         method: "POST",
-        body: JSON.stringify({ RecordType: "Delivery", MessageID: "pm-msg-1" }),
+        body: JSON.stringify({ RecordType: "Delivery", MessageID: sendResult.message!.provider_ref }),
         headers: { "Content-Type": "application/json" },
       },
       env
@@ -191,7 +193,7 @@ describe("POST /webhooks/postmark", () => {
     });
     const messageId = sendResult.message!.id;
 
-    const payload = JSON.stringify({ RecordType: "Delivery", MessageID: "pm-msg-1" });
+    const payload = JSON.stringify({ RecordType: "Delivery", MessageID: sendResult.message!.provider_ref });
     await app().request("/webhooks/postmark", { method: "POST", body: payload, headers: { "Content-Type": "application/json" } }, env);
     await app().request("/webhooks/postmark", { method: "POST", body: payload, headers: { "Content-Type": "application/json" } }, env);
 

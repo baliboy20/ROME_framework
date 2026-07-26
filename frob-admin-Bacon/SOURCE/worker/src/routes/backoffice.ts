@@ -5,6 +5,7 @@
 // persistence via core-data-access (TDR-03).
 
 import { Hono } from "hono";
+import { z } from "zod";
 import { getSession } from "../kv/session";
 import { createDb } from "../db/client";
 import type { Env } from "../env";
@@ -198,4 +199,61 @@ backoffice.get("/admin/bookings/:id", async (c) => {
     },
     200
   );
+});
+
+// ---------------------------------------------------------------------------
+// Owner-configurable operational policy (DR-16, EML reintegration).
+// GET/PUT /admin/settings — the single operator_settings row.
+// ---------------------------------------------------------------------------
+const REMEDIATION = ["refund", "rebook", "credit"] as const;
+const MILESTONES = ["t_minus_7", "t_minus_24h", "t_minus_1"] as const;
+
+function parseSettings(row: Record<string, unknown> | null) {
+  const j = (v: unknown, fallback: unknown) => {
+    try {
+      return JSON.parse((v as string) ?? "");
+    } catch {
+      return fallback;
+    }
+  };
+  return {
+    refund_cutoff_hours: (row?.refund_cutoff_hours as number) ?? 48,
+    reminder_milestones: j(row?.reminder_milestones, ["t_minus_1"]),
+    cancellation_remediation_options: j(row?.cancellation_remediation_options, ["refund", "rebook", "credit"]),
+    updated_at: (row?.updated_at as string) ?? null,
+  };
+}
+
+backoffice.get("/admin/settings", async (c) => {
+  const row = await c.env.DB.prepare(`SELECT * FROM operator_settings WHERE id = 'singleton'`).first();
+  c.header("Cache-Control", "no-store");
+  return c.json(parseSettings(row as Record<string, unknown> | null));
+});
+
+const settingsSchema = z.object({
+  refund_cutoff_hours: z.number().int().min(0).max(720).optional(),
+  reminder_milestones: z.array(z.enum(MILESTONES)).min(1).optional(),
+  cancellation_remediation_options: z.array(z.enum(REMEDIATION)).min(1).optional(),
+});
+
+backoffice.put("/admin/settings", async (c) => {
+  const parsed = settingsSchema.safeParse(await c.req.json().catch(() => ({})));
+  if (!parsed.success) {
+    return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
+  }
+  const sets: string[] = [];
+  const params: unknown[] = [];
+  for (const [k, v] of Object.entries(parsed.data)) {
+    sets.push(`${k} = ?`);
+    params.push(Array.isArray(v) ? JSON.stringify(v) : v);
+  }
+  if (sets.length) {
+    sets.push("updated_at = ?");
+    params.push(new Date().toISOString());
+    await c.env.DB.prepare(`UPDATE operator_settings SET ${sets.join(", ")} WHERE id = 'singleton'`)
+      .bind(...params)
+      .run();
+  }
+  const row = await c.env.DB.prepare(`SELECT * FROM operator_settings WHERE id = 'singleton'`).first();
+  return c.json(parseSettings(row as Record<string, unknown> | null));
 });

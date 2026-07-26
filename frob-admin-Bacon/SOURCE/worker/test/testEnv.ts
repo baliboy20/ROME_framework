@@ -16,6 +16,10 @@ export async function createTestEnv(overrides: Partial<Env> = {}): Promise<Env> 
     SESSIONS: createTestKv(),
     IDEMPOTENCY: createTestKv(),
     ASSETS: createTestR2(),
+    // Stub Cloudflare Email Sending binding (DR-18) — records nothing, resolves
+    // immediately so send() reports "sent" under test. The `cloudflare:email`
+    // EmailMessage is aliased to a stub in vitest.config.ts.
+    EMAIL: { send: async () => {} } as unknown as SendEmail,
     JWT_SECRET: "test-secret-please-do-not-use-in-prod",
     POSTMARK_TOKEN: "test-postmark-token",
     STRIPE_SECRET_KEY: "sk_test_x",
