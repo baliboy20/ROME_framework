@@ -12,7 +12,7 @@ abstract class SchedulingRemoteDataSource {
   Future<List<GuideOptionModel>> getGuides();
   Future<void> createDeparture(Map<String, dynamic> body);
   Future<void> updateDeparture(String id, Map<String, dynamic> body);
-  Future<void> cancelDeparture(String id);
+  Future<void> cancelDeparture(String id, {Map<String, dynamic>? notice});
 }
 
 class SchedulingRemoteDataSourceImpl implements SchedulingRemoteDataSource {
@@ -85,7 +85,7 @@ class SchedulingRemoteDataSourceImpl implements SchedulingRemoteDataSource {
   }
 
   @override
-  Future<void> cancelDeparture(String id) async {
-    await http.post('/admin/departures/$id/cancel');
+  Future<void> cancelDeparture(String id, {Map<String, dynamic>? notice}) async {
+    await http.post('/admin/departures/$id/cancel', body: notice ?? const {});
   }
 }

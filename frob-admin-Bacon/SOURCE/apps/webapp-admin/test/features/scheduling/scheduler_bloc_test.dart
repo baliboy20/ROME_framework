@@ -23,7 +23,8 @@ class _FakeRepo implements SchedulingRepository {
   @override
   Future<Result<void>> updateDeparture(String id, Map<String, dynamic> b) async => const Success(null);
   @override
-  Future<Result<void>> cancelDeparture(String id) async => const Success(null);
+  Future<Result<void>> cancelDeparture(String id, {Map<String, dynamic>? notice}) async =>
+      const Success(null);
 
   // unused
   @override

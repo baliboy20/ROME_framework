@@ -78,9 +78,16 @@ class SaveDepartureParams {
   const SaveDepartureParams({this.departureId, required this.body});
 }
 
-class CancelDeparture extends UseCase<void, String> {
+class CancelDeparture extends UseCase<void, CancelDepartureParams> {
   final SchedulingRepository repository;
   CancelDeparture(this.repository);
   @override
-  Future<Result<void>> call(String id) => repository.cancelDeparture(id);
+  Future<Result<void>> call(CancelDepartureParams p) =>
+      repository.cancelDeparture(p.id, notice: p.notice);
+}
+
+class CancelDepartureParams {
+  final String id;
+  final Map<String, dynamic>? notice;
+  const CancelDepartureParams(this.id, {this.notice});
 }

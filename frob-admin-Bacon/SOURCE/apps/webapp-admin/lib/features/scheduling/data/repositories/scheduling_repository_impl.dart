@@ -48,6 +48,6 @@ class SchedulingRepositoryImpl with RepositoryGuard implements SchedulingReposit
       guard(() async => await remote.updateDeparture(id, body));
 
   @override
-  Future<Result<void>> cancelDeparture(String id) =>
-      guard(() async => await remote.cancelDeparture(id));
+  Future<Result<void>> cancelDeparture(String id, {Map<String, dynamic>? notice}) =>
+      guard(() async => await remote.cancelDeparture(id, notice: notice));
 }

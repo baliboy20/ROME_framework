@@ -7,7 +7,7 @@
 import { Hono, type Context } from "hono";
 import { z } from "zod";
 import type { Env } from "../env";
-import { createDb } from "../db/client";
+import { createDb, exec, query, queryOne } from "../db/client";
 import { type AuthedVariables, requireCustomerSession, requireOperatorSession } from "../lib/auth";
 import * as service from "../modules/booking/service";
 import { signJwt, signBookingLink } from "../modules/auth/jwt";
@@ -315,10 +315,96 @@ bookingRoutes.patch("/admin/departures/:id", requireOperatorSession, async (c) =
 // REQ-BOOK13 — POST /admin/departures/:id/cancel
 // ---------------------------------------------------------------------------
 
+// REQ-TOUR07 (EML reintegration, F3): the cancel may carry an Owner-authored
+// Explanation Block, a settings-gated remediation choice, and an optional
+// single-use discount code. For each affected booking a cancellation notice is
+// recorded (operator_notices + explanation_blocks) and sent to the party
+// leader + every opted-in co-leader (F-18).
+const cancelDepartureSchema = z.object({
+  explanationBlock: z.string().trim().min(1).nullable().optional(),
+  remediation: z.enum(["refund", "rebook", "credit"]).nullable().optional(),
+  discountCode: z.string().trim().min(1).nullable().optional(),
+  discountExpiresAt: z.string().nullable().optional(),
+});
+
 bookingRoutes.post("/admin/departures/:id/cancel", requireOperatorSession, async (c) => {
+  const parsed = cancelDepartureSchema.safeParse(await c.req.json().catch(() => ({})));
+  if (!parsed.success) return c.json({ error: "invalid_body", message: parsed.error.message }, 422);
+  const notice = parsed.data;
+  const departureId = c.req.param("id")!;
   const db = createDb(c.env.DB);
-  const result = await service.cancelDeparture(db, c.env.DB, c.req.param("id")!);
-  return respond(c, result);
+
+  // Settings-gated remediation (DR-16 / F3): a disabled option is rejected.
+  if (notice.remediation) {
+    const settingsRow = await queryOne<{ cancellation_remediation_options: string }>(
+      c.env.DB,
+      `SELECT cancellation_remediation_options FROM operator_settings WHERE id = 'singleton'`
+    );
+    let allowed: string[] = ["refund", "rebook", "credit"];
+    try {
+      allowed = JSON.parse(settingsRow?.cancellation_remediation_options ?? "[]");
+    } catch {
+      /* keep default */
+    }
+    if (!allowed.includes(notice.remediation)) {
+      return c.json({ error: "remediation_disabled", message: "That remediation option is not currently offered." }, 422);
+    }
+  }
+
+  const affected = await db.bookings.listByDeparture(departureId);
+  const result = await service.cancelDeparture(db, c.env.DB, departureId);
+  if (!result.ok) return respond(c, result);
+
+  const now = new Date().toISOString();
+  let notified = 0;
+  for (const b of affected) {
+    if (b.status === "cancelled") continue;
+
+    let explanationBlockId: string | null = null;
+    const noticeId = crypto.randomUUID();
+    if (notice.explanationBlock) {
+      explanationBlockId = crypto.randomUUID();
+      await exec(
+        c.env.DB,
+        `INSERT INTO explanation_blocks (id, booking_id, notice_id, author_actor_id, text, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+        [explanationBlockId, b.id, noticeId, null, notice.explanationBlock, now]
+      );
+    }
+    await exec(
+      c.env.DB,
+      `INSERT INTO operator_notices
+         (id, booking_id, type, old_value, new_value, material, status, remediation_choice, explanation_block_id, discount_code, discount_expires_at, sent_at, acknowledged_at)
+       VALUES (?, ?, 'cancellation', NULL, ?, 1, 'sent', ?, ?, ?, ?, ?, NULL)`,
+      [noticeId, b.id, notice.explanationBlock ?? "Your tour has been cancelled.", notice.remediation ?? null, explanationBlockId, notice.discountCode ?? null, notice.discountExpiresAt ?? null, now]
+    );
+    await db.bookings.update(b.id, { status: "cancelled", cancelled_at: now });
+
+    // Recipient fan-out: leader (always) + opted-in co-leaders (F-18).
+    const recipients = await query<{ email: string }>(
+      c.env.DB,
+      `SELECT email FROM participants
+        WHERE booking_id = ? AND email IS NOT NULL AND email <> ''
+          AND (contact_role = 'leader' OR (contact_role = 'co-leader' AND notify_opted_in = 1))`,
+      [b.id]
+    );
+    const bodyLines: string[] = ["Your tour has been cancelled."];
+    if (notice.explanationBlock) bodyLines.push(notice.explanationBlock);
+    if (notice.remediation) bodyLines.push(`We can offer: ${notice.remediation}.`);
+    if (notice.discountCode) bodyLines.push(`Use code ${notice.discountCode} to rebook.`);
+    for (const r of recipients) {
+      await send(db, c.env, {
+        messageType: "transactional",
+        recipient: r.email,
+        event: `cancellation-notice:${b.id}`,
+        idempotencyKey: `cancellation-notice:${b.id}:${r.email}`,
+        subject: "Your tour has been cancelled",
+        textBody: bodyLines.join("\n\n"),
+      });
+      notified += 1;
+    }
+  }
+
+  return c.json({ ...result.value, notified });
 });
 
 // ---------------------------------------------------------------------------

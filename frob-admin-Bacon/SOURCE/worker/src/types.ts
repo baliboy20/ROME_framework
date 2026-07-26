@@ -439,6 +439,10 @@ export interface OperatorNotice {
   sent_at: string;
   acknowledged_at: string | null;
   remediation_choice: RemediationChoice | null;
+  // EML reintegration (F3): folded from retired REQ-EML05/06.
+  explanation_block_id?: string | null;
+  discount_code?: string | null;
+  discount_expires_at?: string | null;
 }
 
 export interface Feedback {

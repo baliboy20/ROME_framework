@@ -215,25 +215,96 @@ class _SchedulerViewState extends State<_SchedulerView> {
   }
 
   Future<void> _cancelWithConfirm(BuildContext context, SchedulerBloc bloc) async {
-    final proceed = await showFobModal<bool>(
+    final notice = await showFobModal<Map<String, dynamic>>(
       context: context,
       blocking: true,
-      builder: (ctx) => _ConfirmDialog(
-        key: const Key('cancel-confirm-dialog'),
-        message: 'This will offer refund / rebook / credit to the customers already booked. Continue?',
-        confirmLabel: 'Cancel departure',
-        danger: true,
-      ),
+      builder: (ctx) => const _CancelNoticeDialog(),
     );
-    if (proceed == true) bloc.add(const CancelDepartureFormEvent());
+    if (notice != null) bloc.add(CancelDepartureFormEvent(notice: notice));
+  }
+}
+
+/// REQ-TOUR07 cancellation notice — Explanation Block + settings-gated
+/// remediation choice + optional single-use discount code (F3).
+class _CancelNoticeDialog extends StatefulWidget {
+  const _CancelNoticeDialog();
+  @override
+  State<_CancelNoticeDialog> createState() => _CancelNoticeDialogState();
+}
+
+class _CancelNoticeDialogState extends State<_CancelNoticeDialog> {
+  final _explanationCtrl = TextEditingController();
+  final _discountCtrl = TextEditingController();
+  String? _remediation;
+
+  @override
+  void dispose() {
+    _explanationCtrl.dispose();
+    _discountCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Cancel departure', style: FobText.cardTitle),
+        const SizedBox(height: 4),
+        const Text(
+          'Notifies the party leader and every opted-in co-leader. Add an Explanation Block and, if offered, a remediation and rebook code.',
+          style: TextStyle(fontSize: 12, color: FobColors.textMuted),
+        ),
+        const SizedBox(height: FobSpace.card),
+        AppField(label: 'Explanation (shown to customers)', controller: _explanationCtrl),
+        const SizedBox(height: FobSpace.field),
+        Row(
+          children: [
+            const Text('Remediation: ', style: FobText.body),
+            const SizedBox(width: 8),
+            DropdownButton<String?>(
+              value: _remediation,
+              hint: const Text('None'),
+              items: const [
+                DropdownMenuItem<String?>(value: null, child: Text('None')),
+                DropdownMenuItem<String?>(value: 'refund', child: Text('Refund')),
+                DropdownMenuItem<String?>(value: 'rebook', child: Text('Rebook')),
+                DropdownMenuItem<String?>(value: 'credit', child: Text('Credit')),
+              ],
+              onChanged: (v) => setState(() => _remediation = v),
+            ),
+          ],
+        ),
+        const SizedBox(height: FobSpace.field),
+        AppField(label: 'Discount / voucher code (optional)', controller: _discountCtrl),
+        const SizedBox(height: FobSpace.block),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            AppButton(label: 'Back', kind: AppButtonKind.ghost, onPressed: () => Navigator.of(context).pop()),
+            const SizedBox(width: 8),
+            AppButton(
+              key: const Key('confirm-dialog-confirm'),
+              label: 'Cancel departure',
+              kind: AppButtonKind.danger,
+              onPressed: () => Navigator.of(context).pop(<String, dynamic>{
+                if (_explanationCtrl.text.trim().isNotEmpty) 'explanationBlock': _explanationCtrl.text.trim(),
+                if (_remediation != null) 'remediation': _remediation,
+                if (_discountCtrl.text.trim().isNotEmpty) 'discountCode': _discountCtrl.text.trim(),
+              }),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }
 
 class _ConfirmDialog extends StatelessWidget {
   final String message;
   final String confirmLabel;
-  final bool danger;
-  const _ConfirmDialog({super.key, required this.message, required this.confirmLabel, this.danger = false});
+  const _ConfirmDialog({super.key, required this.message, required this.confirmLabel});
 
   @override
   Widget build(BuildContext context) {
@@ -251,7 +322,7 @@ class _ConfirmDialog extends StatelessWidget {
             AppButton(
               key: const Key('confirm-dialog-confirm'),
               label: confirmLabel,
-              kind: danger ? AppButtonKind.danger : AppButtonKind.primary,
+              kind: AppButtonKind.primary,
               onPressed: () => Navigator.of(context).pop(true),
             ),
           ],

@@ -15,5 +15,5 @@ abstract class SchedulingRepository {
   Future<Result<List<GuideOption>>> getGuides();
   Future<Result<void>> createDeparture(Map<String, dynamic> body);
   Future<Result<void>> updateDeparture(String id, Map<String, dynamic> body);
-  Future<Result<void>> cancelDeparture(String id);
+  Future<Result<void>> cancelDeparture(String id, {Map<String, dynamic>? notice});
 }

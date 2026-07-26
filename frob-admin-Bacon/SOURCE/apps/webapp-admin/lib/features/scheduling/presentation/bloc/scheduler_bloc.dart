@@ -54,7 +54,11 @@ class SaveDepartureFormEvent extends SchedulerEvent {
 }
 
 class CancelDepartureFormEvent extends SchedulerEvent {
-  const CancelDepartureFormEvent();
+  /// REQ-TOUR07 cancellation-notice payload (explanationBlock/remediation/discountCode).
+  final Map<String, dynamic>? notice;
+  const CancelDepartureFormEvent({this.notice});
+  @override
+  List<Object?> get props => [notice];
 }
 
 // ---- state ----
@@ -231,9 +235,9 @@ class SchedulerBloc extends Bloc<SchedulerEvent, SchedulerState> {
     final id = state.editingId;
     if (id == null) return;
     emit(state.copyWith(saving: true, saveError: null));
-    final result = await cancelDeparture(id);
+    final result = await cancelDeparture(CancelDepartureParams(id, notice: event.notice));
     emit(result.fold(
-      (f) => state.copyWith(saving: false, saveError: 'Cancel failed — please try again.'),
+      (f) => state.copyWith(saving: false, saveError: f.message),
       (_) => state.copyWith(saving: false, saved: true),
     ));
   }
