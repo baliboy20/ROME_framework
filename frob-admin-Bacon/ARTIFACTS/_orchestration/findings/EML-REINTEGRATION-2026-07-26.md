@@ -46,10 +46,10 @@
 - **Amended** `architecture.md` + `architecture-impact-brief.md` — vendor table + NOTIF path Postmark → Cloudflare (DR-18).
 - **Coverage** — `requirements-coverage.md` count 78 → 84; NOTIF01/02 rows repointed to Cloudflare.
 
-## Not done here (pending review — Phases 3–5)
-- **Phase 3** — api-worker: Hono routes for NOTIF05–10, D1 migration for the new tables/columns, the Cloudflare Email Routing `email()` inbound handler + cascade, outbound send via Cloudflare Email Sending.
-- **Phase 4** — webapp-admin (Flutter/DDD): email archive + reply, template management, co-leader/notify management, cancellation-notice + Explanation Block, Settings, enquiry in-tool reply — built fresh against Parchment tokens (behavior reference: the POC screens).
-- **Phase 5** — re-run the EML life-cycle scenarios + P5 re-gate.
+## Build status (updated 2026-07-26)
+- **Phase 3 — api-worker · DONE.** Migration 0004 (new tables/columns + `participants.email` build-finding); Cloudflare Email Sending (`[[send_email]]` EMAIL binding, `lib/cloudflare-email.ts`); inbound `email()` handler + 5-step cascade (`modules/notifications/inbound.ts`); routes NOTIF06–10 (`routes/email.ts`); `operator_settings` GET/PUT; enquiry in-tool reply (`POST /admin/enquiries/:id/reply`); participant email/notify on booking edit; cancellation-notice + Explanation Block + settings-gated remediation + discount + recipient fan-out (`POST /admin/departures/:id/cancel`). **typecheck clean, 157 vitest tests pass.**
+- **Phase 4 — webapp-admin (Flutter/DDD) · DONE.** Settings screen (4a); email archive + thread reply + templates (4b); enquiry in-tool reply, co-leader email/notify on the booking editor, cancellation-notice + Explanation Block on the scheduler (4c). New nav groups **Email** + **System**. **analyze clean, 46 tests pass.**
+- **Phase 5 — re-verify / P5 re-gate · PENDING.** Unit coverage green both sides; the full life-cycle scenario run + P5 gate through the framework remains. Inbound-archive end-to-end needs a real Cloudflare Email Routing message (not wired locally).
 
 ## Open judgment calls (resolved here, confirm on review)
 1. DR-16 settings home → **`back-office`** (`operator_settings`) — per handover suggestion.
