@@ -35,8 +35,14 @@ const app = new Hono<{ Bindings: Env }>();
 app.use("*", async (c, next) => {
   const configured = c.env.ALLOWED_ORIGIN || "*";
   const reqOrigin = c.req.header("Origin");
-  const origin =
-    reqOrigin && /^http:\/\/localhost:\d+$/.test(reqOrigin) ? reqOrigin : configured;
+  // Reflect any localhost port (local dev) and any friendsonbikes.uk subdomain
+  // (book./dev.book./guide./capture./… — the customer + operator surfaces all
+  // live under the apex). Everything else falls back to ALLOWED_ORIGIN.
+  const trusted =
+    !!reqOrigin &&
+    (/^http:\/\/localhost:\d+$/.test(reqOrigin) ||
+      /^https:\/\/([a-z0-9-]+\.)*friendsonbikes\.uk$/.test(reqOrigin));
+  const origin = trusted ? reqOrigin! : configured;
   return cors({ origin, credentials: origin !== "*" })(c, next);
 });
 
