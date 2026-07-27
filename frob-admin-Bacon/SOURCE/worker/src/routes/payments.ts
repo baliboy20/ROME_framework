@@ -46,6 +46,15 @@ paymentRoutes.post("/bookings/:id/checkout-session", requireCustomerSession, asy
     return c.json({ error: "not_payable", message: "This booking is not awaiting payment" }, 409);
   }
 
+  // Persist the checkout email onto the lead booker if we don't already have one,
+  // so the booking-outcome confirmation (REQ-NOTIF11) has an address to send to.
+  if (parsed.data.customerEmail) {
+    await c.env.DB.prepare(
+      `UPDATE participants SET email = ?
+         WHERE booking_id = ? AND contact_role = 'leader' AND (email IS NULL OR email = '')`
+    ).bind(parsed.data.customerEmail, bookingId).run();
+  }
+
   const stripe = getStripeClient(c.env.STRIPE_SECRET_KEY);
   try {
     const session = await createCheckoutSession(stripe, db, {

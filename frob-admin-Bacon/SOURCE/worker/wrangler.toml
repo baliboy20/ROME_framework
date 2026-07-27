@@ -147,7 +147,9 @@ routes = [
 ]
 
 [env.production.vars]
-ALLOWED_ORIGIN = "https://friendsonbikes.uk"
+# Stripe return-URL base → customer booking site confirmation page
+# (${base}/return → /en/book/return/). CORS trusts *.friendsonbikes.uk separately.
+ALLOWED_ORIGIN = "https://dev.book.friendsonbikes.uk/en/book"
 STRIPE_MODE = "test"
 NOTIFICATIONS_EMAIL_FROM = "bookings@friendsonbikes.uk"
 
