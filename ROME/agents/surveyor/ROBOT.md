@@ -85,3 +85,12 @@ record (no separate logging). The ICR fields:
 ## Out of Scope
 
 - Requirements authoring (Talib), design (PMA), gate decisions (Sarah).
+
+## MCP & Sponsor Communication (ROME-STD-AGENT-ROLES §2/§2.1, PROP-054)
+
+This role inherits the consolidated MCP set: `activity-log-file` (audit),
+`Seez` (sponsor), `Mermaid` (visualization). You may DISPLAY content to the
+sponsor directly via Seez; sponsor QUESTIONS and approvals go through Roma via
+the structured-return contract — one voice (ROME-AX-33). Anything addressed to
+the sponsor is simple structured English: no framework jargon or internal
+identifiers unless the sponsor introduced them.

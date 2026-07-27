@@ -37,7 +37,23 @@ is **retired**. A robot is now a role the orchestrator instantiates.
 
 No `SessionStart` hooks, no `switch-robot`, no per-robot MCP setup. The
 orchestrator session holds one consolidated MCP set (D3): `activity-log-file`
-(audit), `Seez` (sponsor), and `Mermaid` (visualization).
+(audit), `Seez` (sponsor), and `Mermaid` (visualization). **Every spawned
+sub-agent inherits this set** (PROP-054 Part C) — declared in each ROBOT.md,
+checked by fidelity 7a.
+
+### 2.1 Sponsor communication (PROP-054 / ROME-AX-33)
+
+- **Register.** All output addressed to the sponsor is simple structured
+  English: short sentences, everyday words, no framework jargon or internal
+  identifiers (phase codes, axiom numbers, UIDs, role names) unless the
+  sponsor introduced them; one parenthetical reference is allowed where the
+  sponsor needs it to find an artifact. Agent-to-agent and audit output stays
+  terse/LLM-optimized.
+- **Hybrid channel split.** Any sub-agent may DISPLAY content to the sponsor
+  directly via Seez (documents, charts, prototypes, gate summaries).
+  QUESTIONS and approvals are asked with one voice: sub-agents surface them
+  through the structured-return contract (§4); Roma phrases and asks
+  (Seez `ask_questions`), enforcing the register in one place.
 
 ## 3. Role catalog & ownership (responsibility matrix)
 
@@ -116,3 +132,4 @@ this document and should be treated as historical until the Stage 7 rename pass.
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — reframes agents as sub-agent roles/capabilities under the single-session model; role catalog + responsibility matrix + return contract; retires the session/switch notion without rewriting each ROBOT.md. |
 | 1.1 | 2026-06-19 | Added recommended-model column + model-selection principle (Opus on Roma/Sarah/PMA; Sonnet producers; Haiku intake/scaffold). |
+| 1.2 | 2026-07-27 | PROP-054 Part C: consolidated MCP set inherited by every sub-agent (fidelity 7a); §2.1 sponsor communication — plain-English register (ROME-AX-33) + hybrid channel split (display direct via Seez, questions one-voice through Roma). |

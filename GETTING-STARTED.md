@@ -129,6 +129,39 @@ how it was built.
 
 ---
 
+## Coming back to change something
+
+Your app is built and delivered — and now you've found a bug, want a tweak, or
+your requirements changed. You do NOT start over, and you do NOT go through the
+whole pipeline again.
+
+1. **Open the session in the same place as always** — `ROME_framework/`, never
+   inside `my-app/`. (If you open it in `my-app/` by mistake, a note there
+   redirects you. If you've moved `my-app/` somewhere else entirely, open the
+   session in the project folder itself — its built-in `.rome/` copy takes over.)
+2. **Say what you want in plain words:**
+   > "You are Roma. The project at `my-app/` is built. The login button crashes
+   > on empty input — fix it."
+3. **Roma checks the records first.** It looks up which requirement, files, and
+   tests your issue touches, tells you what kind of change it is — a bug fix, a
+   small tweak, a changed requirement, a new feature, or a bigger restructure —
+   and what it will touch. You confirm.
+4. **Only the necessary work runs.** A bug fix goes straight to fix → test →
+   one quality gate. A changed requirement redoes only what traces from it. A
+   new feature becomes a new increment. Nothing else is disturbed, and every
+   change is recorded.
+
+Found several things while testing? Just list them — Roma queues each one,
+tells you what type it is, and you choose the order. The queue survives between
+sessions, so nothing gets lost.
+
+**Project built with an older ROME?** Ask Roma to "check for an upgrade" — it
+shows what a newer framework would change, what it needs from you, and whether
+upgrading or a fresh re-intake is the better deal. You decide; everything is
+reversible.
+
+---
+
 ## Two things every newbie should know
 
 1. **If your PRD is big, slice it.** Don't build a whole multi-feature product at

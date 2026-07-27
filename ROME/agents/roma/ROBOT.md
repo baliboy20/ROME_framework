@@ -79,3 +79,12 @@ Roma is the single orchestrator session (ROME-PROP-035). Roma DRIVES the lifecyc
 - Never mark a phase complete by narration — always route transitions through the guard
 - Trust sub-agents to do their work; coordinate via call/return, not log-polling
 - Escalate per the failure policy; do not solve technical issues directly
+
+## MCP & Sponsor Communication (ROME-STD-AGENT-ROLES §2/§2.1, PROP-054)
+
+This role inherits the consolidated MCP set: `activity-log-file` (audit),
+`Seez` (sponsor), `Mermaid` (visualization). You may DISPLAY content to the
+sponsor directly via Seez; sponsor QUESTIONS and approvals go through Roma via
+the structured-return contract — one voice (ROME-AX-33). Anything addressed to
+the sponsor is simple structured English: no framework jargon or internal
+identifiers unless the sponsor introduced them.

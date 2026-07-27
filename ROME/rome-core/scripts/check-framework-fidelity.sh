@@ -290,7 +290,7 @@ else
   # increments.test.cjs — AX-20 is CHECKED, its tagged test exists but is not
   # demanded here).
   TESTS_DIR="$ROME_CORE/orchestrator/tests"
-  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18 AX-19 AX-21 AX-22 AX-23 AX-24 AX-26 AX-27 AX-29 AX-30"
+  ENFORCED_AXIOMS="AX-01 AX-02 AX-03 AX-04 AX-05 AX-06 AX-07 AX-08 AX-17 AX-18 AX-19 AX-21 AX-22 AX-23 AX-24 AX-26 AX-27 AX-29 AX-30 AX-31 AX-32 AX-34 AX-35"
   if [ ! -d "$TESTS_DIR" ]; then
     fail "6b: orchestrator/tests not found — ENFORCED axioms have no behavioural provenance"
   else
@@ -305,6 +305,50 @@ else
       NAX=$(echo "$ENFORCED_AXIOMS" | wc -w | tr -d ' ')
       pass "6b: all $NAX ENFORCED axioms retain a tagged violation test"
     fi
+  fi
+fi
+echo ""
+
+# ─────────────────────────────────────────────────────────
+# Check 7: PROP-054/055 configuration provenance
+# 7a: every agent ROBOT.md declares the consolidated MCP set (Seez inheritance
+#     — PROP-054 Part C; AX-33 fidelity hook).
+# 7b: migration boundary coverage (AX-35): steps under rome-core/migrations/
+#     form a contiguous chain from their lowest `from` to the current framework
+#     version — no unreachable version.
+# ─────────────────────────────────────────────────────────
+bold "Check 7: Sub-Agent MCP Set & Migration Coverage"
+
+AGENTS_DIR="$ROME_CORE/../agents"
+MISSING_MCP=0
+for ROBOT in "$AGENTS_DIR"/*/ROBOT.md; do
+  [ -f "$ROBOT" ] || continue
+  if ! grep -q "Seez" "$ROBOT"; then
+    fail "7a: $(basename "$(dirname "$ROBOT")")/ROBOT.md does not declare the consolidated MCP set (Seez missing — PROP-054 Part C)"
+    MISSING_MCP=$((MISSING_MCP + 1))
+  fi
+done
+if [ "$MISSING_MCP" -eq 0 ]; then
+  pass "7a: every ROBOT.md declares the consolidated MCP set (Seez inheritance)"
+fi
+
+MIG_DIR="$ROME_CORE/migrations"
+FW_VERSION=$(grep -E '^ROME_FRAMEWORK_VERSION=' "$ROME_CORE/VERSION" | cut -d= -f2)
+if [ ! -d "$MIG_DIR" ]; then
+  fail "7b: rome-core/migrations/ missing (AX-35)"
+else
+  CUR=$(ls "$MIG_DIR" | sort -t. -k1,1n -k2,2n -k3,3n | head -1 | cut -d- -f1)
+  HOLE=0
+  while [ "$CUR" != "$FW_VERSION" ]; do
+    NEXT_DIR=$(ls "$MIG_DIR" | grep "^${CUR}-" | head -1)
+    if [ -z "$NEXT_DIR" ]; then
+      fail "7b: no migration step for boundary ${CUR} → … up to v${FW_VERSION} (AX-35: unreachable version)"
+      HOLE=1; break
+    fi
+    CUR="${NEXT_DIR#${CUR}-}"
+  done
+  if [ "$HOLE" -eq 0 ]; then
+    pass "7b: migration steps form a contiguous ladder to v${FW_VERSION} (AX-35)"
   fi
 fi
 echo ""

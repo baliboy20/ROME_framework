@@ -153,4 +153,58 @@ function resolveDeferral(state, oqId) {
   return { resolved: true, affectedReqs };
 }
 
-module.exports = { dependentsIndex, downstreamClosure, computeImpact, markStale, applyChange, resolveDeferral };
+/**
+ * Trace-verified blast radius for a change classification (PROP-054 A.2 /
+ * ROME-AX-31). Wraps computeImpact with honesty about trace granularity:
+ * the result NEVER asserts precision the trace does not carry.
+ *
+ * granularityCeiling values (null = trace isolated the impact precisely):
+ *   'project'   — no topology graph at all: impact cannot be scoped below the
+ *                 whole delivered scope;
+ *   'component' — requirements resolved only to whole components (no
+ *                 artifact-level edges): scope = full rework of those components.
+ *
+ * @param {object} state  orchestrator state (traceability + topology)
+ * @param {object} change { requirements?:[REQ], components?:[id], contracts?:[id] }
+ * @param {object} opts   { graph?, contracts? }
+ * @returns { verified:true, components, seeds, reasons, requirements,
+ *            designImpacted, granularityCeiling, notes:[string] }
+ */
+function blastRadius(state, change = {}, opts = {}) {
+  const notes = [];
+  const graph = opts.graph || state.topology || state.graph || null;
+  const requirements = change.requirements || [];
+
+  if (!graph) {
+    notes.push('no topology graph: impact cannot be scoped below the whole delivered scope (A.2 — report plainly, widen honestly)');
+    return { verified: true, components: [], seeds: [], reasons: {}, requirements, designImpacted: true, granularityCeiling: 'project', notes };
+  }
+
+  const ctx = {
+    graph,
+    contracts: opts.contracts || state.contracts,
+    traceability: state.traceability,
+    traceabilityDeltas: state.traceability && state.traceability.deltas,
+  };
+  const impact = computeImpact(ctx, change);
+
+  // Granularity check: did any changed requirement resolve only through the
+  // legacy component-level deltas (no artifact-level edge)?
+  let ceiling = null;
+  const byReq = (state.traceability && state.traceability.byReq) || {};
+  for (const req of requirements) {
+    if (!byReq[req] || byReq[req].length === 0) {
+      ceiling = 'component';
+      notes.push(`${req} traces only at component level — scope widens to full rework of its component(s)`);
+    }
+  }
+
+  // Design impact: any affected artifact of kind design/spec, or a ceiling hit.
+  const artifacts = (state.traceability && state.traceability.artifacts) || {};
+  const designImpacted = !!ceiling || Object.values(artifacts).some(a =>
+    impact.components.includes(a.component) && /design|spec/i.test(a.kind || ''));
+
+  return { verified: true, components: impact.components, seeds: impact.seeds, reasons: impact.reasons, requirements, designImpacted, granularityCeiling: ceiling, notes };
+}
+
+module.exports = { dependentsIndex, downstreamClosure, computeImpact, markStale, applyChange, resolveDeferral, blastRadius };

@@ -2,6 +2,90 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-27] - v3.3.0 "Severus" — change-type taxonomy + project version migration (PROP-054/055)
+
+Codename **Severus**. Two gaps closed: (1) there was no right-sized path for
+changing a DELIVERED project — a one-line bug fix formally required the full
+pipeline; (2) vendored projects were frozen forever on the framework that
+built them. Convention change: YES (state gains conventionLevel/changeQueue;
+migration step MIG-3.2.1→3.3.0 shipped, gap-free).
+
+### Added — change types & re-entry (PROP-054)
+- **CT taxonomy CT-1..CT-5** (defect fix / minor amendment / requirement
+  change / new capability / restructure), classified by the highest artifact
+  tier reworked. Five labels, THREE mechanisms: light path (CT-1/2),
+  trace-scoped rework (CT-3/5), and CT-4 delegated to the existing increment
+  mechanism — never a parallel growth path.
+- **Change queue** (`state.changeQueue[]`, append-only) + `queueChange`/
+  `classifyChange`/`confirmChange`/`beginChange`; confirmed changes run as
+  change-scoped increments (tagged `change:{id,ct}`) so ALL gate/seal
+  machinery applies unchanged.
+- **`routing.js#routeChange`** — CT-scoped routings (CT-1/2 → [P5]; CT-3 →
+  [P1,(P3),P5] by traced design impact; CT-5 → [P1,P3,P4,P5]).
+- **`impact.js#blastRadius`** — trace-verified affected set with an honest
+  `granularityCeiling` (no graph → 'project'; component-only trace →
+  'component'): the path widens rather than pretending precision.
+- **`rome-change.cjs`** — queue/list/begin CLI; classification stays with
+  Roma+sponsor.
+- **Sentinel `CLAUDE.md`** scaffolded into every project folder (ROME-DEF-003):
+  redirects mis-opened sessions to the framework root, or activates
+  vendored-engine mode for relocated projects.
+- **AX-31** trace-verified classification, **AX-32** no untraced delivery
+  (both ENFORCED, tagged tests in `changes-upgrade.test.cjs`); **AX-33**
+  sponsor register — plain structured English to the sponsor, display direct
+  via Seez from any sub-agent, questions one-voice through Roma (ASSERTED;
+  Seez-set inheritance checked by new fidelity 7a).
+
+### Added — project version migration (PROP-055)
+- **`state.conventionLevel`** — the version number IS the rule-set
+  declaration (AX-34, ENFORCED): MAJOR/MINOR ⇔ conventions changed; PATCH
+  convention-neutral. Older states default losslessly on load.
+- **`rome-core/migrations/<from>-<to>/step.md`** — declared per-boundary
+  steps (transforms / gaps closed by derive→RECONSTRUCTED or sponsor /
+  semantics ledger). Retro-authored: 3.0.0→3.1.0, 3.1.0→3.1.1 (grandfathered
+  convention-changing PATCH), 3.1.1→3.2.0, 3.2.0→3.2.1 (no-op).
+- **`rome-upgrade.cjs`** — composes the contiguous ladder (refuses holes —
+  AX-35, ENFORCED), prints a plain-terms pre-approval brief incl. the
+  escape-hatch comparison vs a fresh migration-intent re-intake, and on
+  `--apply`: append-only state snapshot, semantics accumulated into
+  `migration-log.md`, gaps → `state.upgrade.pending` (closed as change-queue
+  work), engine swap LAST with the old engine retained at `.rome-prev/`.
+- **Compatibility read mode** (orchestrator.md): below-level projects are
+  read freely, never gated against post-level rules; migration-log consulted
+  before touching pre-migration artifacts.
+
+### Framework alignment
+- Ontology v1.6 (AX-31..35), lexicon v1.6 (Change Type, Change Queue,
+  Change-Scoped Run, Blast Radius, Convention Level, Migration Step,
+  Migration Log — and the intent-vs-CT boundary resolving the
+  refinement/extension overlap). ROME-STD-AGENT-ROLES v1.2 (MCP inheritance +
+  sponsor register). Fidelity checks 7a (every ROBOT.md declares the Seez
+  set) and 7b (contiguous migration ladder to the current version).
+- GETTING-STARTED "Coming back to change something"; USER-GUIDE plain CT table.
+
+### Verify
+- 391 tests pass across suites (+17 in `changes-upgrade.test.cjs`, tagged
+  AX-31/32/34/35). One PRE-EXISTING failure (impact-experts: parse-server
+  expert pack not selected) predates this release — reproduced on a clean
+  tree; not introduced or fixed here. Fidelity green incl. new 7a/7b. Upgrade
+  ladder 3.0.0→3.2.1 verified live (dry-run brief + apply + rollback
+  artifacts).
+
+## [2026-07-17] - v3.2.1 — post-implementation consistency pass (PATCH)
+
+*(Entry backfilled at v3.3.0 — the 3.2.x releases predate it in git only.)*
+3-way review of the PROP-035..052 era: orchestrator VERIFY step rebuilt from
+lifecycle.js, duplicate lexicon terms resolved, stale cross-references fixed.
+Convention change: NO (no-op migration boundary).
+
+## [2026-07-17] - v3.2.0 — sponsor architecture agreement + technical spec standard (PROP-051/052)
+
+*(Entry backfilled at v3.3.0.)* Sponsor P3/P4 architecture checkpoint (AIB +
+CONFIRM/REDIRECT/DELEGATE, AX-27), declared dev/prod divergence (AX-28), TDR
+extraction with carrier reliability + gate-binding conformance (AX-29/30),
+canonical `decisions.tdr.yaml`, infra-constraint capture at intake.
+Convention change: YES (migration step MIG-3.1.1→3.2.0, retro-authored).
+
 ## [2026-07-17] - v3.1.1 — testing declared in tech-stack.yaml (PATCH)
 
 Small but sponsor-visible: the test framework per capability was an implicit

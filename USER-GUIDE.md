@@ -48,6 +48,27 @@ Every transition is gated by **Sarah**; the guard enforces it.
 5. **Delivery** — when all phases are COMPLETE with APPROVE gates and the code is
    verified (it builds and its tests pass), the project is done.
 
+## Changing a delivered project
+
+Every change is classified by what it forces you to redo, and only that runs:
+
+| You say | Type | What runs |
+|---------|------|-----------|
+| "This is broken" (code disagrees with a requirement) | Defect fix | fix → tests → one gate |
+| "Adjust this wording/layout" | Minor amendment | same light path |
+| "This requirement was wrong / changed" | Requirement change | amend the requirement, redo only what traces from it |
+| "Add a new feature" | New capability | a new increment, existing work untouched |
+| "Same behaviour, new stack/shape" | Restructure | design + build redone, requirements re-confirmed |
+
+Roma verifies your classification against the traceability records before
+routing (a "bug" that the requirement actually specifies becomes a requirement
+change — you'll be told why), and every path, however small, ends at a real
+quality gate with the records updated.
+
+Projects built on older framework versions can be upgraded step-by-step
+(`rome-upgrade.cjs`): each version boundary has a declared migration, nothing
+is guessed, old records are never rewritten, and rollback is always possible.
+
 ## What you get
 
 - Working code with **full traceability** (requirement → code → test).

@@ -151,6 +151,39 @@ All retries/escalations/blocks are recorded in `state.json` + audit. No silent r
 
 ---
 
+## Re-entry mode (PROP-054): the project is already delivered
+
+When `state.json` exists with a sealed, delivered increment, you are in
+RE-ENTRY, not greenfield. The sponsor wants something changed. Rules:
+
+- **Live triage (B.2).** Capture every sponsor observation FIRST as a
+  change-queue entry (`state.js#queueChange`) — never start editing. The trace
+  decides the path, the sponsor decides the order, you never just fix.
+- **Trace-verified classification (ROME-AX-31).** For each entry compute the
+  blast radius (`impact.js#blastRadius`), propose a CT (`classifyChange`), and
+  tell the sponsor plainly what it touches. If the trace contradicts the
+  declared type ("bug" traces to a requirement specifying the behaviour),
+  reclassify and say why. Sponsor confirms (`confirmChange`) or parks.
+- **Route by mechanism (A.1).** CT-1/2/3/5 → `rome-change.cjs --begin`
+  (change-scoped increment; the guard applies unchanged — ROME-AX-32).
+  CT-4 (new capability) → `rome-increment.cjs`, never a change record.
+- **Honest scope (A.2).** If the blast radius carries a `granularityCeiling`,
+  report it plainly and let the routing widen — never assert precision the
+  trace does not carry.
+- **Compatibility read mode (ROME-AX-34).** If `state.conventionLevel` is
+  below your engine version: read and reason freely, but do not gate old
+  artifacts against post-level rules and do not produce new work until the
+  level is raised (`rome-upgrade.cjs`). Consult
+  `ARTIFACTS/_orchestration/migration-log.md` before flagging or "fixing" any
+  pre-migration artifact. Open `state.upgrade.pending` gaps are change-queue
+  work.
+- **Sponsor voice (ROME-AX-33).** Everything you say to the sponsor —
+  triage summaries, classifications, upgrade briefs — is simple structured
+  English, no internal identifiers. Sub-agents display via Seez directly;
+  their questions come to you to ask.
+
+---
+
 ## Exit criteria
 
 - [ ] All routed phases COMPLETE; every gate APPROVE in the ledger
@@ -167,3 +200,4 @@ All retries/escalations/blocks are recorded in `state.json` + audit. No silent r
 | 4.0 | 2026-03-03 | ROME-PROP-030 monolith split. |
 | 5.0 | 2026-06-18 | ROME-PROP-035..040: rewritten as the single-session lifecycle driver over the deterministic substrate (state/guard/subagent/topology/executability/contracts/routing/budget). Drives only; guard enforces. Replaces log-based coordination with call/return + guard. |
 | 5.1 | 2026-07-17 | v3.2.0 consistency pass: VERIFY step (c) rebuilt complete from lifecycle.js (was stale — P2/P3/P3.5 facts and matrix/integration missing); intake finalization via `guard-cli intake` (persists TDRs/infraConstraints — PROP-047/051/052); new step (c2) sponsor AIB checkpoint (issue → deliver → respond → REDIRECT loop, AX-27) and TDR deviation resolution (AX-29/30); AX-28 blocker note. |
+| 5.2 | 2026-07-27 | PROP-054/055 (v3.3.0): Re-entry mode — live triage via change queue, trace-verified CT classification (AX-31), mechanism routing (change-scoped increments vs rome-increment), blast-radius honesty, compatibility read mode + migration-log duty (AX-34), sponsor register + one-voice questions (AX-33). |
