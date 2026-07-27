@@ -7,6 +7,12 @@ specialist sub-agents and enforces quality with deterministic checks**.
 > Framework: ROME v3.x. For concepts see `USER-GUIDE.md`; for
 > the engine see `ROME/rome-core/orchestrator/README.md`.
 
+> **Where does the Claude session run?** Always `ROME_framework/` — the folder
+> you cloned in step 0.1 — never `my-app/` itself. `my-app/` is just a subfolder
+> created inside it (step 1). Open the session there once and stay there for
+> every step below (0.4 through 5); every path in this guide (`my-app/...`,
+> `ROME/...`) is written relative to `ROME_framework/`.
+
 ---
 
 ## Step 0 — One-time setup
@@ -98,7 +104,8 @@ delivered, grow the project with `rome-increment.cjs my-app --stage N --ts …` 
 it never erases the previous increment's record (PROP-048/049).
 
 ## Step 3 — Run it
-In your Claude session, say (plain English):
+In that same Claude session — still with `ROME_framework/` as its working
+directory, never `cd`'d into `my-app/` — say (plain English):
 > "You are Roma, the ROME orchestrator. Run the project at `my-app/` following `ROME/agents/roma/modes/orchestrator.md`. Begin."
 
 Roma then walks the phases automatically — requirements → analysis → design →
