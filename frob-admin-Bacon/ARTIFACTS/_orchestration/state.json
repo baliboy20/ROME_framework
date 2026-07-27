@@ -8,14 +8,14 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-22T17:20:00Z",
-  "activeIncrement": 0,
+  "updatedAt": "2026-07-27T12:13:40Z",
+  "activeIncrement": 1,
   "increments": [
     {
       "id": 0,
       "intent": "greenfield",
       "stage": null,
-      "sealed": false,
+      "sealed": true,
       "createdAt": "2026-07-21T20:33:50Z",
       "awaitingIntake": false,
       "routing": [
@@ -1155,6 +1155,471 @@
             "type": "CONFIRM",
             "revision": "P4-fd751737c9",
             "timestamp": "2026-07-22T07:42:32Z"
+          }
+        }
+      }
+    },
+    {
+      "id": 1,
+      "intent": "refinement",
+      "stage": null,
+      "sealed": false,
+      "createdAt": "2026-07-27T08:25:52Z",
+      "awaitingIntake": false,
+      "routing": [
+        "P0",
+        "P0.5",
+        "P1",
+        "P2",
+        "P3",
+        "P3.5",
+        "P4",
+        "P5"
+      ],
+      "currentPhase": null,
+      "phases": {
+        "P0": {
+          "status": "COMPLETE"
+        },
+        "P0.5": {
+          "status": "COMPLETE"
+        },
+        "P1": {
+          "status": "COMPLETE"
+        },
+        "P2": {
+          "status": "COMPLETE"
+        },
+        "P3": {
+          "status": "COMPLETE"
+        },
+        "P3.5": {
+          "status": "COMPLETE"
+        },
+        "P4": {
+          "status": "COMPLETE"
+        },
+        "P5": {
+          "status": "COMPLETE"
+        }
+      },
+      "gateLedger": [
+        {
+          "gate": "GATE-P0.5",
+          "phase": "P0.5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p0.5-1",
+          "timestamp": "2026-07-27T10:04:08Z",
+          "note": "GATE-P0.5 APPROVE: ICR sufficient — all 3 sponsor clarifications genuinely resolved (nav=separate routes, read-only/remove Edit, presentation-only scope w/ REQ-BO05/BO06 confirmed); routing (brownfield as-is-first + prototype) appropriate for this refinement"
+        },
+        {
+          "gate": "GATE-P1",
+          "phase": "P1",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p1-1",
+          "timestamp": "2026-07-27T10:36:44Z",
+          "note": "GATE-P1 APPROVE: requirements delta matches sponsor decisions; AORDL clean; traceability intact"
+        },
+        {
+          "gate": "GATE-P2",
+          "phase": "P2",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p2-1",
+          "timestamp": "2026-07-27T10:42:08Z",
+          "note": "GATE-P2 APPROVE: analysis delta fully covers requirements delta, scope contained"
+        },
+        {
+          "gate": "GATE-P3",
+          "phase": "P3",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p3-1",
+          "timestamp": "2026-07-27T11:00:52Z",
+          "note": "GATE-P3 APPROVE: design internally consistent, fully implements corrected sponsor-confirmed scope"
+        },
+        {
+          "gate": "GATE-P3.5",
+          "phase": "P3.5",
+          "verdict": "BLOCK",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p3.5-1",
+          "timestamp": "2026-07-27T11:32:44Z",
+          "note": "GATE-P3.5 BLOCK: P3.5-approval.md contradicted state.json sponsor-approval audit entry (said pending). Fixed immediately."
+        },
+        {
+          "gate": "GATE-P3.5",
+          "phase": "P3.5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p3.5-2",
+          "timestamp": "2026-07-27T11:33:11Z",
+          "note": "GATE-P3.5 APPROVE (re-review): contradiction fixed, sponsor approval genuinely documented"
+        },
+        {
+          "gate": "GATE-P4",
+          "phase": "P4",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p4-1",
+          "timestamp": "2026-07-27T11:58:25Z",
+          "note": "GATE-P4 APPROVE: no config changes needed, verified clean"
+        },
+        {
+          "gate": "GATE-P5",
+          "phase": "P5",
+          "verdict": "BLOCK",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p5-1",
+          "timestamp": "2026-07-27T12:12:33Z",
+          "note": "GATE-P5 BLOCK: incomplete A21->A23 rename left stray references in shipped UI text, colliding with real Bikes A21"
+        },
+        {
+          "gate": "GATE-P5",
+          "phase": "P5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p5-2",
+          "timestamp": "2026-07-27T13:15:00Z",
+          "note": "Re-verify after A21->A23 fix: grep for stray A21 (word-boundary, bike-excluded) across frob-admin-Bacon returns only the historical audit-log entry in state.json documenting pre-fix state; no live UI/code hits. bookings_detail_page.dart and bookings_master_page.dart both now say A19 (own screen id, correct per FUNC/REQ bindings) and A23 (Edit booking) in all user-visible text, doc comments, and nav routes -- no A21 remains. flutter analyze: no issues. flutter test: 46/46 passed. worker npx vitest run: 172/172 passed (worker untouched by this fix, as expected). git diff --stat scope is consistent with a scoped rename: booking_browser_page.dart/edit_booking_dialog.dart deleted, bookings_detail_page.dart/bookings_master_page.dart/edit_booking_page.dart added (untracked, hence absent from diff --stat, confirmed via git status), plus router/shell wiring and doc updates. Prior BLOCK preserved untouched in ledger. APPROVE."
+        },
+        {
+          "gate": "GATE-P5",
+          "phase": "P5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-inc1-gate-p5-2",
+          "timestamp": "2026-07-27T12:13:40Z",
+          "note": "GATE-P5 APPROVE (final): A21 collision fully resolved, all tests pass, scope verified clean"
+        }
+      ],
+      "blockers": [],
+      "dispatch": [
+        {
+          "agent": "bootstrap-inc1-p0-1",
+          "role": "bootstrap",
+          "phase": "P0",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T08:38:24Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "surveyor-inc1-p0.5-1",
+          "role": "surveyor",
+          "phase": "P0.5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:02:57Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p0.5-1",
+          "role": "sarah",
+          "phase": "P0.5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:04:02Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "talib-inc1-p1-1",
+          "role": "talib",
+          "phase": "P1",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:35:57Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p1-1",
+          "role": "sarah",
+          "phase": "P1",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:36:44Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "talib-inc1-p2-1",
+          "role": "talib",
+          "phase": "P2",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:41:22Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p2-1",
+          "role": "sarah",
+          "phase": "P2",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:42:08Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "pma-inc1-p3-1",
+          "role": "pma",
+          "phase": "P3",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:58:44Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "clara-inc1-p3-1",
+          "role": "clara",
+          "phase": "P3",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T10:58:44Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p3-1",
+          "role": "sarah",
+          "phase": "P3",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T11:00:52Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "reena-inc1-p3.5-1",
+          "role": "reena",
+          "phase": "P3.5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T11:23:39Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p3.5-1",
+          "role": "sarah",
+          "phase": "P3.5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T11:32:44Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p3.5-2",
+          "role": "sarah",
+          "phase": "P3.5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T11:33:11Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "lucien-inc1-p4-1",
+          "role": "lucien",
+          "phase": "P4",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T11:57:32Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p4-1",
+          "role": "sarah",
+          "phase": "P4",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T11:58:25Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "charlie-inc1-p5-1",
+          "role": "charlie",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T12:06:01Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "charlie-inc1-p5-2",
+          "role": "charlie",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T12:09:58Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p5-1",
+          "role": "sarah",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T12:12:33Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "charlie-inc1-p5-3",
+          "role": "charlie",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T12:12:33Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-inc1-gate-p5-2",
+          "role": "sarah",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-27T12:13:40Z",
+          "spawnedBy": "roma"
+        }
+      ],
+      "budget": {
+        "tokens": 0,
+        "ceiling": null
+      },
+      "oq": {
+        "resolvedByTalib": 0,
+        "awaitingSponsor": 0,
+        "deferrals": []
+      },
+      "inputReliability": [],
+      "testManifest": [],
+      "verification": {
+        "P1": {
+          "aordl": {
+            "pass": true,
+            "detail": "STRICT validation on amended REQ-BO05/REQ-BO06: 0 real violations after screen->view fix. ID_FORMAT violation on both (pre-existing project-wide REQ-BO##/REQ-BOOK## naming convention, also present on the increment-0 sealed originals) accepted as a known deviation, not a new defect — consistent with increment 0 precedent (GATE-P1 APPROVE).",
+            "timestamp": "2026-07-27T10:36:07Z"
+          },
+          "traceability": {
+            "pass": true,
+            "detail": "REQ-BO05/REQ-BO06 traceability edges (documents/implements/validates from increment 0, plus new documents edge from this increment) all active, none stale.",
+            "timestamp": "2026-07-27T10:36:07Z"
+          }
+        },
+        "P2": {
+          "traceability": {
+            "pass": true,
+            "detail": "REQ-BO05/BO06 -> FUNC-BO05/FUNC-BO06 edges active",
+            "timestamp": "2026-07-27T10:41:37Z"
+          },
+          "sponsorOq": {
+            "pass": true,
+            "detail": "all sponsor OQs answered or authorized-deferred (0 resolved by Talib, 0 sponsor-authorized deferral(s))",
+            "timestamp": "2026-07-27T10:41:37Z"
+          },
+          "stageConsistency": {
+            "pass": true,
+            "detail": "unstaged project — trivially consistent",
+            "timestamp": "2026-07-27T10:41:37Z"
+          }
+        },
+        "P3": {
+          "traceability": {
+            "pass": true,
+            "detail": "all 4 reqs have active edges",
+            "timestamp": "2026-07-27T11:00:08Z"
+          },
+          "matrix": {
+            "pass": true,
+            "detail": "all reqs have a design link",
+            "timestamp": "2026-07-27T11:00:08Z"
+          },
+          "designAssets": {
+            "pass": true,
+            "detail": "2 design asset(s) present",
+            "timestamp": "2026-07-27T11:00:08Z"
+          },
+          "sponsorArch": {
+            "pass": true,
+            "detail": "sponsor CONFIRM on AIB-P3 rev inc1-p3-rev1",
+            "timestamp": "2026-07-27T11:00:08Z"
+          },
+          "tdrConformance": {
+            "pass": true,
+            "detail": "no APPROVED TDRs bind P3 — trivially conformant",
+            "timestamp": "2026-07-27T11:00:08Z"
+          }
+        },
+        "P3.5": {
+          "traceability": {
+            "pass": true,
+            "detail": "all 4 reqs have prototype-stage edges",
+            "timestamp": "2026-07-27T11:31:22Z"
+          },
+          "matrix": {
+            "pass": true,
+            "detail": "all reqs have a design link",
+            "timestamp": "2026-07-27T11:31:22Z"
+          }
+        },
+        "P4": {
+          "secrets": {
+            "pass": true,
+            "detail": "no secrets found in this increment new files",
+            "timestamp": "2026-07-27T11:57:42Z"
+          },
+          "traceability": {
+            "pass": true,
+            "detail": "all reqs have config-stage edges",
+            "timestamp": "2026-07-27T11:57:42Z"
+          },
+          "tdrConformance": {
+            "pass": true,
+            "detail": "no APPROVED TDRs bind P4 — trivially conformant",
+            "timestamp": "2026-07-27T11:57:42Z"
+          },
+          "sponsorInfra": {
+            "pass": true,
+            "detail": "sponsor CONFIRM on AIB-P4 rev inc1-p4-rev1",
+            "timestamp": "2026-07-27T11:57:46Z"
+          }
+        },
+        "P5": {
+          "executability": {
+            "pass": true,
+            "detail": "flutter analyze + flutter test both passed for webapp-admin",
+            "timestamp": "2026-07-27T12:06:40Z"
+          },
+          "integration": {
+            "pass": true,
+            "detail": "full flutter test suite (46 tests) passed, including bookings_bloc_test.dart against the new page structure",
+            "timestamp": "2026-07-27T12:06:40Z"
+          },
+          "secrets": {
+            "pass": true,
+            "detail": "no secrets in new/changed source files",
+            "timestamp": "2026-07-27T12:06:40Z"
+          },
+          "contracts": {
+            "pass": true,
+            "detail": "no new/changed API contracts this increment - PATCH /admin/bookings/:id and POST /admin/bookings/:id/transition endpoints unchanged, only calling screen moved (confirmed at P4)",
+            "timestamp": "2026-07-27T12:06:40Z"
+          },
+          "testAdequacy": {
+            "pass": true,
+            "detail": "{\"pass\":true,\"gaps\":[]}",
+            "timestamp": "2026-07-27T12:10:14Z"
+          },
+          "traceability": {
+            "pass": true,
+            "detail": "all 4 reqs have implements+validates edges (fabricated increment-0 edge corrected)",
+            "timestamp": "2026-07-27T12:10:14Z"
+          },
+          "matrix": {
+            "pass": true,
+            "detail": "all reqs linked to code and tests",
+            "timestamp": "2026-07-27T12:10:14Z"
+          },
+          "tdrConformance": {
+            "pass": true,
+            "detail": "no APPROVED TDRs bind P5 — trivially conformant",
+            "timestamp": "2026-07-27T12:06:40Z"
+          }
+        }
+      },
+      "aib": {
+        "P3": {
+          "revision": "inc1-p3-rev1",
+          "timestamp": "2026-07-27T10:59:03Z",
+          "response": {
+            "type": "CONFIRM",
+            "revision": "inc1-p3-rev1",
+            "timestamp": "2026-07-27T11:00:08Z"
+          }
+        },
+        "P4": {
+          "revision": "inc1-p4-rev1",
+          "timestamp": "2026-07-27T11:38:13Z",
+          "response": {
+            "type": "CONFIRM",
+            "revision": "inc1-p4-rev1",
+            "timestamp": "2026-07-27T11:57:32Z"
           }
         }
       }
@@ -3750,10 +4215,10 @@
         "component": "api-worker"
       },
       "api-worker:test:REQ-BO05": {
-        "logicalName": "test:REQ-BO05",
+        "logicalName": "api-worker:test:REQ-BO05",
         "kind": "unknown",
         "path": null,
-        "component": "api-worker"
+        "component": null
       },
       "api-worker:code:REQ-BO06": {
         "logicalName": "code:REQ-BO06",
@@ -3762,10 +4227,10 @@
         "component": "api-worker"
       },
       "api-worker:test:REQ-BO06": {
-        "logicalName": "test:REQ-BO06",
+        "logicalName": "api-worker:test:REQ-BO06",
         "kind": "unknown",
         "path": null,
-        "component": "api-worker"
+        "component": null
       },
       "webapp-admin:ui:webapp-admin:REQ-BOOK11": {
         "logicalName": "ui:webapp-admin:REQ-BOOK11",
@@ -4138,6 +4603,114 @@
         "kind": "unknown",
         "path": null,
         "component": "webapp-editor"
+      },
+      "design:REQ-BOOK15": {
+        "logicalName": "design:REQ-BOOK15",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "design:REQ-BOOK16": {
+        "logicalName": "design:REQ-BOOK16",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "design:REQ-BO05-flows": {
+        "logicalName": "design:REQ-BO05-flows",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "design:REQ-BO06-flows": {
+        "logicalName": "design:REQ-BO06-flows",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "design:REQ-BOOK15-flows": {
+        "logicalName": "design:REQ-BOOK15-flows",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "design:REQ-BOOK16-flows": {
+        "logicalName": "design:REQ-BOOK16-flows",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "prototype:admin-bookings-master": {
+        "logicalName": "prototype:admin-bookings-master",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "prototype:admin-bookings-detail": {
+        "logicalName": "prototype:admin-bookings-detail",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "prototype:admin-edit-booking": {
+        "logicalName": "prototype:admin-edit-booking",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "config:increment-1-p4-note": {
+        "logicalName": "config:increment-1-p4-note",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:code:REQ-BO05": {
+        "logicalName": "webapp-admin:code:REQ-BO05",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:code:REQ-BO06": {
+        "logicalName": "webapp-admin:code:REQ-BO06",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:code:REQ-BOOK15": {
+        "logicalName": "webapp-admin:code:REQ-BOOK15",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:code:REQ-BOOK16": {
+        "logicalName": "webapp-admin:code:REQ-BOOK16",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:test:REQ-BO05": {
+        "logicalName": "webapp-admin:test:REQ-BO05",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:test:REQ-BO06": {
+        "logicalName": "webapp-admin:test:REQ-BO06",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:test:REQ-BOOK15": {
+        "logicalName": "webapp-admin:test:REQ-BOOK15",
+        "kind": "unknown",
+        "path": null,
+        "component": null
+      },
+      "webapp-admin:test:REQ-BOOK16": {
+        "logicalName": "webapp-admin:test:REQ-BOOK16",
+        "kind": "unknown",
+        "path": null,
+        "component": null
       }
     },
     "edges": [
@@ -4327,9 +4900,10 @@
         "satisfiesHow": "documents",
         "phase": "P1",
         "role": "talib",
-        "agent": "talib-P1-post-backoffice",
-        "increment": 0,
-        "stale": false
+        "agent": "talib-inc1-p1-1",
+        "increment": 1,
+        "stale": false,
+        "location": "ARTIFACTS/_requirements/REQ-BO05.yaml"
       },
       {
         "req": "REQ-BO06",
@@ -4337,9 +4911,10 @@
         "satisfiesHow": "documents",
         "phase": "P1",
         "role": "talib",
-        "agent": "talib-P1-post-backoffice",
-        "increment": 0,
-        "stale": false
+        "agent": "talib-inc1-p1-1",
+        "increment": 1,
+        "stale": false,
+        "location": "ARTIFACTS/_requirements/REQ-BO06.yaml"
       },
       {
         "req": "REQ-POST01",
@@ -5567,9 +6142,10 @@
         "satisfiesHow": "documents",
         "phase": "P2",
         "role": "talib",
-        "agent": "talib-P2-fleet-post-bo",
-        "increment": 0,
-        "stale": false
+        "agent": "talib-inc1-p2-1",
+        "increment": 1,
+        "stale": false,
+        "location": "ARTIFACTS/_analysis/fleet-post-backoffice-analysis.md"
       },
       {
         "req": "REQ-BO06",
@@ -5577,9 +6153,10 @@
         "satisfiesHow": "documents",
         "phase": "P2",
         "role": "talib",
-        "agent": "talib-P2-fleet-post-bo",
-        "increment": 0,
-        "stale": false
+        "agent": "talib-inc1-p2-1",
+        "increment": 1,
+        "stale": false,
+        "location": "ARTIFACTS/_analysis/fleet-post-backoffice-analysis.md"
       },
       {
         "req": "REQ-FLEET01",
@@ -8961,11 +9538,11 @@
         "req": "REQ-BO05",
         "artifactId": "api-worker:test:REQ-BO05",
         "satisfiesHow": "validates",
-        "location": "SOURCE/worker/test/fleet.test.ts",
+        "location": "SOURCE/worker/test/booking.routes.test.ts",
         "phase": "P5",
-        "role": "ashok",
-        "agent": "ashok-P5-worker-fleet",
-        "increment": 0,
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-2",
+        "increment": 1,
         "stale": false
       },
       {
@@ -8983,11 +9560,11 @@
         "req": "REQ-BO06",
         "artifactId": "api-worker:test:REQ-BO06",
         "satisfiesHow": "validates",
-        "location": "SOURCE/worker/test/fleet.test.ts",
+        "location": "SOURCE/worker/test/booking.routes.test.ts",
         "phase": "P5",
-        "role": "ashok",
-        "agent": "ashok-P5-worker-fleet",
-        "increment": 0,
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-2",
+        "increment": 1,
         "stale": false
       },
       {
@@ -9671,6 +10248,226 @@
         "agent": "charlie-P5-editor-final",
         "increment": 0,
         "stale": false
+      },
+      {
+        "req": "REQ-BOOK15",
+        "artifactId": "design:REQ-BOOK15",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_design/requirements-coverage.md",
+        "phase": "P3",
+        "role": "pma",
+        "agent": "pma-inc1-p3-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK16",
+        "artifactId": "design:REQ-BOOK16",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_design/requirements-coverage.md",
+        "phase": "P3",
+        "role": "pma",
+        "agent": "pma-inc1-p3-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO05",
+        "artifactId": "design:REQ-BO05-flows",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_design/design-assets/user-flows.md",
+        "phase": "P3",
+        "role": "clara",
+        "agent": "clara-inc1-p3-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO06",
+        "artifactId": "design:REQ-BO06-flows",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_design/design-assets/user-flows.md",
+        "phase": "P3",
+        "role": "clara",
+        "agent": "clara-inc1-p3-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK15",
+        "artifactId": "design:REQ-BOOK15-flows",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_design/design-assets/user-flows.md",
+        "phase": "P3",
+        "role": "clara",
+        "agent": "clara-inc1-p3-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK16",
+        "artifactId": "design:REQ-BOOK16-flows",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_design/design-assets/user-flows.md",
+        "phase": "P3",
+        "role": "clara",
+        "agent": "clara-inc1-p3-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO05",
+        "artifactId": "prototype:admin-bookings-master",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_prototype/admin-bookings-master.html",
+        "phase": "P3.5",
+        "role": "reena",
+        "agent": "reena-inc1-p3.5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO06",
+        "artifactId": "prototype:admin-bookings-detail",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_prototype/admin-bookings-detail.html",
+        "phase": "P3.5",
+        "role": "reena",
+        "agent": "reena-inc1-p3.5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK15",
+        "artifactId": "prototype:admin-edit-booking",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_prototype/admin-edit-booking.html",
+        "phase": "P3.5",
+        "role": "reena",
+        "agent": "reena-inc1-p3.5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK16",
+        "artifactId": "prototype:admin-edit-booking",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_prototype/admin-edit-booking.html",
+        "phase": "P3.5",
+        "role": "reena",
+        "agent": "reena-inc1-p3.5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK15",
+        "artifactId": "config:increment-1-p4-note",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_config/increment-1-p4-note.md",
+        "phase": "P4",
+        "role": "lucien",
+        "agent": "lucien-inc1-p4-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK16",
+        "artifactId": "config:increment-1-p4-note",
+        "satisfiesHow": "documents",
+        "location": "ARTIFACTS/_config/increment-1-p4-note.md",
+        "phase": "P4",
+        "role": "lucien",
+        "agent": "lucien-inc1-p4-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO05",
+        "artifactId": "webapp-admin:code:REQ-BO05",
+        "satisfiesHow": "implements",
+        "location": "SOURCE/apps/webapp-admin/lib/features/bookings/presentation/pages/bookings_master_page.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO06",
+        "artifactId": "webapp-admin:code:REQ-BO06",
+        "satisfiesHow": "implements",
+        "location": "SOURCE/apps/webapp-admin/lib/features/bookings/presentation/pages/bookings_detail_page.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK15",
+        "artifactId": "webapp-admin:code:REQ-BOOK15",
+        "satisfiesHow": "implements",
+        "location": "SOURCE/apps/webapp-admin/lib/features/bookings/presentation/pages/edit_booking_page.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK16",
+        "artifactId": "webapp-admin:code:REQ-BOOK16",
+        "satisfiesHow": "implements",
+        "location": "SOURCE/apps/webapp-admin/lib/features/bookings/presentation/pages/edit_booking_page.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO05",
+        "artifactId": "webapp-admin:test:REQ-BO05",
+        "satisfiesHow": "validates",
+        "location": "SOURCE/apps/webapp-admin/test/features/bookings/bookings_bloc_test.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BO06",
+        "artifactId": "webapp-admin:test:REQ-BO06",
+        "satisfiesHow": "validates",
+        "location": "SOURCE/apps/webapp-admin/test/features/bookings/bookings_bloc_test.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK15",
+        "artifactId": "webapp-admin:test:REQ-BOOK15",
+        "satisfiesHow": "validates",
+        "location": "SOURCE/apps/webapp-admin/test/features/bookings/bookings_bloc_test.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
+      },
+      {
+        "req": "REQ-BOOK16",
+        "artifactId": "webapp-admin:test:REQ-BOOK16",
+        "satisfiesHow": "validates",
+        "location": "SOURCE/apps/webapp-admin/test/features/bookings/bookings_bloc_test.dart",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-inc1-p5-1",
+        "increment": 1,
+        "stale": false
       }
     ],
     "byReq": {
@@ -9831,7 +10628,11 @@
         "prototype:admin-booking-browser",
         "api-worker:code:REQ-BO05",
         "api-worker:test:REQ-BO05",
-        "webapp-admin:ui:webapp-admin:REQ-BO05"
+        "webapp-admin:ui:webapp-admin:REQ-BO05",
+        "design:REQ-BO05-flows",
+        "prototype:admin-bookings-master",
+        "webapp-admin:code:REQ-BO05",
+        "webapp-admin:test:REQ-BO05"
       ],
       "REQ-BO06": [
         "requirements:REQ-BO06",
@@ -9840,7 +10641,11 @@
         "prototype:admin-departure-detail",
         "api-worker:code:REQ-BO06",
         "api-worker:test:REQ-BO06",
-        "webapp-admin:ui:webapp-admin:REQ-BO06"
+        "webapp-admin:ui:webapp-admin:REQ-BO06",
+        "design:REQ-BO06-flows",
+        "prototype:admin-bookings-detail",
+        "webapp-admin:code:REQ-BO06",
+        "webapp-admin:test:REQ-BO06"
       ],
       "REQ-POST01": [
         "requirements:REQ-POST01",
@@ -10346,6 +11151,22 @@
         "design:REQ-TOUR10",
         "api-worker:code:REQ-TOUR10",
         "api-worker:test:REQ-TOUR10"
+      ],
+      "REQ-BOOK15": [
+        "design:REQ-BOOK15",
+        "design:REQ-BOOK15-flows",
+        "prototype:admin-edit-booking",
+        "config:increment-1-p4-note",
+        "webapp-admin:code:REQ-BOOK15",
+        "webapp-admin:test:REQ-BOOK15"
+      ],
+      "REQ-BOOK16": [
+        "design:REQ-BOOK16",
+        "design:REQ-BOOK16-flows",
+        "prototype:admin-edit-booking",
+        "config:increment-1-p4-note",
+        "webapp-admin:code:REQ-BOOK16",
+        "webapp-admin:test:REQ-BOOK16"
       ]
     },
     "byArtifact": {
@@ -11857,6 +12678,62 @@
       ],
       "webapp-editor:uitest:webapp-editor:REQ-SEO03": [
         "REQ-SEO03"
+      ],
+      "design:REQ-BOOK15": [
+        "REQ-BOOK15"
+      ],
+      "design:REQ-BOOK16": [
+        "REQ-BOOK16"
+      ],
+      "design:REQ-BO05-flows": [
+        "REQ-BO05"
+      ],
+      "design:REQ-BO06-flows": [
+        "REQ-BO06"
+      ],
+      "design:REQ-BOOK15-flows": [
+        "REQ-BOOK15"
+      ],
+      "design:REQ-BOOK16-flows": [
+        "REQ-BOOK16"
+      ],
+      "prototype:admin-bookings-master": [
+        "REQ-BO05"
+      ],
+      "prototype:admin-bookings-detail": [
+        "REQ-BO06"
+      ],
+      "prototype:admin-edit-booking": [
+        "REQ-BOOK15",
+        "REQ-BOOK16"
+      ],
+      "config:increment-1-p4-note": [
+        "REQ-BOOK15",
+        "REQ-BOOK16"
+      ],
+      "webapp-admin:code:REQ-BO05": [
+        "REQ-BO05"
+      ],
+      "webapp-admin:code:REQ-BO06": [
+        "REQ-BO06"
+      ],
+      "webapp-admin:code:REQ-BOOK15": [
+        "REQ-BOOK15"
+      ],
+      "webapp-admin:code:REQ-BOOK16": [
+        "REQ-BOOK16"
+      ],
+      "webapp-admin:test:REQ-BO05": [
+        "REQ-BO05"
+      ],
+      "webapp-admin:test:REQ-BO06": [
+        "REQ-BO06"
+      ],
+      "webapp-admin:test:REQ-BOOK15": [
+        "REQ-BOOK15"
+      ],
+      "webapp-admin:test:REQ-BOOK16": [
+        "REQ-BOOK16"
       ]
     },
     "matrix": {
@@ -12927,180 +13804,7 @@
   },
   "stagePlan": null,
   "stubs": [],
-  "tdrs": [
-    {
-      "id": "TDR-01",
-      "status": "APPROVED",
-      "scope": "stack",
-      "decision": "Cloudflare-native: Workers (Hono) for APIs, Pages for frontends, D1 (UK) for data, KV for sessions/tokens, R2 for objects, Cron Triggers for scheduled jobs.",
-      "binds": [
-        "P3",
-        "P4",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-02",
-      "status": "APPROVED",
-      "scope": "stack",
-      "decision": "Do NOT use Durable Objects, Cloudflare Queues, AI Gateway, Vectorize, Workers AI, or Cloudflare Access.",
-      "binds": [
-        "P3",
-        "P4"
-      ]
-    },
-    {
-      "id": "TDR-03",
-      "status": "APPROVED",
-      "scope": "data",
-      "decision": "Persistence is Cloudflare D1 (UK); all access goes through the core-data-access layer plus a run-once, in-order migration runner.",
-      "binds": [
-        "P3",
-        "P4",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-04",
-      "status": "APPROVED",
-      "scope": "data",
-      "decision": "Money is stored as integer pence; timestamps are ISO-8601 UTC.",
-      "binds": [
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-05",
-      "status": "APPROVED",
-      "scope": "pattern",
-      "decision": "Idempotency (webhooks, cron sends, checkout-session creation) uses a D1 store keyed by the provider event/idempotency key (INSERT OR IGNORE) — not KV, not a queue.",
-      "binds": [
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-06",
-      "status": "APPROVED",
-      "scope": "vendor",
-      "decision": "Payments use Stripe Embedded Checkout (ui_mode:'embedded'); fulfilment driven strictly by the checkout.session.completed webhook, never the return page; cumulative refunds read from charge.amount_refunded.",
-      "binds": [
-        "P3",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-07",
-      "status": "APPROVED",
-      "scope": "pattern",
-      "decision": "Auth is JWT (Web Crypto HS256, 1h) plus KV sessions for Customer (signed link) and Owner; Guides authenticate by X-Device-ID validated per guide. No Cloudflare Access.",
-      "binds": [
-        "P3",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-08",
-      "status": "APPROVED",
-      "scope": "pattern",
-      "decision": "Departure capacity is enforced by an atomic D1 transactional decrement of held/confirmed counts — NOT Durable Objects, NOT held_until+sweep.",
-      "binds": [
-        "P3",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-09",
-      "status": "APPROVED",
-      "scope": "vendor",
-      "decision": "Outbound transactional email is Postmark for v1.",
-      "binds": [
-        "P4",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-10",
-      "status": "PROPOSED",
-      "scope": "vendor",
-      "decision": "SMS/WhatsApp delivery: direct Twilio vs Knock-orchestrated Twilio — undecided (D-NOTIF-1). Interim: direct Twilio, no orchestration lock-in.",
-      "binds": [
-        "P4"
-      ]
-    },
-    {
-      "id": "TDR-11",
-      "status": "APPROVED",
-      "scope": "deployment",
-      "decision": "Deploy to Cloudflare Pages (customer/admin/editor) + Workers (API) on friendsonbikes.uk; prod D1+KV namespaces exist; staging namespaces to be created; secrets set via Wrangler.",
-      "binds": [
-        "P4"
-      ]
-    },
-    {
-      "id": "TDR-12",
-      "status": "SUPERSEDED",
-      "scope": "dev-env",
-      "decision": "Canonical source repo is admin-rome (carries CI); rome-dev is spurious/superseded (DR-1). Local dev runs Wrangler against a local D1 — no in-memory substitute.",
-      "binds": [
-        "P4",
-        "P5"
-      ],
-      "supersededBy": "DEV-4"
-    },
-    {
-      "id": "TDR-13",
-      "status": "SUPERSEDED",
-      "scope": "stack",
-      "decision": "webapp-customer is vanilla static HTML/CSS/JS + Flutter Web island widgets, per-locale static dirs (en/fr/es); webapp-admin/webapp-editor are full Flutter Web SPAs; mobile-guide is Flutter iOS-native (primary) plus Flutter Web PWA (fallback).",
-      "binds": [
-        "P3",
-        "P5"
-      ],
-      "supersededBy": "DEV-3"
-    },
-    {
-      "id": "TDR-14",
-      "status": "APPROVED",
-      "scope": "pattern",
-      "decision": "Static publish is manual-only (operator-triggered rebuild of the customer site); no automated on-content-change trigger.",
-      "binds": [
-        "P3",
-        "P5"
-      ]
-    },
-    {
-      "id": "TDR-15",
-      "status": "SUPERSEDED",
-      "scope": "dependency",
-      "decision": "Design system = forest-palette CSS tokens + Syne (display) / DM Sans (body), self-hosted variable woff2; every customer surface renders from it; a Flutter component library is to-build.",
-      "binds": [
-        "P3",
-        "P5"
-      ],
-      "supersededBy": "DEV-1"
-    },
-    {
-      "id": "TDR-16",
-      "status": "SUPERSEDED",
-      "scope": "dependency",
-      "decision": "The guide app (mobile-guide/GMT) stack is flutter_map + CyclOSM tiles + FMTC offline caching + sembast persistence + flutter_bloc + go_router + GetIt; offline-critical once a tour starts.",
-      "binds": [
-        "P3",
-        "P5"
-      ],
-      "supersededBy": "DEV-2"
-    },
-    {
-      "id": "TDR-17",
-      "status": "APPROVED",
-      "scope": "vendor",
-      "decision": "Advisory APIs: Met Office DataHub (forecast, free tier, via a Worker proxy so the JWT never ships to the browser) and TfL Unified API (use the street field — road is often null); both read-only, informational at v1.",
-      "binds": [
-        "P4",
-        "P5"
-      ]
-    }
-  ],
+  "tdrs": [],
   "tdrDeviations": [
     {
       "id": "DEV-1",
@@ -13143,27 +13847,7 @@
       "resolvedAt": "2026-07-21T22:16:42Z"
     }
   ],
-  "infraConstraints": {
-    "hosting": "Cloudflare account exists; prod D1+KV namespaces for friendsonbikes.uk exist; staging namespaces to be created (TDR-11).",
-    "payments": "Stripe Embedded Checkout, test/GBP, implemented (TDR-06).",
-    "email": "Postmark APPROVED for v1 (TDR-09).",
-    "sms": "Twilio configured; orchestration direct-vs-Knock OPEN (TDR-10 / D-NOTIF-1); interim direct Twilio.",
-    "weather": "Met Office DataHub via Worker proxy (TDR-17).",
-    "transit": "TfL Unified API, use street field (TDR-17).",
-    "canonicalRepo": "admin-rome (has CI); rome-dev superseded (TDR-12) — to be provided.",
-    "localDev": "Wrangler against local D1, no in-memory substitute (TDR-12).",
-    "avoid": [
-      "Durable Objects",
-      "Cloudflare Queues",
-      "AI Gateway",
-      "Vectorize",
-      "Workers AI",
-      "Cloudflare Access",
-      "SendGrid",
-      "MailChannels"
-    ],
-    "procurement": "Apple Developer account for mobile-guide iOS distribution not yet obtained."
-  },
+  "infraConstraints": null,
   "audit": [
     {
       "event": "INTAKE_FINALIZED",
@@ -14248,6 +14932,644 @@
       "summary": "Home page = adapted LBT mockup (support.js animations, real logo+tour images, DB-synced cards, Book->island). Tours index (W2) built: LBT design, tours-hero, cards rendered from GET /tours. PRE01 surface now reachable.",
       "raisedBy": "roma",
       "timestamp": "2026-07-22T17:20:00Z"
+    },
+    {
+      "event": "INCREMENT_SEALED",
+      "increment": 0,
+      "timestamp": "2026-07-27T08:25:52Z"
+    },
+    {
+      "event": "INCREMENT_BEGUN",
+      "increment": 1,
+      "stage": null,
+      "intent": "refinement",
+      "timestamp": "2026-07-27T08:25:52Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "bootstrap-inc1-p0-1",
+      "role": "bootstrap",
+      "phase": "P0",
+      "timestamp": "2026-07-27T08:38:24Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "bootstrap-inc1-p0-1",
+      "role": "bootstrap",
+      "phase": "P0",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T08:38:24Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "surveyor-inc1-p0.5-1",
+      "role": "surveyor",
+      "phase": "P0.5",
+      "timestamp": "2026-07-27T10:02:57Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "surveyor-inc1-p0.5-1",
+      "role": "surveyor",
+      "phase": "P0.5",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T10:02:57Z"
+    },
+    {
+      "event": "INTAKE_FINALIZED",
+      "increment": 1,
+      "routing": [
+        "P0",
+        "P0.5",
+        "P1",
+        "P2",
+        "P3",
+        "P3.5",
+        "P4",
+        "P5"
+      ],
+      "tdrs": 0,
+      "timestamp": "2026-07-27T10:03:02Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p0.5-1",
+      "role": "sarah",
+      "phase": "P0.5",
+      "timestamp": "2026-07-27T10:04:02Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p0.5-1",
+      "role": "sarah",
+      "phase": "P0.5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T10:04:02Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "talib-inc1-p1-1",
+      "role": "talib",
+      "phase": "P1",
+      "timestamp": "2026-07-27T10:35:57Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "talib-inc1-p1-1",
+      "role": "talib",
+      "phase": "P1",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 0,
+      "edges": 2,
+      "timestamp": "2026-07-27T10:35:57Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P1",
+      "key": "aordl",
+      "pass": true,
+      "timestamp": "2026-07-27T10:36:07Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P1",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T10:36:07Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p1-1",
+      "role": "sarah",
+      "phase": "P1",
+      "timestamp": "2026-07-27T10:36:44Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p1-1",
+      "role": "sarah",
+      "phase": "P1",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T10:36:44Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "talib-inc1-p2-1",
+      "role": "talib",
+      "phase": "P2",
+      "timestamp": "2026-07-27T10:41:22Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "talib-inc1-p2-1",
+      "role": "talib",
+      "phase": "P2",
+      "status": "COMPLETE",
+      "artifacts": 2,
+      "deltas": 0,
+      "edges": 2,
+      "timestamp": "2026-07-27T10:41:22Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P2",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T10:41:37Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P2",
+      "key": "sponsorOq",
+      "pass": true,
+      "timestamp": "2026-07-27T10:41:37Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P2",
+      "key": "stageConsistency",
+      "pass": true,
+      "timestamp": "2026-07-27T10:41:37Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p2-1",
+      "role": "sarah",
+      "phase": "P2",
+      "timestamp": "2026-07-27T10:42:08Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p2-1",
+      "role": "sarah",
+      "phase": "P2",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T10:42:08Z"
+    },
+    {
+      "event": "AMENDMENT",
+      "phase": "P3",
+      "title": "Scope correction: A19 Edit button is REQ-BOOK15/16 (DR-B12), not a defect",
+      "detail": "P0.5 intake missed the 2026-07-24 DR-B12 decision superseding A19s original read-only intent (user-flows.md #4b.7). Sponsor re-briefed and confirmed: A19 Detail stays read-only; REQ-BOOK15/BOOK16 relocate to a new A21 Edit booking screen rather than being dropped. No change needed to REQ-BO05/REQ-BO06 (P1) or FUNC-BO05/FUNC-BO06 (P2) - both already correct and screen-agnostic where it matters. Scope for P3 design expands to include defining screen A21 and moving the requirements-coverage.md / user-flows.md / design-system.md / FOB-UXIS-001_UXIS.md screen bindings for REQ-BOOK15/REQ-BOOK16 from A19 to A21.",
+      "severity": "MAJOR",
+      "timestamp": "2026-07-27T10:50:04Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "pma-inc1-p3-1",
+      "role": "pma",
+      "phase": "P3",
+      "timestamp": "2026-07-27T10:58:44Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "pma-inc1-p3-1",
+      "role": "pma",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "edges": 2,
+      "timestamp": "2026-07-27T10:58:44Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "clara-inc1-p3-1",
+      "role": "clara",
+      "phase": "P3",
+      "timestamp": "2026-07-27T10:58:44Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "clara-inc1-p3-1",
+      "role": "clara",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 0,
+      "edges": 4,
+      "timestamp": "2026-07-27T10:58:44Z"
+    },
+    {
+      "event": "AIB_ISSUED",
+      "phase": "P3",
+      "revision": "inc1-p3-rev1",
+      "timestamp": "2026-07-27T10:59:03Z"
+    },
+    {
+      "event": "AIB_RESPONSE",
+      "phase": "P3",
+      "type": "CONFIRM",
+      "revision": "inc1-p3-rev1",
+      "timestamp": "2026-07-27T11:00:08Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T11:00:08Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-27T11:00:08Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3",
+      "key": "designAssets",
+      "pass": true,
+      "timestamp": "2026-07-27T11:00:08Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3",
+      "key": "sponsorArch",
+      "pass": true,
+      "timestamp": "2026-07-27T11:00:08Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3",
+      "key": "tdrConformance",
+      "pass": true,
+      "timestamp": "2026-07-27T11:00:08Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p3-1",
+      "role": "sarah",
+      "phase": "P3",
+      "timestamp": "2026-07-27T11:00:52Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p3-1",
+      "role": "sarah",
+      "phase": "P3",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T11:00:52Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "reena-inc1-p3.5-1",
+      "role": "reena",
+      "phase": "P3.5",
+      "timestamp": "2026-07-27T11:23:39Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "reena-inc1-p3.5-1",
+      "role": "reena",
+      "phase": "P3.5",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 0,
+      "edges": 4,
+      "timestamp": "2026-07-27T11:23:39Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3.5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T11:31:22Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P3.5",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-27T11:31:22Z"
+    },
+    {
+      "event": "SPONSOR_VISUAL_APPROVAL",
+      "phase": "P3.5",
+      "verdict": "APPROVE",
+      "detail": "Sponsor approved look-and-flow for admin-bookings-master/detail + admin-edit-booking prototypes",
+      "timestamp": "2026-07-27T11:31:22Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p3.5-1",
+      "role": "sarah",
+      "phase": "P3.5",
+      "timestamp": "2026-07-27T11:32:44Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p3.5-1",
+      "role": "sarah",
+      "phase": "P3.5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T11:32:44Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p3.5-2",
+      "role": "sarah",
+      "phase": "P3.5",
+      "timestamp": "2026-07-27T11:33:11Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p3.5-2",
+      "role": "sarah",
+      "phase": "P3.5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T11:33:11Z"
+    },
+    {
+      "event": "AIB_ISSUED",
+      "phase": "P4",
+      "revision": "inc1-p4-rev1",
+      "timestamp": "2026-07-27T11:38:13Z"
+    },
+    {
+      "event": "AIB_RESPONSE",
+      "phase": "P4",
+      "type": "CONFIRM",
+      "revision": "inc1-p4-rev1",
+      "timestamp": "2026-07-27T11:57:32Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "lucien-inc1-p4-1",
+      "role": "lucien",
+      "phase": "P4",
+      "timestamp": "2026-07-27T11:57:32Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "lucien-inc1-p4-1",
+      "role": "lucien",
+      "phase": "P4",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "edges": 2,
+      "timestamp": "2026-07-27T11:57:32Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P4",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-07-27T11:57:42Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P4",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T11:57:42Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P4",
+      "key": "tdrConformance",
+      "pass": true,
+      "timestamp": "2026-07-27T11:57:42Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P4",
+      "key": "sponsorInfra",
+      "pass": true,
+      "timestamp": "2026-07-27T11:57:46Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p4-1",
+      "role": "sarah",
+      "phase": "P4",
+      "timestamp": "2026-07-27T11:58:25Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p4-1",
+      "role": "sarah",
+      "phase": "P4",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T11:58:25Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie-inc1-p5-1",
+      "role": "charlie",
+      "phase": "P5",
+      "timestamp": "2026-07-27T12:06:01Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie-inc1-p5-1",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 0,
+      "edges": 8,
+      "timestamp": "2026-07-27T12:06:01Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "executability",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "integration",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "contracts",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "testAdequacy",
+      "pass": false,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "tdrConformance",
+      "pass": true,
+      "timestamp": "2026-07-27T12:06:40Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie-inc1-p5-2",
+      "role": "charlie",
+      "phase": "P5",
+      "timestamp": "2026-07-27T12:09:58Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie-inc1-p5-2",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "edges": 2,
+      "timestamp": "2026-07-27T12:09:58Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "testAdequacy",
+      "pass": true,
+      "timestamp": "2026-07-27T12:10:14Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-27T12:10:14Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-27T12:10:14Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p5-1",
+      "role": "sarah",
+      "phase": "P5",
+      "timestamp": "2026-07-27T12:12:33Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p5-1",
+      "role": "sarah",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T12:12:33Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie-inc1-p5-3",
+      "role": "charlie",
+      "phase": "P5",
+      "timestamp": "2026-07-27T12:12:33Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie-inc1-p5-3",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T12:12:33Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-inc1-gate-p5-2",
+      "role": "sarah",
+      "phase": "P5",
+      "timestamp": "2026-07-27T12:13:40Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-inc1-gate-p5-2",
+      "role": "sarah",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-27T12:13:40Z"
     }
   ],
   "tdrCitations": {

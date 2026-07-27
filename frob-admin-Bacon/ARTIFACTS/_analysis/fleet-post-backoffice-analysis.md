@@ -202,6 +202,16 @@
 
 ---
 
+> **Increment 1 delta (2026-07-27):** A19 "Booking browser" is renamed "Bookings"
+> and split into a true Master/Detail pattern — the search view (FUNC-BO05) and
+> the booking detail view (FUNC-BO06) are now separate views reached by
+> navigation, not one screen with two panes. The detail view's Edit action is
+> removed; it was already out of scope per the original REQ-BO06 and is now
+> made explicit. No data fields, search criteria, or security/payment
+> invariants changed. Source: `_user_input/raw-requirements/Refinement_A19_BookingBrowser_2026-07-27.md`
+> and `ARTIFACTS/_requirements/increment-1-p1-delta.md`. Binding of record
+> unchanged: REQ-BO05 (search) / REQ-BO06 (detail).
+
 ### FUNC-BO05 — Search Bookings
 **Maps to:** REQ-BO05
 
@@ -212,6 +222,7 @@
 - Given the Owner is in an operator session, when a search is run by booking reference, customer name or email, tour, departure date, or status, then matching bookings are returned.
 - Given search results are returned, when the Owner views them, then no customer payment-card data is included — only provider references.
 - Given no bookings match the search criteria, when the search is run, then the system shows "No bookings match these criteria" and prompts the Owner to adjust criteria.
+- Given search results are shown in the "Bookings" view, when the Owner selects a result, then the Owner is navigated to the separate booking detail view (FUNC-BO06) for that booking, rather than the record being displayed inline.
 
 ---
 
@@ -225,7 +236,8 @@
 - Given a booking exists and the Owner is in an operator session, when the Owner opens the booking detail view, then attendees, emergency contact, payment/refund state (as provider references, never card data), the consent and waiver record with timestamps, and the booking's status history are shown.
 - Given the booking's authoritative state changes, when the Owner views the detail, then it reflects the current authoritative state.
 - Given the booking reference is not found, when the Owner searches for it, then the system shows "No booking found for that reference" (404) and prompts the Owner to check the reference.
-- Given the detail view is read-only, when the Owner wants to edit the booking, then they are routed to the booking-update or payment-admin capability (out of scope here).
+- Given the detail view is read-only and reached only by navigating from the "Bookings" search view, when the Owner wants to edit the booking, then no edit action is presented and editing is only available via the separate booking-update or payment-admin capability (out of scope here).
+- Given the Owner is viewing a booking's detail, when the Owner selects the back action, then the Owner returns to the "Bookings" search view with its prior results still shown, not a fresh, lost search.
 
 ---
 

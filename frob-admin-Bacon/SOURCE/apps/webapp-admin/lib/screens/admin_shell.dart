@@ -11,7 +11,7 @@ const kNavGroups = [
     NavLeaf('A7', 'New booking', '/new-booking'),
     NavLeaf('A8', 'Payments & refunds', '/payments'),
     NavLeaf('A9', 'Enquiries', '/enquiries'),
-    NavLeaf('A19', 'Booking browser', '/booking-browser'),
+    NavLeaf('A19', 'Bookings', '/bookings'),
   ], hue: FobColors.pink),
   NavGroup('Scheduling', [
     NavLeaf('A22', 'Tours & routes', '/tours'),

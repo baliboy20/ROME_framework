@@ -119,7 +119,7 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 | Bike allocation | A20 | PC | nav · A17 "Bikes" | operator session · REQ-BOOK14 |
 | Bookings (master) | A19 | PC | nav | operator session · REQ-BO05 (read-only) |
 | Bookings (detail) | A19 | PC | Bookings row select · back to master | operator session · REQ-BO06 (read-only) |
-| Edit booking | A21 | PC | A19 Detail "Edit" action | operator session · REQ-BOOK15/16 |
+| Edit booking | A23 | PC | A19 Detail "Edit" action | operator session · REQ-BOOK15/16 |
 | Owner alerts / Deliverability / Audit | A4 / A3 / A5 | PC | nav | operator session |
 | Publish & quality | A6 | PC | nav | operator session |
 | Incidents / Hazard log | A10 / A11 | PC | nav | operator session |
@@ -180,7 +180,7 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 - **serves:** REQ-BOOK11/12/13 · UJ-BO-02/03
 - **behaviour:** A18 is a **master/detail** screen. The master (left) is a selectable list of scheduled departures (tour · date · time · booked/capacity) plus a **New** (+) control; the detail (right) is the create/edit form for the selected — or new — departure, carrying the capacity guard (UXD-05), the change fan-out confirm (UXD-03) and the cancellation remediation fan-out (UXD-04). Selecting a row pre-fills the form (conforms UXC-NAV-4); New clears it. Renamed from "Scheduler". Cancellation is a notice workflow, never a silent row delete.
 - **states:** list-ready / row-selected(edit) / new(empty form).
-- **rationale:** replaces a dropdown-of-ids selector with a first-class list; unifies read + write in one surface and matches the app's master/detail navigation idiom, also used by A19 Bookings (master/detail, but read-only — the write side lives on the separate A21 Edit booking screen, not unified into one surface as it is here on A18). A17 departure calendar remains the complementary date-oriented view (potential future consolidation, recorded in the build finding).
+- **rationale:** replaces a dropdown-of-ids selector with a first-class list; unifies read + write in one surface and matches the app's master/detail navigation idiom, also used by A19 Bookings (master/detail, but read-only — the write side lives on the separate A23 Edit booking screen, not unified into one surface as it is here on A18). A17 departure calendar remains the complementary date-oriented view (potential future consolidation, recorded in the build finding).
 - **mockup-ref:** none yet (layout evolution; behaviour mockups A18 unchanged).
 
 #### UXD-05 — Scheduler capacity guards
@@ -339,7 +339,7 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 
 | Mockup / wireframe | Surfaces | Sidecar updated | UXD records touched | Conventions confirmed sufficient? | Date |
 |---|---|---|---|---|---|
-| `Admin System.dc.html` | A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A21 | pending | UXD-01…12, UXD-18 | Yes, except records listed (A21 has no mockup yet — new screen, layout evolution only) | 2026-07-22 |
+| `Admin System.dc.html` | A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A23 | pending | UXD-01…12, UXD-18 | Yes, except records listed (A23 has no mockup yet — new screen, layout evolution only) | 2026-07-22 |
 | `Guide App.dc.html` | G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G11, G12, G13 | pending | UXD-13…17, UXD-19 | Yes, except records listed | 2026-07-22 |
 
 ---

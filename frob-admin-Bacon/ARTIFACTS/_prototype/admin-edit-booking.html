@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A23 · Edit booking BK-1001 — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T1 PROTOTYPE — A23 Edit booking &middot; new screen, relocated off A19 (REQ-BOOK15/16, sponsor-confirmed 2026-07-27) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <p class="body-text" style="margin-top:-8px"><a href="admin-bookings-detail.html" style="color:var(--pink-text-light)">&larr; Back to booking BK-1001</a></p>
+
+      <div class="a-card" style="max-width:640px">
+        <div class="eyebrow" style="margin-bottom:6px">BK-1001</div>
+        <div class="card-title serif">Edit booking</div>
+
+        <div class="a-field"><label>Departure date</label><input value="1 August 2026, 10:00"></div>
+
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+
+        <div class="eyebrow" style="margin-bottom:6px">ATTENDEES &amp; CONTACT ROLES</div>
+        <div style="display:flex;gap:16px">
+          <div class="a-field" style="flex:1"><label>Attendee</label><input value="Tom Baker"></div>
+          <div class="a-field" style="flex:1"><label>Contact role</label><input value="leader"></div>
+        </div>
+        <div style="display:flex;gap:16px">
+          <div class="a-field" style="flex:1"><label>Attendee</label><input value="Tom Baker (jr)"></div>
+          <div class="a-field" style="flex:1"><label>Contact role</label><input value="attendee"></div>
+        </div>
+        <button class="a-btn a-btn-secondary" style="margin-top:4px">+ Add attendee</button>
+
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+
+        <div class="eyebrow" style="margin-bottom:8px">STATUS TRANSITION</div>
+        <div style="display:flex;gap:10px">
+          <a class="a-btn a-btn-primary" href="admin-bookings-detail.html">Confirm</a>
+          <a class="a-btn a-btn-secondary" style="border-color:var(--accent-pink);color:var(--pink-text-light)" href="admin-bookings-detail.html">Cancel booking</a>
+          <a class="a-btn a-btn-secondary" style="border-color:var(--accent-orange);color:var(--orange-text-light)" href="admin-bookings-detail.html">Mark abandoned</a>
+        </div>
+
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+
+        <div style="display:flex;gap:10px">
+          <a class="a-btn a-btn-primary" href="admin-bookings-detail.html">Save</a>
+          <a class="a-btn a-btn-secondary" href="admin-bookings-detail.html">Cancel</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a19', 'A23 · SCHEDULING', 'Edit booking', 'Change departure date and attendee list/contact roles (REQ-BOOK15); apply a constrained status transition (REQ-BOOK16). Saving or transitioning returns to the A19 Detail record.');</script>
+</body>
+</html>

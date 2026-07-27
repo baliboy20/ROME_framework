@@ -3,14 +3,14 @@ var ADMIN_LABELS = {
   a3:'Deliverability', a4:'Owner alerts', a5:'Audit log', a6:'Publish & quality',
   a7:'New booking', a8:'Payments & refunds', a9:'Enquiries', a10:'Incidents', a11:'Hazard log',
   a12:'Add bike', a13:'Equipment', a14:'Fleet readiness', a15:'Flagged-bike', a16:'Compliance',
-  a17:'Departure calendar', a18:'Scheduler', a19:'Booking browser', a20:'Bike allocation'
+  a17:'Departure calendar', a18:'Scheduler', a19:'Bookings', a20:'Bike allocation'
 };
 var ADMIN_PAGES = {
   a3:'admin-deliverability.html', a4:'admin-alerts.html', a5:'admin-audit.html', a6:'admin-publish-quality.html',
   a7:'admin-new-booking.html', a8:'admin-payments.html', a9:'admin-enquiries.html', a10:'admin-incidents.html',
   a11:'admin-hazard-log.html', a12:'admin-add-bike.html', a13:'admin-equipment.html', a14:'admin-fleet-readiness.html',
   a15:'admin-flagged-bike.html', a16:'admin-compliance.html', a17:'admin-calendar.html', a18:'admin-scheduler.html',
-  a19:'admin-booking-browser.html', a20:'admin-bike-allocation.html'
+  a19:'admin-bookings-master.html', a20:'admin-bike-allocation.html'
 };
 var ADMIN_GROUPS = [
   ['Bookings & payments', ['a7','a8','a9']],

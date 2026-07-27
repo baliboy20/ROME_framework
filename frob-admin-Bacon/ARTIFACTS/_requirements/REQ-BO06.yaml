@@ -6,10 +6,13 @@ Preconditions:
   - Owner is in an operator session
 Conditions:
   - the detail view shows attendees, the emergency contact, payment and refund state as provider references rather than card data, the consent and waiver record with timestamps, and the booking's status history
+  - the detail view is its own view, reached by navigating from the "Bookings" search view (REQ-BO05), and offers a back action that returns the Owner to that search view
+  - the detail view presents no edit action; it is read-only in full
 Postconditions:
   - none, this is a read-only view
 Outcomes:
   - Owner sees the full record of one booking, enough to answer a customer question or decide an action
+  - Owner returns to the "Bookings" search view via the back action without losing the prior search results
 Invariants:
   - the view reflects the booking's current authoritative state
   - payment data is shown only as provider references, never card data
@@ -24,9 +27,10 @@ Errors:
     userAction: Check the booking reference and try again
 ScopeBoundary:
   InScope:
-    - a single-booking read-only detail view
+    - a single-booking read-only detail view, presented as a distinct view with a back action to the search view
   OutOfScope:
     - editing a booking from this view, which routes to the booking-update or payment-admin capability
+    - any inline edit action on this view; none is presented
 CopilotMode: STRICT
 OpenQuestions:
   - question: none

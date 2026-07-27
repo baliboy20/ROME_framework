@@ -8,7 +8,9 @@ import '../widgets/deferred_content.dart';
 import '../widgets/skeleton_page.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/pages/sign_in_page.dart';
-import '../features/bookings/presentation/pages/booking_browser_page.dart';
+import '../features/bookings/presentation/pages/bookings_detail_page.dart';
+import '../features/bookings/presentation/pages/bookings_master_page.dart';
+import '../features/bookings/presentation/pages/edit_booking_page.dart';
 import '../features/bookings/presentation/pages/new_booking_page.dart';
 import '../features/comms/presentation/pages/alerts_page.dart';
 import '../features/comms/presentation/pages/audit_page.dart';
@@ -102,6 +104,13 @@ GoRoute _shellRoute(String path, Widget page) => GoRoute(
       pageBuilder: (context, state) => _animatedPage(state, _pageScaffold(page)),
     );
 
+/// Like [_shellRoute] but builds the page from the route's path parameters
+/// (e.g. the booking `:id` in `/bookings/:id`).
+GoRoute _shellParamRoute(String path, Widget Function(GoRouterState state) builder) => GoRoute(
+      path: path,
+      pageBuilder: (context, state) => _animatedPage(state, _pageScaffold(builder(state))),
+    );
+
 /// The app router. Pass the app-wide [AuthBloc] so the redirect can gate the
 /// shell without reaching into the widget tree.
 GoRouter createRouter(AuthBloc authBloc) {
@@ -131,7 +140,9 @@ GoRouter createRouter(AuthBloc authBloc) {
           _shellRoute('/new-booking', const NewBookingPage()),
           _shellRoute('/payments', const PaymentsPage()),
           _shellRoute('/enquiries', const EnquiriesPage()),
-          _shellRoute('/booking-browser', const BookingBrowserPage()),
+          _shellRoute('/bookings', const BookingsMasterPage()),
+          _shellParamRoute('/bookings/:id', (state) => BookingsDetailPage(bookingId: state.pathParameters['id']!)),
+          _shellParamRoute('/bookings/:id/edit', (state) => EditBookingPage(bookingId: state.pathParameters['id']!)),
           _shellRoute('/tours', const ToursPage()),
           _shellRoute('/calendar', const CalendarPage()),
           _shellRoute('/scheduler', const SchedulerPage()),

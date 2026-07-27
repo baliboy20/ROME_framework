@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A19 · Booking BK-1001 — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T1 PROTOTYPE — A19 Bookings, Detail &middot; read-only (2026-07-27: no Edit dialog / no status-transition buttons here — see A23) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <p class="body-text" style="margin-top:-8px"><a href="admin-bookings-master.html" style="color:var(--pink-text-light)">&larr; Back to bookings</a></p>
+
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;max-width:640px">
+        <div class="eyebrow">BK-1001</div>
+        <a class="a-btn a-btn-primary" href="admin-edit-booking.html">Edit</a>
+      </div>
+
+      <div class="a-card" style="max-width:640px">
+        <div class="card-title serif">Tom Baker</div>
+        <div class="mono" style="font-size:11.5px;color:var(--cyan-text-light);margin-top:2px">BK-1001 &middot; tom.baker@example.com</div>
+        <div class="mono" style="font-size:12.5px;color:var(--text-muted);margin-top:4px">Hidden City &middot; 1 Aug 2026, 10:00</div>
+        <div class="money-val" style="margin-top:10px">£90.00</div>
+        <div style="margin-top:6px"><span class="status-pill lime">succeeded</span></div>
+
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+
+        <div class="eyebrow" style="margin-bottom:6px">ATTENDEES</div>
+        <div class="a-field"><label>Tom Baker</label><div>contact_role: <span class="mono">leader</span></div></div>
+        <div class="a-field"><label>Tom Baker (jr)</label><div>contact_role: <span class="mono">attendee</span></div></div>
+
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+
+        <div class="a-field"><label>Emergency contact</label><div>Jane Baker &middot; +44 7700 900123</div></div>
+        <div class="a-field"><label>Payment</label><div>pi_3P&middot;&middot;&middot;F00X (provider reference) — card number never stored. Amounts handled on A8.</div></div>
+        <div class="a-field"><label>Waiver / T&amp;C</label><div>Accepted 20 Jul 2026, 14:02</div></div>
+        <div class="a-field"><label>Marketing consent</label><div>Not given</div></div>
+
+        <hr style="border:none;border-top:1px solid #eee6d6;margin:14px 0">
+
+        <div class="eyebrow" style="margin-bottom:6px">STATUS HISTORY</div>
+        <div class="a-field"><label>20 Jul 2026, 14:02</label><div><span class="status-pill todo">draft</span> booking created</div></div>
+        <div class="a-field"><label>20 Jul 2026, 14:05</label><div><span class="status-pill lime">succeeded</span> payment captured</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a19', 'A19 · SCHEDULING', 'Booking BK-1001', 'Full read-only booking record. Payment shown as provider reference only — amounts remain on A8. Editing moved to A23.');</script>
+</body>
+</html>

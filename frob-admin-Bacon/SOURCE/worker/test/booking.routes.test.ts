@@ -6,6 +6,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Hono } from "hono";
 import { bookingRoutes } from "../src/routes/booking";
+import { backoffice } from "../src/routes/backoffice";
 import type { Env } from "../src/env";
 import { createTestEnv } from "./testEnv";
 import { signJwt, verifyBookingLink } from "../src/modules/auth/jwt";
@@ -14,6 +15,12 @@ import { putSession } from "../src/kv/session";
 function app() {
   const hono = new Hono<{ Bindings: Env }>();
   hono.route("/", bookingRoutes);
+  return hono;
+}
+
+function backofficeApp() {
+  const hono = new Hono<{ Bindings: Env }>();
+  hono.route("/", backoffice);
   return hono;
 }
 
@@ -359,5 +366,45 @@ describe("REQ-BOOK16 — POST /admin/bookings/:id/transition (DR-B12c constraine
       env
     );
     expect(res.status).toBe(409);
+  });
+});
+
+// Increment 1 (2026-07-27) — closing a pre-existing test-adequacy gap found
+// while gating this refinement: REQ-BO05/REQ-BO06's declared error conditions
+// (no-match search, unknown reference) were never covered. Backend behavior
+// itself is unchanged by this increment (Flutter-only screen split); these
+// tests just make the existing, already-shipped behavior verifiable.
+describe("REQ-BO05 — GET /admin/bookings (search)", () => {
+  it("returns an empty list with the no-match message when nothing matches", async () => {
+    const env = await createTestEnv();
+    const token = await operatorToken(env);
+
+    const res = await backofficeApp().request(
+      "/admin/bookings?reference=does-not-exist",
+      { headers: { Authorization: `Bearer ${token}` } },
+      env
+    );
+
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as { bookings: unknown[]; message?: string };
+    expect(body.bookings).toEqual([]);
+    expect(body.message).toBe("No bookings match these criteria.");
+  });
+});
+
+describe("REQ-BO06 — GET /admin/bookings/:id (detail)", () => {
+  it("returns 404 for a booking reference that doesn't exist", async () => {
+    const env = await createTestEnv();
+    const token = await operatorToken(env);
+
+    const res = await backofficeApp().request(
+      "/admin/bookings/does-not-exist",
+      { headers: { Authorization: `Bearer ${token}` } },
+      env
+    );
+
+    expect(res.status).toBe(404);
+    const body = (await res.json()) as { message: string };
+    expect(body.message).toBe("No booking found for that reference.");
   });
 });

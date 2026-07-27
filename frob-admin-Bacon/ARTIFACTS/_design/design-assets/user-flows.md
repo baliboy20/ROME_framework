@@ -51,7 +51,7 @@ flowchart TD
     O -->|Modify date| P[W10 self-service date change]
     O -->|Cancel >48h| Q[Auto full refund]
     O -->|Cancel within 48h| R["William will confirm your refund"]
-    O -->|Party/attendee change| S[Contact William -> A19 owner-assisted edit, REQ-BOOK15]
+    O -->|Party/attendee change| S[Contact William -> A23 owner-assisted edit, REQ-BOOK15]
 ```
 
 **Design considerations**: skeleton loading on W5 slot list; inline field-level errors on W6 (no full-page reload); W8 never redirects away from page (embedded checkout is a hard product requirement — do not substitute a hosted redirect flow). Cancellation-within-48h intentionally shows no calculated refund amount (William decides case-by-case) — do not "improve" this into an auto-calculated figure.
@@ -167,23 +167,27 @@ flowchart TD
 
 ### 4b. Booking & payment management (Owner side)
 
-5. **A7 — Booking creation** [SPA, Parchment]: from enquiry (A9 handoff) or provisional/pay-later — William sets hold/deposit/reminder terms per booking, no defaults (money fields in Playfair `--type-price`). Captures `customerEmail` and sends the DR-B11 completion link (BOOK08/BOOK10) — attendee details and consent are supplied by the *customer* via that link, never entered here. (Creation only; editing an existing booking is A19, REQ-BOOK15.)
+5. **A7 — Booking creation** [SPA, Parchment]: from enquiry (A9 handoff) or provisional/pay-later — William sets hold/deposit/reminder terms per booking, no defaults (money fields in Playfair `--type-price`). Captures `customerEmail` and sends the DR-B11 completion link (BOOK08/BOOK10) — attendee details and consent are supplied by the *customer* via that link, never entered here. (Creation only; editing an existing booking is A23, REQ-BOOK15.)
 6. **A8 — Payment & refund management** [SPA, Parchment]: matches `scraps/03-s2.png`-style payments table and its refund modal. Requires operator session (not a static admin key, DR-B9). Filter chip row (All / Requires payment / Succeeded / Refunded / Failed / No-show, active chip pink), dense DataTable (Booking / Customer / Paid / Refunded / Status / action) with money in Playfair `--text-price`, StatusPill per row (lime "succeeded," cyan "refunded," pink "requires_payment"). **Refund modal**: mono eyebrow "REFUND · BK-1001," Playfair title "Issue refund," booking summary line, two-up Paid/Refunded-so-far fields (Playfair pink values), single Refund-amount field, computed "Cumulative refunded after this: £X.XX" helper line, Cancel (secondary) + "Issue refund" (gradient-pink primary) actions. Cumulative refund total always shown, not just latest refund. **Row actions (FINDING-005):** **View** (always) opens a read-only per-payment history modal (BO06 array — individual transactions, not the aggregate row) plus a "View booking" link; **Refund** appears only for a `succeeded` row (never for failed/no-show/requires-payment).
-7. **A19 — Booking browser** [SPA, Parchment]: search by ref/customer/tour/date/status; detail view shows payment as provider references only (never raw card data), consent/waiver timestamps, status history, attendees with `contact_role` (leader/co-leader/attendee), using the same mono-label/Playfair-value detail-card pattern as A20's participant modal. **Editable (DR-B12, 2026-07-24 — supersedes the original read-only intent):** an **Edit** dialog changes departure/date and the attendee list + contact roles (REQ-BOOK15), and inline **status-transition** buttons (Confirm / Cancel / Mark abandoned) apply constrained transitions (REQ-BOOK16). Payment *amounts* are still handled on A8, not here.
+7. **A19 — Bookings** [SPA, Parchment, **master/detail**, matching A18's established master/detail pattern]: renamed from "Booking browser." Split into two screens reached by navigation (not two panes of one screen):
+   - **Master** — search by ref/customer/tour/date/status; results list (reference, name, tour, status).
+   - **Detail** — reached by selecting a Master row; a back action returns to Master. Shows the full booking record: payment as provider references only (never raw card data), consent/waiver timestamps, status history, attendees with `contact_role` (leader/co-leader/attendee), using the same mono-label/Playfair-value detail-card pattern as A20's participant modal. **Read-only (2026-07-27 — reverses DR-B12):** no Edit dialog and no inline status-transition buttons on this screen; both moved to A23. Payment *amounts* are still handled on A8, not here.
 
-   *(A8 Payments cross-link, FINDING-005): the payments drill-down "View" opens the real per-payment history (BO06), and "View booking" opens the A19 booking record as a modal — deliberately a dialog, not a route change, so the A8 filter/scroll state is preserved.)*
+   *(A8 Payments cross-link, FINDING-005): the payments drill-down "View" opens the real per-payment history (BO06), and "View booking" opens the A19 **Detail** record as a modal — sponsor-confirmed 2026-07-27 to keep this as a modal (not a route navigation), preserving A8's filter/scroll state as originally designed; the modal content is now read-only, since editing has relocated to A23.)*
+
+8. **A23 — Edit booking** [SPA, Parchment]: new screen hosting the owner-assisted booking edit and status-transition capability relocated off A19, reached via an **"Edit"** action on the A19 Detail screen (sponsor-confirmed label, 2026-07-27). Hosts: an **Edit** dialog/form changing departure date and the attendee list + contact roles (REQ-BOOK15), and **status-transition** buttons (Confirm / Cancel / Mark abandoned) applying constrained transitions (REQ-BOOK16). Saving or transitioning returns to A19 Detail (showing the updated record). Payment *amounts* remain on A8, not here.
 
 ### 4c. Fleet & equipment
 
-8. **A12 — Add bike** [SPA, Parchment]: duplicate identifier blocked (pink), next-sequential suggested, no photo capture.
-9. **A13 — Add/replace equipment** [SPA, Parchment]: line-by-line, no bulk, no photo; helmet impact → immediate retirement (pink/orange status change).
-10. **A14 — Fleet & equipment readiness view** [SPA, Parchment]: aggregate status counts using the four-hue StatusPill system (lime in-service, orange flagged, pink needs-action, cyan info); critical alerts never buried.
-11. **A15 — Flagged-bike maintenance** [SPA, Parchment]: detail + event log + status update, mono-labelled event rows; needs ≥1 logged maintenance event before clearing back to service.
-12. **A16 — Compliance review & renewal** [SPA, Parchment]: on-event alerts only (E6), this view is the primary check-in-between-alerts surface; renewal-due items get the orange warning treatment.
+9. **A12 — Add bike** [SPA, Parchment]: duplicate identifier blocked (pink), next-sequential suggested, no photo capture.
+10. **A13 — Add/replace equipment** [SPA, Parchment]: line-by-line, no bulk, no photo; helmet impact → immediate retirement (pink/orange status change).
+11. **A14 — Fleet & equipment readiness view** [SPA, Parchment]: aggregate status counts using the four-hue StatusPill system (lime in-service, orange flagged, pink needs-action, cyan info); critical alerts never buried.
+12. **A15 — Flagged-bike maintenance** [SPA, Parchment]: detail + event log + status update, mono-labelled event rows; needs ≥1 logged maintenance event before clearing back to service.
+13. **A16 — Compliance review & renewal** [SPA, Parchment]: on-event alerts only (E6), this view is the primary check-in-between-alerts surface; renewal-due items get the orange warning treatment.
 
 ### 4d. Back-office operations (auth, content, audit)
 
-13. **A1/A2 — Operator sign-in/sign-out** [Parchment], **A5 — Audit log viewer** [Parchment] (incomplete entries flagged not hidden, orange left-edge treatment), **A6 — Manual publish trigger + content-quality panel** [Parchment] (manual-only per DR-10/TDR-14), **A3 — Deliverability status** [Parchment], **A4 — Owner alert inbox** [Parchment] (fallback landing for unreachable-channel alerts, pink needs-action treatment for unactioned items), **A10 — Incident review & insurer dispatch** [Parchment] (stub, format TBD), **A11 — Hazard log review** [Parchment] (dedupes by street). All use the same left-rail shell shown in `scraps/02-shell.png`.
+14. **A1/A2 — Operator sign-in/sign-out** [Parchment], **A5 — Audit log viewer** [Parchment] (incomplete entries flagged not hidden, orange left-edge treatment), **A6 — Manual publish trigger + content-quality panel** [Parchment] (manual-only per DR-10/TDR-14), **A3 — Deliverability status** [Parchment], **A4 — Owner alert inbox** [Parchment] (fallback landing for unreachable-channel alerts, pink needs-action treatment for unactioned items), **A10 — Incident review & insurer dispatch** [Parchment] (stub, format TBD), **A11 — Hazard log review** [Parchment] (dedupes by street). All use the same left-rail shell shown in `scraps/02-shell.png`.
 
 ### Mermaid — departure & fleet operations flow (Track B — Admin Parchment)
 
@@ -210,7 +214,8 @@ flowchart TD
 
     U[A9 Enquiry management] -->|Convert| V[A7 Booking creation]
     V --> W[A8 Payment & refund management]
-    W --> X[A19 Booking browser - read only detail]
+    W --> X[A19 Bookings - Master/Detail, read only]
+    X -->|Edit action| Y19[A23 Edit booking]
 
     Y[A12 Add bike] --> Z[A14 Fleet readiness view]
     AA[A13 Add/replace equipment] --> Z
