@@ -17,6 +17,12 @@ import '../mappers/payment_status_pill.dart';
 
 String formatMoney(int pence) => '£${(pence / 100).toStringAsFixed(2)}';
 
+/// Short, human booking reference (first block of the id, upper-cased).
+String shortRef(String id) => id.isEmpty ? '—' : (id.length >= 8 ? id.substring(0, 8).toUpperCase() : id.toUpperCase());
+
+/// Trimmed Stripe transaction/session code for display.
+String shortTxn(String ref) => ref.isEmpty ? '—' : (ref.length > 20 ? '${ref.substring(0, 20)}…' : ref);
+
 /// Compact transaction date for the A8 ledger. '—' when no payment has moved.
 String formatTxnDate(DateTime? dt) {
   if (dt == null) return '—';
@@ -78,7 +84,31 @@ class _PaymentsView extends StatelessWidget {
                   emptyText: 'No payments to show.',
                   rows: state is PaymentsLoaded ? state.filtered : const [],
                   columns: [
-                    FobColumn(label: 'Booking', flex: 2, render: (r) => Text('${r.bookingRef} · ${r.customerName}', style: FobText.body)),
+                    FobColumn(
+                      label: 'Leader · booking',
+                      flex: 3,
+                      render: (r) => InkWell(
+                        onTap: () => _openBookingModal(context, r.bookingId),
+                        borderRadius: BorderRadius.circular(6),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(mainAxisSize: MainAxisSize.min, children: [
+                                Flexible(child: Text(r.customerName,
+                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14.5, color: FobColors.textStrong))),
+                                const SizedBox(width: 6),
+                                const Icon(Icons.open_in_new, size: 13, color: FobColors.pink),
+                              ]),
+                              const SizedBox(height: 2),
+                              Text('REF ${shortRef(r.bookingRef)}   ·   TXN ${shortTxn(r.providerRef)}',
+                                  style: const TextStyle(fontFamily: FobText.mono, fontSize: 11, color: FobColors.textMuted)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     FobColumn(label: 'Paid', render: (r) => Text(formatMoney(r.paidPence), style: FobText.money)),
                     FobColumn(label: 'Refunded', render: (r) => Text(formatMoney(r.refundedPence), style: FobText.money)),
                     FobColumn(
