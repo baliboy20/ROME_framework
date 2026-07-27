@@ -8,7 +8,7 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-27T12:13:40Z",
+  "updatedAt": "2026-07-27T13:56:56Z",
   "activeIncrement": 1,
   "increments": [
     {
@@ -1163,7 +1163,7 @@
       "id": 1,
       "intent": "refinement",
       "stage": null,
-      "sealed": false,
+      "sealed": true,
       "createdAt": "2026-07-27T08:25:52Z",
       "awaitingIntake": false,
       "routing": [
@@ -15570,6 +15570,11 @@
       "deltas": 0,
       "edges": 0,
       "timestamp": "2026-07-27T12:13:40Z"
+    },
+    {
+      "event": "INCREMENT_SEALED",
+      "increment": 1,
+      "timestamp": "2026-07-27T13:56:56Z"
     }
   ],
   "tdrCitations": {

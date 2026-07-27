@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "Seez": {
+      "command": "dart",
+      "args": [
+        "run",
+        "/Users/will/flutterProjects/Apps/Local/mcps/rome/version7/seez_mcp/bin/mcp_server.dart"
+      ],
+      "description": "Seez v2 - MCP server for visualizing Mermaid diagrams and Markdown content in tabbed views"
+    }
+  }
+}
