@@ -21,7 +21,7 @@ const { STATUS, resolveRouting } = require('./lifecycle');
 const SCHEMA_VERSION = 2;
 
 /** Build one increment's lifecycle record (per-increment state, PROP-048). */
-function newIncrement({ id, intent = 'greenfield', stage = null, routing, timestamp, awaitingIntake = false }) {
+function newIncrement({ id, intent = 'greenfield', stage = null, routing, timestamp, awaitingIntake = false, change = null }) {
   const routed = resolveRouting(routing);
   const phases = {};
   routed.forEach((pid, i) => {
@@ -31,6 +31,7 @@ function newIncrement({ id, intent = 'greenfield', stage = null, routing, timest
     id,
     intent,
     stage,              // PROP-049: the Stage this increment builds (null = unstaged)
+    change,             // PROP-054: { id, ct } when this is a change-scoped run (CT-1/2/3/5), else null
     sealed: false,      // sealed increments are immutable (ROME-AX-19)
     createdAt: timestamp,
     awaitingIntake,     // PROP-047: routing provisional until Surveyor's ICR
@@ -80,8 +81,84 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
     tdrs: [],           // PROP-052: validated TDRs from decisions.tdr.yaml (post carrier-reliability downgrade)
     tdrDeviations: [],  // PROP-052 §2.5: { id, tdr, phase?, reason, proposedAlternative, status:OPEN|SPONSOR_APPROVED|SPONSOR_REJECTED, timestamp }
     infraConstraints: null, // PROP-051: sponsor's existing infra/vendor constraints from intake (ICR passthrough)
+    // PROP-055 (AX-34): the rule-set these artifacts were built under = the
+    // framework version at last build/upgrade. Raised ONLY by rome-upgrade.
+    conventionLevel: frameworkVersion,
+    upgrade: null,      // PROP-055: { target, pending:[gapId] } while an upgrade has open gaps
+    changeQueue: [],    // PROP-054 B.2: append-only triage queue — { id, description, source?, status, ct?, blastRadius?, timestamp }
     audit: [],          // append-only, project-wide
   };
+}
+
+// ── PROP-054: change queue (live triage) ─────────────────────────────────────
+// Status flow: QUEUED → CLASSIFIED → CONFIRMED → IN_PROGRESS → DELIVERED
+// (PARKED reachable from any pre-IN_PROGRESS status). Entries are never removed.
+
+const CHANGE_STATUS = Object.freeze(['QUEUED', 'CLASSIFIED', 'CONFIRMED', 'IN_PROGRESS', 'DELIVERED', 'PARKED']);
+
+/** Capture a sponsor observation — B.2 step 1: capture, don't chase. */
+function queueChange(state, { description, source = 'sponsor', timestamp }) {
+  if (!timestamp) throw new Error('queueChange: timestamp required');
+  if (!description) throw new Error('queueChange: description required');
+  state.changeQueue = state.changeQueue || [];
+  const entry = { id: `CHG-${String(state.changeQueue.length + 1).padStart(3, '0')}`, description, source, status: 'QUEUED', timestamp };
+  state.changeQueue.push(entry);
+  state.audit.push({ event: 'CHANGE_QUEUED', change: entry.id, timestamp });
+  state.updatedAt = timestamp;
+  return entry;
+}
+
+/** Record Roma's trace-verified classification — B.2 step 2 (ROME-AX-31). */
+function classifyChange(state, changeId, { ct, blastRadius, timestamp }) {
+  if (!timestamp) throw new Error('classifyChange: timestamp required');
+  const entry = (state.changeQueue || []).find(c => c.id === changeId);
+  if (!entry) throw new Error(`classifyChange: unknown change ${changeId}`);
+  if (!blastRadius || blastRadius.verified !== true) {
+    throw new Error(`Classification of ${changeId} lacks a trace-verified blast radius (ROME-AX-31): compute it via impact.js#blastRadius first.`);
+  }
+  entry.ct = ct;
+  entry.blastRadius = blastRadius;
+  entry.status = 'CLASSIFIED';
+  state.audit.push({ event: 'CHANGE_CLASSIFIED', change: changeId, ct, timestamp });
+  state.updatedAt = timestamp;
+  return entry;
+}
+
+/** Sponsor's confirmation (or parking) of a classified change — B.2 step 3. */
+function confirmChange(state, changeId, { park = false, timestamp }) {
+  if (!timestamp) throw new Error('confirmChange: timestamp required');
+  const entry = (state.changeQueue || []).find(c => c.id === changeId);
+  if (!entry) throw new Error(`confirmChange: unknown change ${changeId}`);
+  if (entry.status !== 'CLASSIFIED' && !(park && entry.status === 'QUEUED')) {
+    throw new Error(`confirmChange: ${changeId} is ${entry.status}; confirm requires CLASSIFIED`);
+  }
+  entry.status = park ? 'PARKED' : 'CONFIRMED';
+  state.audit.push({ event: park ? 'CHANGE_PARKED' : 'CHANGE_CONFIRMED', change: changeId, timestamp });
+  state.updatedAt = timestamp;
+  return entry;
+}
+
+/**
+ * Begin the change-scoped run for a confirmed change — B.2 step 4. Reuses the
+ * increment container (tagged `change: {id, ct}`) so ALL guard machinery
+ * (gates, evidence, sealing — ROME-AX-32) applies unchanged. CT-4 never comes
+ * here: it routes to beginIncrement via rome-increment (PROP-054 A.1).
+ */
+function beginChange(state, changeId, { routing, timestamp }) {
+  if (!timestamp) throw new Error('beginChange: timestamp required');
+  const entry = (state.changeQueue || []).find(c => c.id === changeId);
+  if (!entry) throw new Error(`beginChange: unknown change ${changeId}`);
+  if (entry.status !== 'CONFIRMED') throw new Error(`beginChange: ${changeId} is ${entry.status}; sponsor confirmation required (ROME-AX-31)`);
+  if (entry.ct === 'CT-4') throw new Error('CT-4 (new capability) is an increment, not a change record (PROP-054 A.1) — use rome-increment.cjs');
+  const prior = active(state);
+  if (!prior.sealed) throw new Error(`Increment ${prior.id} is not sealed; a change runs only against delivered scope`);
+  const inc = newIncrement({ id: state.increments.length, intent: 'change', routing, timestamp, awaitingIntake: false, change: { id: changeId, ct: entry.ct } });
+  state.increments.push(inc);
+  state.activeIncrement = inc.id;
+  entry.status = 'IN_PROGRESS';
+  state.audit.push({ event: 'CHANGE_BEGUN', change: changeId, ct: entry.ct, increment: inc.id, routing: inc.routing, timestamp });
+  state.updatedAt = timestamp;
+  return state;
 }
 
 /**
@@ -162,6 +239,11 @@ function sealActive(state, timestamp) {
   if (inc.currentPhase !== null) throw new Error(`Cannot seal increment ${inc.id}: lifecycle incomplete (at ${inc.currentPhase})`);
   inc.sealed = true;
   state.audit.push({ event: 'INCREMENT_SEALED', increment: inc.id, timestamp });
+  // PROP-054: sealing a change-scoped run delivers its queue entry
+  if (inc.change) {
+    const entry = (state.changeQueue || []).find(c => c.id === inc.change.id);
+    if (entry) { entry.status = 'DELIVERED'; state.audit.push({ event: 'CHANGE_DELIVERED', change: entry.id, increment: inc.id, timestamp }); }
+  }
   state.updatedAt = timestamp;
   return state;
 }
@@ -223,6 +305,9 @@ function migrateV1(v1) {
     tdrs: [],
     tdrDeviations: [],
     infraConstraints: null,
+    conventionLevel: (v1.framework && v1.framework.version) || v1.frameworkVersion || 'unknown',
+    upgrade: null,
+    changeQueue: [],
     audit: v1.audit || [],
   };
 }
@@ -234,6 +319,11 @@ function load(file) {
   if (state.schemaVersion !== SCHEMA_VERSION) {
     throw new Error(`state.json schema ${state.schemaVersion} != expected ${SCHEMA_VERSION}`);
   }
+  // PROP-054/055 additive fields: default on older v2 states (AX-34 — an
+  // undeclared conventionLevel is the version that built the project).
+  if (state.conventionLevel === undefined) state.conventionLevel = (state.framework && state.framework.version) || state.frameworkVersion || 'unknown';
+  if (state.upgrade === undefined) state.upgrade = null;
+  if (!Array.isArray(state.changeQueue)) state.changeQueue = [];
   return state;
 }
 
@@ -244,4 +334,4 @@ function save(file, state, timestamp) {
   return file;
 }
 
-module.exports = { SCHEMA_VERSION, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, migrateV1, load, save };
+module.exports = { SCHEMA_VERSION, CHANGE_STATUS, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, queueChange, classifyChange, confirmChange, beginChange, migrateV1, load, save };

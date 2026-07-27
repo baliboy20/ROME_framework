@@ -1,0 +1,15 @@
+{
+  "_note": "PROP-035 (D2): activity-log enforcement hooks removed. The activity-log is now an AUDIT trail, not the coordination/correctness mechanism. Enforcement is the deterministic guard (rome-core/orchestrator/guard-cli.cjs), invoked explicitly by the orchestrator on phase transitions. SessionStart loads the Roma orchestrator.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat \"$CLAUDE_PROJECT_DIR/../agents/roma/ROBOT.md\" && echo '\n---\n' && cat \"$CLAUDE_PROJECT_DIR/../agents/roma/modes/orchestrator.md\""
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -163,4 +163,60 @@ function validateStagePlan(stagePlan = {}) {
   return { ok: true, warnings };
 }
 
-module.exports = { routeFromICR, routeInitial, validateStagePlan, BROWNFIELD, RELIABILITY, SHAKY };
+// ── PROP-054: change-type routing (five labels, three mechanisms — §A.1) ─────
+// CT classifies a work item against a DELIVERED project by the highest artifact
+// tier it forces to be reworked. CT-1/2 → light path; CT-3/5 → trace-scoped
+// rework; CT-4 → the EXISTING increment mechanism (delegated, never duplicated).
+
+const CHANGE_TYPES = Object.freeze({
+  'CT-1': 'defect fix',
+  'CT-2': 'minor amendment',
+  'CT-3': 'requirement change',
+  'CT-4': 'new capability',
+  'CT-5': 'restructure',
+});
+
+/**
+ * Resolve the phase routing for a sponsor-confirmed change (PROP-054 Part B
+ * step 3). Enforces:
+ *   AX-31 — route only on a trace-verified blast radius (verified:true), i.e.
+ *           Roma checked the declared CT against the trace and the sponsor
+ *           confirmed. A guess is not a classification.
+ *   A.1  — CT-4 is refused here: new capability = increment, not change.
+ * Blast-radius honesty (A.2): a granularityCeiling on the radius widens design
+ * involvement rather than pretending precision.
+ * @returns { routing:[phaseId], notes:[string] }
+ */
+function routeChange(ct, blastRadius = {}) {
+  if (!CHANGE_TYPES[ct]) throw new Error(`Unknown change type "${ct}" (expected CT-1..CT-5)`);
+  if (ct === 'CT-4') throw new Error('CT-4 (new capability) routes through the increment mechanism (rome-increment.cjs), never a change record (PROP-054 A.1).');
+  if (blastRadius.verified !== true) {
+    throw new Error(`Cannot route ${ct}: blast radius is not trace-verified (ROME-AX-31). Compute it with impact.js#blastRadius and confirm with the sponsor first.`);
+  }
+  const notes = [`${ct} (${CHANGE_TYPES[ct]})`];
+  let phases;
+  if (ct === 'CT-1' || ct === 'CT-2') {
+    // Light path: fix → verify → gate once. P5 alone carries executability,
+    // tests, secrets, traceability — the full AX-32 evidence set.
+    phases = ['P5'];
+    notes.push('light path: code+tests only, single evidenced gate');
+  } else if (ct === 'CT-3') {
+    // Requirement change: amend the requirement (P1-scoped), redo design only
+    // where the trace says design is impacted (or the radius hit its
+    // granularity ceiling — A.2 honest widening), then regenerate.
+    const designTouched = blastRadius.designImpacted === true || !!blastRadius.granularityCeiling;
+    phases = designTouched ? ['P1', 'P3', 'P5'] : ['P1', 'P5'];
+    notes.push(designTouched
+      ? (blastRadius.granularityCeiling ? `trace granularity ceiling "${blastRadius.granularityCeiling}" hit — design pass included (A.2 honest widening)` : 'trace shows design impact — design pass included')
+      : 'trace isolates impact below design — requirements + regeneration only');
+  } else { // CT-5
+    phases = ['P1', 'P3', 'P4', 'P5'];
+    notes.push('restructure: P1 as confirmation pass, full design/config/generation on affected scope');
+  }
+  if (Array.isArray(blastRadius.components) && blastRadius.components.length) {
+    notes.push(`blast radius: ${blastRadius.components.length} component(s)`);
+  }
+  return { routing: resolveRouting(phases), notes };
+}
+
+module.exports = { routeFromICR, routeInitial, routeChange, validateStagePlan, BROWNFIELD, RELIABILITY, SHAKY, CHANGE_TYPES };

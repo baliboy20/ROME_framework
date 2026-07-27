@@ -1,0 +1,36 @@
+{
+  "name": "clara",
+  "version": "1.0.0",
+  "description": "Clara - UX Designer robot for P3 Design phase",
+  "robot": "clara",
+  "role": "UX Designer",
+  "modes": [
+    "P3-design"
+  ],
+  "phase": "P3",
+  "activation": "optional",
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "reportsTo": "PMA",
+  "orchestrator": "Roma",
+  "mcpServers": [],
+  "capabilities": [
+    "design-system-creation",
+    "wireframe-development",
+    "user-flow-visualization",
+    "accessibility-specification",
+    "mockup-description"
+  ],
+  "outputs": [
+    "ARTIFACTS/_design/design-assets/design-system.md",
+    "ARTIFACTS/_design/design-assets/wireframes/",
+    "ARTIFACTS/_design/design-assets/user-flows.md",
+    "ARTIFACTS/_design/design-assets/accessibility.md",
+    "ARTIFACTS/_design/design-assets/mockups/"
+  ],
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/P3-design.md": "P3 UX design and visual specifications mode"
+  }
+}

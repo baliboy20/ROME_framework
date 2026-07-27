@@ -76,6 +76,33 @@ const vendored = !has('--no-vendor');
 let vendorPath = null;
 if (vendored) vendorPath = vendorFramework(projectDir);
 
+// PROP-054 B.1: sentinel CLAUDE.md — catches sessions opened in the project
+// folder by mistake and states the root rule in plain sponsor language.
+fs.writeFileSync(path.join(projectDir, 'CLAUDE.md'), `# ${project} — ROME project folder (not a session root)
+
+Document UID: ROME-DEF-003
+Document Type: Sentinel (PROP-054 B.1)
+
+You (the agent) have opened a session inside a ROME project folder. Explain
+the following to the sponsor in plain language, then act on the first rule
+that applies:
+
+1. If \`../ROME/\` exists, this project lives inside a ROME framework clone.
+   Ask the sponsor to reopen the Claude session with that parent folder
+   (the framework root) as its working directory — everything, including
+   changes and bug fixes to this project, runs from there. Do not proceed
+   from here.
+2. Otherwise this project has been moved out of its framework clone. Its own
+   frozen framework copy in \`.rome/\` is the engine. Confirm this with the
+   sponsor, treat \`.rome/\` as the framework root, and proceed under
+   \`.rome/agents/roma/modes/orchestrator.md\` (re-entry mode: the project is
+   already built — ask the sponsor what they want to change, and follow the
+   change-queue flow).
+
+This file never restates orchestrator logic. State lives in
+\`ARTIFACTS/_orchestration/state.json\` — never hand-edit it.
+`);
+
 // PROP-047: routing is provisional until Surveyor's intake produces the real ICR.
 // PROP-048: increment 0 carries the lifecycle; the project itself never seals.
 const state = createState({ project, frameworkVersion: version, frameworkCommit: commit, vendored, routing: route.routing, intent, awaitingIntake: !skipIntake, timestamp: ts });

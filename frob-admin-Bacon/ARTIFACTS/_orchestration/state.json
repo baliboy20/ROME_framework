@@ -8,7 +8,7 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-27T13:56:56Z",
+  "updatedAt": "2026-07-27T14:06:55Z",
   "activeIncrement": 1,
   "increments": [
     {
@@ -15575,6 +15575,14 @@
       "event": "INCREMENT_SEALED",
       "increment": 1,
       "timestamp": "2026-07-27T13:56:56Z"
+    },
+    {
+      "event": "CONVENTION_UPGRADED",
+      "from": "3.2.1",
+      "to": "3.3.0",
+      "boundaries": 1,
+      "gaps": 0,
+      "timestamp": "2026-07-27T14:06:55Z"
     }
   ],
   "tdrCitations": {
@@ -15700,5 +15708,8 @@
   "configManifest": {
     "devRuntimeDiffers": true,
     "divergenceNote": "local Wrangler D1+miniflare vs prod edge D1/KV/R2"
-  }
+  },
+  "conventionLevel": "3.3.0",
+  "upgrade": null,
+  "changeQueue": []
 }

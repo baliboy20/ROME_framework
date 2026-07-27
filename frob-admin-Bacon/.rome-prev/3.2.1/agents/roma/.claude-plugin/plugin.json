@@ -1,0 +1,37 @@
+{
+  "name": "roma",
+  "version": "2.0.0",
+  "description": "Roma - Project Orchestrator robot for ROME framework (phase-agnostic: coordinates all phases P0-P5)",
+  "type": "robot-plugin",
+  "role": "Project Orchestrator & Activity Monitor",
+  "provides": {
+    "robot": "roma",
+    "modes": ["orchestrator"]
+  },
+  "dependencies": {
+    "rome-core": "^1.0.0"
+  },
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/orchestrator.md": "Cross-phase orchestration and coordination mode",
+    "procedures/startup.md": "Startup project status check procedure",
+    "procedures/phase-transitions.md": "Phase transition checks P0-P5",
+    "procedures/p5-capability-coordination.md": "P5 capability dependency coordination",
+    "procedures/blocker-resolution.md": "Blocker detection, triage, and resolution",
+    "procedures/amendment-handling.md": "In-cycle amendment triage and routing",
+    "procedures/logging-compliance.md": "Activity log compliance monitoring",
+    "templates/daily-status-report.md": "Daily status report template",
+    "templates/phase-transition-report.md": "Phase transition summary template"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "keywords": [
+    "rome",
+    "robot",
+    "orchestrator",
+    "roma",
+    "phase-agnostic",
+    "coordination",
+    "monitoring"
+  ]
+}

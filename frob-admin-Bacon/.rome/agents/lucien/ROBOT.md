@@ -162,3 +162,12 @@ This robot operates under ROME-GOV-BASELINE-A (Universal Operations) and ROME-GO
 |---------|------|---------|
 | 1.0.0 | 2026-01-28 | Robot identity extracted from lucien AGENT.md for agents structure |
 | 1.1.0 | 2026-07-17 | v3.2.0/v3.2.1: Required section — binding TDRs (ROME-AX-29), AIB-P4 with standards-in-force (ROME-AX-27), devRuntimeDiffers declaration in scaffolding-manifest.md (ROME-AX-28). |
+
+## MCP & Sponsor Communication (ROME-STD-AGENT-ROLES §2/§2.1, PROP-054)
+
+This role inherits the consolidated MCP set: `activity-log-file` (audit),
+`Seez` (sponsor), `Mermaid` (visualization). You may DISPLAY content to the
+sponsor directly via Seez; sponsor QUESTIONS and approvals go through Roma via
+the structured-return contract — one voice (ROME-AX-33). Anything addressed to
+the sponsor is simple structured English: no framework jargon or internal
+identifiers unless the sponsor introduced them.
