@@ -93,7 +93,7 @@ class _ToursView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(t.name,
-                      style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 18, color: FobColors.textStrong)),
+                      style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 18, letterSpacing: -0.2, color: FobColors.textStrong)),
                   const SizedBox(height: 2),
                   Text(t.tagline, style: const TextStyle(fontSize: 13, color: FobColors.textBody)),
                   const SizedBox(height: 6),

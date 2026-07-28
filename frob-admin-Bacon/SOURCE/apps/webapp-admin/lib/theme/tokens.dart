@@ -201,12 +201,14 @@ ThemeData buildFobTheme() {
       surfaceTintColor: Colors.transparent,
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(FobRadius.card)),
+      // CHG-014: dialog titles moved serif → sans (serif is reserved for page
+      // titles + money); firmer w600 keeps the heading hierarchy.
       titleTextStyle: const TextStyle(
-        fontFamily: FobText.serif,
+        fontFamily: FobText.sans,
         fontSize: 20,
         fontWeight: FontWeight.w600,
+        letterSpacing: -0.2,
         color: FobColors.textStrong,
-        fontFeatures: FobText.liningFigures,
       ),
       contentTextStyle: FobText.body,
     ),

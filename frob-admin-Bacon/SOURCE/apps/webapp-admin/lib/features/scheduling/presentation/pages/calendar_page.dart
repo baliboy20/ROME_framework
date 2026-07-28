@@ -146,7 +146,7 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
         children: [
           Text('DEPARTURE', style: FobText.microLabel),
           const SizedBox(height: 4),
-          Text(d.tourName, style: const TextStyle(fontFamily: FobText.serif, fontSize: 22, fontWeight: FontWeight.w600, color: FobColors.textStrong)),
+          Text(d.tourName, style: const TextStyle(fontFamily: FobText.sans, fontSize: 22, fontWeight: FontWeight.w600, letterSpacing: -0.2, color: FobColors.textStrong)),
           const SizedBox(height: 3),
           Text('${d.dateTime.day} ${monthName(d.dateTime.month)} ${d.dateTime.year}'
               '${detail?.time != null ? ' · ${detail!.time}' : ''}',
@@ -187,7 +187,7 @@ class _DepartureOverlayState extends State<_DepartureOverlay> {
                         children: [
                           Row(
                             children: [
-                              Expanded(child: Text(b.leadName, style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong))),
+                              Expanded(child: Text(b.leadName, style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong))),
                               PillLabel.forStatus(b.status),
                             ],
                           ),
@@ -273,7 +273,7 @@ class _ParticipantOverlayState extends State<_ParticipantOverlay> {
         children: [
           Text('PARTICIPANT', style: FobText.microLabel),
           const SizedBox(height: 4),
-          Text(p.name, style: const TextStyle(fontFamily: FobText.serif, fontSize: 20, fontWeight: FontWeight.w600, color: FobColors.textStrong)),
+          Text(p.name, style: const TextStyle(fontFamily: FobText.sans, fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.2, color: FobColors.textStrong)),
           const SizedBox(height: 3),
           Text(p.role == 'leader' ? 'Leader (main contact)' : p.role == 'co-leader' ? 'Co-leader' : 'Attendee',
               style: const TextStyle(fontFamily: FobText.mono, fontSize: 11, color: FobColors.textMuted)),
@@ -363,7 +363,7 @@ class _MonthCalendarState extends State<_MonthCalendar> {
             headerStyle: HeaderStyle(
               formatButtonVisible: false,
               titleCentered: false,
-              titleTextStyle: const TextStyle(fontFamily: FobText.serif, fontSize: 20, fontWeight: FontWeight.w600, color: FobColors.textStrong),
+              titleTextStyle: const TextStyle(fontFamily: FobText.sans, fontSize: 20, fontWeight: FontWeight.w600, letterSpacing: -0.2, color: FobColors.textStrong),
               leftChevronIcon: const Icon(Icons.chevron_left, color: FobColors.textMuted),
               rightChevronIcon: const Icon(Icons.chevron_right, color: FobColors.textMuted),
               headerPadding: const EdgeInsets.only(bottom: 12),
@@ -411,7 +411,7 @@ class _MonthCalendarState extends State<_MonthCalendar> {
                             children: [
                               ReadinessDot(tone: d.readinessDot),
                               const SizedBox(width: 10),
-                              Expanded(child: Text(d.tourName, style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong))),
+                              Expanded(child: Text(d.tourName, style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong))),
                               Text('${d.bookedCount}/${d.capacity}', style: const TextStyle(fontFamily: FobText.mono, fontSize: 12, color: FobColors.textMuted)),
                             ],
                           ),

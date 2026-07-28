@@ -120,7 +120,7 @@ class _BikesViewState extends State<_BikesView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('${b.make} ${b.model}',
-                      style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong)),
+                      style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong)),
                   const SizedBox(height: 2),
                   Text('${b.id} · ${b.frameSize} · ${b.colour}',
                       style: const TextStyle(fontFamily: FobText.mono, fontSize: 10.5, color: FobColors.textMuted)),
@@ -161,7 +161,7 @@ class _BikesViewState extends State<_BikesView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('${b.make} ${b.model}',
-                        style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 22, color: FobColors.textStrong)),
+                        style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 22, letterSpacing: -0.2, color: FobColors.textStrong)),
                     const SizedBox(height: 3),
                     Text('${b.id} · ${b.frameSize} · ${b.colour}',
                         style: const TextStyle(fontFamily: FobText.mono, fontSize: 11, color: FobColors.textMuted)),

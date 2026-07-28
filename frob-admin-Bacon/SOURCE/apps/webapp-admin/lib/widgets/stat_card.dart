@@ -24,7 +24,7 @@ class StatCard extends StatelessWidget {
         children: [
           Text(value,
               style: const TextStyle(
-                  fontFamily: FobText.serif,
+                  fontFamily: FobText.sans,
                   fontSize: 32,
                   height: 1,
                   fontWeight: FontWeight.w700,

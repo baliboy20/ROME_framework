@@ -49,30 +49,38 @@ class _BlocRefresh extends ChangeNotifier {
   }
 }
 
-/// CHG-013 (UXD-18 / UXC-NAV-3): a short fade-IN of the incoming page only.
-/// The outgoing page is NOT faded (no cross-blend): during a cross-fade both
-/// pages are semi-transparent at once, and with pages of different heights the
-/// blend reads as a bouncy two-heights wobble. Cutting the old page instantly
-/// and easing the new one in removes that artifact while keeping the change
-/// feeling soft. Honours the platform "reduce motion" setting.
+/// CHG-014 (refines CHG-013, UXD-18 / UXC-NAV-3): fast fade-OUT of the
+/// outgoing page + short fade-IN of the incoming one. The outgoing page's
+/// opacity runs 1→0 over only the first half of the 120ms secondary curve
+/// (Interval 0.0–0.5 ≈ 60ms), so the leaving page vanishes almost immediately
+/// and the two pages barely overlap — no lingering cross-blend wobble.
+/// Honours the platform "reduce motion" setting.
 CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 140),
+    transitionDuration: const Duration(milliseconds: 120),
     reverseTransitionDuration: const Duration(milliseconds: 100),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
 
       final fadeIn = CurvedAnimation(parent: animation, curve: Curves.easeOut);
+      // When this page is the one being covered, `secondaryAnimation` runs
+      // 0→1; front-loading it into the first 50% (~60ms of the incoming
+      // page's 120ms window) drives this page's opacity 1→0 fast.
+      final fadeOut = CurvedAnimation(
+        parent: secondaryAnimation,
+        curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+      );
 
       // FadeTransition over a RepaintBoundary composites the fade as a GPU
-      // opacity layer — no per-frame offscreen raster; a no-op once at 1.0.
-      // Note: `secondaryAnimation` is deliberately unused — the outgoing page
-      // stays fully opaque until the incoming page covers it, then unmounts.
+      // opacity layer — no per-frame offscreen raster; a no-op once settled.
       return FadeTransition(
         opacity: fadeIn,
-        child: RepaintBoundary(child: child),
+        child: FadeTransition(
+          opacity: ReverseAnimation(fadeOut),
+          child: RepaintBoundary(child: child),
+        ),
       );
     },
   );

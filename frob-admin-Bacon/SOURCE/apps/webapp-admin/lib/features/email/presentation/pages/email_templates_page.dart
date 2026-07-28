@@ -238,7 +238,7 @@ class _TemplatesView extends StatelessWidget {
                           child: Text(t.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w500, fontSize: 14, color: FobColors.textStrong)),
+                              style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 14, color: FobColors.textStrong)),
                         ),
                         const SizedBox(width: 8),
                         PillLabel.forStatus(t.status),

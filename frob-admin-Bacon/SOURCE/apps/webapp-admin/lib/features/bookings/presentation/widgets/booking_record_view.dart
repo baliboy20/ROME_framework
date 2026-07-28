@@ -57,7 +57,7 @@ class BookingRecordView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(d.leadName, style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 22, color: FobColors.textStrong)),
+                  Text(d.leadName, style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 22, letterSpacing: -0.2, color: FobColors.textStrong)),
                   const SizedBox(height: 3),
                   Text('${_shortRef(d.id)} · ${d.tourId ?? ''}  ${d.date ?? ''}', style: const TextStyle(fontFamily: FobText.mono, fontSize: 11, color: FobColors.textMuted)),
                 ],

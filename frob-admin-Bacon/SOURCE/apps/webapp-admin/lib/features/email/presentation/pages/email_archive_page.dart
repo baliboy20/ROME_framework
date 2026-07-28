@@ -141,7 +141,7 @@ class _ArchiveViewState extends State<_ArchiveView> {
                     children: [
                       Expanded(
                         child: Text(e.fromAddress,
-                            style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong)),
+                            style: const TextStyle(fontFamily: FobText.sans, fontWeight: FontWeight.w600, fontSize: 15, color: FobColors.textStrong)),
                       ),
                       if (e.spam)
                         const Padding(

@@ -67,7 +67,8 @@ class _TreeNavState extends State<TreeNav> {
                       children: [
                         const Text('Friends on Bikes',
                             style: TextStyle(
-                                fontFamily: FobText.serif,
+                                fontFamily: FobText.sans,
+                                letterSpacing: -0.2,
                                 fontSize: 18,
                                 height: 1.1,
                                 fontWeight: FontWeight.w600,
@@ -128,7 +129,7 @@ class _TreeNavState extends State<TreeNav> {
                         gradient: FobColors.gradientBrand, shape: BoxShape.circle),
                     child: const Text('W',
                         style: TextStyle(
-                            fontFamily: FobText.serif,
+                            fontFamily: FobText.sans,
                             fontWeight: FontWeight.w700,
                             color: Colors.white)),
                   ),

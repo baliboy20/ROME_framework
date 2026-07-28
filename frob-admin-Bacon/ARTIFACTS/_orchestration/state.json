@@ -8,8 +8,8 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-28T19:18:00.000Z",
-  "activeIncrement": 14,
+  "updatedAt": "2026-07-28T21:03:00.000Z",
+  "activeIncrement": 15,
   "increments": [
     {
       "id": 0,
@@ -3476,6 +3476,119 @@
             "pass": true,
             "detail": "no APPROVED TDRs bind P5 — trivially conformant",
             "timestamp": "2026-07-28T19:00:00.000Z"
+          }
+        }
+      },
+      "aib": {}
+    },
+    {
+      "id": 15,
+      "intent": "change",
+      "stage": null,
+      "change": {
+        "id": "CHG-014",
+        "ct": "CT-2"
+      },
+      "sealed": true,
+      "createdAt": "2026-07-28T20:10:00.000Z",
+      "awaitingIntake": false,
+      "routing": [
+        "P5"
+      ],
+      "currentPhase": null,
+      "phases": {
+        "P5": {
+          "status": "COMPLETE"
+        }
+      },
+      "gateLedger": [
+        {
+          "gate": "GATE-P5",
+          "phase": "P5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-chg014-gate-p5",
+          "timestamp": "2026-07-28T21:01:00Z",
+          "note": "GATE-P5 APPROVE (CHG-014): fast outgoing fade + 120ms fade-in; serif restricted to page titles + money; 91/91 + analyze"
+        }
+      ],
+      "blockers": [],
+      "dispatch": [
+        {
+          "agent": "charlie-chg014-p5",
+          "role": "charlie",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T20:10:00.000Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-chg014-gate-p5",
+          "role": "sarah",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T20:40:00.000Z",
+          "spawnedBy": "roma"
+        }
+      ],
+      "budget": {
+        "tokens": 0,
+        "ceiling": null
+      },
+      "oq": {
+        "resolvedByTalib": 0,
+        "awaitingSponsor": 0,
+        "deferrals": []
+      },
+      "inputReliability": [],
+      "testManifest": [
+        {
+          "req": "REQ-NOTIF11",
+          "outcomesTested": true,
+          "errorsTested": []
+        }
+      ],
+      "verification": {
+        "P5": {
+          "executability": {
+            "pass": true,
+            "detail": "Roma re-ran analyze (clean) + flutter test (91/91).",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "integration": {
+            "pass": true,
+            "detail": "Presentation-only across 12 files; suite green.",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "secrets": {
+            "pass": true,
+            "detail": "scan clean",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "contracts": {
+            "pass": true,
+            "detail": "Presentation-only.",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "testAdequacy": {
+            "pass": true,
+            "detail": "Presentation change; suite green.",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "traceability": {
+            "pass": true,
+            "detail": "missing=[]",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "matrix": {
+            "pass": true,
+            "detail": "ok",
+            "timestamp": "2026-07-28T20:40:00.000Z"
+          },
+          "tdrConformance": {
+            "pass": true,
+            "detail": "no APPROVED TDRs bind P5 — trivially conformant",
+            "timestamp": "2026-07-28T20:40:00.000Z"
           }
         }
       },
@@ -6999,6 +7112,12 @@
         "logicalName": "router-static-fade-transition",
         "kind": "code",
         "path": "frob-admin-Bacon/SOURCE/apps/webapp-admin/lib/router/app_router.dart",
+        "component": "webapp-admin"
+      },
+      "webapp-admin:chg014-transitions-typography": {
+        "logicalName": "chg014-transitions-typography",
+        "kind": "code",
+        "path": "frob-admin-Bacon/SOURCE/apps/webapp-admin/lib/theme/tokens.dart",
         "component": "webapp-admin"
       }
     },
@@ -13526,6 +13645,17 @@
         "agent": "charlie-chg013-p5",
         "increment": 14,
         "stale": false
+      },
+      {
+        "req": "REQ-NOTIF11",
+        "artifactId": "webapp-admin:chg014-transitions-typography",
+        "satisfiesHow": "implements",
+        "location": "tokens.dart:106-215",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-chg014-p5",
+        "increment": 15,
+        "stale": false
       }
     ],
     "byReq": {
@@ -14300,7 +14430,8 @@
         "webapp-admin:send-booking-email-usecase",
         "webapp-admin:cr004-admin-tests",
         "webapp-admin:a19-page-tests",
-        "webapp-admin:router-static-fade-transition"
+        "webapp-admin:router-static-fade-transition",
+        "webapp-admin:chg014-transitions-typography"
       ]
     },
     "byArtifact": {
@@ -16083,6 +16214,9 @@
         "REQ-NOTIF11"
       ],
       "webapp-admin:router-static-fade-transition": [
+        "REQ-NOTIF11"
+      ],
+      "webapp-admin:chg014-transitions-typography": [
         "REQ-NOTIF11"
       ]
     },
@@ -21190,6 +21324,137 @@
       "change": "CHG-013",
       "increment": 14,
       "timestamp": "2026-07-28T19:18:00.000Z"
+    },
+    {
+      "event": "CHANGE_QUEUED",
+      "change": "CHG-014",
+      "timestamp": "2026-07-28T20:10:00.000Z"
+    },
+    {
+      "event": "CHANGE_CLASSIFIED",
+      "change": "CHG-014",
+      "ct": "CT-2",
+      "timestamp": "2026-07-28T20:10:00.000Z"
+    },
+    {
+      "event": "CHANGE_CONFIRMED",
+      "change": "CHG-014",
+      "timestamp": "2026-07-28T20:10:00.000Z"
+    },
+    {
+      "event": "CHANGE_BEGUN",
+      "change": "CHG-014",
+      "ct": "CT-2",
+      "increment": 15,
+      "routing": [
+        "P5"
+      ],
+      "timestamp": "2026-07-28T20:10:00.000Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie-chg014-p5",
+      "role": "charlie",
+      "phase": "P5",
+      "timestamp": "2026-07-28T20:10:00.000Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie-chg014-p5",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 2,
+      "deltas": 0,
+      "edges": 1,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "executability",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "integration",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "contracts",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "testAdequacy",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "tdrConformance",
+      "pass": true,
+      "timestamp": "2026-07-28T20:40:00.000Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-chg014-gate-p5",
+      "role": "sarah",
+      "phase": "P5",
+      "timestamp": "2026-07-28T20:40:00.000Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-chg014-gate-p5",
+      "role": "sarah",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T21:00:00.000Z"
+    },
+    {
+      "event": "INCREMENT_SEALED",
+      "increment": 15,
+      "timestamp": "2026-07-28T21:03:00.000Z"
+    },
+    {
+      "event": "CHANGE_DELIVERED",
+      "change": "CHG-014",
+      "increment": 15,
+      "timestamp": "2026-07-28T21:03:00.000Z"
     }
   ],
   "tdrCitations": {
@@ -21590,6 +21855,28 @@
       "source": "sponsor",
       "status": "DELIVERED",
       "timestamp": "2026-07-28T18:30:00.000Z",
+      "ct": "CT-2",
+      "blastRadius": {
+        "verified": true,
+        "components": [],
+        "seeds": [],
+        "reasons": {},
+        "requirements": [
+          "REQ-NOTIF11"
+        ],
+        "designImpacted": true,
+        "granularityCeiling": "project",
+        "notes": [
+          "no topology graph: impact cannot be scoped below the whole delivered scope (A.2 — report plainly, widen honestly)"
+        ]
+      }
+    },
+    {
+      "id": "CHG-014",
+      "description": "Sponsor polish: (a) leaving page should fade out fast (~70ms) to cut the overlay blend; incoming fade ~120ms. (b) Typography more business-regular retaining character: Source Serif 4 restricted to page titles + money; in-content headings (list names, card/dialog titles) move to Plus Jakarta Sans at firmer weight. Sponsor 2026-07-28.",
+      "source": "sponsor",
+      "status": "DELIVERED",
+      "timestamp": "2026-07-28T20:10:00.000Z",
       "ct": "CT-2",
       "blastRadius": {
         "verified": true,

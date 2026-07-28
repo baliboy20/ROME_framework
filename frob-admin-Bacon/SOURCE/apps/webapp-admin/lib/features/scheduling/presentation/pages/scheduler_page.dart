@@ -285,7 +285,7 @@ class _SchedulesMaster extends StatelessWidget {
                   children: [
                     Text(tourName(d.tourId),
                         style: TextStyle(
-                            fontFamily: FobText.serif,
+                            fontFamily: FobText.sans,
                             fontWeight: FontWeight.w600,
                             fontSize: 15,
                             color: selected ? FobColors.pinkText : FobColors.textStrong)),
