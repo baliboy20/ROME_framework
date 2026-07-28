@@ -8,8 +8,8 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-28T17:03:00.000Z",
-  "activeIncrement": 13,
+  "updatedAt": "2026-07-28T19:18:00.000Z",
+  "activeIncrement": 14,
   "increments": [
     {
       "id": 0,
@@ -3367,6 +3367,119 @@
           }
         }
       }
+    },
+    {
+      "id": 14,
+      "intent": "change",
+      "stage": null,
+      "change": {
+        "id": "CHG-013",
+        "ct": "CT-2"
+      },
+      "sealed": true,
+      "createdAt": "2026-07-28T18:30:00.000Z",
+      "awaitingIntake": false,
+      "routing": [
+        "P5"
+      ],
+      "currentPhase": null,
+      "phases": {
+        "P5": {
+          "status": "COMPLETE"
+        }
+      },
+      "gateLedger": [
+        {
+          "gate": "GATE-P5",
+          "phase": "P5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah-chg013-gate-p5",
+          "timestamp": "2026-07-28T19:16:00Z",
+          "note": "GATE-P5 APPROVE (CHG-013): static-mount pages + 140ms fade-in only; skeleton removed clean; 91/91 + analyze"
+        }
+      ],
+      "blockers": [],
+      "dispatch": [
+        {
+          "agent": "charlie-chg013-p5",
+          "role": "charlie",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T18:30:00.000Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah-chg013-gate-p5",
+          "role": "sarah",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T19:00:00.000Z",
+          "spawnedBy": "roma"
+        }
+      ],
+      "budget": {
+        "tokens": 0,
+        "ceiling": null
+      },
+      "oq": {
+        "resolvedByTalib": 0,
+        "awaitingSponsor": 0,
+        "deferrals": []
+      },
+      "inputReliability": [],
+      "testManifest": [
+        {
+          "req": "REQ-NOTIF11",
+          "outcomesTested": true,
+          "errorsTested": []
+        }
+      ],
+      "verification": {
+        "P5": {
+          "executability": {
+            "pass": true,
+            "detail": "Roma re-ran analyze (clean) + flutter test (91/91).",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "integration": {
+            "pass": true,
+            "detail": "Full suite green; deferral removal safe (reduce-motion path already exercised eager mount; DeferredContent was perf-only per its doc).",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "secrets": {
+            "pass": true,
+            "detail": "scan clean",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "contracts": {
+            "pass": true,
+            "detail": "Presentation-only; no API surface.",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "testAdequacy": {
+            "pass": true,
+            "detail": "Presentation change; suite green incl. all page-mount tests now exercising eager mount.",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "traceability": {
+            "pass": true,
+            "detail": "missing=[]",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "matrix": {
+            "pass": true,
+            "detail": "ok",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          },
+          "tdrConformance": {
+            "pass": true,
+            "detail": "no APPROVED TDRs bind P5 — trivially conformant",
+            "timestamp": "2026-07-28T19:00:00.000Z"
+          }
+        }
+      },
+      "aib": {}
     }
   ],
   "traceability": {
@@ -6880,6 +6993,12 @@
         "logicalName": "a19-page-tests",
         "kind": "test",
         "path": "frob-admin-Bacon/SOURCE/apps/webapp-admin/test/features/bookings/bookings_master_page_test.dart",
+        "component": "webapp-admin"
+      },
+      "webapp-admin:router-static-fade-transition": {
+        "logicalName": "router-static-fade-transition",
+        "kind": "code",
+        "path": "frob-admin-Bacon/SOURCE/apps/webapp-admin/lib/router/app_router.dart",
         "component": "webapp-admin"
       }
     },
@@ -13396,6 +13515,17 @@
         "agent": "charlie-chg012-p5-admin",
         "increment": 13,
         "stale": false
+      },
+      {
+        "req": "REQ-NOTIF11",
+        "artifactId": "webapp-admin:router-static-fade-transition",
+        "satisfiesHow": "implements",
+        "location": "app_router.dart:52-98",
+        "phase": "P5",
+        "role": "charlie",
+        "agent": "charlie-chg013-p5",
+        "increment": 14,
+        "stale": false
       }
     ],
     "byReq": {
@@ -14169,7 +14299,8 @@
         "webapp-admin:send-email-dialog-uxd23",
         "webapp-admin:send-booking-email-usecase",
         "webapp-admin:cr004-admin-tests",
-        "webapp-admin:a19-page-tests"
+        "webapp-admin:a19-page-tests",
+        "webapp-admin:router-static-fade-transition"
       ]
     },
     "byArtifact": {
@@ -15949,6 +16080,9 @@
         "REQ-NOTIF11"
       ],
       "webapp-admin:a19-page-tests": [
+        "REQ-NOTIF11"
+      ],
+      "webapp-admin:router-static-fade-transition": [
         "REQ-NOTIF11"
       ]
     },
@@ -20925,6 +21059,137 @@
       "change": "CHG-012",
       "increment": 13,
       "timestamp": "2026-07-28T17:03:00.000Z"
+    },
+    {
+      "event": "CHANGE_QUEUED",
+      "change": "CHG-013",
+      "timestamp": "2026-07-28T18:30:00.000Z"
+    },
+    {
+      "event": "CHANGE_CLASSIFIED",
+      "change": "CHG-013",
+      "ct": "CT-2",
+      "timestamp": "2026-07-28T18:30:00.000Z"
+    },
+    {
+      "event": "CHANGE_CONFIRMED",
+      "change": "CHG-013",
+      "timestamp": "2026-07-28T18:30:00.000Z"
+    },
+    {
+      "event": "CHANGE_BEGUN",
+      "change": "CHG-013",
+      "ct": "CT-2",
+      "increment": 14,
+      "routing": [
+        "P5"
+      ],
+      "timestamp": "2026-07-28T18:30:00.000Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie-chg013-p5",
+      "role": "charlie",
+      "phase": "P5",
+      "timestamp": "2026-07-28T18:30:00.000Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie-chg013-p5",
+      "role": "charlie",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 3,
+      "deltas": 0,
+      "edges": 1,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "executability",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "integration",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "contracts",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "testAdequacy",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "tdrConformance",
+      "pass": true,
+      "timestamp": "2026-07-28T19:00:00.000Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah-chg013-gate-p5",
+      "role": "sarah",
+      "phase": "P5",
+      "timestamp": "2026-07-28T19:00:00.000Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah-chg013-gate-p5",
+      "role": "sarah",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T19:15:00.000Z"
+    },
+    {
+      "event": "INCREMENT_SEALED",
+      "increment": 14,
+      "timestamp": "2026-07-28T19:18:00.000Z"
+    },
+    {
+      "event": "CHANGE_DELIVERED",
+      "change": "CHG-013",
+      "increment": 14,
+      "timestamp": "2026-07-28T19:18:00.000Z"
     }
   ],
   "tdrCitations": {
@@ -21310,6 +21575,28 @@
         "reasons": {},
         "requirements": [
           "REQ-NOTIF10",
+          "REQ-NOTIF11"
+        ],
+        "designImpacted": true,
+        "granularityCeiling": "project",
+        "notes": [
+          "no topology graph: impact cannot be scoped below the whole delivered scope (A.2 — report plainly, widen honestly)"
+        ]
+      }
+    },
+    {
+      "id": "CHG-013",
+      "description": "Admin page transitions bounce: skeleton-first placeholder swaps to real page post-transition causing height reflow, compounded by cross-fade of two different-height pages. Sponsor-ratified fix: remove SkeletonPage/DeferredContent deferral (real page mounts immediately) and keep a short opacity fade-IN only (no fade-out cross-blend). Sponsor 2026-07-28.",
+      "source": "sponsor",
+      "status": "DELIVERED",
+      "timestamp": "2026-07-28T18:30:00.000Z",
+      "ct": "CT-2",
+      "blastRadius": {
+        "verified": true,
+        "components": [],
+        "seeds": [],
+        "reasons": {},
+        "requirements": [
           "REQ-NOTIF11"
         ],
         "designImpacted": true,

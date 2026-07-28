@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../theme/tokens.dart';
-import '../widgets/deferred_content.dart';
-import '../widgets/skeleton_page.dart';
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../features/auth/presentation/pages/sign_in_page.dart';
 import '../features/bookings/presentation/pages/bookings_detail_page.dart';
@@ -51,31 +49,30 @@ class _BlocRefresh extends ChangeNotifier {
   }
 }
 
-/// A plain opacity cross-fade for content-region page changes: the incoming
-/// page fades in while the outgoing fades out. Cheap because the transition
-/// only ever animates the skeleton placeholder (the real page is deferred past
-/// it — see DeferredContent). Honours the platform "reduce motion" setting.
+/// CHG-013 (UXD-18 / UXC-NAV-3): a short fade-IN of the incoming page only.
+/// The outgoing page is NOT faded (no cross-blend): during a cross-fade both
+/// pages are semi-transparent at once, and with pages of different heights the
+/// blend reads as a bouncy two-heights wobble. Cutting the old page instantly
+/// and easing the new one in removes that artifact while keeping the change
+/// feeling soft. Honours the platform "reduce motion" setting.
 CustomTransitionPage<void> _animatedPage(GoRouterState state, Widget child) {
   return CustomTransitionPage<void>(
     key: state.pageKey,
-    transitionDuration: const Duration(milliseconds: 240),
-    reverseTransitionDuration: const Duration(milliseconds: 200),
+    transitionDuration: const Duration(milliseconds: 140),
+    reverseTransitionDuration: const Duration(milliseconds: 100),
     child: child,
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       if (MediaQuery.maybeDisableAnimationsOf(context) ?? false) return child;
 
       final fadeIn = CurvedAnimation(parent: animation, curve: Curves.easeOut);
-      final fadeOut = Tween<double>(begin: 1.0, end: 0.0)
-          .animate(CurvedAnimation(parent: secondaryAnimation, curve: Curves.easeIn));
 
       // FadeTransition over a RepaintBoundary composites the fade as a GPU
-      // opacity layer — no per-frame offscreen raster. Each fade is a no-op at 1.0.
+      // opacity layer — no per-frame offscreen raster; a no-op once at 1.0.
+      // Note: `secondaryAnimation` is deliberately unused — the outgoing page
+      // stays fully opaque until the incoming page covers it, then unmounts.
       return FadeTransition(
-        opacity: fadeOut,
-        child: FadeTransition(
-          opacity: fadeIn,
-          child: RepaintBoundary(child: child),
-        ),
+        opacity: fadeIn,
+        child: RepaintBoundary(child: child),
       );
     },
   );
@@ -89,12 +86,9 @@ Widget _pageScaffold(Widget page) => SingleChildScrollView(
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1160),
-          // Skeleton-first: animate a cheap placeholder during the transition,
-          // then mount the real page (and its data load) once it has settled.
-          child: DeferredContent(
-            placeholder: const SkeletonPage(),
-            builder: (_) => page,
-          ),
+          // CHG-013: the real page mounts immediately (skeleton-first deferral
+          // removed) — the transition is short enough not to need a placeholder.
+          child: page,
         ),
       ),
     );
