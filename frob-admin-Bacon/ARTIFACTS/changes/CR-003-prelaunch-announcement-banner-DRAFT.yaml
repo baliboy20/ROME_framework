@@ -17,7 +17,22 @@ Gate:
     recorded in state.json. Formally queue + gate once increment 17 seals,
     per the standard process, before treating this as a delivered change.
 Priority: HIGH
-Title: "Customer web: pre-launch announcement topsheet with preview-ride application CTA"
+Title: "Customer web: launch countdown takeover with preview-ride application CTA"
+DesignSupersession: >-
+  REDESIGNED 2026-07-28 against sponsor-supplied mock "Launch Countdown
+  Banner.dc.html" (received as fob-free-rides-banner.zip). The original build
+  (2026-07-28, earlier same day) was a slim green topsheet that pushed the
+  nav/content down — a reasonable reading of "topsheet" in the title below,
+  but not what the sponsor actually wanted. The mock specifies a full-screen,
+  once-per-browser cinematic takeover: a 5-4-3-2-1 countdown with rotating
+  imagery and poetic taglines (1.35s per step), resolving into a Ken Burns
+  hero image, then a fade line ("The waiting has finally stopped"), then the
+  final reveal — logo, "Friends on Bikes is opening for tours", a drawn rule,
+  an eyebrow, and a CTA button. Rebuilt to match; the old topsheet mechanism
+  (--banner-h push-down var on nav/body) was removed as dead weight, since
+  a full-screen overlay needs no content-shifting. The word "topsheet" below
+  is now stale relative to the actual surface; kept for traceability rather
+  than silently rewritten.
 Description: |
   The customer website (webapp-customer) should present an announcement
   overlay/banner on first open, stating that:
@@ -131,23 +146,55 @@ OpenQuestions:
     blocking: false
 
 BuildEvidence:
+  supersedes: >-
+    The 2026-07-28 topsheet BuildEvidence (localStorage key
+    fob_prelaunch_dismissed, .topsheet component) is retired — that surface
+    no longer exists in the codebase. Rebuilt from scratch per
+    DesignSupersession above.
   files:
-    - webapp-customer/en/announce.js (NEW) — localStorage-gated topsheet
-      injector; no cookie, no consent.js interaction (OQ-2 resolution)
-    - webapp-customer/en/site.css — .topsheet component, --banner-h css var
-      wired through nav.top{top} and body{padding-top} so nav/content shift
-      down only while the banner is mounted, no-op otherwise
-    - <script src="/en/announce.js" defer> added to all 14 static pages
-      (11 content pages + tours/index, tours/detail, tours/hidden-city)
-      alongside the existing consent.js include
+    - webapp-customer/en/announce.js (REWRITTEN) — builds the full-screen
+      takeover DOM: 5 countdown steps (numeral + tagline + image, each with
+      the mock's own named keyframe: fob_zoom/fob_wipe/fob_rise/fob_focus/
+      fob_split), Ken Burns hero fade-in, "waiting" line, final reveal
+      (logo/headline/rule/eyebrow/CTA). Loads Cormorant Garamond + Jost from
+      Google Fonts on demand (only when the takeover actually renders, not
+      on every page load). Dismiss via close-button click or Escape key.
+      localStorage key renamed fob_launch_dismissed (functional preference,
+      not a cookie — OQ-2 resolution carried over unchanged).
+    - webapp-customer/en/site.css — old .topsheet component and the
+      --banner-h nav/body push-down mechanism REMOVED (dead weight; a
+      full-screen overlay needs no content-shifting). New .launch component
+      tree + all 16 named keyframes ported verbatim from the mock's values
+      (durations, easings, delays, transforms all match). Added a
+      prefers-reduced-motion block NOT present in the raw mock: collapses
+      straight to the final reveal panel with no slideshow, consistent with
+      this site's UXC-MOT-2 convention applied everywhere else.
+    - webapp-customer/en/img/man-womam-stpauls.jpg (NEW) — the one mock
+      asset not already present on-site; copied in for the "2" countdown
+      step. All other countdown/hero images reused existing site assets.
+  deviations_from_mock:
+    - CTA href kept as /en/book/ (not the mock's placeholder /tours) — honors
+      the sponsor's earlier explicit OQ-1 resolution ("the click will take
+      you booking a tour"), not a rendering gap.
+    - Renamed the CTA's CSS/JS class from .cta to .launch-cta — the mock's
+      class name collided with the site's own pre-existing homepage CTA
+      section (also .cta), which would have made future global .cta rules
+      silently apply to both. Caught via CDP DOM query returning the wrong
+      element in testing, fixed at the source rather than leaving it
+      dependent on selector scoping.
+    - Added the reduced-motion fallback (see above) — the mock has none.
   verification: >-
-    Headless Chrome via CDP (not static file read): first-visit shows the
-    banner with correct copy and CTA href (/en/book/, per OQ-1); nav/body
-    shift by exactly the banner's measured height, no overlap, at both
-    desktop (1440x900) and mobile (375x812, where the message wraps to two
-    lines); dismiss click removes the banner, sets the localStorage flag, and
-    the dismissal persists across reload AND across navigation to a
-    different page (about.html); zero console errors throughout.
+    Headless Chrome via CDP, not a static read, across a full test pass:
+    countdown renders all 5 numerals with correct Cormorant Garamond font
+    application; screenshots captured at t=0.9s/3.6s/7.6s/12.6s/14.1s show
+    the sequence progressing correctly (numeral -> hero fade-in ->
+    "waiting has finally stopped" -> final reveal, matching the mock's own
+    timing to the tested checkpoints); close-button click removes the
+    overlay, sets localStorage, and the dismissal persists across reload;
+    Escape key dismisses independently; CTA resolves to /en/book/ with the
+    correct scoped selector; prefers-reduced-motion collapses instantly to
+    the final panel with the slideshow hidden; zero console errors across
+    every run.
 
 Sequencing:
   - SUPERSEDED 2026-07-28: CR-002 (increment 2) sealed long ago; the project is
