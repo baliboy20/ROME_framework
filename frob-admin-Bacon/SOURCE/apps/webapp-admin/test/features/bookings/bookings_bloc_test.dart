@@ -44,6 +44,9 @@ class _FakeRepo implements BookingRepository {
       const Success(BookingCreated(id: 'b9', completionLinkSent: true));
   @override
   Future<Result<void>> updateBooking(String id, Map<String, dynamic> body) async => const Success(null);
+  @override
+  Future<Result<String>> sendBookingEmail(String id, Map<String, dynamic> body) async =>
+      Success(body['to']?.toString() ?? '');
 }
 
 BookingSummary _b(String id, {String status = 'confirmed', String name = 'Alex'}) => BookingSummary(

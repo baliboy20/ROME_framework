@@ -5,7 +5,7 @@
 | **Date** | 2026-07-27 |
 | **Author** | Hume (ROME run) |
 | **Severity** | High — core money path (REQ-BOOK05) |
-| **Status** | OPEN |
+| **Status** | RESOLVED (CHG-011, 2026-07-28) |
 | **Env observed** | production (`api.friendsonbikes.uk`, test Stripe, account "Reena biker") |
 | **Workaround** | `POST /admin/payments/reconcile` flips Draft → Confirmed and fires the confirmation email |
 
@@ -41,3 +41,25 @@ Add temporary tracing to `handleStripeWebhook` (log: signature ok, claim result,
 - `seed-inbound-emails.dev.sql` moved out of `migrations/`.
 - Checkout now persists customer email to the lead booker (else REQ-NOTIF11 had no recipient).
 - prod `ALLOWED_ORIGIN` set to the booking-site base so the Stripe return hits the confirmation page.
+
+
+## Resolution — CHG-011 (2026-07-28, GATE-P5 APPROVE)
+
+Dual root cause:
+1. **Config (the demonstrated production cause):** the Stripe webhook endpoint for
+   `api.friendsonbikes.uk` was subscribed ONLY to `checkout.session.async_payment_succeeded`
+   — `checkout.session.completed` was never dispatched to it at all. The finding's
+   `pending_webhooks: 0` read was a misinterpretation: nothing was pending because
+   nothing was subscribed. Fixed: endpoint now subscribes to completed/async
+   succeeded/async failed/expired; a staging endpoint (api-staging) was created with
+   the same events and its signing secret stored as the staging worker's
+   STRIPE_WEBHOOK_SECRET.
+2. **Code (latent, test-proven):** `handleStripeWebhook` claimed the event
+   idempotency key BEFORE fulfilment with no release on failure — a failed
+   fulfilment permanently claimed the event id, so Stripe redeliveries deduped to
+   2xx no-ops. Fixed: claim released on fulfilment failure + 500 returned so Stripe
+   redelivers; outcome-email failure after successful fulfilment no longer 500s.
+   Regression suite test/webhook-flow.test.ts (fail-then-redeliver fails pre-fix,
+   passes post-fix; duplicate-after-success still deduped; tampered signature 400).
+
+Deployed: staging afff0d09, production 73613c8b. Reconcile sweep retained as belt-and-braces.

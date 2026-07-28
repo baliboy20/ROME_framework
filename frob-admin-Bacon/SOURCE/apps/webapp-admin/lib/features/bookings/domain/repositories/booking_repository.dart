@@ -12,4 +12,8 @@ abstract class BookingRepository {
   Future<Result<BookingCreated>> createProvisionalBooking(Map<String, dynamic> body);
   Future<Result<void>> updateBooking(String id, Map<String, dynamic> body);
   Future<Result<void>> transitionBooking(String id, String transition);
+
+  /// CR-004 (CHG-012, REQ-NOTIF11) — owner-initiated booking email.
+  /// POST /admin/bookings/:id/send-email; resolves to the address sent to.
+  Future<Result<String>> sendBookingEmail(String id, Map<String, dynamic> body);
 }

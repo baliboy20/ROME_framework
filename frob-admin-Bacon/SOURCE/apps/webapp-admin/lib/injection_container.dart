@@ -233,6 +233,7 @@ void _registerBookings() {
   sl.registerLazySingleton(() => CreateProvisionalBooking(sl()));
   sl.registerLazySingleton(() => UpdateBooking(sl()));
   sl.registerLazySingleton(() => TransitionBooking(sl()));
+  sl.registerLazySingleton(() => SendBookingEmail(sl())); // CR-004 (REQ-NOTIF11)
   sl.registerFactory(() => BookingsBloc(getBookings: sl(), getBookingDetail: sl(), transitionBooking: sl()));
   sl.registerFactory(() => NewBookingBloc(getDepartures: sl(), createBooking: sl(), createProvisionalBooking: sl()));
 }

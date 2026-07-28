@@ -169,7 +169,7 @@ flowchart TD
 
 5. **A7 — Booking creation** [SPA, Parchment]: from enquiry (A9 handoff) or provisional/pay-later — William sets hold/deposit/reminder terms per booking, no defaults (money fields in Playfair `--type-price`). Captures `customerEmail` and sends the DR-B11 completion link (BOOK08/BOOK10) — attendee details and consent are supplied by the *customer* via that link, never entered here. (Creation only; editing an existing booking is A23, REQ-BOOK15.)
 6. **A8 — Payment & refund management** [SPA, Parchment]: matches `scraps/03-s2.png`-style payments table and its refund modal. Requires operator session (not a static admin key, DR-B9). Filter chip row (All / Requires payment / Succeeded / Refunded / Failed / No-show, active chip pink), dense DataTable (Booking / Customer / Paid / Refunded / Status / action) with money in Playfair `--text-price`, StatusPill per row (lime "succeeded," cyan "refunded," pink "requires_payment"). **Refund modal**: mono eyebrow "REFUND · BK-1001," Playfair title "Issue refund," booking summary line, two-up Paid/Refunded-so-far fields (Playfair pink values), single Refund-amount field, computed "Cumulative refunded after this: £X.XX" helper line, Cancel (secondary) + "Issue refund" (gradient-pink primary) actions. Cumulative refund total always shown, not just latest refund. **Row actions (FINDING-005):** **View** (always) opens a read-only per-payment history modal (BO06 array — individual transactions, not the aggregate row) plus a "View booking" link; **Refund** appears only for a `succeeded` row (never for failed/no-show/requires-payment).
-7. **A19 — Bookings** [SPA, Parchment, **master/detail**, matching A18's established master/detail pattern]: renamed from "Booking browser." Split into two screens reached by navigation (not two panes of one screen):
+7. **A19 — Bookings** [SPA, Parchment, **master/detail**, matching A18's established master/detail pattern]: renamed from "Booking browser." *(**CR-004 (CHG-012)** supersedes the two-screen split below: A19 is now ONE surface in the A5d Emails-console idiom — sortable six-column table, row select opens a floating read-only detail card in place, Edit still routes to A23; and the detail card gains a Send-email action — see UXD-22/23 and §9. Read-only content and the A8 modal cross-link are unchanged.)* Split into two screens reached by navigation (not two panes of one screen):
    - **Master** — search by ref/customer/tour/date/status; results list (reference, name, tour, status).
    - **Detail** — reached by selecting a Master row; a back action returns to Master. Shows the full booking record: payment as provider references only (never raw card data), consent/waiver timestamps, status history, attendees with `contact_role` (leader/co-leader/attendee), using the same mono-label/Playfair-value detail-card pattern as A20's participant modal. **Read-only (2026-07-27 — reverses DR-B12):** no Edit dialog and no inline status-transition buttons on this screen; both moved to A23. Payment *amounts* are still handled on A8, not here.
 
@@ -280,6 +280,77 @@ UJ-TOUR-08 (day-of morning reminder) has no surface by design (DR-T1 light-caden
 
 ---
 
+## 8. HTML email template authoring — CR-002 (CHG-001)
+
+**Journeys**: Owner authors/upgrades an email template with an optional HTML version · **REQ**: REQ-NOTIF10 (CR-002 amendment) · **Surface**: A5c (Email templates, Track B Parchment editor chrome; the *emails it produces* render from Track A Forest via the house shell — see `email-house-shell.md`) · **UXD**: UXD-20/21 (`FOB-UXIS-001_UXIS.md`).
+
+### 8a. Author a new draft with blocks → preview → test-send → publish
+1. **A5c list** — "New template": pick use_case, fill name/subject/plain-text body (text body always required — it is the fallback of every send).
+2. **HTML section** — add blocks from the 5-block palette (header+logo, text, button, divider, footer); fill per-block fields; insert `{{ merge }}` fields from the use_case's catalogue; reorder/remove as needed.
+3. **Live preview** — the right-hand pane renders house shell + blocks with the use_case's **sample merge data** on every edit; captioned as an approximation, never inbox-truth.
+4. **Save draft**, then **Send test** — delivers the real multipart (text + HTML) message, sample-data-filled, to the Owner or an override address; Owner checks a real inbox (Gmail/Outlook/phone).
+5. **Publish (allocate)** — existing flow unchanged: publishing requires all required merge fields defined (422 otherwise); exactly one active template per use_case; sends from now on are multipart text+HTML.
+
+### 8b. Add HTML to an existing text-only template later
+1. Open the template on A5c — HTML section shows its empty state ("No HTML version — sends as plain text only") + palette. Nothing is flagged as incomplete: text-only is a fully valid end state.
+2. Add blocks → preview → save. If the template is **active**, standard practice per REQ-NOTIF10's draft-first model: create/edit as draft, test-send, then publish (the prior active auto-retires). Removing the last block reverts the template to text-only; existing sends and text fallback are unaffected.
+
+```mermaid
+flowchart TD
+    A[A5c Templates list] -->|New / Edit| B[Editor: use_case, name, subject, text body*]
+    B --> C{Add HTML version?}
+    C -->|No| D[Save draft - text-only, valid end state]
+    C -->|Yes| E[Block editor: header+logo / text / button / divider / footer]
+    E --> F[Live preview: house shell + blocks + sample merge data - approximation]
+    F -->|iterate| E
+    E --> G[Save draft]
+    D --> H[Send test]
+    G --> H[Send test - multipart text+HTML to real inbox]
+    H -->|looks wrong| E
+    H -->|looks right| I{Publish?}
+    I -->|Yes| J[Publish/allocate - prior active retires; sends now multipart]
+    I -->|Later| K[Stays draft]
+```
+
+**Design considerations**: the Owner never touches raw HTML; emoji + the single hosted logo are the only imagery (no asset upload — CR-002 Phase 2); the preview is a Flutter HTML-render approximation, so the test-send is the authoritative check; unsaved block changes disable the editor's test-send ("Save the draft first…").
+
+---
+
+## 9. Send email to a booking's lead — CR-004 (CHG-012)
+
+**Journeys**: Owner emails the booking lead from the booking record · **REQ**: REQ-NOTIF11 (CR-004 amendment) · **Surfaces**: A19 (Bookings — now one master/detail surface in the A5d idiom, UXD-22) → send dialog (UXD-23) → confirmation, sent message visible on A5d · **UXD**: UXD-22/23 (`FOB-UXIS-001_UXIS.md`).
+
+### Steps
+1. **A19 Bookings** — sort/search the six-column table (customer/ref/tour/date/amount/status); select the row. The read-only detail opens as a floating card over the list — no navigation, list state kept.
+2. **"Send email"** on the detail card (disabled with adjacent reason if no active booking-aware template exists: "No booking-aware templates are active. Publish one before sending.").
+3. **Template** — pick from active, booking-aware templates only; options with a `{{personal_message}}` slot are marked.
+4. **Message** — if (and only if) the chosen template has the slot, add an optional personal message. Recipient is prefilled from the lead's contact email, editable (typo fix).
+5. **Preview** — house shell + this booking's real merge data + the personal message, re-rendered live.
+6. **Send** — template-only send via the standard transport, never idempotency-suppressed. Confirmation **"Sent to <address>"**; the message is recorded linked to the booking and appears in the **A5d Emails console** / archive like every other send.
+
+```mermaid
+flowchart TD
+    A[A19 Bookings - sortable table] -->|select row| B[Floating detail card - read only]
+    B -->|Edit| A23[A23 Edit booking]
+    B -->|Send email| C{Active booking-aware template exists?}
+    C -->|No| D[Action disabled - reason adjacent: publish a template on A5c]
+    C -->|Yes| E[Dialog: template picker - personal-message slot marked]
+    E --> F[Recipient prefilled from lead - editable]
+    E -->|template has slot| G[Optional personal message]
+    F --> H[Live preview: house shell + booking's real merge data]
+    G --> H
+    H -->|iterate| E
+    H --> I{Recipient valid?}
+    I -->|No| J[Send disabled - reason adjacent]
+    I -->|Yes| K[Send]
+    K --> L["Confirmation: Sent to address"]
+    L --> M[Message row linked to booking - visible in A5d Emails console]
+```
+
+**Design considerations**: booking-aware filtering prevents blank merge fields by construction; template-only this increment (free-form deferred, DECIDE-3); the send is an owner action so it is never idempotency-suppressed, unlike the automatic confirmation flavours it sits beside in the archive.
+
+---
+
 ## Revision History
 
 | Version | Date | Summary |
@@ -287,3 +358,5 @@ UJ-TOUR-08 (day-of morning reminder) has no surface by design (DR-T1 light-caden
 | 1.0 | 2026-07-21 | Initial P3 user-flows deliverable: 5 primary journeys with Mermaid diagrams (booking+payment, pre-sales, guide day-of, owner admin, post-tour) plus cross-cutting auth/consent/notification notes, mapped to all 64 named surfaces. |
 | 1.1 | 2026-07-21 | **DEV-1 (sponsor-directed, AIB-P3 redirect)**: Flow 4 (owner admin, A1–A20) rewritten to reference the sponsor-supplied Parchment admin mockup screens (`scraps/02-shell.png` app shell, `05-cal.png`/`02-a17ok.png` departure calendar, `04-sched.png` scheduler, `01-a17ok.png`/`02-a17fix.png` departure/participant detail, `03-s2.png`-style payments) instead of the forest system. §7 coverage table now marks brand track per surface group. All other flows (1, 2, 3, 5) unchanged — still Track A Forest. |
 | 1.2 | 2026-07-21 | **DEV-1 extended (sponsor-directed)**: Flow 3 (guide day-of, G1–G13) rewritten to reference the sponsor-supplied Parchment guide-app mockup (`guide-system/scraps/g4done.png` tour-day playbook, `g4check.png` bike-inspection full-signature grid) — guide app moves from Track A/Forest to Track B/Internal Apps Parchment, same token set as web-admin. Offline-first behaviour, gated sign-off order, and DR-O1/DR-O5 scope cuts explicitly unchanged (visual/token change only). §7 coverage table updated: guide app now marked Track B. Flows 1, 2, 5 (customer webapp/editor) unaffected — still Track A Forest. |
+| 1.4 | 2026-07-28 | **CR-004 (CHG-012)**: added §9 — send email to a booking's lead from the A19 detail card (booking-aware template picker → optional personal message → house-shell preview with real booking data → editable recipient → send → "Sent to …" confirmation, archived on A5d linked to the booking), with Mermaid diagram. §4b's A19 two-screen split is superseded by the UXD-22 single-surface master/detail rework (A5d idiom); Edit still routes to A23. Flows 1–8 otherwise unchanged. |
+| 1.3 | 2026-07-27 | **CR-002 (CHG-001)**: added §8 — HTML email template authoring on A5c (draft with blocks → live preview → test-send → publish, plus upgrading a text-only template later), with Mermaid diagram. Companion visual spec `email-house-shell.md` created in this directory. Flows 1–7 unchanged. |

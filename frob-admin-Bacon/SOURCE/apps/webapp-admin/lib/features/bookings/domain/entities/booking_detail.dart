@@ -39,6 +39,15 @@ class BookingDetail extends Equatable {
     return attendees.isNotEmpty ? attendees.first.name : '—';
   }
 
+  /// The lead booker's contact email, or null when none exists — the
+  /// prefilled recipient for the CR-004 send-email dialog (REQ-NOTIF11).
+  String? get leadEmail {
+    for (final a in attendees) {
+      if (a.isLeader && a.email != null && a.email!.isNotEmpty) return a.email;
+    }
+    return null;
+  }
+
   @override
   List<Object?> get props => [
         id, status, partySize, priceTotalPence, tourId, date, departureId,

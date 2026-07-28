@@ -61,6 +61,7 @@ footer .frow{max-width:1200px;margin:0 auto;display:flex;justify-content:space-b
 footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
 @media(max-width:900px){.grid{grid-template-columns:1fr}.nlinks{display:none}}
 </style>
+  <meta name="fob-api-base" content="https://api-staging.friendsonbikes.uk">
 </head>
 <body>
 
@@ -99,7 +100,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
 
 <script>
 (function(){
-  var API="http://localhost:8787", BOOK="/en/book/";
+  var API=((document.querySelector('meta[name="fob-api-base"]')||{}).content)||"https://api.friendsonbikes.uk", BOOK="/en/book/";
   function money(p){return "£"+Math.round(p/100);}
   function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;");}
   function card(t){

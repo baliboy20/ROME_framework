@@ -74,3 +74,71 @@ Seven components realize the 13 modules. Frontend stacks are fixed by TDR-13/16 
 | TOUR | api-worker + webapp-customer + cron-workers |
 | POST | api-worker + webapp-customer + cron-workers |
 | BO | api-worker + webapp-admin |
+
+---
+
+## CR-002 (CHG-001) — HTML email templates (REQ-NOTIF10, 2026-07-27)
+
+No new components. Amends `api-worker` (NOTIF module) and `webapp-admin` (email feature). Phase 1 only: block editor + house shell + live preview + HTML test-send; no asset uploads, no attachments, no raw HTML/Markdown authoring.
+
+### `api-worker` — send path
+
+**1. Block→HTML renderer** — new module `src/modules/notifications/html-render.ts` (pure, no I/O):
+- `renderBlocksToHtml(blocks: Block[]): string` — validates and renders exactly 5 block types, then wraps in the **house shell**:
+  - `header` — full-width table row: `<img>` of the single hosted logo URL (fixed config, e.g. `TEMPLATE_LOGO_URL` env/constant; explicit `width`/`height`, `alt`) above a title line. No other imagery — icons are emoji in text.
+  - `text` — one `<td>` paragraph, `{{merge}}` tokens passed through verbatim for send-time substitution.
+  - `button` — bulletproof CTA: table-cell with `background-color`, padded `<a>` with inline styles (no `<button>`, no border-radius reliance).
+  - `divider` — 1px `<td>` rule via `border-top` inline style.
+  - `footer` — muted brand/legal line (sender identity, contact address).
+- **House shell:** outer 100%-width wrapper table + centred 600px content table; every style **inline** (no `<style>` block, no classes); web-safe font stack (`font-family: Arial, Helvetica, sans-serif` with the brand face listed first as progressive enhancement); no scripts, no external CSS, no SVG. All Owner-entered field values are **HTML-escaped** (`& < > " '`) before interpolation — `{{merge}}` token syntax is preserved (tokens themselves are `[a-zA-Z0-9_]`, unaffected by escaping) and merge **values** are escaped at substitution time in the HTML body.
+- Called by the template create/PATCH route whenever `body_blocks` is supplied: server renders and persists `body_html` (client-submitted HTML is never accepted).
+
+**2. `renderTemplate` (templates.ts)** — `SELECT` adds `body_html`; `RenderedTemplate` gains `htmlBody: string | null`. Substitution runs over **both** bodies from the same vars map (existing `substituteMergeFields`; HTML path uses an escaping variant for the values). Text-only templates return `htmlBody: null` — behaviour unchanged.
+
+**3. MIME `multipart/alternative` builder (lib/cloudflare-email.ts)** — `CfEmailInput` gains `htmlBody?: string`; `buildMime` becomes:
+- No `htmlBody` → exactly today's single-part `text/plain` message (byte-compatible; existing sends unchanged).
+- With `htmlBody` → top-level headers unchanged (From/To/Subject/Message-ID/Date/MIME-Version, plus In-Reply-To/References when threading) except `Content-Type: multipart/alternative; boundary="<b>"`. Boundary = `"=_fob_" + crypto.randomUUID()` — collision-safe, never appears in content (verify-and-regenerate guard). Parts in **ascending preference order** per RFC 2046: `text/plain` first, `text/html` last. Each part carries `Content-Type: text/{plain|html}; charset="utf-8"` and `Content-Transfer-Encoding: quoted-printable`; bodies are **quoted-printable encoded UTF-8** (soft-wrap ≤76 chars, encode `=` and 8-bit octets) so emoji and accented text survive all transports. CRLF line endings throughout; closing `--<b>--` terminator.
+
+**4. `send()` / test-send (send.ts, routes/email.ts)** — `send()` forwards `rendered.htmlBody` (or caller-supplied `htmlBody`) to `sendCloudflareEmail`; `message` row records nothing new. Test-send renders the target template (draft included) with the use_case sample data into **both** bodies and dispatches multipart — still tagged, still never idempotency-suppressed.
+
+### `webapp-admin` — template editor (`features/email/`)
+
+- **Block editor** (`email_templates_page.dart` editor dialog → grows into an edit surface): an optional "HTML version" section listing the template's blocks in order — add (picker limited to the 5 types), edit fields inline, reorder, delete. State: `body_blocks` on the template model (`email_models.dart` / `email_entities.dart` gain `bodyBlocks`, `bodyHtml`); `templates_bloc` carries the draft block list; save submits `body_blocks` only (never HTML). No raw-HTML input exists anywhere in the UI.
+- **Live preview pane**: side-by-side (or toggled on narrow widths) with the block editor. A Dart mirror of the block→HTML renderer + shell produces the HTML **client-side**, substitutes the **use_case's merge-field catalogue sample data** (same sample source the test-send uses — surfaced per use_case), and renders it in a sandboxed `HtmlElementView` iframe (`srcdoc`, no scripts by construction). Updates on every edit. **Parity guard:** worker and Dart renderers are pinned to shared golden fixtures (same block JSON → identical HTML) run in both test suites.
+- **HTML test-send action**: the existing test-send button is unchanged in the UI; when the template has blocks the received test email is multipart (server behaviour). Copy notes "sends text + HTML versions".
+- **Merge fields**: the editor's existing variable affordances extend to block fields — `{{token}}` chips insertable into `text`/`button` fields from the use_case catalogue; unknown tokens render blank (existing rule).
+
+---
+
+## CHG-008 (CT-3) — Resend outbound transport (REQ-NOTIF01, 2026-07-28)
+
+No new components. Amends `api-worker` (NOTIF module) only; inbound Email Routing handler untouched.
+
+### `api-worker` — send path
+
+**1. Resend adapter** — new `src/lib/resend-email.ts` (`sendResendEmail(apiKey, input)`):
+- `POST https://api.resend.com/emails`, `Authorization: Bearer ${env.RESEND_API_KEY}`, JSON body `{from, to, subject, text, html?, headers?}` — `headers` carries `In-Reply-To`/`References` when threading (REQ-NOTIF09/PRE05).
+- Accepts the same input shape as `CfEmailInput`; returns the same result shape (`ok`, `messageId` = Resend's returned `id` → `message.provider_ref`, `message` = provider error text incl. HTTP status on failure). Never throws — non-2xx, network error, or missing key resolve to `ok:false` with the reason captured.
+
+**2. Transport selection (send.ts)** — `send()` dispatches on `env.EMAIL_TRANSPORT`:
+- `resend` → `sendResendEmail` (production/staging default); `cloudflare` → existing `sendCloudflareEmail` (rollback path; `buildMime` and the CR-002 multipart builder stay live for it); `debug`/unset in local dev → simulated send with the CR-002-rendered bodies logged (absorbs `EMAIL_DEBUG`).
+- `message.provider` records the transport actually used (`resend` | `cloudflare-email` | `debug`).
+- On `ok:false`: status `delivery_pending` (existing enum), `failure_reason` = provider error (migration `0007`). Idempotency key stays claimed — exactly one automatic attempt, no retry loop.
+
+**3. Parity invariants** — `html`/`text` passed to Resend are byte-identical to the `renderTemplate` outputs used by the Cloudflare path (Resend assembles the multipart MIME itself — REQ-NOTIF10 rendering preserved); test-send (`POST /admin/email-templates/:id/test-send`) flows through the same `send()` transport dispatch, so a test-send in production exercises Resend exactly as a live send does.
+
+**4. Config** — `wrangler.toml`: `EMAIL_TRANSPORT` in `[vars]` (top-level `"debug"`; `env.staging`/`env.production` `"resend"`); `RESEND_API_KEY` via `wrangler secret put RESEND_API_KEY [--env …]` and `.dev.vars.example` entry; `[[send_email]]` bindings retained for rollback. From-address unchanged.
+
+---
+
+## CR-004 (CHG-012) — booking email + A19 master/detail (REQ-NOTIF11, 2026-07-28)
+
+### `api-worker` — email routes (`src/routes/email.ts`) + notifications module
+- New `POST /admin/bookings/:id/send-email` (contract: api-contracts.md#cr-004). Composition only — validates template is active **and** booking-aware (`use_case ∈ OUTCOME_FIELDS`), merge-substitutes both bodies, calls the standard `send()`. No new module.
+- `modules/notifications/booking-outcome.ts`: the booking→vars construction inside `sendBookingOutcome` is extracted as an exported `buildBookingMergeVars(db, env, bookingId)` so the automatic-outcome path and the owner-initiated path render from one vars builder (no drift). `OUTCOME_FIELDS` keys double as the "booking-aware use_case" allowlist.
+- `personal_message` is injected into the vars map at the route level only — the automatic outcome path never sets it (templates carrying the token render it blank on automatic sends, by the unknown/empty-token rule).
+
+### `webapp-admin` — bookings (`features/bookings/`) + email (`features/email/`)
+- **A19 master/detail rework:** presentation-layer only, adopting the A5d Emails-console idiom (persistent sortable list + adjacent detail panel; "Edit" still routes to A23). Component boundaries, blocs' data contracts, and worker routes unchanged. Clara owns the screen spec.
+- **Send-email dialog** (launched from the A19 detail panel): template picker (active booking-aware templates, filtered client-side from `GET /admin/email-templates` by `use_case ∈` booking merge catalogue), recipient field prefilled from the lead's email (editable), personal-message box shown **only** when the chosen template contains the `{{personal_message}}` token (computed client-side from the template row), preview via the existing CR-002 Dart mirror renderer fed with the booking's real merge data + the typed message, then `POST /admin/bookings/:id/send-email`.
+- Reuse over new code: the mirror renderer, block/HTML preview iframe, and template models in `features/email/` are consumed as-is; `features/bookings/` gains only the dialog + a thin repository call.

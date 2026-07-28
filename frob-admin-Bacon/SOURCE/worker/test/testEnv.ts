@@ -20,6 +20,9 @@ export async function createTestEnv(overrides: Partial<Env> = {}): Promise<Env> 
     // immediately so send() reports "sent" under test. The `cloudflare:email`
     // EmailMessage is aliased to a stub in vitest.config.ts.
     EMAIL: { send: async () => {} } as unknown as SendEmail,
+    // CHG-008: existing suites exercise the EMAIL-binding path — pin the
+    // cloudflare transport so binding-driven success/failure behaviour holds.
+    EMAIL_TRANSPORT: "cloudflare",
     JWT_SECRET: "test-secret-please-do-not-use-in-prod",
     POSTMARK_TOKEN: "test-postmark-token",
     STRIPE_SECRET_KEY: "sk_test_x",

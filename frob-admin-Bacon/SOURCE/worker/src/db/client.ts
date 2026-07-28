@@ -92,6 +92,22 @@ export async function claimIdempotencyKey(
   return (result.meta?.changes ?? 0) > 0;
 }
 
+/**
+ * Release a previously-claimed idempotency key. FINDING-007 (REQ-BOOK05):
+ * used ONLY when the work guarded by the claim FAILED after the claim was
+ * taken — the claim must not outlive a failed attempt, or the provider's
+ * redelivery would be wrongly deduped and the side effect lost forever.
+ */
+export async function releaseIdempotencyKey(
+  db: D1Database,
+  idempotencyKey: string
+): Promise<void> {
+  await db
+    .prepare(`DELETE FROM webhook_events WHERE idempotency_key = ?`)
+    .bind(idempotencyKey)
+    .run();
+}
+
 // ---------------------------------------------------------------------------
 // Repository surface
 // ---------------------------------------------------------------------------
@@ -235,6 +251,7 @@ export interface Db {
     create(row: Feedback): Promise<void>;
   };
   claimIdempotencyKey(idempotencyKey: string): Promise<boolean>;
+  releaseIdempotencyKey(idempotencyKey: string): Promise<void>;
 }
 
 function insertSql<T extends object>(table: string, row: T): { sql: string; params: unknown[] } {
@@ -656,6 +673,9 @@ export function createDb(db: D1Database): Db {
     },
     async claimIdempotencyKey(idempotencyKey) {
       return claimIdempotencyKey(db, idempotencyKey);
+    },
+    async releaseIdempotencyKey(idempotencyKey) {
+      return releaseIdempotencyKey(db, idempotencyKey);
     },
   };
 }

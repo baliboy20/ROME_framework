@@ -117,10 +117,11 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 | Departure calendar | A17 | PC | nav | operator session · REQ-BO04 |
 | Schedules | A18 | PC | nav · A17 row/Edit | operator session · REQ-BOOK11/12/13 |
 | Bike allocation | A20 | PC | nav · A17 "Bikes" | operator session · REQ-BOOK14 |
-| Bookings (master) | A19 | PC | nav | operator session · REQ-BO05 (read-only) |
-| Bookings (detail) | A19 | PC | Bookings row select · back to master | operator session · REQ-BO06 (read-only) |
-| Edit booking | A23 | PC | A19 Detail "Edit" action | operator session · REQ-BOOK15/16 |
+| Bookings (master/detail, one surface — CR-004 (CHG-012), UXD-22) | A19 | PC | nav · row select opens in-place detail (no route change) | operator session · REQ-BO05/BO06 (read-only) |
+| Edit booking | A23 | PC | A19 detail card "Edit" action | operator session · REQ-BOOK15/16 |
+| Emails console | A5d | PC | nav ("Emails") | operator session · REQ-NOTIF01/11 — the master/detail idiom A19 mirrors (CR-004 (CHG-012)) |
 | Owner alerts / Deliverability / Audit | A4 / A3 / A5 | PC | nav | operator session |
+| Email templates | A5c | PC | nav ("Templates", `/email-templates`) | operator session · REQ-NOTIF10 |
 | Publish & quality | A6 | PC | nav | operator session |
 | Incidents / Hazard log | A10 / A11 | PC | nav | operator session |
 | Fleet readiness / Add bike / Equipment / Flagged-bike / Compliance | A14 / A12 / A13 / A15 / A16 | PC | nav | operator session |
@@ -333,6 +334,65 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 - **rationale:** deliberate return-to-complete path against the terminal-confirmation default.
 - **mockup-ref:** `Guide App.dc.html` G11.
 
+#### UXD-20 — A5c template editor: HTML block editor + live preview — CR-002 (CHG-001)
+- **surfaces:** A5c (Email templates — existing screen, extended; **no new A-number allocated**. A5c is already the implemented nav id for `/email-templates`; A21/A22/A23 are taken by Bikes / Tours & routes / Edit booking, so extending A5c is correct, not a workaround.)
+- **trigger:** novel (CR-002, sponsor-ratified 2026-07-27)
+- **overrides:** none — addition; conforms to UXC-FRM-1/2/3, UXC-CMP-2, UXC-STA-1
+- **serves:** REQ-NOTIF10 (CR-002 amendment) · CHG-001
+- **behaviour:** The template editor grows from a single dialog into a **three-region editor surface** (still screen A5c; the template *list* half of A5c is unchanged):
+  1. **Fields column (left)** — existing plain-text fields exactly as today: use_case (create only), name, subject, plain-text body, status. The plain-text body remains **required** — it is the guaranteed fallback of every send (REQ-NOTIF10 invariant). Beneath it sits the **HTML section**, clearly labelled **"HTML version (optional)"**.
+  2. **Block list (centre of the HTML section)** — an ordered list of block cards composing `body_html`. A **block palette** ("Add block") offers exactly five types: **Header + logo · Text · Button · Divider · Footer**. Each card shows its type, its per-block fields, and controls: **remove** (✕), **reorder** (↑/↓ move controls — keyboard-operable per UXC-A11Y-1; no drag-only affordance). Per-block fields: *Header* — none editable beyond the fixed hosted logo URL + optional tagline text; *Text* — multi-line text (merge fields `{{ … }}` and emoji permitted; no markup); *Button* — label text + link URL; *Divider* — none; *Footer* — footer text (defaults from the house shell). Merge-field insertion reuses the use_case's declared merge-field catalogue (REQ-NOTIF10): a picker adjacent to Text/Button fields inserts `{{ field }}` at the caret. **The Owner never sees or edits raw HTML** — blocks are the only authoring surface.
+  3. **Live preview pane (right)** — always visible while the HTML section has ≥1 block; renders the **house shell** (see `design-assets/email-house-shell.md`) wrapping the blocks in order, with **merge fields filled from the use_case's sample data** (same sample data the test-send uses). Re-renders on every block edit/add/remove/reorder (client transient — nothing saved until Save). The pane carries a **permanent caption**: *"Approximate preview — email clients differ. Send a test to check a real inbox."* — the pane must never be presented as inbox-accurate.
+  - **Text-only presentation:** a template with no blocks shows the HTML section in its **empty state**: the palette plus the copy "No HTML version — this template sends as plain text only." The preview pane is replaced by the same note. Nothing about a text-only template is flagged as incomplete or erroneous (UXC-SCR-3 spirit: empty ≠ error). Adding a first block converts nothing destructively; removing the last block reverts the template to text-only.
+  - **Validation:** blocks validate on blur/submit per UXC-FRM-1 (Button requires label + URL; Text requires non-empty text). Save is blocked only by unmet blocking conditions with adjacent reason (UXC-FRM-3). Publishing still requires all required merge fields defined (existing REQ-NOTIF10 422 pair, verbatim per UXC-FRM-2).
+- **states:** text-only (no blocks, empty-state HTML section) / composing (blocks present, preview live) / block-invalid (inline message adjacent) / saving (UXC-CMP-2).
+- **rationale:** a non-technical Owner composes on-brand HTML with zero HTML exposure; the shell guarantees email-safety (inline styles, tables, no scripts) so authoring can never violate the REQ-NOTIF10 invariants.
+- **mockup-ref:** none yet (CR-002 layout evolution; existing A5c list behaviour unchanged).
+
+#### UXD-21 — A5c test-send delivers the HTML version — CR-002 (CHG-001)
+- **surfaces:** A5c
+- **trigger:** deviation-free extension of the existing test-send
+- **overrides:** none
+- **serves:** REQ-NOTIF10 (CR-002 amendment) · CHG-001
+- **behaviour:** The existing **"Send test"** affordance (row action, drafts included, address override, never idempotency-suppressed) is unchanged in placement and flow; its send is extended: when the template has an HTML body it delivers the real **multipart/alternative** message (text + HTML, both filled with the use_case's sample merge data) so the Owner checks the true rendering in a real inbox. A test-send of a text-only template behaves exactly as today. The test-send confirmation copy states which versions were sent ("Test sent (text + HTML)" / "Test sent (text)"). While the editor is open with **unsaved** block changes, the editor's own "Send test" control is disabled with adjacent reason "Save the draft first — the test sends the saved version." (UXC-FRM-3).
+- **states:** idle / sending (UXC-CMP-2) / sent (which-versions confirmation) / failed (inline error, retryable per UXC-ERR-1).
+- **rationale:** the preview pane is an approximation (UXD-20); the test-send is the true-to-inbox check the sponsor ratified — the pair is the whole preview story.
+- **mockup-ref:** none yet.
+
+#### UXD-22 — A19 Bookings reworked to the A5d master/detail idiom — CR-004 (CHG-012)
+- **surfaces:** A19 (existing screen, reworked; A23 unchanged)
+- **trigger:** novel (CR-004, sponsor-ratified 2026-07-28 — sponsor prefers the Emails-console idiom)
+- **overrides:** the 2026-07-27 A19 "two screens reached by navigation" split (Master `/bookings` → Detail `/bookings/:id`). The read-only content and the A23 relocation of editing are **not** overridden.
+- **serves:** REQ-BO05 / REQ-BO06 (read-only browse) · CHG-012
+- **behaviour:** A19 becomes **one surface** in the same idiom as the implemented A5d Emails console (`emails_console_page.dart`), a realistic evolution of the current CHG-005 compact list:
+  1. **Sortable table (master, full width).** The current row data becomes six sortable columns: **Customer · Ref · Tour · Date · Amount · Status**. Column headers toggle sort (tap again to reverse; active column shows the ↑/↓ indicator, exactly as A5d) — replacing the master's search-only scan affordance. The existing search field is retained above the table and composes with sort (filter first, then sort). Amount stays right-aligned Playfair `--type-price`; Status stays a StatusPill (UXC-A11Y-3).
+  2. **In-place detail (no navigation).** Selecting a row opens the booking's read-only record in a **floating detail card over/beside the list** (the A5d card idiom: elevated card, close ✕, page-scoped so it dismisses on navigating away; multiple cards may cascade). The list keeps its scroll/sort/search state — no route change, no back action needed. Card content is the unchanged read-only record (payment as provider references only, consent/waiver timestamps, status history, attendees with `contact_role`, mono-label/Playfair-value pattern).
+  3. **Edit unchanged.** The detail card carries the **"Edit"** action, which routes to **A23** exactly as today; returning from A23 lands back on A19 with the updated record.
+  4. **Send email** action on the detail card — see UXD-23.
+  - The A8 "View booking" cross-link (FINDING-005) still opens the A19 detail record as a modal from A8; it now opens the same detail card content.
+- **states:** loading / empty ("No bookings match." per today) / sorted (indicator on active column) / detail card(s) open.
+- **rationale:** one browse idiom across the console's two operational archives (emails, bookings); the operator scans, sorts and inspects without losing list position — the exact property the sponsor liked in A5d.
+- **mockup-ref:** none (CR-004 layout evolution of the implemented A19 + A5d).
+
+#### UXD-23 — Send email to the booking lead from the A19 detail — CR-004 (CHG-012)
+- **surfaces:** A19 (detail card) · result visible on A5d
+- **trigger:** high-stakes (outbound customer email) + novel (CR-004, sponsor-ratified 2026-07-28)
+- **overrides:** none — addition; conforms to UXC-FRM-1/2/3, UXC-MOD-*, UXC-FBK-1, UXC-ERR-1
+- **serves:** REQ-NOTIF11 (CR-004 amendment) · CHG-012
+- **behaviour:** The A19 detail card gains a **"Send email"** action opening a modal dialog scoped to THIS booking:
+  1. **Template picker** — offers only **active, booking-aware templates** (use_case declares booking merge fields; DECIDE-1). Each option shows name, use_case, and a marker for templates that include the `{{personal_message}}` slot (e.g. "· personal message"). Template-only in this increment — no free-form compose (DECIDE-3).
+  2. **Recipient** — prefilled from the booking's **lead contact email**, editable before send (typo correction). Format-validates on blur (UXC-FRM-1/2).
+  3. **Personal message** — a multi-line box shown **only when the chosen template contains the `{{personal_message}}` slot** (DECIDE-2); optional. Templates without the slot show no box (silently — absence, not a disabled control).
+  4. **Live preview** — renders the chosen template in the **house shell** (`design-assets/email-house-shell.md`) with **this booking's real merge data** (name, ref, tour, date, amount…) and the personal message in its slot; re-renders on template change and message edit. Same approximation caption discipline as UXD-20.
+  5. **Send** — sends via the standard transport (never idempotency-suppressed), then closes the dialog with the confirmation "Sent to <address>" (UXC-FBK-1: inline/toast is the primary channel for this owner-observable outcome). The sent message is recorded as a message row **linked to the booking** and appears in A5d/archive like every other send.
+  - **Disabled states with adjacent reason (UXC-FRM-3):**
+    - No active booking-aware template exists → the detail card's "Send email" action is **disabled** with adjacent reason using the REQ error pair verbatim: "No booking-aware templates are active. Publish one before sending." (recovery: publish on A5c — UXC-ERR-1).
+    - Recipient field empty/invalid → **Send** disabled with adjacent reason ("Enter a valid email address").
+    - No template selected yet → **Send** disabled ("Choose a template").
+- **states:** action-disabled (no booking-aware template, reason adjacent) / composing (template chosen, preview live) / recipient-invalid / sending (UXC-CMP-2) / sent ("Sent to …") / failed (inline error, retryable per UXC-ERR-1).
+- **rationale:** reuses the CR-002 rendering + preview machinery end-to-end with real booking data, keeping every owner-initiated email on-brand and archived; the booking-aware filter prevents blank-field sends by construction.
+- **mockup-ref:** none (CR-004 design-first).
+
 ---
 
 ## §C — Coverage ledger
@@ -341,6 +401,8 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 |---|---|---|---|---|---|
 | `Admin System.dc.html` | A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, A11, A12, A13, A14, A15, A16, A17, A18, A19, A20, A23 | pending | UXD-01…12, UXD-18 | Yes, except records listed (A23 has no mockup yet — new screen, layout evolution only) | 2026-07-22 |
 | `Guide App.dc.html` | G1, G2, G3, G4, G5, G6, G7, G8, G9, G10, G11, G12, G13 | pending | UXD-13…17, UXD-19 | Yes, except records listed | 2026-07-22 |
+| *(no mockup — CR-002 (CHG-001) design-first)* | A5c | pending | UXD-20, UXD-21 | Yes — block editor + preview + test-send fully specified; house shell in `design-assets/email-house-shell.md` | 2026-07-27 |
+| *(no mockup — CR-004 (CHG-012) design-first; idiom source is the implemented A5d)* | A19, A5d | pending | UXD-22, UXD-23 | Yes — six-column sortable table, floating detail card, send-email dialog fully specified; disabled-state reasons per UXC-FRM-3 | 2026-07-28 |
 
 ---
 
@@ -358,3 +420,5 @@ Source key: **D** = derived (REQ/DR) · **R** = ratified project default · **P*
 | Version | Date | Summary |
 |---|---|---|
 | 0.1 | 2026-07-22 | Initial UXIS from the admin console (A1–A20) and guide app (G1–G13) mockups: Part A conventions (UXC-*) with the silence rule, navigation map, 19 fine-grained records (UXD-*), coverage ledger, and routed open questions. Behavioural-not-visual boundary observed. |
+| 0.3 | 2026-07-28 | **CR-004 (CHG-012)**: A19 Bookings reworked to the A5d master/detail idiom — one surface, six sortable columns (customer/ref/tour/date/amount/status), row select opens a floating read-only detail card in place (no navigation), Edit still routes to A23 (UXD-22). New send-email-from-booking flow: detail-card action → dialog with booking-aware template picker (personal-message slot marked), editable lead-prefilled recipient, conditional personal-message box, house-shell live preview with the booking's real merge data, template-only send recorded and linked to the booking; disabled states with adjacent reasons per UXC-FRM-3 (UXD-23). Navigation map: A19 rows merged, A5d row added. |
+| 0.2 | 2026-07-27 | **CR-002 (CHG-001)**: A5c (Email templates) added to the navigation map; UXD-20 (HTML block editor — 5-block palette, add/remove/reorder, live preview pane with sample merge data labelled as approximation, text-only empty state) and UXD-21 (test-send delivers the multipart HTML version) added; coverage ledger row for A5c. Extends existing screen A5c — no new A-number allocated. House shell visual spec: `design-assets/email-house-shell.md`. |

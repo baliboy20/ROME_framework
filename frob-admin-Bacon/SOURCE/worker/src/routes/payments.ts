@@ -88,7 +88,15 @@ paymentRoutes.post("/webhooks/stripe", async (c: AppContext) => {
   const confirmedBookingId =
     "confirmedBookingId" in result.body ? result.body.confirmedBookingId : undefined;
   if (confirmedBookingId) {
-    await sendBookingOutcome(db, c.env, confirmedBookingId);
+    // FINDING-007 (REQ-BOOK05): the booking is already confirmed at this
+    // point — an email-dispatch failure must not turn the acked webhook into
+    // a 500 (Stripe would redeliver an event whose fulfilment already
+    // happened). The send is idempotency-keyed per (booking, flavour).
+    try {
+      await sendBookingOutcome(db, c.env, confirmedBookingId);
+    } catch (err) {
+      console.error("booking-outcome dispatch failed after webhook fulfilment", confirmedBookingId, err);
+    }
   }
   return c.json(result.body, result.status as 200);
 });

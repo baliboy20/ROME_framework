@@ -128,7 +128,13 @@ describe("REQ-BOOK08 — POST /admin/bookings (DR-B11 completion link)", () => {
     // DR-18: the completion link now goes through Cloudflare Email Sending
     // (env.EMAIL.send), captured here — no Postmark fetch to inspect.
     expect(sentEmails[0]?.to).toBe("tom@example.com");
-    const match = sentEmails[0]?.raw.match(/token=([^"\s&]+)/);
+    // CR-002 (REQ-NOTIF10): this send carries an htmlBody, so the raw message
+    // is multipart/alternative with quoted-printable bodies — undo QP soft
+    // line breaks and =XX escapes before extracting the link token.
+    const decoded = sentEmails[0]!.raw
+      .replace(/=\r\n/g, "")
+      .replace(/=([0-9A-F]{2})/g, (_, h: string) => String.fromCharCode(parseInt(h, 16)));
+    const match = decoded.match(/token=([^"\s&]+)/);
     expect(match).not.toBeNull();
     const linkedBookingId = await verifyBookingLink(env.JWT_SECRET, decodeURIComponent(match![1]));
     expect(linkedBookingId).toBe(body.id);

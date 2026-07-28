@@ -78,17 +78,30 @@ export interface DispatchResult {
 }
 
 /**
- * Send the confirmation email that matches a booking's current payment
- * position. Safe to call repeatedly — the idempotency key guards duplicates.
+ * Booking → merge-data context shared by the automatic outcome dispatcher and
+ * the owner-initiated send route (CR-004, REQ-NOTIF11) — one vars builder so
+ * the two rendering paths cannot drift.
  */
-export async function sendBookingOutcome(
+export interface BookingMergeContext {
+  flavour: BookingFlavour;
+  /** Lead booker's contact email, or null when none exists. */
+  recipient: string | null;
+  vars: Record<string, string>;
+}
+
+/**
+ * Build the booking merge-vars map (the contract catalogued in
+ * `OUTCOME_FIELDS`) plus the payment-position flavour and lead-booker
+ * recipient. Returns null when the booking does not exist.
+ */
+export async function buildBookingMergeVars(
   db: Db,
   env: Env,
   bookingId: string,
   opts?: { completionLink?: string }
-): Promise<DispatchResult> {
+): Promise<BookingMergeContext | null> {
   const booking = await db.bookings.get(bookingId);
-  if (!booking) return { flavour: null, status: "booking_not_found" };
+  if (!booking) return null;
 
   const payments = await db.payments.listByBooking(bookingId);
   const paid = payments
@@ -108,7 +121,6 @@ export async function sendBookingOutcome(
     [bookingId]
   );
   const recipient = leaders[0]?.email ?? null;
-  if (!recipient) return { flavour, status: "no_contact_address", recipient: null };
 
   const departure = await db.departures.get(booking.departure_id);
   const balance = Math.max(0, total - paid);
@@ -124,6 +136,25 @@ export async function sendBookingOutcome(
     meeting_point: "Barbican Centre, Silk Street, London EC2Y 8DS",
     completion_link: opts?.completionLink ?? "",
   };
+
+  return { flavour, recipient, vars };
+}
+
+/**
+ * Send the confirmation email that matches a booking's current payment
+ * position. Safe to call repeatedly — the idempotency key guards duplicates.
+ */
+export async function sendBookingOutcome(
+  db: Db,
+  env: Env,
+  bookingId: string,
+  opts?: { completionLink?: string }
+): Promise<DispatchResult> {
+  const merge = await buildBookingMergeVars(db, env, bookingId, opts);
+  if (!merge) return { flavour: null, status: "booking_not_found" };
+
+  const { flavour, recipient, vars } = merge;
+  if (!recipient) return { flavour, status: "no_contact_address", recipient: null };
 
   const fallback = fallbackText(flavour, vars);
   const result = await send(db, env, {

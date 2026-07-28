@@ -1,0 +1,122 @@
+ID: CR-003
+Type: PRELAUNCH_ANNOUNCEMENT
+Status: DRAFT
+Gate:
+  reviewer: Sarah
+  verdict: PENDING
+  date:
+  notes: >-
+    Not yet submitted. Blocked on (a) increment 2 (CR-002) sealing, and
+    (b) sponsor resolution of OQ-1 below, which determines the change type.
+Priority: HIGH
+Title: "Customer web: pre-launch announcement topsheet with preview-ride application CTA"
+Description: |
+  The customer website (webapp-customer) should present an announcement
+  overlay/banner on first open, stating that:
+
+    - the business opens for booking in autumn 2026;
+    - routes are currently being trialled;
+    - members of the public are welcome to APPLY to accompany the team as a
+      guest on one of the preview rides being conducted;
+    - a call-to-action leads to the application.
+
+  Requested surface: site-wide, on first open of the site (not per-page on every
+  navigation). Applies across the 11 static pages under `en/` and, if the
+  overlay is to persist there, the Flutter booking island.
+
+RequestedBy: sponsor
+RequestedDate: 2026-07-27
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CLASSIFICATION — NOT YET VALID FOR ROUTING
+# ROME-AX-31: routeChange() refuses any change whose blast radius is not
+# trace-verified. The radius below is DECLARED, not verified. Do not route.
+# ─────────────────────────────────────────────────────────────────────────────
+ChangeType:
+  declared: CT-3
+  verified: false
+  alternative: CT-4
+  rationale: |
+    CT-3 (requirement change) if "apply" resolves onto the existing enquiry
+    capability (see OQ-1 option B). CT-4 (new capability) if a distinct
+    preview-ride application flow is required — and PROP-054 A.1 refuses CT-4
+    as a change record: it must run through the increment mechanism instead.
+
+    It is NOT CT-2 (minor amendment / light path). A minor amendment reworks no
+    artifact tier above code. This does, on two counts recorded below.
+
+BlastRadius:
+  verified: false
+  designImpacted: true
+  requirements:
+    - REQ-WEB01 (home tour-showcase) — CONTRADICTION. The delivered requirement
+      presents flagship published tours with live prices and deep-links into the
+      booking flow. The banner simultaneously announces that booking does not
+      open until autumn 2026. Both claims would render on the same page. This is
+      the same contract-drift class as FINDING-002; it must be reconciled in the
+      requirement, not papered over in markup.
+    - REQ-PRE01 (tour catalogue) — same contradiction, catalogue surface.
+    - REQ-BOOK* (booking flow entry) — the CTA target. See OQ-1.
+    - REQ-CNA01 (consent capture) — engages IF the application collects contact
+      details. Consent is append-only, never pre-granted, and must record its
+      capture source; a new capture point is a new source.
+    - NEW REQ (unassigned ID) — no delivered requirement covers a site-wide
+      pre-launch announcement surface. Nothing in _requirements/ matches
+      announce / banner / topsheet / coming-soon / launch.
+  design:
+    - _design/FOB-UXIS-001_UXIS.md — new customer-facing surface, needs a UXIS
+      entry (dismissal behaviour, persistence, accessibility, reduced-motion).
+    - _design/design-assets/design-system.md — overlay/scrim treatment.
+    - _design/api-contracts.md — only if the application submits to an endpoint.
+    NOTE: all four _design documents are project-wide (they cover all 4 apps in
+    one file each) and are currently under concurrent edit by the CR-002
+    session. Sequence after CR-002 lands.
+  code:
+    - webapp-customer/en/*.html (11 pages) + styles.css + a first-open
+      suppression mechanism alongside the existing consent.js / island-loader.js
+    - webapp-customer/flutter/ — only if the overlay must persist over the
+      booking island
+
+OpenQuestions:
+  - id: OQ-1
+    question: >-
+      What does "click to apply" actually do? The request says it takes the
+      applicant to booking, but applying to join a free preview ride is not the
+      same act as booking a priced tour — and `en/book/` fronts a Stripe
+      embedded checkout.
+    status: OPEN
+    blocking: true
+    options:
+      - A: New preview-ride application form (name, contact, consent) — this is
+          a new capability, CT-4, therefore an increment, not a change record.
+      - B: Route to the existing enquiry capability with a preview-ride context
+          pre-set — CT-3, lighter, reuses delivered scope.
+      - C: Route to the existing booking flow as-is — NOT RECOMMENDED. Sends an
+          applicant for a free trial ride into a paid checkout. Defect risk, and
+          it contradicts the banner's own message.
+  - id: OQ-2
+    question: >-
+      Dismissal and persistence — once per browser, once per session, or until
+      launch? Affects whether any state is stored and therefore whether consent
+      or cookie policy is engaged.
+    status: OPEN
+    blocking: false
+  - id: OQ-3
+    question: >-
+      Does the announcement supersede or coexist with the live pricing and
+      "book now" CTAs on the home page and catalogue? This is the REQ-WEB01
+      reconciliation and it is a commercial decision, not a design one.
+    status: OPEN
+    blocking: true
+
+Sequencing:
+  - Increment 2 (CR-002, HTML email templates) is OPEN and unsealed at P5.
+    state.js#beginIncrement throws while a prior increment is unsealed
+    (ROME-AX-19), so no new increment can start until CR-002 seals.
+  - The four project-wide _design documents are in the CR-002 session's
+    uncommitted working set. Editing them concurrently is a silent
+    last-writer-wins overwrite.
+  - state.json is single-writer. Concurrent phase advancement risks dropping a
+    gate-ledger entry — the P5 gate-escape failure remediated 2026-07-27.
+
+CopilotMode: STRICT

@@ -9,7 +9,8 @@
 
 import type { Db } from "../../db/client";
 import type { Env } from "../../env";
-import { sendCloudflareEmail } from "../../lib/cloudflare-email";
+import { sendCloudflareEmail, type CfEmailResult } from "../../lib/cloudflare-email";
+import { sendResendEmail } from "../../lib/resend-email";
 import { renderTemplate } from "./templates";
 import type { Message, MessageType } from "../../types";
 
@@ -62,29 +63,53 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
   // REQ-NOTIF10: render from the active template when the caller asked for one.
   let subject = input.subject;
   let textBody = input.textBody;
+  // REQ-NOTIF10 (CR-002): an HTML alternative body — caller-supplied or
+  // template-rendered — makes the send multipart/alternative downstream.
+  let htmlBody = input.htmlBody;
   let templateId = input.templateId ?? null;
   if (input.template) {
     const rendered = await renderTemplate(env.DB, input.template.useCase, input.template.vars);
     if (rendered) {
       subject = rendered.subject;
       textBody = rendered.textBody;
+      htmlBody = rendered.htmlBody ?? undefined;
       templateId = rendered.templateId;
     }
   }
 
-  // DR-18: Cloudflare Email Sending supersedes Postmark.
-  const result = await sendCloudflareEmail(env.EMAIL, {
+  // CHG-008 (CT-3): transport dispatch on env.EMAIL_TRANSPORT — `resend`
+  // (production/staging default), `cloudflare` (DR-18 rollback path), or
+  // `debug`/unset in local dev (simulated send; absorbs EMAIL_DEBUG). Both
+  // real transports receive the SAME renderTemplate outputs (REQ-NOTIF10
+  // parity), and test-sends ride this identical dispatch (REQ-NOTIF01).
+  const emailInput = {
     from: env.NOTIFICATIONS_EMAIL_FROM ?? "bookings@friendsonbikes.uk",
     to: input.recipient,
     subject,
     textBody,
+    htmlBody,
     inReplyTo: input.inReplyTo,
     references: input.references,
-  });
+  };
+  const transport = env.EMAIL_TRANSPORT ?? "debug";
+  let provider: string;
+  let result: CfEmailResult;
+  if (transport === "resend") {
+    provider = "resend";
+    // Missing key is treated as a transport failure and recorded — never thrown.
+    result = await sendResendEmail(env.RESEND_API_KEY, emailInput);
+  } else if (transport === "cloudflare") {
+    provider = "cloudflare-email";
+    result = await sendCloudflareEmail(env.EMAIL, emailInput);
+  } else {
+    // `debug` (or unset in dev): simulated send, console-rendered.
+    provider = "debug";
+    result = { ok: true, messageId: `<${crypto.randomUUID()}@friendsonbikes.uk>`, message: null };
+  }
 
-  // Dev aid: Cloudflare Email can't deliver from local `wrangler dev`, so print
-  // the fully-rendered message to the console when EMAIL_DEBUG is set.
-  if (env.EMAIL_DEBUG) {
+  // Dev aid: print the fully-rendered message to the console for the debug
+  // transport (or legacy EMAIL_DEBUG) — real delivery can't happen locally.
+  if (provider === "debug" || env.EMAIL_DEBUG) {
     console.log(
       `\n────────── EMAIL (${result.ok ? "sent" : "delivery_pending"}) ──────────\n` +
         `To:      ${input.recipient}\n` +
@@ -103,9 +128,12 @@ export async function send(db: Db, env: Env, input: SendInput): Promise<SendResu
     recipient: input.recipient,
     event: input.event,
     idempotency_key: input.idempotencyKey,
-    provider: "cloudflare-email",
+    provider,
     provider_ref: result.messageId,
     status,
+    // CHG-008: a transport failure records its reason — never silently
+    // dropped (REQ-NOTIF01 postcondition; migration 0007). NULL on success.
+    failure_reason: result.ok ? null : result.message,
     template_id: templateId,
     created_at: now.toISOString(),
     sent_at: result.ok ? now.toISOString() : null,

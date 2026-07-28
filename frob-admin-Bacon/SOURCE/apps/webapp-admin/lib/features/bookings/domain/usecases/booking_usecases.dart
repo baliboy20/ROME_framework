@@ -58,3 +58,36 @@ class TransitionParams {
   final String transition;
   const TransitionParams(this.id, this.transition);
 }
+
+/// CR-004 (CHG-012, REQ-NOTIF11) — send an active booking-aware template to
+/// the booking's lead (editable recipient, optional personal message).
+/// Resolves to the address the worker sent to ("Sent to <address>").
+class SendBookingEmail extends UseCase<String, SendBookingEmailParams> {
+  final BookingRepository repository;
+  SendBookingEmail(this.repository);
+  @override
+  Future<Result<String>> call(SendBookingEmailParams p) =>
+      repository.sendBookingEmail(p.bookingId, p.payload);
+}
+
+class SendBookingEmailParams {
+  final String bookingId;
+  final String templateId;
+  final String to;
+  final String? personalMessage;
+  const SendBookingEmailParams({
+    required this.bookingId,
+    required this.templateId,
+    required this.to,
+    this.personalMessage,
+  });
+
+  /// Contract payload (api-contracts.md#cr-004): templateId + to + optional
+  /// personalMessage — never any body/subject fields (template-only send).
+  Map<String, dynamic> get payload => {
+        'templateId': templateId,
+        'to': to,
+        if (personalMessage != null && personalMessage!.isNotEmpty)
+          'personalMessage': personalMessage,
+      };
+}

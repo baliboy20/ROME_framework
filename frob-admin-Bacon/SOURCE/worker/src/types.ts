@@ -214,6 +214,9 @@ export interface Message {
   provider: string;
   provider_ref: string | null;
   status: MessageStatus;
+  // CHG-008 (migration 0007): transport failure reason — provider error text
+  // incl. HTTP status; NULL = no transport failure recorded (REQ-NOTIF01).
+  failure_reason?: string | null;
   // EML reintegration (REQ-NOTIF10): set when rendered from an email_template.
   template_id?: string | null;
   created_at: string;

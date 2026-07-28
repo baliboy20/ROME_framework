@@ -168,3 +168,42 @@ Also honored (bind other phases but reflected here): TDR-04 (money pence / ISO-8
 - D-NOTIF-2: **CLOSED by DR-18 (EML reintegration, 2026-07-26)** — Cloudflare Email Sending/Routing supersedes Postmark (TDR-09) as the v1 email path, on the strength of the EML PoC's live-tested integration. Inbound routing (REQ-NOTIF05) and the `remote: true` send binding both land in `api-worker`.
 - OPS08 mid-tour event log entity is not yet named in the dictionary (Stage 6a follow-up) — designed here as a `mid_tour_events` table placeholder (see data-dictionary.md note).
 - `retired` / `awaiting_external_service` bike states and scheduled-maintenance/certification-gate REQs have ratified *direction* but no authored REQ — not built (must-not-invent, FOB-TSPEC context).
+
+---
+
+## 9. CR-002 (CHG-001) — HTML email templates impact (REQ-NOTIF10, 2026-07-27)
+
+**No new components; no topology change.** Sponsor-ratified CR-002 Phase 1 (block-editor HTML bodies, house shell, live preview, HTML test-send) lands entirely inside two existing components:
+
+- **`api-worker` (NOTIF):** additive migration `0006` adds `email_templates.body_blocks` + `body_html` (data-dictionary.md CR-002 note); new pure block→HTML renderer + house shell; `renderTemplate` fills text **and** HTML bodies; `lib/cloudflare-email.ts` MIME builder gains `multipart/alternative` (text first, HTML last, quoted-printable UTF-8) — text-only sends are byte-unchanged; template CRUD + test-send routes amended (api-contracts.md #cr-002).
+- **`webapp-admin` (email feature):** template editor gains a 5-block editor and a client-side live preview pane fed by the use_case sample merge data; test-send now delivers the HTML version. Preview is client-rendered (no new endpoint), pinned to the worker renderer by shared golden fixtures.
+
+Risk LOW/MEDIUM: additive schema, plain-text fallback preserved as an invariant, no scripts/non-inline styles by construction; residual risk is email-client rendering variance, mitigated by the fixed house shell + real-inbox test-send. Out of scope (later phases): asset uploads, raw HTML/Markdown authoring, attachments.
+
+---
+
+## 10. CHG-008 (CT-3) — Resend outbound email transport (REQ-NOTIF01, 2026-07-28)
+
+**No new components; no topology change.** Sponsor direction reverses TDR-09's no-ESP stance for *outbound* only: transactional email dispatch moves from Cloudflare Email Sending (DR-18) to **Resend**, a deliverability-grade transactional provider verified (DKIM+SPF) for `friendsonbikes.uk`. Inbound stays exactly as-is: Cloudflare Email Routing → the Worker's `email()` handler (REQ-NOTIF05) is untouched.
+
+**Why:** Cloudflare Email Sending only delivers to addresses verified in the zone — it cannot satisfy REQ-NOTIF01's amended invariant that *any syntactically valid recipient* is accepted without pre-verification. Resend delivers to arbitrary recipients with domain-level SPF/DKIM alignment.
+
+**Design (all inside `api-worker`, behind the existing single `send()` seam):**
+- New `src/lib/resend-email.ts` adapter (`sendResendEmail()`) alongside `sendCloudflareEmail()`, same result shape (`ok`/`messageId`/`message`). Callers of `send()` are unchanged.
+- Transport selected by `env.EMAIL_TRANSPORT ∈ {resend, cloudflare, debug}`: **production/staging → `resend`**, **local dev default → `debug`** (simulated send, console-rendered — supersedes the ad-hoc `EMAIL_DEBUG` behaviour) unless overridden. Keeping `cloudflare` selectable preserves an instant rollback path and the working DR-18 code.
+- Resend **native `{from,to,subject,text,html,headers}` payload**, not raw MIME (see api-contracts.md #chg-008 rationale). Bodies come from the *same* `renderTemplate` outputs — REQ-NOTIF10 multipart parity holds; test-sends ride the identical transport (REQ-NOTIF01 invariant).
+- Failure semantics: provider HTTP error / rate limit → message row keeps status `delivery_pending` and records the provider error in a **new additive `failure_reason` column** (migration `0007`, data-dictionary.md #chg-008); never silently dropped. **No retry storm:** the D1 idempotency-key claim precedes the provider call and is not released on failure — at most one automatic attempt per key; re-delivery is a deliberate ops action.
+- Config: `RESEND_API_KEY` via `wrangler secret put` per env (fob-api-worker gets its own copy; the POC key on `email-poc-worker` is not shared); `EMAIL_TRANSPORT` as a per-env `[vars]` entry; `NOTIFICATIONS_EMAIL_FROM` unchanged (`bookings@friendsonbikes.uk`).
+
+Risk LOW: additive schema, seam-preserving adapter, rollback = flip `EMAIL_TRANSPORT`. Residual risks: Resend availability/rate limits (mitigated: failures recorded, idempotent), API-key custody (secret store only, per-worker key). Supersedes the outbound half of DR-18; §8's D-NOTIF-2 note now reads outbound=Resend, inbound=Cloudflare.
+
+## 11. CR-004 (CHG-012) — owner-initiated booking email + A19 master/detail (REQ-NOTIF11, 2026-07-28)
+
+Architecturally a **thin composition over existing seams** — no new component, no topology change, no schema change:
+
+- One new operator-guarded route (`POST /admin/bookings/:id/send-email`) that chains the already-delivered pieces: booking merge-vars builder (shared with the automatic outcome dispatcher), CR-002 merge substitution for both bodies, CHG-008 `send()` transport dispatch. Owner-initiated sends use a fresh idempotency key per action (explicit human intent is never deduplicated), unlike the per-(booking, flavour) keys of automatic sends.
+- Booking↔message linkage stays the established `event`-string convention (`booking-send:{bookingId}:{templateId}`), the same mechanism `booking-outcome:*` sends use — the archive and booking views correlate on it; the `message` table is untouched.
+- `{{personal_message}}` is a plain merge field; support-detection and preview are **client-side** (token scan of template rows; CR-002 Dart mirror renderer with real booking data) — consistent with the CR-002 "no server preview endpoint" decision.
+- **A19 master/detail** is an admin-only presentation rework to the A5d idiom; component boundaries and API contracts are unchanged (screen spec owned by Clara in P3-UX).
+
+Risk posture LOW/MEDIUM per the ratified CR: every load-bearing mechanism (rendering, escaping, transport, linkage, preview parity fixtures) is reused, not rebuilt.

@@ -149,14 +149,25 @@ export async function handleStripeWebhook(
   }
 
   let confirmedBookingId: string | undefined;
-  if (event.type === "checkout.session.completed") {
-    const session = event.data.object as Stripe.Checkout.Session;
-    if (session.payment_status === "paid") {
-      confirmedBookingId = (await fulfilCheckoutSession(db, rawDb, session)) ?? undefined;
+  try {
+    if (event.type === "checkout.session.completed") {
+      const session = event.data.object as Stripe.Checkout.Session;
+      if (session.payment_status === "paid") {
+        confirmedBookingId = (await fulfilCheckoutSession(db, rawDb, session)) ?? undefined;
+      }
     }
+    // All other event types are recorded (idempotency claimed above) but do
+    // not drive fulfilment — satisfies TDR-06's "only checkout.session.completed".
+  } catch {
+    // FINDING-007 (REQ-BOOK05): the claim above was taken BEFORE fulfilment.
+    // If fulfilment fails (e.g. a transient D1 error) the claim must be
+    // RELEASED and a non-2xx returned, so Stripe's redelivery of this same
+    // event id is processed rather than wrongly deduped — otherwise the
+    // booking is stuck `draft` forever behind a permanently-claimed key.
+    // A redelivery after a SUCCESSFUL first processing is still deduped.
+    await db.releaseIdempotencyKey(event.id);
+    return { status: 500, body: { error: "fulfilment_failed" } };
   }
-  // All other event types are recorded (idempotency claimed above) but do
-  // not drive fulfilment — satisfies TDR-06's "only checkout.session.completed".
 
   return { status: 200, body: { received: true, confirmedBookingId } };
 }

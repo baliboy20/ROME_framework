@@ -9,14 +9,14 @@ import '../widgets/tree_nav.dart';
 const kNavGroups = [
   NavGroup('Bookings & payments', [
     NavLeaf('A7', 'New booking', '/new-booking'),
-    NavLeaf('A8', 'Payments & refunds', '/payments'),
+    NavLeaf('A8', 'Payments', '/payments'),
     NavLeaf('A9', 'Enquiries', '/enquiries'),
     NavLeaf('A19', 'Bookings', '/bookings'),
   ], hue: FobColors.pink),
-  NavGroup('Scheduling', [
+  NavGroup('Tours and departures', [
     NavLeaf('A22', 'Tours & routes', '/tours'),
     NavLeaf('A17', 'Departure calendar', '/calendar'),
-    NavLeaf('A18', 'Schedules', '/scheduler'),
+    NavLeaf('A18', 'Departure scheduler', '/scheduler'),
     NavLeaf('A20', 'Bike allocation', '/bike-allocation'),
   ], hue: FobColors.cyan),
   NavGroup('Alerts & records', [

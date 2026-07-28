@@ -38,6 +38,10 @@ class BookingRepositoryImpl with RepositoryGuard implements BookingRepository {
   Future<Result<void>> transitionBooking(String id, String transition) =>
       guard(() async => await remote.transitionBooking(id, transition));
 
+  @override
+  Future<Result<String>> sendBookingEmail(String id, Map<String, dynamic> body) =>
+      guard(() async => await remote.sendBookingEmail(id, body));
+
   BookingCreated _created(Map<String, dynamic> j) => BookingCreated(
         id: j['id']?.toString() ?? '',
         completionLinkSent: j['completionLinkSent'] == true,

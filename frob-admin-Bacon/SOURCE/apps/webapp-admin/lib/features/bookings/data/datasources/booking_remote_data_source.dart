@@ -11,6 +11,7 @@ abstract class BookingRemoteDataSource {
   Future<Map<String, dynamic>> createProvisionalBooking(Map<String, dynamic> body);
   Future<void> updateBooking(String id, Map<String, dynamic> body);
   Future<void> transitionBooking(String id, String transition);
+  Future<String> sendBookingEmail(String id, Map<String, dynamic> body);
 }
 
 class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
@@ -59,5 +60,13 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   @override
   Future<void> transitionBooking(String id, String transition) async {
     await http.post('/admin/bookings/$id/transition', body: {'transition': transition});
+  }
+
+  // CR-004 (CHG-012, REQ-NOTIF11): owner-initiated booking email — returns the
+  // address the worker sent to ({status, sentTo, messageId}).
+  @override
+  Future<String> sendBookingEmail(String id, Map<String, dynamic> body) async {
+    final data = await http.post('/admin/bookings/$id/send-email', body: body);
+    return ((data as Map?)?['sentTo'])?.toString() ?? '';
   }
 }

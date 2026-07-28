@@ -57,6 +57,7 @@ footer .frow{max-width:1200px;margin:0 auto;display:flex;justify-content:space-b
 footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
 @media(max-width:900px){.body{grid-template-columns:1fr;gap:36px}.nlinks{display:none}.incl{grid-template-columns:1fr}}
 </style>
+  <meta name="fob-api-base" content="https://api-staging.friendsonbikes.uk">
 </head>
 <body>
 
@@ -119,7 +120,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
 
 <script>
 (function(){
-  var API="http://localhost:8787", BOOK="/en/book/";
+  var API=((document.querySelector('meta[name="fob-api-base"]')||{}).content)||"https://api.friendsonbikes.uk", BOOK="/en/book/";
   function q(n){return new URLSearchParams(location.search).get(n);}
   function money(p){return "£"+Math.round(p/100);}
   var id=q("tour")||"hidden-city";

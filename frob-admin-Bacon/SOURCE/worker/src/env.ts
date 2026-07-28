@@ -30,6 +30,14 @@ export interface Env {
   ALLOWED_ORIGIN?: string;
   STRIPE_MODE?: string;
   NOTIFICATIONS_EMAIL_FROM?: string;
+  /** CHG-008 (CT-3): outbound email transport selector — `resend`
+   *  (production/staging default), `cloudflare` (DR-18 rollback path), or
+   *  `debug`/unset (local simulated send). wrangler.toml [vars]. */
+  EMAIL_TRANSPORT?: string;
+  /** CHG-008: Resend API key — secret, set via `wrangler secret put
+   *  RESEND_API_KEY [--env …]` / .dev.vars. Missing key under the `resend`
+   *  transport is a recorded transport failure, never a throw. */
+  RESEND_API_KEY?: string;
   /** Dev only: when set, the rendered outgoing email is logged to the console
    *  (Cloudflare Email cannot deliver from local `wrangler dev`). */
   EMAIL_DEBUG?: string;

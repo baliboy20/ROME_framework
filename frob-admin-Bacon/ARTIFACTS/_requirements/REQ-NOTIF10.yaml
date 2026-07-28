@@ -1,6 +1,6 @@
 ID: REQ-NOTIF10
 Actor: Owner
-Intent: manage email-template
+Intent: update email-template
 Preconditions:
   - a new template use-case exists with no active template covering it, or an active template needs replacing
 Conditions:
@@ -10,17 +10,27 @@ Conditions:
   - each use_case declares a merge-field catalogue (the variable names its process supplies); the editor surfaces these and a test-send renders them with sample data
   - a test send renders THIS template (draft included) with the process's sample data and emails it, tagged, to the Owner or an override address — it is never idempotency-suppressed
   - removal is archive-by-default: PATCH status:retired (soft, preserves message.template_id references and audit); hard delete is permitted ONLY for an unused draft that no message references
+  - a template may carry an optional formatted HTML body (body_html) alongside its plain-text body; a send of such a template is multipart/alternative (text + HTML) so clients that cannot show HTML fall back to text; text-only templates keep working unchanged (CR-002, 2026-07-27)
+  - HTML authoring is via a block editor of pre-built blocks (header with logo, text/paragraph, call-to-action, divider, footer); the Owner never writes raw HTML
+  - emitted HTML must be email-safe — inline styles only, table-based layout, web-safe fonts, no scripts — and a house template shell (header/footer/brand) wraps the blocks so every email stays on-brand
+  - imagery is limited to emoji plus a single hosted logo URL; there is no asset upload
+  - a live preview renders the HTML body with the use_case's sample merge data while the Owner edits; the existing test-send also delivers the HTML version
+  - on render, merge fields fill BOTH the plain-text and HTML bodies
 Postconditions:
   - an email_template exists in draft, distinct from any currently active template for the same use_case
   - on publish, exactly one active template covers the use_case (any prior active one is retired)
   - a retired template is preserved for audit; a hard-deleted template was an unreferenced draft
+  - a published template with an HTML body sends both bodies in one message, each filled from the same merge data
 Outcomes:
   - Owner sees the new template listed as draft, can preview it, test-send it, and publish (allocate) it to its process
   - Owner can archive an active/used template or hard-delete an unused draft
   - published templates are used by the triggered transactional sends (REQ-NOTIF01, REQ-NOTIF11 and the module triggers it serves)
+  - Owner can compose an optional HTML version from pre-built blocks, watch a live preview rendered with sample merge data while editing, and test-send the HTML version to a real inbox (CR-002)
 Invariants:
   - at most one active email_template per use_case at a time
   - a template referenced by any sent message is never hard-deleted (archive only)
+  - the HTML body is always optional; the plain-text body remains the guaranteed fallback of every send
+  - emitted HTML never contains scripts and never depends on non-inline styling
 NonFunctional: {}
 Errors:
   - error: Publish attempted with unfilled required variable fields
@@ -30,9 +40,13 @@ Errors:
 ScopeBoundary:
   InScope:
     - creating/editing a draft template, previewing it, test-sending it, publishing (allocating) to active, archiving (retiring), and hard-deleting an unused draft
+    - authoring an optional HTML body via pre-built blocks (header with logo, text/paragraph, button, divider, footer) inside the house shell, with live preview and HTML test-send (CR-002 Phase 1)
   OutOfScope:
     - the per-send Explanation Block for cancellations (that is per-send content, not template authoring — REQ-TOUR07)
     - AI/MCP-assisted drafting
+    - image/asset uploads and an Assets area (CR-002 Phase 2)
+    - raw HTML or Markdown authoring by the Owner
+    - email attachments (explicitly out of scope per CR-002)
 OpenQuestions:
   - question: none
     status: RESOLVED
@@ -40,4 +54,13 @@ OpenQuestions:
       New capability supporting all templated transactional sends, from REQ-EML10; email_templates
       is an EML-reintegration entity (§4, kept — message has no template concept). Source:
       EML-reintegration-handover/2-eml-spec/EML.md REQ-EML10.
+  - question: none (CR-002 amendment provenance)
+    status: RESOLVED
+    resolution: >-
+      Amended per sponsor-ratified CR-002 (CHG-001, CT-3), 2026-07-27, Phase 1 only: optional
+      HTML body authored via block editor (header with logo, text/paragraph, button, divider,
+      footer) inside a house shell; emoji plus one hosted logo URL only; live preview with
+      sample merge data plus HTML test-send; multipart text+HTML sends with merge fields
+      filling both bodies; attachments and asset uploads out of scope. Source:
+      ARTIFACTS/changes/CR-002-html-email-templates-PROPOSAL.md.
 CopilotMode: STRICT

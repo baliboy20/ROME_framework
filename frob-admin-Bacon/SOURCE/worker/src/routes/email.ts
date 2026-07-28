@@ -12,8 +12,14 @@ import { createDb } from "../db/client";
 import type { Env } from "../env";
 import { type AuthedVariables, requireOperatorSession } from "../lib/auth";
 import { send } from "../modules/notifications/send";
-import { substituteMergeFields } from "../modules/notifications/templates";
-import { OUTCOME_FIELDS, type BookingFlavour } from "../modules/notifications/booking-outcome";
+import { renderTemplate, substituteMergeFields, substituteMergeFieldsHtml } from "../modules/notifications/templates";
+import { blocksSchema, renderBlocksToHtml } from "../modules/notifications/html-render";
+import {
+  BOOKING_FLAVOURS,
+  OUTCOME_FIELDS,
+  buildBookingMergeVars,
+  type BookingFlavour,
+} from "../modules/notifications/booking-outcome";
 
 export const emailRoutes = new Hono<{ Bindings: Env; Variables: AuthedVariables }>();
 
@@ -178,26 +184,47 @@ emailRoutes.get("/admin/email-templates", async (c) => {
   return c.json({ templates: r.results ?? [] });
 });
 
+// CR-002 (CHG-001, REQ-NOTIF10): `body_blocks` is the only HTML input the API
+// accepts — the worker renders it through the canonical block→HTML renderer +
+// house shell and stores the derived `body_html`. A client-supplied
+// `body_html` is rejected outright (server-rendered only, by construction).
+function rejectsClientHtml(raw: unknown): boolean {
+  return typeof raw === "object" && raw !== null && "body_html" in raw;
+}
+const CLIENT_HTML_ERROR = {
+  error: "validation",
+  message: "body_html is server-rendered from body_blocks and cannot be submitted directly.",
+} as const;
+
 const templateCreateSchema = z.object({
   use_case: z.enum(TEMPLATE_USE_CASES),
   name: z.string().min(1),
   subject: z.string().min(1),
   body: z.string().min(1),
   variables: z.array(z.string()).default([]),
+  // CR-002: optional block-editor structure; validated against the 5 block
+  // types (unknown types → 422 via Zod).
+  body_blocks: blocksSchema.optional(),
 });
 
 emailRoutes.post("/admin/email-templates", async (c) => {
-  const parsed = templateCreateSchema.safeParse(await c.req.json().catch(() => ({})));
+  const raw = await c.req.json().catch(() => ({}));
+  if (rejectsClientHtml(raw)) return c.json(CLIENT_HTML_ERROR, 422);
+  const parsed = templateCreateSchema.safeParse(raw);
   if (!parsed.success) {
     return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
   }
   const now = new Date().toISOString();
   const id = crypto.randomUUID();
+  // CR-002: render on every save that carries blocks — body_html is always a
+  // projection of body_blocks, never client input.
+  const bodyBlocks = parsed.data.body_blocks ? JSON.stringify(parsed.data.body_blocks) : null;
+  const bodyHtml = parsed.data.body_blocks ? renderBlocksToHtml(parsed.data.body_blocks) : null;
   await c.env.DB.prepare(
-    `INSERT INTO email_templates (id, use_case, name, subject, body, variables, status, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, 'draft', ?, ?)`
+    `INSERT INTO email_templates (id, use_case, name, subject, body, variables, status, body_blocks, body_html, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, 'draft', ?, ?, ?, ?)`
   )
-    .bind(id, parsed.data.use_case, parsed.data.name, parsed.data.subject, parsed.data.body, JSON.stringify(parsed.data.variables), now, now)
+    .bind(id, parsed.data.use_case, parsed.data.name, parsed.data.subject, parsed.data.body, JSON.stringify(parsed.data.variables), bodyBlocks, bodyHtml, now, now)
     .run();
   return c.json({ id, status: "draft" }, 201);
 });
@@ -208,11 +235,16 @@ const templatePatchSchema = z.object({
   body: z.string().min(1).optional(),
   variables: z.array(z.string()).optional(),
   status: z.enum(["draft", "active", "retired"]).optional(),
+  // CR-002: null clears both columns (revert to text-only); an array is
+  // re-rendered and stored alongside its body_html projection.
+  body_blocks: blocksSchema.nullable().optional(),
 });
 
 emailRoutes.patch("/admin/email-templates/:id", async (c) => {
   const id = c.req.param("id");
-  const parsed = templatePatchSchema.safeParse(await c.req.json().catch(() => ({})));
+  const raw = await c.req.json().catch(() => ({}));
+  if (rejectsClientHtml(raw)) return c.json(CLIENT_HTML_ERROR, 422);
+  const parsed = templatePatchSchema.safeParse(raw);
   if (!parsed.success) {
     return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
   }
@@ -234,6 +266,13 @@ emailRoutes.patch("/admin/email-templates/:id", async (c) => {
   const sets: string[] = [];
   const params: unknown[] = [];
   for (const [k, v] of Object.entries(parsed.data)) {
+    // CR-002: body_blocks writes both columns — re-render body_html on every
+    // save; explicit null clears both (template reverts to text-only).
+    if (k === "body_blocks") {
+      sets.push("body_blocks = ?", "body_html = ?");
+      params.push(v === null ? null : JSON.stringify(v), v === null ? null : renderBlocksToHtml(v));
+      continue;
+    }
     sets.push(`${k} = ?`);
     params.push(k === "variables" ? JSON.stringify(v) : v);
   }
@@ -287,7 +326,7 @@ emailRoutes.post("/admin/email-templates/:id/test-send", async (c) => {
   }
   const tmpl = await c.env.DB.prepare(`SELECT * FROM email_templates WHERE id = ?`)
     .bind(id)
-    .first<{ id: string; use_case: string; subject: string; body: string }>();
+    .first<{ id: string; use_case: string; subject: string; body: string; body_html: string | null }>();
   if (!tmpl) return c.json({ error: "not_found" }, 404);
 
   const recipient = parsed.data.to ?? c.env.OWNER_PERSONAL_EMAIL ?? c.env.OWNER_EMAIL;
@@ -308,6 +347,90 @@ emailRoutes.post("/admin/email-templates/:id/test-send", async (c) => {
     textBody:
       `— This is a test send of the "${tmpl.use_case}" template, with sample data. —\n\n` +
       substituteMergeFields(tmpl.body, sample),
+    // CR-002 (REQ-NOTIF10): when the template has an HTML body the test send
+    // is the real multipart/alternative message — merge values substituted
+    // (escaped) into the stored body_html — so the Owner sees the HTML
+    // version in a real inbox. Draft included; never idempotency-suppressed.
+    htmlBody: tmpl.body_html ? substituteMergeFieldsHtml(tmpl.body_html, sample) : undefined,
+  });
+  return c.json({ status: result.status, sentTo: recipient, messageId: result.message?.id ?? null });
+});
+
+// ---------------------------------------------------------------------------
+// CR-004 (CHG-012, REQ-NOTIF11) — owner-initiated booking email.
+// POST /admin/bookings/:id/send-email: send an ACTIVE, booking-aware template
+// (use_case ∈ OUTCOME_FIELDS) to the booking's lead (editable recipient), with
+// the booking's REAL merge data (shared buildBookingMergeVars — same builder
+// as the automatic outcome path) plus an optional {{personal_message}} slot.
+// Fresh idempotency key per explicit owner action: never suppressed.
+// ---------------------------------------------------------------------------
+const bookingSendSchema = z.object({
+  templateId: z.string().min(1),
+  to: z.string().email().optional(),
+  personalMessage: z.string().optional(),
+});
+
+emailRoutes.post("/admin/bookings/:id/send-email", requireOperatorSession, async (c) => {
+  const bookingId = c.req.param("id")!;
+  const parsed = bookingSendSchema.safeParse(await c.req.json().catch(() => ({})));
+  if (!parsed.success) {
+    return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
+  }
+
+  const db = createDb(c.env.DB);
+  const merge = await buildBookingMergeVars(db, c.env, bookingId);
+  if (!merge) return c.json({ error: "not_found" }, 404);
+
+  const tmpl = await c.env.DB.prepare(`SELECT id, use_case, status FROM email_templates WHERE id = ?`)
+    .bind(parsed.data.templateId)
+    .first<{ id: string; use_case: string; status: string }>();
+
+  // Template must be active AND booking-aware (its use_case is a key of the
+  // booking merge catalogue). When no active booking-aware template exists at
+  // all the Owner gets the REQ-NOTIF11 publish-first message instead.
+  if (!tmpl || tmpl.status !== "active" || !(tmpl.use_case in OUTCOME_FIELDS)) {
+    const anyActive = await c.env.DB.prepare(
+      `SELECT 1 FROM email_templates
+        WHERE status = 'active' AND use_case IN (${BOOKING_FLAVOURS.map(() => "?").join(",")})
+        LIMIT 1`
+    )
+      .bind(...BOOKING_FLAVOURS)
+      .first();
+    if (!anyActive) {
+      return c.json(
+        {
+          error: "no_booking_aware_template",
+          message: "No booking-aware templates are active. Publish one before sending.",
+        },
+        422
+      );
+    }
+    return c.json({ error: "not_booking_aware" }, 422);
+  }
+
+  // Recipient: lead booker's contact email, overridable before send.
+  const recipient = parsed.data.to ?? merge.recipient;
+  if (!recipient) return c.json({ error: "no_recipient" }, 422);
+
+  // Real booking merge data + the personal message (empty string when absent,
+  // so a {{personal_message}} token renders blank — never leaks).
+  const vars = { ...merge.vars, personal_message: parsed.data.personalMessage ?? "" };
+
+  // One active per use_case ⇒ this renders exactly the validated template
+  // (both bodies; merge values HTML-escaped in body_html — CR-002 invariant).
+  const rendered = await renderTemplate(c.env.DB, tmpl.use_case, vars);
+  if (!rendered) return c.json({ error: "not_booking_aware" }, 422);
+
+  const result = await send(db, c.env, {
+    messageType: "transactional",
+    recipient,
+    event: `booking-send:${bookingId}:${tmpl.id}`,
+    // Fresh key per explicit owner action — never idempotency-suppressed.
+    idempotencyKey: `booking-send:${bookingId}:${crypto.randomUUID()}`,
+    subject: rendered.subject,
+    textBody: rendered.textBody,
+    htmlBody: rendered.htmlBody ?? undefined,
+    templateId: rendered.templateId,
   });
   return c.json({ status: result.status, sentTo: recipient, messageId: result.message?.id ?? null });
 });

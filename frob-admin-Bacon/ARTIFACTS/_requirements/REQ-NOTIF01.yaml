@@ -7,9 +7,12 @@ Preconditions:
 
 Conditions:
   - each trigger produces one message per person per event, carrying an idempotency key
+  - the outbound transport is a deliverability-grade transactional provider authenticated for the sending domain (SPF and DKIM aligned)
+  - a send is accepted for any syntactically valid recipient address; recipient addresses are not required to be pre-verified or registered with the transport (no zone-verification precondition)
 
 Postconditions:
   - the message is handed to the delivery provider once and logged with its idempotency key
+  - a transport failure is recorded on the message record with its failure reason; failures are never silently dropped
 
 Outcomes:
   - Customer receives the confirmation or reminder for their booking
@@ -18,6 +21,9 @@ Outcomes:
 Invariants:
   - a transactional message is not gated by marketing consent
   - one event yields at most one message per person
+  - deliverability holds for arbitrary recipient addresses: a syntactically valid address is never rejected for lack of prior verification with the transport
+  - the multipart text plus HTML rendering of a message (REQ-NOTIF10 / CR-002) is preserved unchanged through the outbound transport
+  - test-sends (REQ-NOTIF10) travel through the same outbound transport as production sends
 
 NonFunctional:
   Reliability:
@@ -46,6 +52,6 @@ OpenQuestions:
     resolution: "Interim default: native direct integration, proof-of-concept validated, no orchestration-layer dependency locked in; revisit at a later stage (Decision Record, still-open item D-NOTIF-1, interim default confirmed)."
   - question: "Which delivery provider is canonical for transactional email?"
     status: RESOLVED
-    resolution: "Interim default: current provider remains canonical meanwhile; a longer-term consolidated solution is to be designed later (Decision Record, still-open item D-NOTIF-2, interim default confirmed)."
+    resolution: "CHG-008 (CT-3), sponsor direction 2026-07-28: reverses the earlier no-ESP technical decision (TDR-09). Outbound transactional email moves to a deliverability-grade transactional provider (Resend) behind the existing single send() seam, authenticated for the sending domain; inbound email routing remains on the current platform (Cloudflare). Supersedes the prior interim default under still-open item D-NOTIF-2."
 
 CopilotMode: STRICT
