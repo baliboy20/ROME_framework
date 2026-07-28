@@ -60,7 +60,7 @@ footer{padding:70px 40px 40px}
 footer .brand{margin-bottom:16px}
 footer p{font-size:14px;line-height:1.6;max-width:260px}
 /* Reveal (home uses a slightly longer travel/duration) */
-[data-reveal]{transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1)}
+[data-reveal]{transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.16,1,.3,1);transition-delay:var(--rd,0ms)}
 [data-reveal].in{transform:none}
 @media(max-width:900px){
   .grid3,.process .steps,.rgrid{grid-template-columns:1fr}
@@ -86,9 +86,9 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
   <div class="bg" id="heroBg"></div><div class="scrim"></div>
   <div class="inner">
     <p class="eyebrow" data-reveal style="color:rgba(246,244,238,.85)">Guided cycling tours · Barbican, London</p>
-    <h1 data-reveal>See London<br>Like a Local</h1>
-    <p class="lede" data-reveal>Intimate guided cycling tours from the Barbican — for those who want to discover the city, not just photograph it.</p>
-    <div class="btns" data-reveal>
+    <h1 data-reveal data-reveal-delay="90">See London<br>Like a Local</h1>
+    <p class="lede" data-reveal data-reveal-delay="200">Intimate guided cycling tours from the Barbican — for those who want to discover the city, not just photograph it.</p>
+    <div class="btns" data-reveal data-reveal-delay="320">
       <a class="solid" href="/en/book/">Book a Tour →</a>
       <a class="ghost" href="/en/tours/">Explore Our Tours</a>
     </div>
@@ -97,10 +97,10 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
 
 <section class="stats">
   <div class="row">
-    <div class="stat" data-reveal><div class="n" data-count="500" data-suffix="+">500+</div><div class="l">Cyclists Guided</div></div>
-    <div class="stat" data-reveal><div class="n" data-count="5" data-decimals="1">5.0</div><div class="l">Star Rated</div></div>
-    <div class="stat" data-reveal><div class="n" data-count="10">10</div><div class="l">Max Per Group</div></div>
-    <div class="stat" data-reveal><div class="n" data-count="90">90</div><div class="l">Min Experience</div></div>
+    <div class="stat" data-reveal data-reveal-delay="0"><div class="n" data-count="500" data-suffix="+">500+</div><div class="l">Cyclists Guided</div></div>
+    <div class="stat" data-reveal data-reveal-delay="80"><div class="n" data-count="5" data-decimals="1">5.0</div><div class="l">Star Rated</div></div>
+    <div class="stat" data-reveal data-reveal-delay="160"><div class="n" data-count="10">10</div><div class="l">Max Per Group</div></div>
+    <div class="stat" data-reveal data-reveal-delay="240"><div class="n" data-count="90">90</div><div class="l">Min Experience</div></div>
   </div>
   <div class="badges" data-reveal>
     <span>★ 5.0 TripAdvisor</span><span>★ 5.0 Google</span><span>Featured in Time Out London</span>
@@ -109,11 +109,11 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
 
 <section class="sec center">
   <p class="eyebrow" data-reveal>Our Routes</p>
-  <h2 data-reveal>Three Ways to Discover London</h2>
-  <p class="sub" data-reveal>Choose your adventure. Three carefully crafted routes, each revealing a different side of the city.</p>
+  <h2 data-reveal data-reveal-delay="80">Three Ways to Discover London</h2>
+  <p class="sub" data-reveal data-reveal-delay="160">Choose your adventure. Three carefully crafted routes, each revealing a different side of the city.</p>
   <div class="grid3">
-    <a class="tcard" href="/en/book/" data-reveal>
-      <div class="tcard-img"><img src="/en/img/img-tour-hidden-city-card.png" alt="The Hidden City"><span class="tcard-badge pop">Most Popular</span></div>
+    <a class="tcard" href="/en/book/" data-reveal data-reveal-cascade data-reveal-delay="0">
+      <div class="tcard-img"><img data-cascade data-reveal-clip data-kenburns src="/en/img/img-tour-hidden-city-card.png" alt="The Hidden City"><span class="tcard-badge pop">Most Popular</span></div>
       <div class="tcard-body">
         <div class="tcard-meta"><span>90 MIN</span><span class="s">/</span><span>MAX 10</span><span class="s">/</span><span>Easy</span></div>
         <h3 class="tcard-name">The Hidden City</h3>
@@ -123,8 +123,8 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
         <div class="tcard-foot"><div><span class="tcard-price">£45</span> <span class="tcard-pp">/ per person</span></div><span class="tcard-book">Book →</span></div>
       </div>
     </a>
-    <a class="tcard" href="/en/book/" data-reveal>
-      <div class="tcard-img"><img src="/en/img/img-tour-icons-insights-card.png" alt="Icons & Insights"><span class="tcard-badge">First Timers</span></div>
+    <a class="tcard" href="/en/book/" data-reveal data-reveal-cascade data-reveal-delay="140">
+      <div class="tcard-img"><img data-cascade data-reveal-clip data-kenburns src="/en/img/img-tour-icons-insights-card.png" alt="Icons & Insights"><span class="tcard-badge">First Timers</span></div>
       <div class="tcard-body">
         <div class="tcard-meta"><span>120 MIN</span><span class="s">/</span><span>MAX 10</span><span class="s">/</span><span>Moderate</span></div>
         <h3 class="tcard-name">Icons &amp; Insights</h3>
@@ -134,8 +134,8 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
         <div class="tcard-foot"><div><span class="tcard-price">£45</span> <span class="tcard-pp">/ per person</span></div><span class="tcard-book">Book →</span></div>
       </div>
     </a>
-    <a class="tcard" href="/en/book/" data-reveal>
-      <div class="tcard-img"><img src="/en/img/img-tour-golden-hour-card.png" alt="Golden Hour City"><span class="tcard-badge">Summer Only</span></div>
+    <a class="tcard" href="/en/book/" data-reveal data-reveal-cascade data-reveal-delay="280">
+      <div class="tcard-img"><img data-cascade data-reveal-clip data-kenburns src="/en/img/img-tour-golden-hour-card.png" alt="Golden Hour City"><span class="tcard-badge">Summer Only</span></div>
       <div class="tcard-body">
         <div class="tcard-meta"><span>150 MIN</span><span class="s">/</span><span>MAX 10</span><span class="s">/</span><span>Moderate</span></div>
         <h3 class="tcard-name">Golden Hour City</h3>
@@ -152,48 +152,48 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
 <section class="promise">
   <div class="in">
     <p class="eyebrow" data-reveal>Our Promise</p>
-    <h2 data-reveal style="font-family:var(--serif);font-weight:500;font-size:clamp(32px,4.5vw,52px);letter-spacing:-.02em;line-height:1.08;margin:16px auto 0;max-width:760px">The Friends on Bikes Difference</h2>
-    <p class="sub" data-reveal>We're not a franchise. We're two locals who live and work in the Barbican, and we've designed every route ourselves.</p>
+    <h2 data-reveal data-reveal-delay="80" style="font-family:var(--serif);font-weight:500;font-size:clamp(32px,4.5vw,52px);letter-spacing:-.02em;line-height:1.08;margin:16px auto 0;max-width:760px">The Friends on Bikes Difference</h2>
+    <p class="sub" data-reveal data-reveal-delay="160">We're not a franchise. We're two locals who live and work in the Barbican, and we've designed every route ourselves.</p>
     <div class="grid3 tiles">
-      <div class="tile" data-reveal><div class="badge">1</div><h3>Max 10 Guests</h3><p>Your guide knows your name and can answer every question. We will never take more than 10 riders on an open tour.</p></div>
-      <div class="tile" data-reveal><div class="badge">2</div><h3>Genuinely Local Routes</h3><p>We live in the Barbican. The City is our daily commute — we know every alley, hidden garden and shortcut the coach tours can't reach.</p></div>
-      <div class="tile" data-reveal><div class="badge">3</div><h3>Premium Bikes</h3><p>Quality hybrid bikes, maintained daily before every departure.</p></div>
-      <div class="tile" data-reveal><div class="badge">4</div><h3>Everything Included</h3><p>Bike, helmet, hi-vis vest and printed route map — all included. No hidden fees, ever.</p></div>
-      <div class="tile" data-reveal><div class="badge">5</div><h3>Flexible Cancellation</h3><p>Cancel more than 48 hours before your tour for a full refund. Secure payment by Stripe.</p></div>
-      <div class="tile" data-reveal><div class="badge">6</div><h3>All Abilities Welcome</h3><p>Flat, traffic-calmed routes with quality bikes maintained daily. Ages 12 and up.</p></div>
+      <div class="tile" data-reveal data-reveal-delay="0"><div class="badge">1</div><h3>Max 10 Guests</h3><p>Your guide knows your name and can answer every question. We will never take more than 10 riders on an open tour.</p></div>
+      <div class="tile" data-reveal data-reveal-delay="80"><div class="badge">2</div><h3>Genuinely Local Routes</h3><p>We live in the Barbican. The City is our daily commute — we know every alley, hidden garden and shortcut the coach tours can't reach.</p></div>
+      <div class="tile" data-reveal data-reveal-delay="160"><div class="badge">3</div><h3>Premium Bikes</h3><p>Quality hybrid bikes, maintained daily before every departure.</p></div>
+      <div class="tile" data-reveal data-reveal-delay="240"><div class="badge">4</div><h3>Everything Included</h3><p>Bike, helmet, hi-vis vest and printed route map — all included. No hidden fees, ever.</p></div>
+      <div class="tile" data-reveal data-reveal-delay="320"><div class="badge">5</div><h3>Flexible Cancellation</h3><p>Cancel more than 48 hours before your tour for a full refund. Secure payment by Stripe.</p></div>
+      <div class="tile" data-reveal data-reveal-delay="400"><div class="badge">6</div><h3>All Abilities Welcome</h3><p>Flat, traffic-calmed routes with quality bikes maintained daily. Ages 12 and up.</p></div>
     </div>
   </div>
 </section>
 
 <section class="sec center process">
   <p class="eyebrow" data-reveal>The Process</p>
-  <h2 data-reveal style="margin-bottom:0">Booking Takes Under Three Minutes</h2>
+  <h2 data-reveal data-reveal-delay="80" style="margin-bottom:0">Booking Takes Under Three Minutes</h2>
   <div class="steps">
     <div class="line" id="procLine"></div>
-    <div class="step" data-reveal><div class="dot">1</div><h3>Choose Your Tour</h3><p>Pick from three routes: a 90-minute hidden gem ride, a two-hour landmark tour, or a golden hour evening adventure.</p></div>
-    <div class="step" data-reveal><div class="dot">2</div><h3>Select Your Date</h3><p>Our live calendar shows real-time availability. See exactly which dates and times are open.</p></div>
-    <div class="step" data-reveal><div class="dot">3</div><h3>Pay Securely</h3><p>Card, Apple Pay or Google Pay — all secured by Stripe. Your booking reference arrives within 60 seconds.</p></div>
-    <div class="step" data-reveal><div class="dot">4</div><h3>Show Up &amp; Explore</h3><p>Meet us at the Barbican Centre, Silk Street, 10 minutes before your tour. We take care of the rest.</p></div>
+    <div class="step" data-reveal data-reveal-delay="0"><div class="dot">1</div><h3>Choose Your Tour</h3><p>Pick from three routes: a 90-minute hidden gem ride, a two-hour landmark tour, or a golden hour evening adventure.</p></div>
+    <div class="step" data-reveal data-reveal-delay="120"><div class="dot">2</div><h3>Select Your Date</h3><p>Our live calendar shows real-time availability. See exactly which dates and times are open.</p></div>
+    <div class="step" data-reveal data-reveal-delay="240"><div class="dot">3</div><h3>Pay Securely</h3><p>Card, Apple Pay or Google Pay — all secured by Stripe. Your booking reference arrives within 60 seconds.</p></div>
+    <div class="step" data-reveal data-reveal-delay="360"><div class="dot">4</div><h3>Show Up &amp; Explore</h3><p>Meet us at the Barbican Centre, Silk Street, 10 minutes before your tour. We take care of the rest.</p></div>
   </div>
 </section>
 
 <section class="reviews">
   <div class="in">
     <p class="eyebrow" data-reveal>Guest Reviews</p>
-    <h2 data-reveal>What Our Guests Say</h2>
-    <p class="sub" data-reveal>★ 5.0 — Based on reviews across TripAdvisor and Google</p>
+    <h2 data-reveal data-reveal-delay="80">What Our Guests Say</h2>
+    <p class="sub" data-reveal data-reveal-delay="160">★ 5.0 — Based on reviews across TripAdvisor and Google</p>
     <div class="rgrid">
-      <div class="rcard" data-reveal><div class="stars">★★★★★</div><blockquote>"The absolute highlight of our London trip. Our guide knew every hidden corner and the small group made it feel like a private tour."</blockquote><div class="who"><div class="ini">SM</div><div><div class="nm">Sarah M.</div><div class="mt">Boston · TripAdvisor</div></div></div></div>
-      <div class="rcard" data-reveal><div class="stars">★★★★★</div><blockquote>"We've done bike tours in eight different cities and this was by far the best. The routes avoid traffic and the stories bring everything to life."</blockquote><div class="who"><div class="ini">TE</div><div><div class="nm">Tom &amp; Ellie</div><div class="mt">Edinburgh · Google</div></div></div></div>
-      <div class="rcard" data-reveal><div class="stars">★★★★★</div><blockquote>"I've lived in London 20 years and still discovered places I'd never seen. A completely new perspective on the city I thought I knew."</blockquote><div class="who"><div class="ini">MK</div><div><div class="nm">Margaret K.</div><div class="mt">Melbourne · TripAdvisor</div></div></div></div>
+      <div class="rcard" data-reveal data-reveal-delay="0"><div class="stars">★★★★★</div><blockquote>"The absolute highlight of our London trip. Our guide knew every hidden corner and the small group made it feel like a private tour."</blockquote><div class="who"><div class="ini">SM</div><div><div class="nm">Sarah M.</div><div class="mt">Boston · TripAdvisor</div></div></div></div>
+      <div class="rcard" data-reveal data-reveal-delay="120"><div class="stars">★★★★★</div><blockquote>"We've done bike tours in eight different cities and this was by far the best. The routes avoid traffic and the stories bring everything to life."</blockquote><div class="who"><div class="ini">TE</div><div><div class="nm">Tom &amp; Ellie</div><div class="mt">Edinburgh · Google</div></div></div></div>
+      <div class="rcard" data-reveal data-reveal-delay="240"><div class="stars">★★★★★</div><blockquote>"I've lived in London 20 years and still discovered places I'd never seen. A completely new perspective on the city I thought I knew."</blockquote><div class="who"><div class="ini">MK</div><div><div class="nm">Margaret K.</div><div class="mt">Melbourne · TripAdvisor</div></div></div></div>
     </div>
   </div>
 </section>
 
 <section class="cta">
   <h2 data-reveal>Ready to See London Differently?</h2>
-  <p data-reveal>Join one of our small-group tours and discover the city from behind the handlebars.</p>
-  <a href="/en/book/" data-reveal>Book Your Tour →</a>
+  <p data-reveal data-reveal-delay="120">Join one of our small-group tours and discover the city from behind the handlebars.</p>
+  <a href="/en/book/" data-reveal data-reveal-delay="240">Book Your Tour →</a>
 </section>
 
 <footer>
@@ -256,34 +256,58 @@ footer p{font-size:14px;line-height:1.6;max-width:260px}
   }
 
   if(reduce){
-    els.forEach(function(e){e.classList.add('in');});
+    els.forEach(function(e){
+      e.classList.add('in');
+      [].slice.call(e.querySelectorAll('[data-cascade]')).forEach(function(c){c.classList.add('in');});
+    });
     if(line)line.classList.add('draw');
-  }else{
-    var io=new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(!en.isIntersecting)return;
-        en.target.classList.add('in');
-        var c=en.target.querySelector('[data-count]'); if(c)count(c);
-        io.unobserve(en.target);
-      });
-    },{threshold:.14});
-    els.forEach(function(e){io.observe(e);});
-    var lio=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){line.classList.add('draw');lio.unobserve(e.target);}});},{threshold:.4});
-    if(line)lio.observe(line);
+    return;
   }
 
-  // Nav bg + hero parallax on scroll
+  // Trigger geometry matches the source mock (London Bike Tours.dc.html):
+  // an element reveals once its top crosses 88% of the viewport height —
+  // a beat *before* it's fully in view, not after 14% of its own area is
+  // visible (IO-threshold reveals feel late/abrupt by comparison).
+  function reveal(el){
+    if(el._revealed)return; el._revealed=true;
+    var delay=parseInt(el.getAttribute('data-reveal-delay')||'0',10);
+    el.style.setProperty('--rd',delay+'ms');
+    requestAnimationFrame(function(){ el.classList.add('in'); });
+    var c=el.querySelector('[data-count]'); if(c)count(c);
+    if(el.hasAttribute('data-reveal-cascade')){
+      var kids=[].slice.call(el.querySelectorAll('[data-cascade]'));
+      kids.forEach(function(k,i){
+        setTimeout(function(){ k.classList.add('in'); }, delay+140+i*130);
+      });
+    }
+  }
+
+  function check(){
+    var vh=window.innerHeight||document.documentElement.clientHeight;
+    var trigger=vh*0.88;
+    els.forEach(function(el){
+      if(el._revealed)return;
+      if(el.getBoundingClientRect().top<trigger)reveal(el);
+    });
+    if(line&&!line._drawn&&line.getBoundingClientRect().top<trigger){
+      line._drawn=true;
+      requestAnimationFrame(function(){line.classList.add('draw');});
+    }
+    var y=window.scrollY||document.documentElement.scrollTop||0;
+    nav.classList.toggle('on',y>60);
+    if(heroBg)heroBg.style.transform='translateY('+(y*0.28)+'px)';
+  }
+
   var ticking=false;
   function onScroll(){
     if(ticking)return; ticking=true;
-    requestAnimationFrame(function(){
-      var y=window.scrollY||document.documentElement.scrollTop||0;
-      nav.classList.toggle('on',y>60);
-      if(heroBg&&!reduce)heroBg.style.transform='translateY('+(y*0.28)+'px)';
-      ticking=false;
-    });
+    requestAnimationFrame(function(){check();ticking=false;});
   }
-  window.addEventListener('scroll',onScroll,{passive:true}); onScroll();
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',onScroll,{passive:true});
+  check();
+  // Safety re-checks in case layout/fonts settle after first paint (matches source mock).
+  setTimeout(check,250); setTimeout(check,800);
 })();
 </script>
 <script src="/en/consent.js" defer></script>
