@@ -21,20 +21,9 @@
      window.Stripe(...), BOOK04, TDR-06). Must live on the HOST page since the
      island is mounted here, not served standalone. -->
 <script src="https://js.stripe.com/v3/"></script>
+<link rel="stylesheet" href="/en/site.css">
 <style>
-:root{
-  --cream:#f6f4ee; --cream-hi:#faf8f2; --cream-lo:#efece3; --card:#faf8f2;
-  --ink:#14130f; --ink-2:#1a1916; --body:#4a483f; --muted:#8a8778; --faint:#a8a495; --hairline:#dcd7c9; --green:#3f6b3f;
-  --serif:'Newsreader',Georgia,serif; --sans:'Instrument Sans','Helvetica Neue',Arial,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--cream);color:var(--ink-2);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(20,19,17,.82);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(246,244,238,.08)}
-nav.top img{height:52px;width:auto;display:block}
-.nlinks{display:flex;align-items:center;gap:40px}
-.nlinks a{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,238,.9)}
-.nlinks a:hover{color:#fff}
+/* Page-specific rules — shared tokens/components live in /en/site.css */
 /* Page frame */
 .book-head{padding:112px 48px 20px;max-width:1000px;margin:0 auto}
 .book-head .eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:13px;color:var(--green);margin-bottom:14px}
@@ -58,16 +47,17 @@ nav.top img{height:52px;width:auto;display:block}
 [data-hydrated="true"] .island-skeleton{display:none}
 @keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
 @media (prefers-reduced-motion:reduce){.island-skeleton .bar{animation:none}}
-footer{background:var(--ink);color:rgba(246,244,238,.6);padding:44px 40px 36px}
-footer .frow{max-width:1000px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:16px;font-size:13px}
-footer .brand{font-family:var(--serif);font-size:20px;color:#f6f4ee}
+footer{padding:44px 40px 36px}
+footer .frow{max-width:1000px;gap:16px;font-size:13px}
+footer .brand{font-size:20px}
 footer .secure{color:rgba(246,244,238,.5)}
 @media(max-width:700px){.nlinks{display:none}.island-wrap,.book-head{padding-left:24px;padding-right:24px}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="top">
+<nav class="top on">
   <a href="/en/"><img src="/en/img/logo.webp" alt="Friends on Bikes"></a>
   <div class="nlinks">
     <a href="/en/tours/">Our Tours</a>
@@ -77,7 +67,7 @@ footer .secure{color:rgba(246,244,238,.5)}
   </div>
 </nav>
 
-<header class="book-head">
+<header class="book-head" id="main">
   <p class="eyebrow">Secure booking</p>
   <h1>Book your tour</h1>
   <p>Select your date, add attendees and pay securely — all on this page, no redirects. Payments handled by Stripe.</p>

@@ -10,24 +10,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/en/site.css">
 <style>
-:root{
-  --cream:#f6f4ee; --cream-hi:#faf8f2; --card:#faf8f2;
-  --ink:#14130f; --ink-2:#1a1916; --body:#4a483f; --muted:#8a8778; --faint:#a8a495; --hairline:#dcd7c9;
-  --green:#3f6b3f;
-  --serif:'Newsreader',Georgia,serif; --sans:'Instrument Sans','Helvetica Neue',Arial,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--cream);color:var(--ink-2);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(20,19,17,.82);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(246,244,238,.08)}
-nav.top img{height:52px;width:auto;display:block}
-.nlinks{display:flex;align-items:center;gap:40px}
-.nlinks a{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,238,.9)}
-.nlinks a:hover{color:#fff}
-.lang{font-size:12px;letter-spacing:.12em;color:rgba(246,244,238,.5)}
-.lang a{color:rgba(246,244,238,.5)} .lang a.on{color:#f6f4ee}
-.booknow{padding:13px 26px;background:var(--green);color:#fff;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+/* Page-specific rules — shared tokens/components live in /en/site.css */
 /* Hero */
 .hero{position:relative;background:var(--ink-2);color:var(--cream);padding:210px 48px 84px;overflow:hidden}
 .hero .grain{position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,rgba(246,244,238,.03) 0,rgba(246,244,238,.03) 1px,transparent 1px,transparent 11px);pointer-events:none}
@@ -40,17 +25,8 @@ nav.top img{height:52px;width:auto;display:block}
 .body .grid{display:grid;grid-template-columns:1.3fr 1fr;gap:72px;align-items:start}
 form h2{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.01em;margin-bottom:28px}
 .frow2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:block}
-input,textarea,select{font-family:inherit;font-size:15px;color:var(--ink-2);background:var(--card);border:1px solid rgba(26,25,22,.16);border-radius:3px;padding:13px 15px;width:100%;outline:none;transition:border-color .2s ease,box-shadow .2s ease}
-input:focus,textarea:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 16%,transparent)}
-textarea{resize:vertical}
+input,textarea,select{background:var(--card)}
 .field-msg{margin-bottom:24px}
-button.send{padding:16px 36px;background:var(--green);color:#fff;border:none;font-family:inherit;font-size:14px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;transition:transform .25s ease,filter .25s ease}
-button.send:hover{transform:translateY(-2px);filter:brightness(1.08)}
-button.send[disabled]{opacity:.6;cursor:default;transform:none}
-.note{margin-top:18px;font-size:14px;line-height:1.5;opacity:0;transition:opacity .4s ease}
-.note.show{opacity:1}
-.note.ok{color:var(--green)} .note.err{color:#a8582f}
 .visit{background-color:#f4f1e8;background-image:repeating-linear-gradient(45deg,rgba(26,25,22,.022) 0,rgba(26,25,22,.022) 1px,transparent 1px,transparent 9px),radial-gradient(120% 90% at 20% 0%,rgba(255,255,255,.55) 0%,rgba(255,255,255,0) 55%);border:1px solid rgba(26,25,22,.08);border-radius:4px;padding:44px 40px}
 .visit h2{font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:-.01em;margin-bottom:26px}
 .visit .stack{display:flex;flex-direction:column;gap:24px}
@@ -59,19 +35,14 @@ button.send[disabled]{opacity:.6;cursor:default;transform:none}
 .visit a.v{color:var(--green);font-weight:600;display:inline-block}
 .visit .foot{padding-top:22px;border-top:1px solid rgba(26,25,22,.1);font-size:14px;line-height:1.6;color:#5a584f}
 .visit .foot strong{color:#2f2d27}
-/* Footer */
-footer{background:var(--ink);color:rgba(246,244,238,.6);padding:60px 40px 36px;margin-top:20px}
-footer .frow{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;font-size:14px}
-footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
-[data-reveal]{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.16,1,.3,1)}
-[data-reveal].in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){[data-reveal]{opacity:1!important;transform:none!important}}
-@media(max-width:900px){.body .grid{grid-template-columns:1fr;gap:40px}.frow2{grid-template-columns:1fr}.nlinks{display:none}}
+footer{margin-top:20px}
+@media(max-width:900px){.body .grid{grid-template-columns:1fr;gap:40px}.frow2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="top">
+<nav class="top on">
   <a href="/en/"><img src="/en/img/logo.webp" alt="Friends on Bikes"></a>
   <div class="nlinks">
     <a href="/en/tours/">Our Tours</a>
@@ -82,7 +53,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
   </div>
 </nav>
 
-<header class="hero">
+<header class="hero" id="main">
   <div class="grain"></div>
   <div class="inner">
     <p class="eyebrow" data-reveal>Get in Touch</p>

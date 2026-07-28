@@ -10,40 +10,17 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/en/site.css">
 <style>
-:root{
-  --cream:#f6f4ee; --cream-hi:#faf8f2; --card:#faf8f2;
-  --ink:#14130f; --ink-2:#1a1916; --body:#4a483f; --muted:#8a8778; --faint:#a8a495; --hairline:#dcd7c9; --green:#3f6b3f;
-  --serif:'Newsreader',Georgia,serif; --sans:'Instrument Sans','Helvetica Neue',Arial,sans-serif;
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--cream);color:var(--ink-2);font-family:var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-nav.top{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;justify-content:space-between;padding:18px 48px;background:rgba(20,19,17,.82);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(246,244,238,.08)}
-nav.top img{height:52px;width:auto;display:block}
-.nlinks{display:flex;align-items:center;gap:40px}
-.nlinks a{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:rgba(246,244,238,.9)}
-.nlinks a:hover{color:#fff}
-.booknow{padding:13px 26px;background:var(--green);color:#fff;font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+/* Page-specific rules — shared tokens/components live in /en/site.css */
 .head{padding:150px 48px 40px;max-width:1200px;margin:0 auto}
 .head .eyebrow{text-transform:uppercase;letter-spacing:.22em;font-size:13px;color:var(--green);margin-bottom:16px}
 .head h1{font-family:var(--serif);font-weight:500;font-size:clamp(34px,5vw,60px);line-height:1.04;letter-spacing:-.02em}
 .head p{font-size:17px;line-height:1.55;color:var(--body);max-width:560px;margin-top:16px}
 .routes{padding:24px 40px 40px;max-width:1200px;margin:0 auto}
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:44px}
-.tcard{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid rgba(26,25,22,.09);border-radius:4px;overflow:hidden;box-shadow:0 1px 2px rgba(26,25,22,.04);transition:transform .4s ease,box-shadow .4s ease}
-.tcard:hover{transform:translateY(-8px);box-shadow:0 22px 50px rgba(26,25,22,.14)}
-.tcard-img{position:relative;aspect-ratio:4/5;background:#e6e2d8;overflow:hidden}
-.tcard-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
-.tcard-body{padding:28px 28px 30px;display:flex;flex-direction:column;flex:1}
-.tcard-meta{display:flex;gap:13px;font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
-.tcard-meta .s{opacity:.35}
-.tcard-name{font-family:var(--serif);font-weight:500;font-size:31px;letter-spacing:-.015em;line-height:1.04;margin-bottom:14px}
-.tcard-desc{font-size:15px;line-height:1.6;color:var(--body);margin-bottom:24px}
-.tcard-foot{margin-top:auto;display:flex;align-items:baseline;justify-content:space-between;padding-top:20px;border-top:1px solid var(--hairline)}
-.tcard-price{font-family:var(--serif);font-size:33px;letter-spacing:-.01em}
-.tcard-pp{font-size:13px;letter-spacing:.04em;color:var(--muted)}
-.tcard-book{font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--green)}
+.tcard{position:relative}
+.tcard-desc{color:var(--body)}
 .remove{position:absolute;top:14px;right:14px;z-index:2;width:34px;height:34px;border-radius:50%;border:none;background:rgba(20,20,17,.55);color:#fff;font-size:16px;cursor:pointer;backdrop-filter:blur(6px);transition:background .2s ease}
 .remove:hover{background:rgba(20,20,17,.8)}
 .empty{max-width:560px;margin:20px auto 0;text-align:center;padding:70px 40px}
@@ -51,15 +28,14 @@ nav.top img{height:52px;width:auto;display:block}
 .empty h2{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.01em;margin-bottom:12px}
 .empty p{font-size:16px;line-height:1.6;color:var(--body);margin-bottom:28px}
 .empty a.cta{display:inline-block;padding:15px 34px;background:var(--green);color:#fff;font-weight:600;font-size:13px;letter-spacing:.12em;text-transform:uppercase}
-footer{background:var(--ink);color:rgba(246,244,238,.6);padding:60px 40px 36px;margin-top:70px}
-footer .frow{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;font-size:14px}
-footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
-@media(max-width:900px){.grid{grid-template-columns:1fr}.nlinks{display:none}}
+footer{margin-top:70px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 
-<nav class="top">
+<nav class="top on">
   <a href="/en/"><img src="/en/img/logo.webp" alt="Friends on Bikes"></a>
   <div class="nlinks">
     <a href="/en/tours/">Our Tours</a>
@@ -69,7 +45,7 @@ footer .brand{font-family:var(--serif);font-size:22px;color:#f6f4ee}
   </div>
 </nav>
 
-<header class="head">
+<header class="head" id="main">
   <p class="eyebrow">Your shortlist</p>
   <h1>Saved Tours</h1>
   <p>The routes you've bookmarked for later. Saved on this device — no account needed.</p>

@@ -3,203 +3,227 @@
 | | |
 |---|---|
 | **Document** | P3 Design System (Clara, dispatch clara-P3) |
-| **Status** | APPROVED baseline — **TWO brand tracks**, conforms to **TDR-15** with sponsor-directed deviation **DEV-1** (AIB-P3 redirect), extended to cover **both internal apps** (web-admin AND guide app), **Track B tokens now sourced from the sponsor's FINAL high-fidelity handoff** (supersedes the earlier mockup-approximated values) |
-| **Sources** | `core-design-system.md` (F-10, DR-11, DR-12), `Handover_AllModules_ClaudeDesign_Aristotle_2026-07-21.md` §1, `Handover_BackOffice_ClaudeDesign_Bacon_2026-07-21.md`, `Surface_Journey_Coverage.md`; **Track B token/component SOURCE OF TRUTH: `_user_input/design-handoff/README.md` (final tokens, screen inventory), `_user_input/design-handoff/components/README.md` (11-component library), `_user_input/design-handoff/FOB-UXIS.md` + `FOB-Guide-App-UXIS.md` (authoritative behavioural specs), `_user_input/design-handoff/screenshots/`**; earlier Track B layout corroboration from `_user_input/design-mockups/admin-system/` and `guide-system/` (`_ds` bundle + `scraps/` screens incl. `g4check.png`/`g4done.png`) remains valid as supplementary layout reference. |
-| **Binding TDRs** | **TDR-15** (design system = forest-palette tokens + Syne/DM Sans, self-hosted variable woff2; every customer surface renders from it; Flutter component library is to-build) — **still governs Track A in full; DEV-1 is a sponsor-directed, scoped deviation now covering web-admin AND mobile-guide, recorded here, not a repeal of TDR-15** · **TDR-13** (stack split: `webapp-customer` static HTML/CSS/JS + Flutter Web islands; `webapp-admin`/`webapp-editor` full Flutter Web SPA; `mobile-guide` Flutter iOS-native + Web PWA fallback) |
+| **Status** | APPROVED baseline — **TWO brand tracks**. Track A rewritten under sponsor-approved deviation **DEV-4** (2026-07-28): the **shipped customer-webapp look** (Newsreader/Instrument Sans, cream/ink/green) is now the Track A system of record, superseding TDR-15's forest/Syne-DM-Sans **for `webapp-customer`**; includes NEW approved accessibility defect fixes (§1/§5). Track B unchanged under **DEV-1** (internal apps, sponsor FINAL handoff tokens). `webapp-editor` track assignment: OPEN QUESTION (see DEV-4). |
+| **Sources** | `core-design-system.md` (F-10, DR-11, DR-12), `Handover_AllModules_ClaudeDesign_Aristotle_2026-07-21.md` §1, `Handover_BackOffice_ClaudeDesign_Bacon_2026-07-21.md`, `Surface_Journey_Coverage.md`; **Track A SOURCE OF TRUTH (per DEV-4): the shipped `SOURCE/apps/webapp-customer` pages themselves** — inline `<style>` blocks of `en/index.html`, `about.html`, `faq.html`, `contact.html`, `gift-vouchers.html`, `hub.html`, `saved.html`, `cancellation-policy.html`, `privacy-policy.html`, `terms-and-conditions.html`, `tours/index.html`, `tours/detail.html`, `book/index.html` (the stale forest-token `en/styles.css` is to be replaced by `en/site.css`, §7); **Track B token/component SOURCE OF TRUTH: `_user_input/design-handoff/README.md` (final tokens, screen inventory), `_user_input/design-handoff/components/README.md` (11-component library), `_user_input/design-handoff/FOB-UXIS.md` + `FOB-Guide-App-UXIS.md` (authoritative behavioural specs), `_user_input/design-handoff/screenshots/`**; earlier Track B layout corroboration from `_user_input/design-mockups/admin-system/` and `guide-system/` (`_ds` bundle + `scraps/` screens incl. `g4check.png`/`g4done.png`) remains valid as supplementary layout reference. |
+| **Binding TDRs** | **TDR-15** — **superseded for `webapp-customer` by DEV-4** (sponsor-approved 2026-07-28): the shipped Cream & Ink / Newsreader / Instrument Sans system (§1–§7) replaces the forest-palette + Syne/DM Sans mandate for the customer webapp; TDR-15's forest system has no remaining shipped consumer and survives only as the unresolved default for `webapp-editor` (OPEN QUESTION, see DEV-4); **DEV-1** remains a scoped deviation covering web-admin AND mobile-guide (Track B) · **TDR-13** (stack split: `webapp-customer` static HTML/CSS/JS + Flutter Web islands; `webapp-admin`/`webapp-editor` full Flutter Web SPA; `mobile-guide` Flutter iOS-native + Web PWA fallback) |
 
 ## DEV-1 — sponsor-directed deviation from TDR-15 (AIB-P3 redirect; extended)
 
-**Directive (as extended)**: **both internal apps** — web-admin (A-prefixed back-office surfaces, A1–A20) **and mobile-guide** (G-prefixed guide-app surfaces, G1–G13) — use the **sponsor-supplied mockup design system**, in its **Parchment (warm light)** theme, instead of the forest/Syne system otherwise mandated by TDR-15. Both mockups (`admin-system/`, `guide-system/`) ship the identical `_ds` token bundle. The mockup's dark-plum `.fob-console` theme is **explicitly OFF everywhere** — Parchment only, for both internal apps. Only the **customer webapp** (`webapp-customer`) and **editor** (`webapp-editor`) — the two customer/content-facing surfaces — **keep the original TDR-15 forest palette + Syne/DM Sans unchanged.**
+**Directive (as extended)**: **both internal apps** — web-admin (A-prefixed back-office surfaces, A1–A20) **and mobile-guide** (G-prefixed guide-app surfaces, G1–G13) — use the **sponsor-supplied mockup design system**, in its **Parchment (warm light)** theme, instead of the forest/Syne system otherwise mandated by TDR-15. Both mockups (`admin-system/`, `guide-system/`) ship the identical `_ds` token bundle. The mockup's dark-plum `.fob-console` theme is **explicitly OFF everywhere** — Parchment only, for both internal apps. Only the **customer webapp** (`webapp-customer`) and **editor** (`webapp-editor`) — the two customer/content-facing surfaces — were left on the original TDR-15 forest palette + Syne/DM Sans at the time of DEV-1. *(Historical: DEV-4, below, has since superseded that for `webapp-customer` and reopened the question for `webapp-editor`.)*
 
 **Two brand tracks in this document:**
 
 | Track | Apps | Palette | Type | Section |
 |---|---|---|---|---|
-| **A — Forest** | `webapp-customer` (W1–W21, P1–P2), `webapp-editor` | Forest (`--forest #5a9962`, `--charcoal #243320`) | Syne (display) / DM Sans (body) | §1–§7 below |
+| **A — Shipped Cream & Ink (DEV-4)** | `webapp-customer` (W1–W21, P1–P2); `webapp-editor` = OPEN QUESTION | Cream/ink/green (`--cream #f6f4ee`, `--ink #14130f`, `--green #3f6b3f`) | Newsreader (display serif) / Instrument Sans (body) | §1–§7 below |
 | **B — Internal Apps Parchment** | `webapp-admin` (A1–A20) **and** `mobile-guide` (G1–G13) | Parchment neutrals + pink/lime/cyan/orange status accents | Playfair Display (titles & money) / Plus Jakarta Sans (functional) / mono (ids/labels) | §8 below |
 
 `webapp-admin` is a **Flutter Web SPA** and `mobile-guide` is a **Flutter iOS-native + Web PWA** app (TDR-13; guide-app PWA emphasis reconfirmed by Roma as DEV-2/DEV-3) — neither runs the mockup's React runtime. The mockups' compiled React component bundles (`window.FOBDesignSystem.*`) are **layout/token reference only**, to be rebuilt as Flutter widgets consuming a ported Flutter `ThemeData`/token set shared by both internal apps (§8.6). Do not attempt to embed or reuse the React bundle or the guide mockup's `ios-frame.jsx` as code — it is a device-frame layout reference.
 
 **Guide app remains offline-first and safety-gated (TDR-16, DR-O1) — this deviation is visual/token-only.** The sequential sign-off flow, full-signature vs. typed-confirm distinction, sembast offline persistence, and no-photo-capture scope cuts are unchanged; only the theme (Parchment + Playfair/Plus Jakarta/mono in place of Forest + Syne/DM Sans) changes.
 
+## DEV-4 — sponsor-approved deviation from TDR-15 (CHG-015; shipped look ratified as system of record)
+
+**Directive (sponsor approved 2026-07-28)**: the customer website as shipped (`SOURCE/apps/webapp-customer` — `en/*.html`, `en/tours/*.html`, `en/book/index.html`) diverged from TDR-15's forest/Syne-DM-Sans system. Rather than remediate the pages, the sponsor has formally approved the **SHIPPED look as the Track A system of record**: **Newsreader** (display serif) + **Instrument Sans** (body) over the **cream/ink/green** palette (`--cream #f6f4ee`, `--ink #14130f`, `--green #3f6b3f`). This **supersedes TDR-15's forest palette + Syne/DM Sans for `webapp-customer` only**. §1–§7 of this document now document that shipped reality (plus explicitly-marked NEW accessibility defect fixes, also approved under DEV-4).
+
+- **Scope**: `webapp-customer` only. **Track B (§8, internal Parchment apps) is untouched** by DEV-4.
+- **`webapp-editor` — OPEN QUESTION for the sponsor**: the editor never shipped, so it never rendered from either system. TDR-15's forest/Syne remains its *nominal* assignment only by default (nothing in DEV-4 or Track B says otherwise), but with the forest system now retired from every shipped surface, keeping the editor as forest's sole consumer is almost certainly not intended. **Flagged, not decided** — sponsor to rule on whether `webapp-editor` adopts the DEV-4 Cream & Ink system.
+- **Flutter booking island — TO-MIGRATE**: `SOURCE/apps/webapp-customer/flutter/lib/theme/tokens.dart` and `lbt_tokens.dart` still carry the old forest tokens (`ForestTokens`, `#5a9962`/`#243320`). See §6.
+- **Stylesheet**: the stale forest-token `en/styles.css` will be **replaced by `en/site.css`** in the implementation step, per the §7 consolidation contract.
+- **Accessibility defect fixes ride with DEV-4**: shipped `--muted #8a8778` and `--faint #a8a495` fail WCAG AA for text and are replaced by `#6a675a` / `#716e60` (§1.1/§1.4); focus-visible, skip link, disabled/error states and full reduced-motion coverage are specified NEW in §5.
+- **Known shipped gap (flagged, not fixed here)**: ≤900px the nav links simply disappear (no hamburger/drawer shipped) — mobile nav needs a decision in a follow-up change.
+
 ## 0. Governing decisions (do not deviate)
 
 - **DR-11**: one set of shared brand **tokens**, not shared components. Each app (`webapp-customer`, `webapp-admin`, `mobile-guide`, `webapp-editor`) implements its own component layer on top of the same tokens. **DEV-1 note (extended)**: `webapp-admin` and `mobile-guide` now consume a *different* token set (Track B) than `webapp-customer`/`webapp-editor` (Track A) — DR-11's "own component layer per app" principle still holds; the token source now forks along a customer-vs-internal boundary, per sponsor directive, rather than a single admin-only carve-out.
-- **DR-12**: the Flutter component library is **to-build** (this document is its spec) — it does not exist yet in code. This now applies to **two** Flutter widget libraries: Track A (forest, shared by customer islands/editor) and Track B (parchment, shared by web-admin and guide app).
+- **DR-12**: the Flutter component library is **to-build** (this document is its spec) — it does not exist yet in code. This now applies to **two** Flutter widget libraries: Track A (Cream & Ink per DEV-4, for the customer booking island — currently TO-MIGRATE off forest tokens, §6 — and the editor if the sponsor so rules) and Track B (parchment, shared by web-admin and guide app).
 - **TDR-13**: rendering split per surface —
   - `webapp-customer` (W1–W21, P1–P2): vanilla static HTML/CSS/JS pages, per-locale dirs (`en/fr/es`), **plus Flutter Web island widgets** embedded into the static pages for anything stateful/transactional (booking, payment, consent forms, attendee forms, feedback). Simple content pages stay plain static HTML. Track A tokens.
   - `webapp-admin` (A1–A20): **full Flutter Web SPA**, PC/iMac only, fixed wide-screen, not responsive. **Track B (Parchment) tokens per DEV-1.**
-  - `webapp-editor`: full Flutter Web SPA. **Track A (Forest) tokens, unaffected by DEV-1.**
+  - `webapp-editor`: full Flutter Web SPA. **Track assignment OPEN QUESTION per DEV-4** (never shipped; nominally forest by TDR-15 default, but forest now has no shipped consumer — sponsor to decide).
   - `mobile-guide` (G1–G13): **Flutter iOS-native** (primary) + Flutter Web PWA (fallback), extension of the existing GMT app shell, offline-critical mid-tour. **Track B (Parchment) tokens per DEV-1 (extended) — visual theme only, offline/native behaviour unchanged.**
 - Canonical fixtures for any spec/mock: Tom (customer, `BK-1001`), Marie (prospect, `ENQ-2001`), Sarah (prospect, `SAVE-2001`), William (Owner — always "William" in copy, never "Owner"/"admin"), Emma (guide, `DEV-EMMA-01`), Hidden City tour (`TOUR-HID`, £45, 90 min), Departure `DEP-HID-2026-08-01-1000` (cap 10), Bike `FOB-001`, Helmet `HEL-014`, Feedback `FB-1001` (5★). Same fixtures reused across both tracks (Riverside Loop `TOUR-RVL` also appears in the admin mockup screens as a second tour example).
 
 ---
 
-# Track A — Forest brand (customer webapp, editor)
+# Track A — Shipped Customer Webapp System ("Cream & Ink", per DEV-4)
 
-## 1. Colour tokens (forest palette)
+**Scope**: `webapp-customer` (static pages `en/*.html`, `en/tours/*.html`, `en/book/index.html`, plus the Flutter booking island). **`webapp-editor` is NOT covered — its track assignment is an OPEN QUESTION for the sponsor (see DEV-4).** Everything in §1–§7 is extracted from the shipped pages' inline `<style>` blocks (the system of record per DEV-4), except items explicitly marked **NEW (DEV-4 defect fix)**, which are approved accessibility corrections that go *beyond* what shipped.
 
-### 1.1 Brand primitives
+## 1. Colour tokens (Cream & Ink palette) — SHIPPED, with two NEW replacements
 
-| Token | Hex | Usage |
-|---|---|---|
-| `--forest` | `#5a9962` | Primary brand colour — primary buttons, active nav, links, focus accents, badges (positive) |
-| `--charcoal` | `#243320` | Primary text colour, dark-mode surface base, headings on light backgrounds |
+### 1.1 Canonical `:root` token set
 
-### 1.2 Extended scale — **Clara-derived, PENDING sponsor ratification** (the two brand primitives `--forest #5a9962` / `--charcoal #243320` and Syne/DM Sans are sponsor-ratified per F-10/TDR-15; everything below is Clara's derivation to make those two primitives usable as a full UI palette — needed for states/elevation, not itself sponsor-specified. Unaffected by the Track B handoff, which only supplies FINAL tokens for the internal apps. Build alongside `--forest`/`--charcoal`, canonicalise in `styles.css` per D-DS-1, and flag for sponsor sign-off the same way Track B's motion tokens are flagged in §8.8.)
+This is the **superset** of the per-page `:root` blocks (some pages omit `--cream-hi`/`--cream-lo`; `en/site.css` will canonicalise the full set — see §7).
 
-| Token | Hex (approx.) | Usage |
-|---|---|---|
-| `--forest-50` | `#f0f7f1` | Subtle backgrounds (selected row, info panel) |
-| `--forest-100` | `#dbeadd` | Hover background on light surfaces |
-| `--forest-300` | `#8fc498` | Disabled-state fill, secondary borders |
-| `--forest-500` | `#5a9962` | = `--forest`, primary |
-| `--forest-700` | `#3f7347` | Primary hover/pressed |
-| `--forest-900` | `#243320` | = `--charcoal`, darkest text |
-| `--sand` | `#f7f5ef` | Page background (light) |
-| `--paper` | `#ffffff` | Card/surface background |
-| `--ink-muted` | `#5a6b57` | Secondary text, captions, meta |
-| `--border` | `#dde3da` | Hairline borders, dividers |
-
-### 1.3 Semantic tokens
-
-| Token | Hex | Usage | Example surfaces |
+| Token | Hex | Status | Usage |
 |---|---|---|---|
-| `--success` | `#2f8f4e` | Confirmed booking, sign-off complete, in-service | W9, G8, A14 |
-| `--warning` | `#c98a1c` | Weather watch, low capacity, flagged-not-critical | W16, A14, A17 |
-| `--error` | `#c0392b` | Declined payment, blocked action, out-of-service | W8, A15, A20 |
-| `--info` | `#2f6fa8` | Loading/in-flight, informational advisories | E5 weather, W5 capacity re-query |
-| `--focus-ring` | `#5a9962` @ 40% opacity, 2px outline offset 2px | Keyboard focus indicator on all interactive elements (WCAG 2.4.7) |
+| `--cream` | `#f6f4ee` | shipped | Page background; light text on dark surfaces (`#f6f4ee` literal) |
+| `--cream-hi` | `#faf8f2` | shipped | Raised light surface (= `--card`) |
+| `--cream-lo` | `#efece3` | shipped | Recessed band background (promise section, skeleton base) |
+| `--card` | `#faf8f2` | shipped | Card/panel/bookcard background |
+| `--ink` | `#14130f` | shipped | Footer background, darkest ink |
+| `--ink-2` | `#1a1916` | shipped | Default body text colour; dark section backgrounds (stats, reviews) |
+| `--body` | `#4a483f` | shipped | Long-form copy, answers, secondary paragraphs |
+| `--muted` | **`#6a675a`** | **NEW (DEV-4 defect fix)** — shipped value `#8a8778` fails AA (3.28:1 on `--cream`), replaced | Meta text, card meta rows, form labels, `/ per person` |
+| `--faint` | **`#716e60`** | **NEW (DEV-4 defect fix)** — shipped value `#a8a495` fails AA (2.27:1 on `--cream`), replaced | Overline labels (`.tcard-hll`, `.sec-label`) |
+| `--hairline` | `#dcd7c9` | shipped | Rules, card foot dividers, accordion borders (non-text UI only) |
+| `--green` | `#3f6b3f` | shipped | Brand accent: eyebrows, solid buttons, dots/badges, links, focus ring |
+| `--serif` | `'Newsreader',Georgia,serif` | shipped | Display serif |
+| `--sans` | `'Instrument Sans','Helvetica Neue',Arial,sans-serif` | shipped | Body sans |
 
-### 1.4 Contrast (WCAG AA)
+**NEW-token derivation (Clara, verified mathematically)**: the replacements darken the shipped warm olive-grey hue along the same axis rather than shifting to neutral grey — `--muted #6a675a` keeps the green-brown cast of `#8a8778`; `--faint #716e60` stays visibly lighter than `--muted` while clearing AA. Ratios in §1.4. The shipped values `#8a8778`/`#a8a495` may survive **only** as non-text UI (decorative rules, disabled-state fills ≥3:1 not required) — never for text.
 
-- Body text `--charcoal` (#243320) on `--sand`/`--paper`: contrast ratio ≈ 12.9:1 — passes AA and AAA.
-- `--forest` (#5a9962) on white as button fill with white text: text must be white (`#ffffff`) — ratio ≈ 3.1:1 for large/bold text only; **use `--forest-700` (#3f7347)** as the button fill for body-sized button labels to clear 4.5:1 for normal text (ratio ≈ 4.6:1). `--forest` itself is reserved for large text (≥18px/24px bold), icons, and non-text UI (borders, focus rings, badges ≥3:1 requirement).
-- Never place body text in `--forest-300` or lighter on white — falls below 3:1.
-- Error/warning/success text on `--paper`: verify each at implementation time against the AA 4.5:1 (normal text) / 3:1 (large text, UI components) thresholds; the hexes above were chosen to clear this on white/`--sand` backgrounds.
+### 1.2 Dark-surface and alpha conventions (shipped)
 
-## 2. Typography
+No separate token set exists for dark sections; the pages use consistent literal alphas — carry these into `site.css` as-is:
 
-**Display: Syne** (self-hosted variable woff2, `font-display: swap`) — headings, hero copy, nav wordmark, call-to-action button labels on marketing surfaces.
-**Body: DM Sans** (self-hosted variable woff2, `font-display: swap`) — all body copy, form labels/inputs, table content, back-office UI, guide-app UI.
+| Value | Usage |
+|---|---|
+| `rgba(20,19,17,.82)` + `backdrop-filter: blur(12px)` | Fixed nav background (scrolled/interior state) |
+| `rgba(246,244,238,.9)` / `.82` / `.7` / `.6` / `.55` / `.5` | Cream-alpha text ladder on dark surfaces (nav links, hero lede, stats labels, footer text) |
+| `rgba(246,244,238,.14)` / `.1` / `.08` | Cream-alpha hairlines on dark (stats divider, review card border, nav shadow line) |
+| `rgba(26,25,22,.16)` / `.09`–`.10` / `.07`–`.08` | Ink-alpha borders on light (inputs at .16; cards/panels/tiles at .07–.10) |
+| `rgba(20,20,17,.35→.78)` gradient | Hero image scrim |
+| `#f4f1e8` + `repeating-linear-gradient(45deg, rgba(26,25,22,.022) …)` | Textured tile/aside/helpcard background (grain motif) |
 
-### 2.1 Scale (rem, 16px base)
+**Rule**: cream-alpha text on dark below `.7` (i.e. `.6`, `.55`, `.5`) is confined to footer meta/legal-bar text at ≥13px — do not extend it to new body copy (`.6` on `--ink-2` ≈ 5.6:1 effective and shrinking with alpha; treat `.7` as the body-text floor on dark).
 
-| Token | Font | Size / Line-height | Weight | Usage |
+### 1.3 Semantic states — NEW (DEV-4 defect fix)
+
+The shipped pages carry no error/success tokens (forms were success-path only). Specify:
+
+| Token | Hex | Ratio on `--cream` | Usage |
+|---|---|---|---|
+| `--error` | `#a03325` | 7.0:1 | Field error border + inline error text |
+| `--success` | `#3f6b3f` (= `--green`) | 5.64:1 | Confirmation notices — always with a text label, never colour alone |
+
+### 1.4 Contrast (WCAG AA) — verified against `--cream #f6f4ee` (worst light surface is `--cream-lo #efece3`)
+
+| Foreground | On `--cream` | On `--card` | On `--cream-lo` | Verdict |
 |---|---|---|---|---|
-| `--text-display-1` | Syne | 3.0rem / 1.1 | 700 | Marketing hero (W11 homepage) |
-| `--text-h1` | Syne | 2.25rem / 1.2 | 700 | Page titles (W12 tour detail, A-screen headers) |
-| `--text-h2` | Syne | 1.75rem / 1.25 | 600 | Section headers |
-| `--text-h3` | Syne | 1.375rem / 1.3 | 600 | Card/panel titles, G-app step headers |
-| `--text-h4` | Syne | 1.125rem / 1.35 | 600 | Sub-panel titles, table group headers |
-| `--text-body-lg` | DM Sans | 1.125rem / 1.5 | 400 | Lead paragraphs, waiver text (W7) |
-| `--text-body` | DM Sans | 1rem / 1.5 | 400 | Default body, form inputs, table cells |
-| `--text-body-sm` | DM Sans | 0.875rem / 1.45 | 400 | Meta text, timestamps, helper text |
-| `--text-caption` | DM Sans | 0.75rem / 1.4 | 500 | Badges, labels, overlines |
-| `--text-button` | DM Sans | 1rem / 1 | 600 | Button labels (all apps) |
+| `--ink #14130f` | 16.9:1 | 17.5:1 | 15.7:1 | AAA |
+| `--ink-2 #1a1916` | 16.0:1 | 16.6:1 | 14.9:1 | AAA |
+| `--body #4a483f` | 8.3:1 | 8.6:1 | 7.8:1 | AAA |
+| **`--muted #6a675a` (NEW)** | **5.16:1** | 5.34:1 | 4.80:1 | **AA pass on all light surfaces** |
+| **`--faint #716e60` (NEW)** | **4.66:1** | 4.82:1 | 4.33:1 | **AA pass on `--cream`/`--card`; on `--cream-lo` use `--muted` instead (4.33 < 4.5)** |
+| `--green #3f6b3f` (text/eyebrows) | 5.64:1 | 5.84:1 | 5.25:1 | AA |
+| `#ffffff` on `--green` fill (buttons) | 6.2:1 | — | — | AA |
+| *(retired)* shipped `--muted #8a8778` | 3.28:1 | 3.40:1 | 3.06:1 | **FAIL — non-text use only** |
+| *(retired)* shipped `--faint #a8a495` | 2.27:1 | 2.35:1 | 2.11:1 | **FAIL — non-text use only** |
+| `--green` on `--ink-2` (dark surfaces) | — | — | — | 3.0:1 — icons/large text only; **not** the focus ring on dark (§5.2) |
 
-Minimum body text size on any surface: 16px (1rem).
+## 2. Typography — SHIPPED
 
-## 3. Spacing
+**Display serif: Newsreader** (weights 400/500, italic 400, optical sizing 6..72). **Body sans: Instrument Sans** (400/500/600). Loaded from **Google Fonts CDN** (`fonts.googleapis.com` + `preconnect`) as shipped — note this diverges from TDR-15's self-hosting convention; DEV-4 ratifies the *look*, and CDN loading is the shipped mechanism of record, but self-hosting the same two families remains an allowed future hardening step (visual no-op).
 
-Base unit **4px**. Scale: `--space-1 4px · --space-2 8px · --space-3 12px · --space-4 16px · --space-6 24px · --space-8 32px · --space-12 48px · --space-16 64px`.
+Display type is Newsreader **weight 500** with tight tracking (`-.01em` to `-.02em`) and tight leading (1.02–1.1). All-caps micro-labels (eyebrows, nav links, buttons, meta) are Instrument Sans with wide tracking (`.1em`–`.22em`).
 
-- Form field vertical rhythm: `--space-4` between fields, `--space-6` between form sections.
-- Customer-webapp touch target: **min 44×44px** hard floor (mobile touch).
-- Card padding: `--space-6` desktop, `--space-4` mobile.
+### 2.1 Type scale (rem, 16px base) — **Clara-derived from the shipped `clamp()`/px values**, not a shipped token set
 
-> **Note (DEV-1, extended)**: guide-app (G1–G13) spacing/touch-target/outdoor-legibility requirements (44×44px hard floor, ≥16px minimum text, gloved-use tolerance) still apply as **usage constraints** on the guide app regardless of its now-Parchment visual theme — see §8.3/§8.7. They are no longer specified with Track A's forest tokens because the guide app no longer renders from Track A.
+The pages use raw `clamp()`s that vary a few px page-to-page (hero h1 max ranges 66–88px). This ladder normalises them; `site.css` should expose these as tokens and pages adopt the nearest step.
 
-## 4. Radius & elevation
+| Token | Font / weight | Size | Shipped basis |
+|---|---|---|---|
+| `--text-display-1` | Newsreader 500 | `clamp(2.75rem, 6.5vw, 5.5rem)` / 1.02 | Home hero `clamp(44px,6.5vw,88px)` |
+| `--text-display-2` | Newsreader 500 | `clamp(2.5rem, 6vw, 4.875rem)` / 1.02 | Interior heroes `clamp(38–42px,5.5–6.5vw,66–82px)` |
+| `--text-h1` | Newsreader 500 | `clamp(2rem, 4.5vw, 3.25rem)` / 1.06 | Section heads / page titles `clamp(32px,4.5vw,52px)`, CTA `clamp(34px,5vw,58–60px)` |
+| `--text-h2` | Newsreader 500 | `clamp(1.875rem, 4vw, 2.875rem)` / 1.08 | Secondary sections `clamp(30px,4vw,46px)` |
+| `--text-h3` | Newsreader 500 | `clamp(1.5rem, 3vw, 2.125rem)` / 1.15 | FAQ category heads `clamp(24px,3vw,34px)` |
+| `--text-card-title` | Newsreader 500 | `1.9375rem` (31px) / 1.04 | `.tcard-name` 31px; price `2.0625rem` (33px) |
+| `--text-tile-title` | Newsreader 500 | `1.4375rem` (23px) / 1.2 | `.tile h3` 23px, footer brand 22px |
+| `--text-stat` | Newsreader 400 | `clamp(2.375rem, 5vw, 3.75rem)` / 1 | Stats numerals `clamp(38px,5vw,60px)` |
+| `--text-lede` | Instrument Sans 400 | `clamp(1.0625rem, 2vw, 1.3125rem)` / 1.5 | Hero ledes `clamp(16–17px,2vw,20–21px)` |
+| `--text-body-lg` | Instrument Sans 400 | `1.125rem` (18px) / 1.5 | `.sec .sub` |
+| `--text-body` | Instrument Sans 400 | `0.9375rem`–`1rem` (15–16px) / 1.55–1.75 | Card desc 15px, answers 15.5px, book-head p 16px |
+| `--text-meta` | Instrument Sans 400–600 | `0.8125rem` (13px) / caps, `.13–.16em` tracking | Eyebrows, nav links, stats labels, `.tcard-pp` |
+| `--text-micro` | Instrument Sans 600 | `0.6875rem`–`0.75rem` (11–12px) / caps, `.14–.2em` tracking | Card badges, overlines, buttons (`.booknow` 12px), labels |
 
-| Token | Value | Usage |
+**Floors**: body copy never below 15px; all-caps micro-labels never below 11px, and at 11–12px always weight 500+ with letter-spacing (as shipped).
+
+## 3. Spacing, radius, elevation — SHIPPED conventions (no formal token scale shipped; Clara-codified)
+
+**Spacing**: page gutter `48px` (nav, heroes) / `40px` (sections), collapsing to `24px` under 700px. Section vertical padding `110px` (`.sec`), dark bands `56px`–`120px`. Card padding `28px`–`46px`; grid gaps `24`–`44px`; small gaps run 6/10/14/16/20/24. Content max-widths: `1200px` (sections), `1100px` (stats), `1000px` (book), `900px` (FAQ/legal prose), `760px` (headline measure), `560px` (lede measure).
+
+**Radius — deliberately sharp**: buttons and CTAs are **square (0)**; inputs `3px`; tour cards/tiles `4px`; panels/tiers/asides `6px`; large panels/island `8px`; review cards `18px` (dark-surface exception); circles `50%` (step dots, initials, remove buttons). Do not import a softer radius scale — the squared button is a brand signature.
+
+**Elevation**:
+
+| Level | Shadow | Usage |
 |---|---|---|
-| `--radius-sm` | 4px | Inputs, badges, small buttons |
-| `--radius-md` | 8px | Cards, modals, panels |
-| `--radius-lg` | 16px | Hero panels, bottom sheets (mobile) |
-| `--radius-full` | 999px | Pills, avatar, status dots |
+| Rest | `0 1px 2px rgba(26,25,22,.04)` (+1px ink-alpha border) | Cards, panels, tiers |
+| Tile hover | `0 14px 30px rgba(26,25,22,.09)` + `translateY(-4px)` | `.tile` |
+| Card hover | `0 22px 50px rgba(26,25,22,.14)` + `translateY(-8px)` | `.tcard` lift |
+| Selected | `0 20px 44px rgba(63,107,63,.16)` + `--green` border | `.tier.sel` (gift vouchers) |
 
-| Elevation | Shadow | Usage |
-|---|---|---|
-| `--elev-0` | none | Flat page background |
-| `--elev-1` | `0 1px 2px rgba(36,51,32,.08)` | Cards at rest |
-| `--elev-2` | `0 2px 8px rgba(36,51,32,.10)` | Hover cards, dropdowns |
-| `--elev-3` | `0 8px 24px rgba(36,51,32,.14)` | Modals, popovers |
-| `--elev-4` | `0 16px 40px rgba(36,51,32,.18)` | Toasts/alert overlays (A4 owner alert inbox) |
+**Motion (shipped)**: reveal-on-scroll `[data-reveal]` (opacity + 22–40px translateY, `.7–.8s cubic-bezier(.16,1,.3,1)`), hero parallax (`translateY(scrollY*0.28)`), nav `.4s` background/shadow transition, card hover `.35–.45s ease`, process line draw `1.1s`, skeleton shimmer `1.3s`. All gated by reduced-motion — §5.5.
 
-## 5. Component inventory (Track A — Forest)
+## 4. Component inventory — AS SHIPPED
 
-Legend: **[Static]** = plain HTML/CSS (webapp-customer non-interactive pages) · **[Island]** = Flutter Web island embedded in a static page (webapp-customer interactive) · **[SPA]** = full Flutter Web SPA (webapp-editor). Per TDR-13, the *tokens* below are shared across Track A apps; each rendering target implements its own widget/CSS for the same look. **`webapp-admin` (A-screens) and `mobile-guide` (G-screens) are NOT part of Track A as of DEV-1 (extended) — see §8 for the shared Parchment component inventory.**
+Legend: **[Static]** plain HTML/CSS/JS · **[Island]** Flutter Web island (book flow, W4–W10).
 
-### 5.1 Buttons
-- **Primary** — `--forest-700` fill, white `--text-button` label, `--radius-sm`, min 44×44px. States: default / hover (`--forest-900` fill) / pressed / disabled (`--forest-300` fill, `--ink-muted` text, no pointer) / loading (spinner replaces label, button stays same width) / focus (`--focus-ring`).
-- **Secondary** — transparent fill, `--forest-700` 1.5px border + text. Same state set.
-- **Destructive** — `--error` fill/border (cancel booking W10).
-- **Text/link button** — no fill/border, `--forest-700` text, underline on hover.
-- Used on: [Island] W5–W10 CTAs, W13, W14, W15, W19, W21 · [Static] W11/W12 "Book now"/"Enquire" links (styled as buttons, plain anchor under the hood).
+- **4.1 Fixed nav (`nav.top`)** — fixed full-width bar, logo img (52px), uppercase 13px links (cream-alpha `.9`), language switch (`EN | FR | ES`, active `.on` full cream), square `--green` "Book Now" (`.booknow`, 12px/600/caps). Two states: transparent over the home hero, and dark **`.on`** state (`rgba(20,19,17,.82)` + blur + hairline shadow) toggled at `scrollY > 60`; interior pages ship the dark state permanently. Mobile ≤900px: `.nlinks` hidden (shipped has **no** drawer — gap flagged, see DEV-4 open questions).
+- **4.2 Footer** — `--ink` background, cream-alpha `.6` text; full variant: 4-column grid (`2fr 1fr 1fr 1fr`: brand serif 22px + address, Explore/Company/Legal link columns) + legal bar over cream-alpha `.1` hairline; compact variant (`.frow`, book/legal pages): single row brand + secure-payments line.
+- **4.3 Eyebrow (`.eyebrow`)** — uppercase 13px, `.22em` tracking, `--green` (cream-alpha `.85` over hero imagery). Opens every section/page head.
+- **4.4 Buttons** — all square, uppercase or near-caps, Instrument Sans 600:
+  - **Solid** (`.solid`, `.booknow`, `button.go`, `button.send`, `.helpcard a`) — `--green` fill, `#fff` text, padding ~13–18px × 26–42px. Hover: `translateY(-2px)` + `filter:brightness(1.08)`.
+  - **Ghost** (`.ghost`) — transparent, `1px solid rgba(246,244,238,.5)` + cream text (dark/hero surfaces); hover cream-alpha `.12` fill.
+  - **Inverse** (`.cta a`) — `#fff` fill, `--ink-2` text, on the green CTA band.
+  - **Text link** (`.tcard-book`, `.routes-note a`) — `--green`, 600, caps 12px, arrow glyph.
+  - **Disabled** (shipped: `button.send[disabled]` `opacity:.6`) — **superseded by §5.4's NEW spec**.
+- **4.5 Section head (`.sec`)** — eyebrow → serif `h2` (`--text-h1`, max-width 760px) → `.sub` 18px `--body`-range subhead (max-width 660px); `.center` variant.
+- **4.6 Tour card (`.tcard`)** — anchor-wrapped column card: 4/5 image with glass badge (`rgba(20,20,17,.4)` + blur; `.pop` = `--green`), meta row (caps 12px `--muted`, `/` separators), serif name 31px, desc 15px, highlights overline (`--faint`) + list, hairline-topped foot with serif price 33px + `--green` book link. Hover: `-8px` lift + deep shadow.
+- **4.7 Textured tile (`.tile`, `.aside`, `.helpcard`, `.byus`, `.visit`)** — `#f4f1e8` grain-gradient surface, numbered `--green` serif badge square (46px), serif h3 23px, 15px body.
+- **4.8 Stats band (`.stats`)** — `--ink-2` background, 4-up grid of serif `--green` numerals (count-up on reveal) over caps labels (cream-alpha `.7`); badges row above a cream-alpha `.14` hairline.
+- **4.9 Accordion (FAQ `details`/`summary`)** — native `details`, hairline-separated rows, 17px/500 summary with `--green` `+`/`–` glyph (rotating), answer 15.5px/1.7 `--body`. Category = serif h3 + hairline rule.
+- **4.10 Forms** (contact, hub lookup, gift vouchers) — label: caps 12px `--muted` (NEW value); input/select/textarea: 15px `--ink-2` on `#fff` or `--card`, `1px solid rgba(26,25,22,.16)`, radius 3px, padding 13×15px; focus: `--green` border + `0 0 0 3px color-mix(in srgb, var(--green) 16%, transparent)` ring; submit = solid button. Error/disabled states: **NEW, §5.4**.
+- **4.11 Process steps (`.step`)** — 54px `--green` circle serif numerals, animated `--green` connector line, serif h3 21px.
+- **4.12 Review card (`.rcard`)** — dark-surface card (cream-alpha `.05` fill, `.1` border, radius 18px), `--green` stars, serif 20px blockquote, initials disc.
+- **4.13 CTA band (`.cta`)** — full-bleed `--green`, serif white headline, inverse button.
+- **4.14 Booking island frame (`#booking-island`)** — `--card` panel, radius 8px, viewport-tall; skeleton shimmer bars (`#efece3→#f4f1e8`) until hydration; `noscript` fallback with phone number. Flutter island mounts inside (see §6).
+- **4.15 Saved/hub patterns** — empty-state disc (`#efece3` 64px circle + message), remove button (34px dark glass circle), sticky `.bookcard` panel, `.tier` selectable cards (hover lift; `.sel` `--green` border + green-tinted shadow).
 
-### 5.2 Forms — inputs, selects, checkboxes, radios, date/slot pickers
-- **Text input** — `--paper` fill, `--border` 1px, `--radius-sm`, `--space-3` padding. States: default / focus (`--focus-ring` + `--forest-700` border) / error (`--error` border + inline message below in `--text-body-sm`/`--error`) / disabled (`--forest-100` fill) / filled.
-- **Checkbox** — 20×20px, `--radius-sm`. **Marketing/consent checkboxes must render unticked by default everywhere** (W4, W7, W14, W15, W3) — this is a hard invariant, not a style preference.
-- **Radio group** — used for remediation choices (W19: refund/rebook/credit).
-- **Date picker** (W5 tour selection, W13 availability) — [Island]. Calendar grid, 90-day horizon, sold-out dates greyed + non-interactive, selected date `--forest` fill. Live capacity label per date/slot ("10:00 — 4 spaces left"), re-queries on every field change (loading: skeleton shimmer on the slot list, not the whole page).
-- **Slot/time picker** — pill list under the selected date, same greyed/disabled treatment for full slots.
-- **Party-size stepper** — numeric stepper, hard cap at 10 (Global convention), blocks input above cap with inline error rather than allowing then rejecting.
+## 5. Accessibility (WCAG 2.1 AA) — Track A. Items 5.1–5.5 are **NEW (DEV-4 defect fixes)** unless marked shipped
 
-> **Note (DEV-1, extended)**: signature-capture and typed-confirm form components (formerly specified here for G3–G6) now live in **§8.5 (Track B)**, rebuilt in Parchment tokens — see also the guide mockup's `g4check.png` full-signature declaration pattern.
+- **5.1 Text contrast** — governed by §1.4: `--muted`/`--faint` replaced (shipped values fail AA); on `--cream-lo` use `--muted`, not `--faint`. Cream-alpha-on-dark floor `.7` for body text. Never colour-only status.
+- **5.2 `:focus-visible` (NEW)** — global rule in `site.css`:
+  - Light surfaces: `:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }` — `--green` vs `--cream` 5.64:1, comfortably over the 3:1 non-text minimum.
+  - Dark surfaces (nav, stats, reviews, footer, hero): `--green` on `--ink-2` is only 3.0:1 — too marginal for a ring. Scope `nav.top :focus-visible, .stats :focus-visible, .reviews :focus-visible, footer :focus-visible, .hero :focus-visible { outline-color: var(--cream); }` (16:1 on ink). Green CTA band: `outline-color:#fff` (6.2:1).
+  - Never `outline:none` without this replacement; shipped `input{outline:none}` must gain the box-shadow focus ring **and** keep `:focus-visible` outline for high-contrast modes.
+- **5.3 Skip link (NEW)** — first DOM element on every page: `<a class="skip" href="#main">Skip to content</a>`; visually hidden off-canvas until focused; on focus: fixed top-left, `--ink-2` background, `--cream` text, 14px/600, padding 12×20px, square, `z-index` above nav. Every page gains `id="main"` on its first content landmark.
+- **5.4 Disabled + error/validation states (NEW)** —
+  - **Buttons disabled**: `--cream-lo` fill, `--muted` text (4.8:1 on `--cream-lo`), no shadow/transform, `cursor:not-allowed`, `aria-disabled` where the control stays focusable. Replaces shipped `opacity:.6`.
+  - **Inputs disabled**: `--cream-lo` fill, `--muted` text, `rgba(26,25,22,.09)` border.
+  - **Input error**: `1.5px solid --error #a03325` border + `0 0 0 3px color-mix(in srgb, var(--error) 14%, transparent)` on focus; inline message below in 13px `--error` (7.0:1), `aria-invalid="true"` + `aria-describedby` to the message. Never colour-only — message text always present.
+- **5.5 `prefers-reduced-motion` (partially shipped; NEW = complete coverage)** — shipped pages already gate `[data-reveal]`, hero parallax and skeleton shimmer. `site.css` must extend the rule to **all** motion: `@media (prefers-reduced-motion: reduce){ .tcard, .tile, .tier, button, a { transition: none; } .tcard:hover, .tile:hover, .tier:hover, button:hover { transform: none; } nav.top { transition: none; } .process .line { transition: none; } }` plus the shipped reveal/parallax/shimmer guards. Hover feedback under reduced motion = shadow/brightness change only, no translate.
+- **Shipped/carried-forward**: correct `lang` per locale dir; native `details` accordion is keyboard-operable for free; island `noscript` fallback with phone number; touch targets ≥44px on interactive elements (nav "Book Now" 13px×26px padding + text clears it; audit small text links at implementation).
 
-### 5.3 Cards
-- **Standard card** — `--paper`, `--elev-1`, `--radius-md`, `--space-6` padding. Tour catalogue tiles (W11).
-- **Status card** — card + top-edge colour bar (success/warning/error) — tour hub status (W16: Confirmed/Change pending/Weather watch/Cancelled).
-- **Summary card** — booking review (W7), confirmation (W9): label/value rows, `--border` divider between sections.
+## 6. Flutter booking island — TO-MIGRATE
 
-### 5.4 Navigation
-- **[Static/Island] Customer webapp top nav** — logo (Syne wordmark), tour catalogue, saved tours, manage-booking entry point. Mobile: hamburger → drawer.
-- **[SPA] Editor side nav** — fixed left rail, wide-screen only, content-authoring sections. Active item `--forest-50` background + `--forest-700` left border accent.
+`SOURCE/apps/webapp-customer/flutter/lib/theme/tokens.dart` (`ForestTokens`) and `lbt_tokens.dart` still carry the **old forest palette** (`#5a9962`/`#243320`, Syne/DM Sans-era scale) superseded by DEV-4. **Status: TO-MIGRATE** — port the §1 Cream & Ink token set (including the NEW `--muted`/`--faint`/`--error` values), Newsreader/Instrument Sans, and §3's radius/shadow conventions into the island theme so the embedded booking flow (W4–W10) matches its host page. Until migrated, the island is a known visual mismatch inside `#booking-island`.
 
-### 5.5 Tables
-- **[SPA] Dense data table** (editor content lists) — `--text-body-sm`, rely on `--border` hairlines, sortable column headers, sticky header on scroll. Row min-height 44px. Flagged rows get a `--warning` left-edge bar, never hidden.
-- Empty state: centered icon + message + primary action where applicable.
+## 7. `site.css` consolidation contract (normative for the implementer)
 
-### 5.6 Badges / status pills
-- `--radius-full`, `--text-caption`, colour-coded by semantic token: Confirmed (`--success`), Change pending / Weather watch (`--warning`), Cancelled (`--error`), In-service (`--success`), Flagged (`--warning`), Out-of-service/Retired (`--error`).
+The shipped per-page inline `<style>` blocks and the stale forest-token `en/styles.css` are replaced by **one shared `en/site.css`** (old `styles.css` deleted). Split:
 
-### 5.7 Modals / dialogs
-- `--elev-3`, `--radius-md`, max-width 560px.
+**Belongs in `site.css` (shared, single source):**
+1. `:root` tokens — §1.1 superset (with NEW `--muted`/`--faint`/`--error`) + §1.2 alpha conventions as comments/vars.
+2. Reset (`*{box-sizing:border-box;margin:0;padding:0}`, `body` base, `a` base).
+3. Type-scale tokens + heading/eyebrow classes (§2.1).
+4. Focus-visible rules, skip link, disabled/error states, full reduced-motion block (§5.2–5.5).
+5. `nav.top` (both states) — pages keep only the `.on` toggle script or a static `on` class.
+6. `footer` (full + compact variants).
+7. Buttons: `.solid`, `.ghost`, `.booknow`, `button.go`/`.send` unified as `.btn`/`.btn-ghost`/`.btn-inverse` (+ states).
+8. `.eyebrow`, `.sec`/section-head pattern, `.sub`.
+9. `.tcard` (full card spec), `.tile` textured surface.
+10. Form primitives: `label`, `input`/`select`/`textarea` + focus/error/disabled.
 
-### 5.8 Alerts / toasts / inline banners
-- **Inline banner** — full-width, semantic colour background at 10% tint + matching border, icon + message.
-- **Toast** — `--elev-4`, top-right (SPA)/top (Native), auto-dismiss 5s except errors (manual dismiss).
+**Stays page-inline (page-specific):**
+- Hero variants (home parallax hero, interior grain heroes), scrims, per-page hero `clamp()` overrides.
+- Page layouts: stats band, process steps, reviews grid, CTA band, FAQ accordion, gift-voucher tiers, saved/hub panels, booking island frame/skeleton, contact/legal layouts.
+- Page-scoped scripts (reveal, count-up, parallax) — unchanged, but honouring the shared reduced-motion block.
 
-### 5.9 Progress / loading
-- **Skeleton shimmer** — content-shaped placeholder blocks, `--forest-50` base with shimmer sweep. Used wherever "loading" is documented in `Surface_Journey_Coverage.md` (W5 capacity re-query, W11 catalogue on slow connection).
-- **Spinner** — inline in buttons during submit (W8 payment in progress — stays on-page, no redirect).
-
-> **Note (DEV-1, extended)**: the A20 two-panel bike-allocation pattern, dense back-office data tables, status-pill sets, guide-app step nav/progress bar, and signature/typed-confirm components previously specified here for A-screens and G-screens now live in **§8 (Track B — Internal Apps Parchment)**, since `webapp-admin` and `mobile-guide` no longer render from Track A tokens.
-
-## 6. Accessibility (WCAG 2.1 AA) — Track A
-
-- **Contrast**: all body text combinations verified §1.4; never rely on colour alone for status (badges always carry a text label, not just colour — e.g. "Confirmed" text + green, not a bare green dot).
-- **Focus**: every interactive element has a visible `--focus-ring` (2px, `--forest` @40%, 2px offset); focus order follows visual/DOM order; no `outline: none` without a replacement.
-- **Touch targets**: minimum 44×44px on every customer-webapp interactive element (editor SPA may use denser desktop-pointer targets ≥32px given it's PC/iMac-only, but table row actions still resolve to ≥44px clickable hit area via padding).
-- **ARIA**:
-  - Form errors: `aria-invalid="true"` + `aria-describedby` pointing at the inline error message.
-  - Live-updating regions (capacity counters W5): `aria-live="polite"`.
-  - Modal dialogs: `role="dialog"`, `aria-modal="true"`, focus trapped, `Esc` closes, focus returns to trigger element.
-  - Status badges: text content is the accessible name, not decorative-only colour.
-- **Language**: static public-site pages (P1, P2, most of W11–W12) render with correct `lang` attribute per locale dir (en/fr/es).
-- **Reduced motion**: shimmer/skeleton and toast animations respect `prefers-reduced-motion: reduce` (cross-fade or instant swap instead).
-- **No-script baseline**: P1/P2 and simple static content pages must be fully readable/navigable with JS disabled — Flutter islands degrade to a "content unavailable without JavaScript, please..." notice rather than a blank void, on the *interactive* portions only.
-
-## 7. Where components live (per TDR-13, informative — not a P5 implementation spec)
-
-| App | Rendering | Screens | Component tech | Brand track |
-|---|---|---|---|---|
-| `webapp-customer` | Static HTML/CSS/JS + Flutter Web islands | W1–W3, W11, W12, W20, P1, P2 = static; W4–W10, W13–W15, W17–W19, W21 = islands | Static: plain CSS using the tokens in this doc. Islands: Flutter Web widgets (to-build, DR-12) consuming the same tokens via a shared theme. | **A — Forest** |
-| `webapp-admin` | Full Flutter Web SPA | A1–A20 | Flutter widget library (to-build) ported from the sponsor-supplied Parchment mockup tokens; wide-screen fixed layout, no responsive breakpoints needed. | **B — Internal Apps Parchment (DEV-1)** |
-| `webapp-editor` | Full Flutter Web SPA | (editor/content surfaces, unaffected by DEV-1) | Flutter widget library (to-build), wide-screen fixed layout. | **A — Forest** |
-| `mobile-guide` | Flutter iOS-native + Web PWA fallback | G1–G13 | Flutter widget library (to-build) ported from the same sponsor-supplied Parchment mockup tokens as `webapp-admin`; offline-first (works with `flutter_map`/CyclOSM/FMTC/sembast per TDR-16), PWA emphasis per DEV-2/DEV-3. Visual theme only — offline/sign-off behaviour unchanged. | **B — Internal Apps Parchment (DEV-1, extended)** |
-| Messages | Rendered HTML email / SMS / WhatsApp text | E1–E8 | Email-safe inline-CSS templates using the same colour/type tokens where the medium supports it (SMS/WhatsApp are plain text, brand carried via copy tone only). | **A — Forest** |
+Rule of thumb: if it appears on ≥2 pages or is a token/state/a11y rule, it lives in `site.css`; if it styles one page's unique sections, it stays inline. No page may redeclare `:root` after migration.
 
 ---
 
@@ -402,9 +426,9 @@ Per `design-handoff/components/README.md` — documented with full prop contract
 
 ## 8.6 Flutter theme porting notes (for P5 — Charlie/Ashok)
 
-- Build **one shared** Track-B `ThemeData`/`ColorScheme` + `TextTheme` (Internal Apps Parchment) consumed by both `webapp-admin` and `mobile-guide`, separate from the Track A forest `ThemeData` used by `webapp-customer`/`webapp-editor`. **Do not merge Track A and Track B into one theme with a runtime switch** — DEV-1 scopes Parchment strictly to the two internal apps, and each app still builds its own widget layer on the shared token set per DR-11.
+- Build **one shared** Track-B `ThemeData`/`ColorScheme` + `TextTheme` (Internal Apps Parchment) consumed by both `webapp-admin` and `mobile-guide`, separate from the Track A `ThemeData` used by the `webapp-customer` booking island (Cream & Ink per DEV-4; editor TBD). **Do not merge Track A and Track B into one theme with a runtime switch** — DEV-1 scopes Parchment strictly to the two internal apps, and each app still builds its own widget layer on the shared token set per DR-11.
 - `webapp-admin` is a wide-screen desktop SPA; `mobile-guide` is a narrow-viewport iOS-native/PWA app — the same colour/type/spacing *tokens* apply, but layout composition (fixed left rail vs. single-column step screens) differs per app, consistent with TDR-13's per-app component-layer principle.
-- Port `--font-serif` (Playfair Display) and `--font-sans` (Plus Jakarta Sans) as self-hosted variable fonts (consistent with the `font-display: swap`-equivalent loading pattern already used for Track A, per TDR-15's asset-hosting convention) — do not rely on Google Fonts CDN at runtime, including in the guide app's offline-first build (fonts must be bundled, not fetched at runtime, given TDR-16's offline-critical requirement).
+- Port `--font-serif` (Playfair Display) and `--font-sans` (Plus Jakarta Sans) as self-hosted variable fonts (self-hosting per TDR-15's asset-hosting convention — note Track A as shipped uses Google Fonts CDN per DEV-4 §2; Track B must still bundle) — do not rely on Google Fonts CDN at runtime, including in the guide app's offline-first build (fonts must be bundled, not fetched at runtime, given TDR-16's offline-critical requirement).
 - Represent the alpha ladders (`--tx32…--tx75` text-ink steps, `--wb03…--wb16` hairline/fill steps — FINAL per handoff README §8.1) as Flutter `Color.withOpacity`/`Color.fromRGBO` helpers keyed off `--text-strong` (text ladder) and a neutral white/black base (hairline ladder) rather than hard-coded greys — this preserves the handoff's "no invented colours, type, or spacing" rule in Flutter.
 - `StatusPill` and `FilterChip` should be built as shared Track-B widgets consumed by every A-screen and by the guide app's step/status indicators, not re-implemented per screen — the handoff explicitly calls out `StatusPill` as the canonical way to render fixed states rather than colouring text by hand; carry that discipline into Flutter for both apps.
 - Guide-app-specific: signature capture and typed-confirm widgets must work fully offline (sembast-backed, per TDR-16) — the Parchment re-skin does not change this; it's a token/visual change only, layered on the same underlying offline widget behaviour. Note `SignatureField`'s tap-to-attest fidelity (not true signature capture) is itself an open question per the handoff's own §Fidelity — flag to Roma/sponsor if higher-fidelity capture is later required.
@@ -444,3 +468,4 @@ The handoff states motion is **"communicative only"** (progress fill, sidebar co
 | 2.0 | 2026-07-21 | **DEV-1 (sponsor-directed, AIB-P3 redirect)**: split into Track A (Forest — customer webapp, editor, guide app, unchanged) and Track B (Admin Parchment — web-admin only, sponsor-supplied mockup tokens: Playfair Display/Plus Jakarta Sans/mono, parchment neutrals, pink/lime/cyan/orange status-accent system, `.fob-console` dark theme off). Track B grounded in the mockup's `tokens/*.css`, `README.md`, and reference screenshots (shell, nav tree, calendar, scheduler, departure/participant detail). Component inventory, accessibility, and Flutter-porting notes added for Track B (§8). A-screen references removed from Track A's §5/§6/§7 and relocated to §8. |
 | 2.1 | 2026-07-21 | **DEV-1 extended (sponsor-directed)**: Track B renamed "Internal Apps Parchment" and now covers **mobile-guide (G1–G13) in addition to web-admin (A1–A20)** — same `_ds` token bundle, guide-specific mockup at `_user_input/design-mockups/guide-system/`. Track A narrowed to customer webapp + editor only (forest/Syne/DM Sans). Guide-app G-screen references (signature capture, typed-confirm, step nav, outdoor/gloved touch-target constraints) removed from Track A §2/§3/§5/§6 and relocated/rebuilt in Parchment tokens under §8.4 (layout, grounded in `g4check.png`/`g4done.png`), §8.5 (component inventory), §8.6 (Flutter porting, incl. offline-bundled fonts per TDR-16), §8.7 (accessibility, incl. outdoor-legibility and 44×44px touch-floor carried forward despite the re-skin). Guide app's offline-first, safety-gated behaviour (DR-O1, TDR-16) is explicitly unchanged — this deviation is visual/token-only. |
 | 3.0 | 2026-07-22 | **Sponsor high-fidelity handoff integrated** (`_user_input/design-handoff/`) — now the **authoritative source of truth for Track B**, superseding the earlier mockup-approximated tokens: §8.1 colour tokens replaced with the handoff's FINAL semantic aliases (`--surface-bg/-bg-lo/-card/-raised/-rail`, `--text-strong/-body/-muted/-faint/-label/-price/-link/-link-hover`, accent/status hues, alpha ladders `--wb03..16`/`--tx32..75`); §8.2 typography updated to the handoff's observed sizes (27px page title, 14–18px section, 13–14px body, 9.5–11px mono), with the prior granular named scale flagged as a Clara-derived approximation where it goes beyond the handoff's stated ranges; §8.3 spacing/radius/elevation re-cited as FINAL (radius-pill token dropped — not in the handoff). Added §8.4a (behaviour is governed by the two authoritative UXIS specs, `FOB-UXIS.md`/`FOB-Guide-App-UXIS.md`, not this document). Added §8.5a (7 core components) and §8.5b (11 extension components: StatCard, ReadinessBadge, TreeNav, TransferList, CalendarMonth, StepRow, ProgressBar, ChecklistRow, SignatureField, CategoryChips, StarRating) as explicit P5 Flutter build targets, with a hard "do not ship the `.dc` runtime" note. Added §8.8 Motion tokens (PROPOSED — the handoff specifies motion qualitatively only; Clara-proposed fast/base/slow duration scale + easing + reduced-motion rule, flagged for sponsor ratification). §1.2 (Track A extended colour scale) reworded to explicitly flag it as Clara-derived pending sponsor ratification, unaffected by this handoff. |
+| 4.0 | 2026-07-28 | **DEV-4 (sponsor-approved, CHG-015)**: Track A (§1–§7) rewritten to document the **shipped customer-webapp system of record** ("Cream & Ink": Newsreader/Instrument Sans over `--cream #f6f4ee`/`--ink #14130f`/`--green #3f6b3f`), superseding TDR-15's forest/Syne-DM-Sans for `webapp-customer`; old forest §1–§7 content removed. Tokens, dark-surface alpha conventions, Clara-derived type scale (from shipped `clamp()`s), spacing/radius/shadow conventions and as-shipped component inventory extracted from the inline `<style>` blocks of the 13 shipped pages. **NEW approved accessibility defect fixes**: `--muted` `#8a8778→#6a675a` (3.28:1→5.16:1 on cream) and `--faint` `#a8a495→#716e60` (2.27:1→4.66:1); `--error #a03325`; `:focus-visible` spec (green ring on light, cream ring on dark); skip-to-content link; button/form disabled + error states; full `prefers-reduced-motion` coverage; updated AA contrast table (§1.4). `webapp-editor` track assignment flagged OPEN QUESTION (never shipped); Flutter booking-island tokens (`tokens.dart`/`lbt_tokens.dart`) marked TO-MIGRATE (§6); `en/styles.css` to be replaced by `en/site.css` per the new §7 consolidation contract. Track B (§8) untouched except stale cross-references to Track A updated. |

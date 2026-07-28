@@ -6,9 +6,38 @@
 <title>Hidden City — Tour detail — Friends on Bikes</title>
 <meta name="description" content="Hidden City: a 90-minute guided ride through the city's hidden alleys, courtyards and viewpoints. £45 per person.">
 <link rel="canonical" href="https://friendsonbikes.uk/en/tours/hidden-city.html">
-<link rel="stylesheet" href="../styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/en/site.css">
+<style>
+/* Page-specific rules — shared tokens/components live in /en/site.css.
+   Legacy f-* classes remapped onto the Cream & Ink tokens (was built against
+   the retired forest styles.css, deleted per DEV-4). */
+.f-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 32px;background:var(--card);border-bottom:1px solid var(--hairline);position:sticky;top:0;z-index:5}
+.f-nav .wordmark{font-family:var(--serif);font-weight:500;font-size:1.25rem;color:var(--ink-2)}
+.f-nav nav a{margin-left:24px;color:var(--ink-2);font-size:.95rem;font-weight:500}
+.f-nav nav a:hover{color:var(--green)}
+.f-wrap{max-width:960px;margin:0 auto;padding:32px 20px 80px}
+.f-wrap h1{font-family:var(--serif);font-weight:500;letter-spacing:-.01em;font-size:2.25rem;line-height:1.2;margin:0 0 .4em}
+.caption{font-size:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.muted{color:var(--muted)}
+.f-badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:2px;font-size:.75rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+.f-badge-success{background:#e8efe6;color:var(--success)}
+.f-card{background:var(--card);border:1px solid rgba(26,25,22,.09);border-radius:6px;box-shadow:0 1px 2px rgba(26,25,22,.04);padding:24px}
+.f-card h3{font-family:var(--serif);font-weight:500;font-size:1.375rem;margin:0 0 .4em}
+.f-card p{color:var(--body);line-height:1.6}
+.f-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:0 20px;font-weight:600;font-size:.875rem;letter-spacing:.1em;text-transform:uppercase;border:none;cursor:pointer}
+.f-btn-primary{background:var(--green);color:#fff}
+.f-btn-primary:hover{filter:brightness(1.08)}
+.f-btn-secondary{background:transparent;color:var(--green);border:1.5px solid var(--green)}
+.f-btn-text{background:none;color:var(--green);text-decoration:underline;padding:0;min-height:auto;border:none;cursor:pointer;font-weight:600}
+.f-footer{text-align:center;padding:32px 20px;background:transparent;color:var(--muted);font-size:.875rem;border-top:1px solid var(--hairline);margin-top:40px}
+.f-footer :focus-visible{outline-color:var(--green)}
+</style>
 </head>
 <body>
+<a class="skip-link" href="#main">Skip to content</a>
 <header class="f-nav">
   <a class="wordmark" href="../index.html">Friends on Bikes</a>
   <nav>
@@ -17,7 +46,7 @@
     <a href="../hub.html">Manage booking</a>
   </nav>
 </header>
-<main class="f-wrap">
+<main class="f-wrap" id="main">
   <p class="caption"><a href="index.html" class="f-btn-text">&larr; All tours</a></p>
   <span class="f-badge f-badge-success">Active</span>
   <h1>Hidden City</h1>

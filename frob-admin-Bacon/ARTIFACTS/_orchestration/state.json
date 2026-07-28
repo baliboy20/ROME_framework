@@ -8,8 +8,8 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-28T21:03:00.000Z",
-  "activeIncrement": 15,
+  "updatedAt": "2026-07-28T11:48:21Z",
+  "activeIncrement": 16,
   "increments": [
     {
       "id": 0,
@@ -3529,6 +3529,30 @@
           "status": "COMPLETE",
           "timestamp": "2026-07-28T20:40:00.000Z",
           "spawnedBy": "roma"
+        },
+        {
+          "agent": "clara",
+          "role": "ux-designer",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T11:27:34Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "charlie",
+          "role": "frontend-developer",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T11:33:59Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah",
+          "role": "gate",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T11:44:20Z",
+          "spawnedBy": "roma"
         }
       ],
       "budget": {
@@ -3589,6 +3613,121 @@
             "pass": true,
             "detail": "no APPROVED TDRs bind P5 — trivially conformant",
             "timestamp": "2026-07-28T20:40:00.000Z"
+          }
+        }
+      },
+      "aib": {}
+    },
+    {
+      "id": 16,
+      "intent": "change",
+      "stage": null,
+      "change": {
+        "id": "CHG-015",
+        "ct": "CT-2"
+      },
+      "sealed": true,
+      "createdAt": "2026-07-28T11:47:04Z",
+      "awaitingIntake": false,
+      "routing": [
+        "P5"
+      ],
+      "currentPhase": null,
+      "phases": {
+        "P5": {
+          "status": "COMPLETE"
+        }
+      },
+      "gateLedger": [
+        {
+          "gate": "GATE-P5",
+          "phase": "P5",
+          "verdict": "APPROVE",
+          "role": "sarah",
+          "dispatchId": "sarah",
+          "timestamp": "2026-07-28T11:47:42Z",
+          "note": "CHG-015 site.css consolidation + DEV-4 formalization: independently verified tokens, contrast, links, skip-links, deletions; no discrepancies"
+        }
+      ],
+      "blockers": [],
+      "dispatch": [
+        {
+          "agent": "clara",
+          "role": "ux-designer",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T11:47:20Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "charlie",
+          "role": "frontend-developer",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T11:47:20Z",
+          "spawnedBy": "roma"
+        },
+        {
+          "agent": "sarah",
+          "role": "sarah",
+          "phase": "P5",
+          "status": "COMPLETE",
+          "timestamp": "2026-07-28T11:47:20Z",
+          "spawnedBy": "roma"
+        }
+      ],
+      "budget": {
+        "tokens": 0,
+        "ceiling": null
+      },
+      "oq": {
+        "resolvedByTalib": 0,
+        "awaitingSponsor": 0,
+        "deferrals": []
+      },
+      "inputReliability": [],
+      "testManifest": [],
+      "verification": {
+        "P5": {
+          "executability": {
+            "pass": true,
+            "detail": "site.css: 91/91 braces balanced; all 14 pages carry exactly one <link> to /en/site.css (verified by Sarah); static HTML/CSS, no build step, no server code touched — nothing to compile.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "integration": {
+            "pass": true,
+            "detail": "Cascade order preserved (site.css loads before each page inline block, so page-specific overrides still win); tours/hidden-city.html remapped from retired forest classes onto shared tokens with content intact; no cross-page class collisions found by Sarah's spot-check of index/faq/book.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "secrets": {
+            "pass": true,
+            "detail": "grep of all changed files (site.css, 14 HTML pages, README) for key/secret/token/bearer patterns: no matches. Static front-end change, no credentials in scope.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "contracts": {
+            "pass": true,
+            "detail": "No API/worker contract touched — pure front-end presentation change (CSS + inline-style relocation + skip-link/id=main markup additions). No routes, schemas, or payloads affected.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "testAdequacy": {
+            "pass": true,
+            "detail": "No automated test suite exists for webapp-customer static pages (consistent with prior CHG-00x deliveries in this app); adequacy here is Sarah's independent structural verification: 14/14 pages linked once, no orphaned classes beyond the one pre-existing disclosed exception, contrast ratios computed independently rather than trusted from the producer.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "traceability": {
+            "pass": true,
+            "detail": "Change traces to DEV-4 (sponsor-approved TDR-15 deviation) and design-system.md v4.0 (Track A rewrite, site.css consolidation contract) rather than a REQ-* entry — this is a design/presentation-layer restructure (CT-2) with no functional requirement delta.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "matrix": {
+            "pass": true,
+            "detail": "No requirements matrix entries added or changed — CT-2 restructure with no REQ impact; design-system.md is the artifact of record and is updated.",
+            "timestamp": "2026-07-28T11:48:12Z"
+          },
+          "tdrConformance": {
+            "pass": true,
+            "detail": "DEV-4 formally supersedes TDR-15 for webapp-customer (sponsor-approved 2026-07-28, recorded in state.audit and design-system.md); site.css and all page changes conform to the DEV-4-superseded Track A spec, not the retired forest/Syne spec.",
+            "timestamp": "2026-07-28T11:48:12Z"
           }
         }
       },
@@ -21455,6 +21594,233 @@
       "change": "CHG-014",
       "increment": 15,
       "timestamp": "2026-07-28T21:03:00.000Z"
+    },
+    {
+      "event": "SPONSOR_DECISION",
+      "id": "DEV-4",
+      "tdr": "TDR-15",
+      "phase": "P3",
+      "note": "Sponsor formalizes the shipped webapp-customer look (Newsreader/Instrument Sans + cream/ink/green inline-token palette) as the Track A design system of record, superseding TDR-15 forest/Syne-DM-Sans for the customer webapp; stale old-style docs to be removed. state.tdrs no longer carries TDR records post-3.3.0 migration, so this deviation is recorded here append-only (guard recordTdrDeviation unavailable) and normatively in design-system.md alongside DEV-1. Flutter booking-island tokens marked to-migrate. Track B (Parchment) unaffected.",
+      "sponsor": true,
+      "timestamp": "2026-07-28T11:27:11Z"
+    },
+    {
+      "event": "CHANGE_QUEUED",
+      "change": "CHG-015",
+      "ct": "CT-2",
+      "routing": [
+        "P5"
+      ],
+      "timestamp": "2026-07-28T11:27:11Z"
+    },
+    {
+      "event": "CHANGE_CLASSIFIED",
+      "change": "CHG-015",
+      "ct": "CT-2",
+      "timestamp": "2026-07-28T11:27:25Z"
+    },
+    {
+      "event": "CHANGE_CONFIRMED",
+      "change": "CHG-015",
+      "note": "sponsor pre-approved in the same directive that filed DEV-4 (\"i approve... now cont.\")",
+      "sponsor": true,
+      "timestamp": "2026-07-28T11:27:25Z"
+    },
+    {
+      "event": "CHANGE_BEGUN",
+      "change": "CHG-015",
+      "timestamp": "2026-07-28T11:27:25Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "clara",
+      "role": "ux-designer",
+      "phase": "P5",
+      "timestamp": "2026-07-28T11:27:34Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "clara",
+      "role": "ux-designer",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T11:33:50Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie",
+      "role": "frontend-developer",
+      "phase": "P5",
+      "timestamp": "2026-07-28T11:33:59Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie",
+      "role": "frontend-developer",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 16,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T11:44:16Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah",
+      "role": "gate",
+      "phase": "P5",
+      "timestamp": "2026-07-28T11:44:20Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah",
+      "role": "gate",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T11:46:31Z"
+    },
+    {
+      "event": "CHANGE_BEGUN",
+      "change": "CHG-015",
+      "ct": "CT-2",
+      "increment": 16,
+      "routing": [
+        "P5"
+      ],
+      "timestamp": "2026-07-28T11:47:04Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "clara",
+      "role": "ux-designer",
+      "phase": "P5",
+      "timestamp": "2026-07-28T11:47:20Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "clara",
+      "role": "ux-designer",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 1,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T11:47:20Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "charlie",
+      "role": "frontend-developer",
+      "phase": "P5",
+      "timestamp": "2026-07-28T11:47:20Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "charlie",
+      "role": "frontend-developer",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 16,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T11:47:20Z"
+    },
+    {
+      "event": "DISPATCH",
+      "agent": "sarah",
+      "role": "gate",
+      "phase": "P5",
+      "timestamp": "2026-07-28T11:47:20Z",
+      "spawnedBy": "roma"
+    },
+    {
+      "event": "RETURN",
+      "agent": "sarah",
+      "role": "gate",
+      "phase": "P5",
+      "status": "COMPLETE",
+      "artifacts": 0,
+      "deltas": 0,
+      "edges": 0,
+      "timestamp": "2026-07-28T11:47:20Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "executability",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "integration",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "secrets",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "contracts",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "testAdequacy",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "traceability",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "matrix",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "VERIFY",
+      "phase": "P5",
+      "key": "tdrConformance",
+      "pass": true,
+      "timestamp": "2026-07-28T11:48:12Z"
+    },
+    {
+      "event": "INCREMENT_SEALED",
+      "increment": 16,
+      "timestamp": "2026-07-28T11:48:21Z"
+    },
+    {
+      "event": "CHANGE_DELIVERED",
+      "change": "CHG-015",
+      "increment": 16,
+      "timestamp": "2026-07-28T11:48:21Z"
     }
   ],
   "tdrCitations": {
@@ -21892,6 +22258,36 @@
           "no topology graph: impact cannot be scoped below the whole delivered scope (A.2 — report plainly, widen honestly)"
         ]
       }
+    },
+    {
+      "id": "CHG-015",
+      "description": "DEV-4 formalization: rewrite Track A of design-system.md from the shipped customer pages (Newsreader/Instrument Sans, cream/ink/green), adding designed focus/disabled/error states and WCAG AA contrast fixes (--muted/--faint fail AA); remove/supersede stale old-style docs (forest/Syne styles.css content, TDR-14/15 references); consolidate shared CSS into en/site.css (tokens, reset, type scale, focus-visible, skip link, prefers-reduced-motion, nav/footer/buttons/eyebrow/section-heads/cards), pages keep only page-specific residue inline; a11y defects: muted contrast, missing focus styles (11 pages), no skip links, missing reduced-motion (5 pages). Sponsor approved 2026-07-28.",
+      "source": "sponsor",
+      "status": "DELIVERED",
+      "timestamp": "2026-07-28T11:27:11Z",
+      "ct": "CT-2",
+      "blastRadius": {
+        "verified": true,
+        "components": [
+          "webapp-customer"
+        ],
+        "seeds": [],
+        "reasons": {},
+        "requirements": [],
+        "designImpacted": true,
+        "granularityCeiling": "component",
+        "notes": [
+          "scope: SOURCE/apps/webapp-customer/en (13 inline-styled pages + styles.css) + ARTIFACTS/_design design-system.md Track A + stale-doc removal; no worker, no admin app, no guide app; Flutter island tokens documented as to-migrate, not changed here"
+        ]
+      },
+      "routing": [
+        "P5"
+      ],
+      "routingNotes": [
+        "CT-2 (minor amendment)",
+        "light path: code+tests only, single evidenced gate",
+        "blast radius: 1 component(s)"
+      ]
     }
   ]
 }

@@ -17,7 +17,7 @@ See component-specs.md#webapp-customer.
 en/                       # English static pages (P5 content: home, tours
                            # catalogue, tour detail, booking-page shell)
   index.html               # W11 homepage
-  styles.css                # Track A Forest CSS tokens (design-system.md §1-§7)
+  site.css                  # Track A Cream & Ink shared stylesheet (DEV-4, design-system.md §7)
   island-loader.js          # no-JS-safe bootstrap for island mount points
   tours/
     index.html               # W11 tour catalogue
