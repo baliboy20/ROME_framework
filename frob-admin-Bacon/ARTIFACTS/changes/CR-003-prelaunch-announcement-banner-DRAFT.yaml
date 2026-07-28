@@ -1,14 +1,21 @@
 ID: CR-003
 Type: PRELAUNCH_ANNOUNCEMENT
-Status: READY_TO_QUEUE
+Status: BUILT_PENDING_GATE
 Gate:
   reviewer: Sarah
   verdict: PENDING
   date:
   notes: >-
-    Not yet submitted. Sponsor resolved the blocking open questions
-    2026-07-28 (OQ-1, OQ-3 below); the only remaining blocker is
-    ROME-AX-19 (increment 17, unrelated in-flight work, must seal first).
+    Built 2026-07-28 OUTSIDE the guarded change-queue pipeline, by sponsor
+    directive ("build separately") — increment 17 (unrelated in-flight work)
+    still blocks a new change-scoped increment per ROME-AX-19, so this was
+    not routed, classified-and-confirmed through beginChange, or run through
+    a real P5 sub-agent dispatch/verification/gate cycle. Implementation is
+    complete and self-verified (headless-Chrome CDP session driving real
+    scroll/click/reload/viewport interaction — see BuildEvidence below), but
+    Sarah has not independently gated it and no P5 mechanical facts are
+    recorded in state.json. Formally queue + gate once increment 17 seals,
+    per the standard process, before treating this as a delivered change.
 Priority: HIGH
 Title: "Customer web: pre-launch announcement topsheet with preview-ride application CTA"
 Description: |
@@ -101,8 +108,15 @@ OpenQuestions:
       Dismissal and persistence — once per browser, once per session, or until
       launch? Affects whether any state is stored and therefore whether consent
       or cookie policy is engaged.
-    status: OPEN
-    blocking: false
+    status: RESOLVED
+    resolution: >-
+      Roma default 2026-07-28 (sponsor asked to proceed without waiting on
+      this one — non-blocking): once per browser, until launch. A dismissal
+      flag is stored in localStorage (`fob_prelaunch_dismissed`), not a
+      cookie; the banner never reappears on that device once closed. Treated
+      as a first-party functional preference, same category as the existing
+      cookie banner's "strictly necessary" bucket — does not engage the
+      optional-analytics consent gate (consent.js unchanged).
   - id: OQ-3
     question: >-
       Does the announcement supersede or coexist with the live pricing and
@@ -115,6 +129,25 @@ OpenQuestions:
       are not reconciled by this change. Recorded as a sponsor-accepted,
       known content inconsistency, not a defect this change must fix.
     blocking: false
+
+BuildEvidence:
+  files:
+    - webapp-customer/en/announce.js (NEW) — localStorage-gated topsheet
+      injector; no cookie, no consent.js interaction (OQ-2 resolution)
+    - webapp-customer/en/site.css — .topsheet component, --banner-h css var
+      wired through nav.top{top} and body{padding-top} so nav/content shift
+      down only while the banner is mounted, no-op otherwise
+    - <script src="/en/announce.js" defer> added to all 14 static pages
+      (11 content pages + tours/index, tours/detail, tours/hidden-city)
+      alongside the existing consent.js include
+  verification: >-
+    Headless Chrome via CDP (not static file read): first-visit shows the
+    banner with correct copy and CTA href (/en/book/, per OQ-1); nav/body
+    shift by exactly the banner's measured height, no overlap, at both
+    desktop (1440x900) and mobile (375x812, where the message wraps to two
+    lines); dismiss click removes the banner, sets the localStorage flag, and
+    the dismissal persists across reload AND across navigation to a
+    different page (about.html); zero console errors throughout.
 
 Sequencing:
   - SUPERSEDED 2026-07-28: CR-002 (increment 2) sealed long ago; the project is
