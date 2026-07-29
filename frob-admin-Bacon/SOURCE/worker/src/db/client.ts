@@ -243,6 +243,8 @@ export interface Db {
   };
   operatorNotices: {
     listByBooking(bookingId: string): Promise<OperatorNotice[]>;
+    /** FINDING-008: ownership resolution for `/notices/:id/*`. */
+    getById(id: string): Promise<OperatorNotice | null>;
     create(row: OperatorNotice): Promise<void>;
     update(id: string, patch: Partial<OperatorNotice>): Promise<void>;
   };
@@ -652,6 +654,9 @@ export function createDb(db: D1Database): Db {
         return query<OperatorNotice>(db, `SELECT * FROM operator_notices WHERE booking_id = ?`, [
           bookingId,
         ]);
+      },
+      async getById(id) {
+        return queryOne<OperatorNotice>(db, `SELECT * FROM operator_notices WHERE id = ?`, [id]);
       },
       async create(row) {
         const { sql, params } = insertSql("operator_notices", row);

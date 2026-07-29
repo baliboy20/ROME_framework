@@ -24,6 +24,8 @@ import { toursAdmin } from "./routes/tours-admin";
 import { emailRoutes } from "./routes/email";
 import { handleScheduled } from "./cron/handlers";
 import { handleInboundEmail } from "./email/handler";
+import { requireOperatorSession, requireCustomerSession } from "./lib/auth";
+import { requireNoticeOwner } from "./lib/notice-auth";
 
 const app = new Hono<{ Bindings: Env }>();
 
@@ -47,6 +49,63 @@ app.use("*", async (c, next) => {
 });
 
 app.get("/health", (c) => c.json({ ok: true, service: "fob-api-worker" }));
+
+// FR-001 workstream 5 — images extracted from imported HTML templates.
+//
+// DELIBERATELY PUBLIC, and it must stay that way: a mail client fetches images
+// from the recipient's device with no session of any kind, so anything behind
+// auth simply would not load. Declared here, before the deny-by-default guards
+// below, so the exemption is visible rather than an accident of prefixes.
+//
+// Scope is narrow by construction — the key is always prefixed `email-assets/`,
+// so no other object in the bucket is reachable through this route. Contents
+// are Owner-authored marketing imagery, not customer data.
+app.get("/email-assets/*", async (c) => {
+  const key = new URL(c.req.url).pathname.replace(/^\//, "");
+  if (!key.startsWith("email-assets/")) return c.json({ error: "not_found" }, 404);
+  const object = await c.env.ASSETS.get(key);
+  if (!object) return c.json({ error: "not_found" }, 404);
+  return new Response(object.body, {
+    headers: {
+      "Content-Type": object.httpMetadata?.contentType ?? "application/octet-stream",
+      // Immutable: the key contains the template id and an index, and content
+      // is replaced by a fresh import rather than edited in place.
+      "Cache-Control": "public, max-age=31536000, immutable",
+    },
+  });
+});
+
+// ---------------------------------------------------------------------------
+// FINDING-008 — deny-by-default auth, mounted BEFORE any sub-app.
+//
+// Hono runs matched handlers in registration order, so a guard declared inside
+// a sub-app protects only that sub-app — and only if the request was not
+// already answered by an earlier-mounted one. `fleet`, `pretour`, `posttour`
+// and two `/admin/*` routes in `tourops` shipped with no guard of their own and
+// mount before `backoffice`, so its `use("*")` guard never ran for them: every
+// route below was reachable anonymously (verified against a running worker —
+// `GET /admin/fleet` returned 200 with no credentials).
+//
+// These middlewares are declared at the app level so protection no longer
+// depends on each module remembering to opt in. A module may still add its own
+// narrower guard; running both is harmless (the second is a repeat KV read).
+// Anything genuinely public must NOT live under these prefixes.
+//
+// `/auth/*` (login, link verification) is deliberately outside — it is how a
+// caller obtains a session in the first place.
+app.use("/admin/*", requireOperatorSession);
+// `/internal/*` is named internal but was publicly routable; operators only.
+app.use("/internal/*", requireOperatorSession);
+// Customer, booking-scoped (AUTH02). `requireCustomerSession` matches the
+// route's `:id`/`:bookingId` against the session's own booking, so one
+// customer cannot read another's tour hub. This is the route that exposed
+// participant PII and emergency contacts to anyone who could guess an id.
+app.use("/tour-hub/*", requireCustomerSession);
+// `/notices/:id/*` cannot use `requireCustomerSession`: its `:id` is a NOTICE
+// id, not a booking id, so the generic param check would compare a notice id
+// against a booking id and reject every legitimate caller. Ownership is
+// resolved by lookup instead.
+app.use("/notices/*", requireCustomerSession, requireNoticeOwner);
 
 // All module sub-apps mount at root; each declares absolute domain paths
 // (/auth/*, /consent, /bookings, /admin/*, /guide/*, /webhooks/stripe, …).

@@ -18,6 +18,15 @@ import { signJwt, verifyBookingLink } from "../modules/auth/jwt";
 import { putSession, revokeSession } from "../kv/session";
 import { createDb } from "../db/client";
 import { sha256Hex } from "../lib/hash";
+import { checkRateLimit, clearRateLimit, clientKey } from "../lib/rate-limit";
+
+// FINDING-008: 10 attempts per 15 minutes per client. Generous enough that a
+// person mistyping their own password is never locked out; tight enough that
+// exhaustive online guessing against the unsalted SHA-256 credential is
+// impractical. This does NOT fix the weak hash itself (FINDING-008 item 3) —
+// that needs a credential rotation plan.
+const LOGIN_ATTEMPT_LIMIT = 10;
+const LOGIN_WINDOW_SECONDS = 900;
 
 export const authRoutes = new Hono<{ Bindings: Env }>();
 
@@ -48,6 +57,26 @@ authRoutes.post("/auth/owner/login", async (c) => {
     );
   }
 
+  // FINDING-008: throttle before doing any credential work, so a blocked
+  // caller learns nothing about whether the address or password was right.
+  const rlKey = `login:${clientKey(c.req.raw.headers)}`;
+  const rl = await checkRateLimit(
+    c.env.IDEMPOTENCY,
+    rlKey,
+    LOGIN_ATTEMPT_LIMIT,
+    LOGIN_WINDOW_SECONDS
+  );
+  if (!rl.allowed) {
+    return c.json(
+      {
+        error: "too many attempts",
+        message: "Too many sign-in attempts — wait a few minutes and try again",
+      },
+      429,
+      { "Retry-After": String(rl.retryAfterSeconds) }
+    );
+  }
+
   const passwordHash = await sha256Hex(password);
   const validEmail = email.toLowerCase() === c.env.OWNER_EMAIL.toLowerCase();
   const validPassword = passwordHash === c.env.OWNER_PASSWORD_HASH;
@@ -57,6 +86,9 @@ authRoutes.post("/auth/owner/login", async (c) => {
       401
     );
   }
+  // Successful sign-in resets the budget, so ordinary use never accumulates
+  // toward a lockout across a working day.
+  await clearRateLimit(c.env.IDEMPOTENCY, rlKey);
 
   let token: string;
   try {
