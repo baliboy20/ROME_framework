@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G7 · Safety briefing — Guide App</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — G7 Safety briefing script &middot; UXD-15 today's mitigations pulled inline from G5 <a href="index.html">index</a></div>
+<div class="guide-frame">
+  <div id="header-mount"></div>
+  <div class="guide-content">
+    <div class="a-card">
+      <p class="body-text">"Welcome to Hidden City. We'll keep a steady pace, ride single-file on narrow lanes, and regroup at every junction. Helmets stay on the whole ride."</p>
+    </div>
+
+    <div class="playbook-title" style="padding:0;margin:18px 0 8px">TODAY'S MITIGATIONS</div>
+    <div class="g-log-list" id="mitigationList"></div>
+
+    <button class="g-btn g-btn-primary" onclick="markStepDone('g7');window.location.href='guide-complete.html'">Continue to sign-off</button>
+    <a class="g-btn g-btn-secondary" href="guide-playbook.html">Back to playbook</a>
+  </div>
+</div>
+<script src="guide-shell.js"></script>
+<script>
+renderGuideHeader('guide-playbook.html', 'G7 · ON-SCREEN', 'Safety briefing script');
+var m1 = localStorage.getItem('fob_mitigation_1');
+var html = '';
+if (m1) html += '<div class="event-log-row"><span>Wet cobblestones — Riverside descent</span><span class="mono" style="font-size:11px;color:var(--orange-text-light)">' + m1 + '</span></div>';
+document.getElementById('mitigationList').innerHTML = html || '<div class="event-log-row" style="color:var(--text-faint)"><span>No mitigations logged from G5 yet.</span><span></span></div>';
+</script>
+</body>
+</html>

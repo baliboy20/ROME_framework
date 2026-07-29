@@ -1,0 +1,40 @@
+ID: REQ-CNA05
+Actor: SystemConsentGuard
+Intent: read consent-state
+
+Preconditions:
+  - a marketing message is about to be sent to a person for a purpose
+
+Conditions:
+  - current state is the latest decision for that person and purpose
+
+Postconditions:
+  - the send proceeds only if the current state is granted
+
+Outcomes:
+  - marketing is sent only to people whose current permission is granted
+  - Owner is assured no marketing goes to a withdrawn or never-granted person
+
+Invariants:
+  - marketing is never sent against a withheld or withdrawn current state
+
+NonFunctional:
+  Reliability:
+    - the check reflects the most recent decision
+
+Errors:
+  - error: "no decision on record"
+    message: "Recipient treated as not consented; send suppressed"
+    httpCode: 200
+    userAction: "No action needed — recipient excluded from this send"
+
+ScopeBoundary:
+  InScope:
+    - pre-send consent gate by person and purpose
+  OutOfScope:
+    - frequency capping
+    - content selection
+
+OpenQuestions: []
+
+CopilotMode: STRICT

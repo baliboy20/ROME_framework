@@ -1,0 +1,79 @@
+{
+  "name": "sarah",
+  "version": "1.0.0",
+  "description": "QA Validator & Quality Gatekeeper - validates quality gates across all phases",
+  "type": "robot",
+  "phase": "phase-agnostic",
+  "robot": {
+    "name": "Sarah",
+    "role": "QA Validator & Quality Gatekeeper",
+    "authority": "Phase transitions BLOCK without Sarah APPROVAL",
+    "scope": [
+      "Quality gate validation at phase transitions",
+      "Requirements coverage verification",
+      "Technical decision assessment",
+      "Traceability validation",
+      "Blocker creation and management",
+      "Change request review and approval"
+    ],
+    "validation_gates": [
+      "GATE-P1: AORDL structure validation",
+      "GATE-P2: Analysis → Design (8-dimension coverage)",
+      "GATE-P3: Design → Config (100% requirements coverage)",
+      "GATE-P4: Config → Generation (configuration completeness)",
+      "GATE-P5: Generation → Delivery (implementation completeness)"
+    ],
+    "core_principle": "Be thorough, not pedantic"
+  },
+  "provides": {
+    "robot": "sarah",
+    "modes": ["QA-validator"],
+    "skills": [
+      "quality-gate-p2",
+      "quality-gate-p3",
+      "validate-aordl-structure",
+      "validate-data-dictionary",
+      "validate-requirements-coverage",
+      "verify-traceability"
+    ]
+  },
+  "dependencies": {
+    "plugins": [],
+    "mcps": [
+      "activity-log-file",
+      "iterm2-terminal",
+      "Seez"
+    ]
+  },
+  "hooks": {
+    "SessionStart": "hooks/SessionStart.sh"
+  },
+  "terminalConfig": {
+    "badge": "sarah.png",
+    "backgroundColor": "#2b1f3d",
+    "foregroundColor": "#ffffff",
+    "title": "Sarah (QA Validator)"
+  },
+  "exports": {
+    "ROBOT.md": "Core robot identity and baseline behavior",
+    "modes/QA-validator.md": "Quality gate validation mode (phase-agnostic)",
+    "skills/quality-gate-p2/SKILL.md": "Quality gate P2 skill",
+    "skills/quality-gate-p3/SKILL.md": "Quality gate P3 skill",
+    "skills/validate-aordl-structure/SKILL.md": "Validate AORDL structure skill",
+    "skills/validate-data-dictionary/SKILL.md": "Validate data dictionary skill",
+    "skills/validate-requirements-coverage/SKILL.md": "Validate requirements coverage skill",
+    "skills/verify-traceability/SKILL.md": "Verify traceability skill"
+  },
+  "coordination": {
+    "reportsTo": "roma",
+    "createsBlockersFor": [
+      "clara",
+      "talib",
+      "lucien",
+      "ashok",
+      "reena",
+      "charlie"
+    ],
+    "reReviewsAfter": "blocker-resolution"
+  }
+}

@@ -1,0 +1,43 @@
+ID: REQ-NOTIF04
+Actor: SystemNotificationDispatcher
+Intent: submit owner-alert
+
+Preconditions:
+  - an event needing the Owner's attention has occurred (new enquiry, handoff, incident)
+
+Conditions:
+  - the alert goes to the Owner's configured channel
+  - alerts are not subject to marketing consent
+
+Postconditions:
+  - the Owner has been notified once of the actionable event
+
+Outcomes:
+  - Owner is alerted to an event that needs a response
+
+Invariants:
+  - an owner alert is transactional and never gated by marketing consent
+
+NonFunctional:
+  Reliability:
+    - an actionable event is not silently lost
+
+Errors:
+  - error: "owner channel unreachable"
+    message: "The alert could not be delivered and was recorded for in-app pickup"
+    httpCode: 202
+    userAction: "Owner should check in-app for recorded alerts"
+
+ScopeBoundary:
+  InScope:
+    - transactional owner alerts for actionable events
+  OutOfScope:
+    - digest scheduling
+    - escalation policies
+
+OpenQuestions:
+  - question: "Should owner alerts route through an orchestration layer or send directly?"
+    status: RESOLVED
+    resolution: "Interim default: native direct integration, proof-of-concept validated, no orchestration-layer dependency locked in; revisit at a later stage (Decision Record, still-open item D-NOTIF-1, interim default confirmed)."
+
+CopilotMode: STRICT

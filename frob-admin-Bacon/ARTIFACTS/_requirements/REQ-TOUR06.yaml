@@ -1,0 +1,33 @@
+ID: REQ-TOUR06
+Actor: Customer
+Intent: approve booking-change
+Preconditions:
+  - a material operator-change notice is pending acknowledgement
+Conditions:
+  - acknowledgement is a single explicit action
+Postconditions:
+  - the change is acknowledged
+  - the tour hub reflects the new details as confirmed
+Outcomes:
+  - Customer confirms they've seen and accepted the change
+  - Owner sees the acknowledgement, or its absence, in their operational view
+Invariants:
+  - the booking proceeds under the new details regardless of acknowledgement status, since acknowledgement is a confirmation and not a gate
+NonFunctional:
+  Reliability:
+    - an acknowledgement is recorded exactly once per change notice
+Errors:
+  - error: no acknowledgement within 24 hours
+    message: A reminder has been sent; the change remains outstanding until acknowledged.
+    httpCode: 200
+    userAction: Acknowledge the pending change notice
+ScopeBoundary:
+  InScope:
+    - customer acknowledgement of a material change
+  OutOfScope:
+    - rejecting the change, which instead routes to booking cancellation
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: No open questions for this requirement
+CopilotMode: STRICT

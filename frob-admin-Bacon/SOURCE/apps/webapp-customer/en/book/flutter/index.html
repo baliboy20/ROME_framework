@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--
+    If you are serving your web app in a path other than the root, change the
+    href value below to reflect the base path you are serving from.
+
+    The path provided below has to start and end with a slash "/" in order for
+    it to work correctly.
+
+    For more details:
+    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
+
+    This is a placeholder for base href that will be replaced by the value of
+    the `--base-href` argument provided to `flutter build`.
+  -->
+  <base href="/en/book/flutter/">
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Friends on Bikes — booking, attendees, consent and payment (Flutter Web island, BOOK01-05, TDR-06).">
+  <meta name="robots" content="noindex">
+  <!--
+    Set by the publish pipeline (TDR-14) per environment; main.dart falls
+    back to FOB_API_BASE / a default origin if this tag is absent (e.g.
+    local `flutter build web` runs outside the static-page shell).
+  -->
+  <!-- LOCAL DEV: point the standalone island at the local api-worker. The
+       real integrated static page (en/book/) supplies its own meta per env;
+       this file is only used when running the island by itself. -->
+  <meta name="fob-api-base" content="https://api-staging.friendsonbikes.uk">
+
+  <!-- Stripe.js — required by interop/stripe_embedded_checkout_interop.dart
+       (window.Stripe(...), BOOK04, TDR-06). -->
+  <script src="https://js.stripe.com/v3/"></script>
+
+  <!-- iOS meta tags & icons -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="fob_webapp_customer_booking_island">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
+
+  <title>fob_webapp_customer_booking_island</title>
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+  <!--
+    You can customize the "flutter_bootstrap.js" script.
+    This is useful to provide a custom configuration to the Flutter loader
+    or to give the user feedback during the initialization process.
+
+    For more details:
+    * https://docs.flutter.dev/platform-integration/web/initialization
+  -->
+  <script src="flutter_bootstrap.js" async></script>
+</body>
+</html>

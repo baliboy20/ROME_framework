@@ -1,0 +1,59 @@
+ID: CR-001
+Type: UI_CHANGE
+Status: DELIVERED
+Gate:
+  reviewer: Sarah
+  verdict: APPROVE
+  date: 2026-07-27
+  notes: >-
+    First pass BLOCK — Expanded under the route's SingleChildScrollView (unbounded
+    height) would crash the Emails console. Fixed by bounding the page height
+    (SizedBox from MediaQuery) + disposing the reply controller. Re-review APPROVE.
+Priority: MEDIUM
+Title: "Admin: payments-ledger clarity + emails console"
+Description: |
+  Two post-delivery admin-app (webapp-admin) UI changes requested by the sponsor.
+
+  (1) Payments & refunds (A8) ledger — the row is confusing: it prints the raw
+  booking UUID. Show the LEADER name, a short booking REF, and the payment
+  TRANSACTION code clearly, and make the row a link that opens the booking in a
+  dismissible dialog.
+
+  (2) Emails (A5) — a console page listing all emails with sortable columns
+  (category, sender, subject, date), groupable into interaction chains. Selecting
+  an email opens its detail in a modal; multiple modals may be open at once and
+  all auto-dismiss on navigation away from the page. The admin can reply to the
+  sender from a modal (compose dialog).
+RequestedBy: sponsor
+RequestedDate: 2026-07-27
+
+ImpactAnalysis:
+  requirements:
+    - REQ-BO05 (payments ledger view — clarity, non-behavioural)
+    - REQ-NOTIF06 (email archive search — extended to sortable console + chains)
+    - REQ-NOTIF07 (manual thread link — reachable from console)
+    - REQ-NOTIF09 (in-tool thread reply — reachable as the compose modal)
+  design:
+    - UXIS A8 (payments) — row identity: leader / ref / txn + booking dialog link
+    - UXIS A5b (email archive) — becomes a sortable, multi-modal console
+  code:
+    - webapp-admin/lib/features/payments/presentation/pages/payments_page.dart
+    - webapp-admin/lib/features/email/presentation/pages/email_archive_page.dart
+    - webapp-admin/lib/features/email/** (datasource/repo/usecases/bloc as needed)
+    - api-worker: reuse existing NOTIF06/07/09 routes (no new endpoints expected)
+  libraries: []
+  pipelines: []
+
+RiskAssessment:
+  breaking: false
+  dataLoss: false
+  rollbackComplexity: LOW
+  testingRequired: "flutter analyze + widget smoke; admin rebuild"
+  deploymentRisk: LOW
+  migrationRequired: false
+
+Rollback:
+  plan: "Revert the CR-001 branch merge; UI-only, no data/schema change."
+  migrationRollback: ""
+
+GitBranch: "cr/CR-001-admin-payments-emails"

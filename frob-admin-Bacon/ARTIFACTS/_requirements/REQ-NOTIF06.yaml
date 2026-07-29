@@ -1,0 +1,35 @@
+ID: REQ-NOTIF06
+Actor: Owner
+Intent: search email-archive
+Preconditions:
+  - at least one sent (message) or received_emails record exists
+Conditions:
+  - search matches on sender, keywords in subject/body, or a domain-entity reference (booking reference, voucher id, enquiry id)
+Postconditions:
+  - none (a read operation)
+Outcomes:
+  - Owner sees a list of matching messages, each with enough context to identify it (sender, subject, date, linked booking/voucher reference if any)
+  - Owner can open a matching email_thread to see the full chain in order
+Invariants:
+  - results include spam-flagged messages by default, visibly marked as spam (never silently withheld — DR-7)
+  - search never hides a message the Owner could otherwise find
+NonFunctional:
+  Usability:
+    - search returns results without the Owner needing to know in advance which booking/thread a message belongs to
+Errors:
+  - error: Search matches nothing
+    message: No emails match your search.
+    httpCode: 200
+    userAction: Adjust the search terms
+ScopeBoundary:
+  InScope:
+    - search by sender/keyword/reference, viewing a thread
+  OutOfScope:
+    - editing or deleting archived messages
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      Genuinely new (EML reintegration §3), from REQ-EML12. Source:
+      EML-reintegration-handover/2-eml-spec/EML.md REQ-EML12.
+CopilotMode: STRICT

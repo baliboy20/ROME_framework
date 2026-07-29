@@ -1,0 +1,37 @@
+ID: REQ-BOOK12
+Actor: Owner
+Intent: update departure
+Preconditions:
+  - a departure exists
+  - Owner is in an operator session
+Conditions:
+  - time, capacity, or assigned guide may change
+  - capacity may not be reduced below current held-plus-confirmed bookings
+  - a material change, meaning a date or time change, on a departure with bookings sets a material-change flag
+  - this requirement performs the data change only and does not itself send customer notices, which are orchestrated separately
+Postconditions:
+  - the departure reflects the updated details
+  - a material change is flagged for downstream notification
+Outcomes:
+  - Owner sees the departure updated
+  - a material change is marked so booked Customers can be notified
+Invariants:
+  - capacity is never set below current held-plus-confirmed bookings
+NonFunctional:
+  Reliability:
+    - a material change is never silently applied without being flagged for notification
+Errors:
+  - error: capacity reduced below current bookings
+    message: N riders are already booked — capacity can't go below that
+ScopeBoundary:
+  InScope:
+    - time, capacity, and guide data edits
+    - material-change flagging
+  OutOfScope:
+    - sending the customer notices, orchestrated by a separate module
+    - moving a departure to a different tour
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: departure lifecycle ownership resolved by DR-BO1
+CopilotMode: STRICT

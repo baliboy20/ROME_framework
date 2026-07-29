@@ -1,0 +1,36 @@
+ID: REQ-BO05
+Actor: Owner
+Intent: search bookings
+Preconditions:
+  - Owner is in an operator session
+Conditions:
+  - bookings are searchable by booking reference, customer name or email, tour, departure date, and status
+  - this search and results list is presented as its own view, "Bookings," distinct from the booking detail view
+  - selecting a result navigates the Owner to the booking detail view (REQ-BO06); the search view does not display the full booking record inline
+Postconditions:
+  - none, this is a read-only view
+Outcomes:
+  - Owner finds any booking by reference, customer, tour, date, or status
+  - Owner reaches a single booking's detail view by selecting it from the results list
+Invariants:
+  - results never include customer payment-card data, only provider references
+NonFunctional:
+  Security:
+    - card data is never exposed in search results
+Errors:
+  - error: no bookings match the search criteria
+    message: No bookings match these criteria.
+    httpCode: 200
+    userAction: Adjust the search criteria
+ScopeBoundary:
+  InScope:
+    - search and filter across bookings, presented as the "Bookings" master view
+    - navigating from a selected result to the booking detail view
+  OutOfScope:
+    - cross-customer analytics or reporting, a separate concern
+    - displaying the full booking record inline on this view, which is the detail view's concern
+CopilotMode: STRICT
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: No open questions for this requirement

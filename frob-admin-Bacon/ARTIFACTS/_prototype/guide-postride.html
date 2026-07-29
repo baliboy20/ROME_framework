@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G11 · Post-ride review — Guide App</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — G11 Post-ride review &middot; StarRating x3 (design-handoff), UXD-19 draft vs submit <a href="index.html">index</a></div>
+<div class="guide-frame">
+  <div id="header-mount"></div>
+  <div class="guide-content">
+    <p class="body-text" style="font-size:13.5px">Due within 24h of the tour ending. Save a draft and come back to finish, or submit now.</p>
+
+    <div class="a-field"><label>Group pace</label><div class="star-rating" data-rating="pace">★★★★★</div></div>
+    <div class="a-field"><label>Route enjoyment</label><div class="star-rating" data-rating="route">★★★★★</div></div>
+    <div class="a-field"><label>Overall tour</label><div class="star-rating" data-rating="overall">★★★★★</div></div>
+
+    <div class="a-field"><label>How did the tour go?</label><input id="f-notes" placeholder="Group pace, any notable moments"></div>
+    <div class="a-field"><label>Group headcount at finish</label><input value="6"></div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="a-btn a-btn-secondary" style="flex:1;justify-content:center;height:44px" onclick="saveDraft()">Save draft</button>
+      <button class="a-btn a-btn-primary" style="flex:1;justify-content:center;height:44px" onclick="submitReview()">Submit</button>
+    </div>
+    <div id="reviewNote"></div>
+    <a class="g-btn g-btn-secondary" href="guide-playbook.html">Back to playbook</a>
+  </div>
+</div>
+<script src="guide-shell.js"></script>
+<script>
+renderGuideHeader('guide-playbook.html', 'G11 · DRAFT OR SUBMIT', 'Post-ride review');
+
+// StarRating (design-handoff component): render 5 clickable stars per rating group, default 4
+var ratings = { pace: 4, route: 4, overall: 4 };
+document.querySelectorAll('.star-rating').forEach(function(el){
+  var key = el.getAttribute('data-rating');
+  renderStars(el, key);
+  el.addEventListener('click', function(e){
+    var stars = Array.from(el.children);
+    var idx = stars.indexOf(e.target);
+    if (idx === -1) return;
+    ratings[key] = idx + 1;
+    renderStars(el, key);
+  });
+});
+function renderStars(el, key){
+  var v = ratings[key];
+  el.innerHTML = '';
+  for (var i = 1; i <= 5; i++) {
+    var s = document.createElement('span');
+    s.className = 'star' + (i <= v ? ' filled' : '');
+    s.textContent = '★';
+    el.appendChild(s);
+  }
+}
+
+// UXC-SCR-2: in-progress input preserved across interruption
+document.getElementById('f-notes').value = localStorage.getItem('fob_g11_draft') || '';
+function saveDraft(){
+  localStorage.setItem('fob_g11_draft', document.getElementById('f-notes').value);
+  document.getElementById('reviewNote').innerHTML = '<div class="inline-confirm">Saved as draft — re-enterable any time before the 24h deadline. This return is non-terminal (UXD-19).</div>';
+}
+function submitReview(){
+  document.getElementById('reviewNote').innerHTML = '<div class="inline-confirm">Submitted — this is the terminal commit; returning here will not re-submit (UXC-NAV-2).</div>';
+  localStorage.removeItem('fob_g11_draft');
+}
+</script>
+</body>
+</html>

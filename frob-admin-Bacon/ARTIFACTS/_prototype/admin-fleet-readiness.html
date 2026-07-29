@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A14 · Fleet readiness — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A14 Fleet &amp; equipment readiness &middot; StatCard (design-handoff component) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <div class="stat-grid" style="margin-top:8px">
+        <div class="stat-card"><div class="stat-value">18</div><div class="stat-label"><span class="stat-dot lime"></span>In service</div></div>
+        <div class="stat-card"><div class="stat-value">1</div><div class="stat-label"><span class="stat-dot orange"></span>Flagged</div></div>
+        <div class="stat-card"><div class="stat-value">0</div><div class="stat-label"><span class="stat-dot pink"></span>Needs action</div></div>
+        <div class="stat-card"><div class="stat-value">2</div><div class="stat-label"><span class="stat-dot cyan"></span>Retired / awaiting service</div></div>
+      </div>
+      <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:14px">retired / awaiting_external_service bikes are counted here but expose no transition control (UXC-STA-3, known gap).</p>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a14', 'A14 · FLEET & EQUIPMENT', 'Fleet & equipment readiness', 'Aggregate status counts across the whole fleet — critical alerts never buried.');</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+ID: REQ-TOUR02
+Actor: System
+Intent: submit reminder-message
+Preconditions:
+  - a booking is confirmed
+  - the single T-1 milestone is due and has not yet been sent for this booking
+Conditions:
+  - content covers final logistics including meeting point, what-to-bring, and current weather summary
+  - a booking made within one day of departure silently skips the milestone since there is nothing to send
+Postconditions:
+  - the reminder is sent and recorded so it is never sent twice for this booking
+Outcomes:
+  - Customer receives one timely reminder the day before their tour
+Invariants:
+  - the T-1 milestone is sent at most once per booking
+  - a cancelled booking never receives the reminder
+NonFunctional:
+  Reliability:
+    - the reminder bypasses marketing-consent suppression, consistent with the transactional-notification invariant
+Errors:
+  - error: the booking is cancelled before the milestone fires
+    message: The scheduled reminder was suppressed because the booking was cancelled.
+    httpCode: 200
+    userAction: No action needed
+  - error: the booking is modified before the milestone fires
+    message: The reminder was sent using the updated booking details.
+    httpCode: 200
+    userAction: No action needed
+ScopeBoundary:
+  InScope:
+    - the single T-1 scheduled reminder
+  OutOfScope:
+    - a day-of T-0 reminder, removed under the light cadence decision
+    - the channel choice itself
+OpenQuestions:
+  - question: Which channels should carry the T-1 reminder?
+    status: OPEN
+    resolution: "Blocked on D-NOTIF-1 (reminder channels), tied to D-TOUR-2; not ratified independently"
+CopilotMode: STRICT

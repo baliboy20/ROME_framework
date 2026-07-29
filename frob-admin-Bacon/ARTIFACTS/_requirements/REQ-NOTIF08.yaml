@@ -1,0 +1,34 @@
+ID: REQ-NOTIF08
+Actor: System
+Intent: export email-archive
+Preconditions:
+  - Owner triggers an archive export (manual only, no scheduled export — DR-8)
+Conditions:
+  - the export produces a downloadable backup file; retention itself remains indefinite (F-14) — archiving is a backup, not a deletion
+Postconditions:
+  - a downloadable archive file exists, containing sent (message) and received_emails records as of the export
+Outcomes:
+  - Owner can download a backup file of the email archive
+Invariants:
+  - archiving never deletes the live, searchable records (REQ-NOTIF06 keeps working against the same data regardless of exports)
+NonFunctional:
+  Reliability:
+    - a failed export never corrupts or truncates the live archive; no partial file is offered as complete
+Errors:
+  - error: Export fails partway
+    message: The export failed and was not produced — please retry.
+    httpCode: 500
+    userAction: Retry the export
+ScopeBoundary:
+  InScope:
+    - producing a downloadable backup file on Owner-triggered demand
+  OutOfScope:
+    - automatic/scheduled export (DR-8 — rejected for now)
+    - off-site backup storage
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      Genuinely new (EML reintegration §3), from REQ-EML13; DR-8 (manual, Owner-triggered). Source:
+      EML-reintegration-handover/2-eml-spec/EML.md REQ-EML13.
+CopilotMode: STRICT

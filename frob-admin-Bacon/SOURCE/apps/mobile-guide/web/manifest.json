@@ -1,0 +1,35 @@
+{
+    "name": "Friends on Bikes — Guide",
+    "short_name": "FOB Guide",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#f8f6ef",
+    "theme_color": "#f8f6ef",
+    "description": "Friends on Bikes guide field playbook — readiness gates, rider check-in, incident/hazard logging. Offline-critical, issued-device iOS PWA.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}

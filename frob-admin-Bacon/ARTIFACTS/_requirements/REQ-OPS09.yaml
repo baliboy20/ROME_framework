@@ -1,0 +1,44 @@
+ID: REQ-OPS09
+
+Actor: Guide
+
+Intent: submit incident-record
+
+Preconditions:
+  - a serious incident occurs, such as an injury, road traffic collision, or medical emergency, during an active tour
+
+Conditions:
+  - the Guide's safety actions, such as calling emergency services or applying first aid, happen before or alongside logging, never blocked by it
+  - the record captures time, location, what happened, who was involved, severity, and action taken
+
+Postconditions:
+  - a preliminary incident record exists
+  - the Owner is notified on their configured channel
+
+Outcomes:
+  - Owner is alerted to the incident
+  - a preliminary record exists to seed the formal incident report
+
+Invariants:
+  - an incident record, once logged, is never modified or deleted
+
+NonFunctional:
+  Security:
+    - the record is tamper-evident and fully audited
+
+Errors:
+  - error: "no mobile signal at the incident location"
+    message: "No signal is available at this location. Seek help via a passer-by; the record will be logged once possible."
+    httpCode: 503
+    userAction: "Seek help via a passer-by and log the record once signal is available"
+
+ScopeBoundary:
+  InScope:
+    - preliminary incident logging
+    - owner notification
+  OutOfScope:
+    - the formal report and insurer dispatch
+
+OpenQuestions: []
+
+CopilotMode: STRICT

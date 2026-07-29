@@ -1,0 +1,47 @@
+ID: REQ-TOUR07
+Actor: System
+Intent: submit cancellation-notice
+Preconditions:
+  - the Owner has cancelled a confirmed booking's tour, for reasons such as weather, guide illness, or force majeure
+Conditions:
+  - the notice states the reason and available remediation options
+  - the remediation choice is one of refund/rebook/credit, limited to those the Owner has enabled in operator_settings.cancellation_remediation_options (DR-16); a disabled option is rejected server-side
+  - an Owner-authored Explanation Block (freeform cancellation rationale, manually supplied — DR-2) may be attached to the notice and, when supplied, is included in the message (folded from retired REQ-EML05, F3)
+  - when the remediation offered is rebook or credit, a single-use discount code / voucher with an expiry may be issued, tied to the Party Leader only — never a Co-leader (F-19/BR-05)
+  - the notice is sent to the Party Leader and every Co-leader currently opted in on the booking (F-18), via every available channel given the urgency
+Postconditions:
+  - the notice is sent
+  - if a remediation choice is required, it is now pending
+  - any attached Explanation Block and issued discount code/voucher are recorded against the operator_notice
+Outcomes:
+  - Customer is informed of the cancellation through every relevant channel, with the reason and any remediation offer
+Invariants:
+  - a cancellation notice is sent through every channel available for the booking, not just one
+  - a company/weather-initiated cancellation is reason-agnostic — the remediation is chosen (D-TOUR-5), not hard-coded to always-full-refund
+  - any issued discount code/voucher is single-use, tied to the Party Leader, and carries an expiry (BR-05)
+NonFunctional:
+  Reliability:
+    - delivery reaches the customer even if one channel fails
+Errors:
+  - error: Remediation type not enabled in operator_settings
+    message: That remediation option is not currently offered.
+    httpCode: 422
+    userAction: Enable the option in Settings, or choose an enabled one
+ScopeBoundary:
+  InScope:
+    - cancellation notification, its remediation choice, the Explanation Block, and any single-use discount/voucher
+  OutOfScope:
+    - the underlying cancellation decision, made by the Owner off-system
+    - refund execution (owned by booking/payments, REQ-BOOK07/BOOK13)
+    - authoring/generating the Explanation Block text (Owner pastes it — DR-2)
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      D-TOUR-5 closed: choose-your-own remediation of refund/rebook/credit. F3 (EML reintegration,
+      2026-07-26): retired REQ-EML05 (company cancellation) and REQ-EML06 (weather cancellation)
+      fold into this single reason-agnostic notice; their Explanation Block + single-use discount-code
+      mechanics are added here as the concrete content for the remediation choice, superseding EML's
+      always-full-refund premise. Source:
+      _user_input/raw-requirements/EML-reintegration-handover/1-decision-record/EML_Reintegration_Analysis_2026-07-25.md §2 F3.
+CopilotMode: STRICT

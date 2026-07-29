@@ -1,0 +1,41 @@
+ID: REQ-POST01
+Actor: System
+Intent: submit thankyou-message
+Preconditions:
+  - a booking is marked completed
+  - the tour review has "review request" ticked
+  - the booking was not a no-show or an operator cancellation
+Conditions:
+  - sent at a configurable delay after completion, default T+12h
+  - includes a review link and a private-feedback link
+  - transactional, sent regardless of marketing consent
+Postconditions:
+  - the thank-you message is sent and recorded
+Outcomes:
+  - Customer is acknowledged and offered a next step
+Invariants:
+  - the thank-you always sends for a genuinely completed, reviewed booking
+  - the thank-you is never gated by marketing consent
+NonFunctional:
+  Reliability:
+    - the thank-you is sent exactly once per completed booking
+Errors:
+  - error: the booking was a no-show
+    message: No thank-you is sent for a no-show booking; no-show communication applies instead.
+    httpCode: 200
+    userAction: No action needed
+  - error: the booking was operator-cancelled
+    message: No thank-you is sent for an operator-cancelled booking; the refund or credit confirmation already covers it.
+    httpCode: 200
+    userAction: No action needed
+ScopeBoundary:
+  InScope:
+    - the thank-you message with review link and private-feedback link
+  OutOfScope:
+    - the review submission itself (REQ-POST02)
+    - feedback capture (REQ-POST03)
+CopilotMode: STRICT
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: D-POST-9 closed inline - transactional, confirmed (DR-PT3)

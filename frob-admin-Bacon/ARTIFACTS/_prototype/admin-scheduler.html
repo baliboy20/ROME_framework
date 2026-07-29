@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A18 · Scheduler — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A18 Scheduler &middot; UXD-03 date/time fan-out, UXD-04 cancel remediation, UXD-05 capacity guards, UXD-06 no-guide note <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <p class="body-text" style="margin-top:-8px"><a href="admin-calendar.html" style="color:var(--pink-text-light)">&larr; Back to calendar</a></p>
+
+      <div class="tabs-row" id="modeTabs">
+        <button class="tab-btn" onclick="setActiveTab(document.getElementById('modeTabs'),this,'a18mode-','create')">Create new</button>
+        <button class="tab-btn active" onclick="setActiveTab(document.getElementById('modeTabs'),this,'a18mode-','edit')">Edit existing</button>
+      </div>
+
+      <div class="a-card" style="max-width:640px">
+        <div class="a-field"><label>Tour</label><input id="f-tour" value="Hidden City"></div>
+        <div style="display:flex;gap:16px">
+          <div class="a-field" style="flex:1">
+            <label>Capacity <span class="mono" style="font-weight:400;text-transform:none">(max 10)</span></label>
+            <input id="f-cap" value="10" oninput="checkCapacity()">
+            <div id="cap-guard-msg"></div>
+          </div>
+          <div class="a-field" style="flex:1"><label>Date</label><input id="f-date" value="1 August 2026" onchange="checkDateChange()"></div>
+          <div class="a-field" style="flex:1"><label>Time</label><input id="f-time" value="10:00" onchange="checkDateChange()"></div>
+        </div>
+        <div class="a-field">
+          <label>Guide (optional)</label>
+          <input id="f-guide" value="Emma" placeholder="Leave empty = not ready to run" oninput="checkGuide()">
+          <div id="guide-note"></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin:6px 0 14px;font:500 12.5px var(--font-sans);color:var(--text-body)">
+          <span class="dot cyan"></span> <span id="booked-note">6 riders already booked — a date/time change will notify them.</span>
+        </div>
+        <div id="dep-change-note"></div>
+        <div style="display:flex;gap:10px;margin-top:8px">
+          <button class="a-btn a-btn-primary" id="saveBtn" onclick="attemptSave()">Save departure</button>
+          <button class="a-btn a-btn-secondary" style="border-color:var(--accent-pink);color:var(--pink-text-light)" onclick="attemptCancel()">Cancel departure</button>
+        </div>
+        <div id="saved-note"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- UXD-03: blocking confirm, explicit-choice dismissal only (UXC-MOD-1) -->
+<div class="a-modal-scrim hidden" id="modal-notify">
+  <div class="a-modal">
+    <div class="eyebrow">A18 &middot; CONFIRM CHANGE</div>
+    <h2 class="serif" style="font-weight:600;font-size:1.3rem;margin:.2em 0 .3em">Notify customers?</h2>
+    <p class="body-text">This will notify <strong>6 customers</strong> of the change. Continue?</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="a-btn a-btn-secondary" onclick="closeModal('modal-notify')">Back</button>
+      <button class="a-btn a-btn-primary" onclick="confirmSave()">Notify &amp; save</button>
+    </div>
+  </div>
+</div>
+
+<!-- UXD-04: blocking confirm, destructive styling -->
+<div class="a-modal-scrim hidden" id="modal-cancel">
+  <div class="a-modal">
+    <div class="eyebrow">A18 &middot; CANCEL DEPARTURE</div>
+    <h2 class="serif" style="font-weight:600;font-size:1.3rem;margin:.2em 0 .3em">Cancel this departure?</h2>
+    <p class="body-text">This will offer <strong>refund / rebook / credit</strong> to the <strong>6 customers</strong> already booked. The remediation flow runs behind the scenes. Continue?</p>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px">
+      <button class="a-btn a-btn-secondary" onclick="closeModal('modal-cancel')">Back</button>
+      <button class="a-btn a-btn-primary" style="background:var(--accent-pink)" onclick="confirmCancel()">Cancel departure</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shell.js"></script>
+<script>
+renderAdminShell('a18', 'A18 · SCHEDULING', 'Scheduler',
+  'Create or edit a departure. Capacity, guide and timing changes are guarded before they can affect real riders.');
+
+var pendingCapErr = false;
+
+function checkCapacity(){
+  var cap = parseInt(document.getElementById('f-cap').value, 10);
+  var msg = document.getElementById('cap-guard-msg');
+  var booked = 6;
+  if (isNaN(cap)) { msg.innerHTML=''; pendingCapErr=false; }
+  else if (cap > 10) { msg.innerHTML = '<div class="guard-msg blocked">A departure can hold at most 10 riders.</div>'; pendingCapErr = true; }
+  else if (cap < booked) { msg.innerHTML = '<div class="guard-msg blocked">' + booked + ' riders are already booked — capacity can\'t go below that.</div>'; pendingCapErr = true; }
+  else { msg.innerHTML = ''; pendingCapErr = false; }
+  updateSaveState();
+}
+function checkGuide(){
+  var guide = document.getElementById('f-guide').value.trim();
+  var note = document.getElementById('guide-note');
+  // UXD-06: non-blocking note, never an error
+  note.innerHTML = guide ? '' : '<div class="note-msg">Marked not ready to run — feeds the A17 readiness dot as GUIDE ✗. Saving is still allowed.</div>';
+}
+function updateSaveState(){
+  document.getElementById('saveBtn').disabled = pendingCapErr;
+  document.getElementById('saveBtn').title = pendingCapErr ? 'Resolve the capacity guard above to save' : '';
+}
+var dateChanged = false;
+function checkDateChange(){ dateChanged = true; }
+
+function attemptSave(){
+  if (pendingCapErr) return;
+  if (dateChanged) { openModal('modal-notify'); }
+  else { commitSave(); }
+}
+function confirmSave(){ closeModal('modal-notify'); commitSave(); }
+function commitSave(){
+  document.getElementById('saved-note').innerHTML = '<div class="inline-confirm">Departure saved' + (dateChanged ? ' — 6 customers notified of the change.' : '.') + '</div>';
+  dateChanged = false;
+}
+function attemptCancel(){ openModal('modal-cancel'); }
+function confirmCancel(){
+  closeModal('modal-cancel');
+  document.getElementById('saved-note').innerHTML = '<div class="inline-confirm">Departure cancelled — refund/rebook/credit offered to 6 customers.</div>';
+}
+function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+</script>
+</body>
+</html>

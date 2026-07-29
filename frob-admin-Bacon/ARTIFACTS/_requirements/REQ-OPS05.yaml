@@ -1,0 +1,59 @@
+ID: REQ-OPS05
+
+Actor: Guide
+
+Intent: submit rider-checkin
+
+Preconditions:
+  - the kit check, bike inspection, and risk assessment are complete
+  - the rider is present at the meeting point
+
+Conditions:
+  - bike and equipment fit, health and suitability, and consent are each confirmed per rider
+  - the rider re-confirms the liability waiver with a fresh signature, a lighter re-confirmation than the full acceptance given at the time of booking
+
+Postconditions:
+  - the rider is recorded cleared or refused
+  - once every rider is processed, an all-riders declaration is signed
+
+Outcomes:
+  - Guide has a per-rider record confirming fitness, suitability, and consent
+  - Rider sees their details reviewed and confirms them correct
+
+Invariants:
+  - a rider is never marked cleared without a recorded waiver re-confirmation
+  - the all-riders declaration is never signed while any rider's status is unresolved
+
+NonFunctional:
+  Security:
+    - the re-confirmation signature and timestamp are recorded per rider
+
+Errors:
+  - error: "rider declares a new incompatible medical condition"
+    message: "This rider has declared a medical condition incompatible with the tour. They have been refused."
+    httpCode: 409
+    userAction: "Flag the refusal for Owner-processed refund"
+  - error: "rider is visibly impaired or intoxicated"
+    message: "This rider appears impaired or intoxicated and has been refused."
+    httpCode: 409
+    userAction: "Record the refusal and inform the rider"
+  - error: "a minor arrives without their declared accompanying adult"
+    message: "This minor has arrived without their declared accompanying adult and has been refused."
+    httpCode: 409
+    userAction: "Record the refusal and inform the party"
+  - error: "rider refuses to re-confirm the waiver"
+    message: "This rider declined to re-confirm the waiver and has been refused."
+    httpCode: 409
+    userAction: "Record the refusal and inform the rider"
+
+ScopeBoundary:
+  InScope:
+    - per-rider check-in
+    - waiver re-confirmation
+    - all-riders declaration
+  OutOfScope:
+    - the full waiver acceptance given at booking
+
+OpenQuestions: []
+
+CopilotMode: STRICT

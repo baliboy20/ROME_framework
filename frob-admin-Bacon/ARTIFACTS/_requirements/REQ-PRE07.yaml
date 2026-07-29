@@ -1,0 +1,39 @@
+ID: REQ-PRE07
+Actor: System (cron)
+Intent: submit nudge-message
+Preconditions:
+  - A saved-tour record is pending, at least 3 days old
+  - The prospect has not since booked that tour
+Conditions:
+  - Current marketing consent must be granted at send time, not just at save time
+  - Suppressed if the prospect's address has bounced
+Postconditions:
+  - The nudge is sent and the saved-tour record moves to sent, or moves to suppressed if a suppression rule applies
+Outcomes:
+  - Prospect receives at most one low-pressure nudge, with an unsubscribe link
+  - Owner is never seen as contacting someone who withdrew consent or already booked
+Invariants:
+  - A nudge is never sent without current, not just historical, consent
+  - At most one nudge is sent per prospect-tour pair
+NonFunctional:
+  Reliability:
+    - The consent check is re-evaluated at send time, not cached from save time
+Errors:
+  - error: Consent withdrawn since the save
+    message: Not applicable — the nudge is suppressed silently, no error shown to anyone.
+    httpCode: 200
+    userAction: None
+  - error: Prospect has since booked the tour
+    message: Not applicable — the nudge is suppressed silently, no error shown to anyone.
+    httpCode: 200
+    userAction: None
+ScopeBoundary:
+  InScope:
+    - The three-day, consent-gated nudge
+  OutOfScope:
+    - Repeated or escalating nudges
+OpenQuestions:
+  - question: None
+    status: RESOLVED
+    resolution: No open questions for this requirement
+CopilotMode: STRICT

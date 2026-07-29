@@ -1,0 +1,46 @@
+ID: REQ-OPS01
+
+Actor: Guide
+
+Intent: view tour-assignment
+
+Preconditions:
+  - a tour is scheduled and assigned to the Guide for today
+
+Conditions:
+  - the rider list reflects the current booking and participant data at the moment it is viewed
+
+Postconditions:
+  - the Guide has reviewed the assignment and rider list
+
+Outcomes:
+  - Guide sees today's tours, party size, and status
+  - Guide sees each rider's name, age band, accompanying adult if a minor, declared health flags, and accessibility notes
+
+Invariants:
+  - the rider list shown is never older than the last successful sync from the booking record
+
+NonFunctional:
+  Reliability:
+    - the assignment reflects the current state, not a stale cache
+
+Errors:
+  - error: "assignment is missing or incorrect"
+    message: "This tour assignment could not be found or looks incorrect. Contact the Owner before proceeding."
+    httpCode: 404
+    userAction: "Contact the Owner; the tour cannot proceed until corrected"
+  - error: "a health flag indicates incompatibility with the tour"
+    message: "A rider's declared health flag may be incompatible with this tour. This has been flagged to the Owner."
+    httpCode: 409
+    userAction: "Review the flagged rider before further preparation"
+
+ScopeBoundary:
+  InScope:
+    - assignment review
+    - rider-list review
+  OutOfScope:
+    - route and waypoint review
+
+OpenQuestions: []
+
+CopilotMode: STRICT

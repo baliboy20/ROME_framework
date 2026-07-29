@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A8 · Payments &amp; refunds — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A8 Payments &amp; refunds &middot; UXD-01 cumulative refund modal (blocking, UXC-MOD-1) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+
+      <div class="chip-row" id="payChips">
+        <button class="chip active" onclick="setActiveChip(document.getElementById('payChips'),this)">All</button>
+        <button class="chip" onclick="setActiveChip(document.getElementById('payChips'),this)">Requires payment</button>
+        <button class="chip" onclick="setActiveChip(document.getElementById('payChips'),this)">Succeeded</button>
+        <button class="chip" onclick="setActiveChip(document.getElementById('payChips'),this)">Refunded</button>
+        <button class="chip" onclick="setActiveChip(document.getElementById('payChips'),this)">Failed</button>
+        <button class="chip" onclick="setActiveChip(document.getElementById('payChips'),this)">No-show</button>
+      </div>
+
+      <table class="a-table">
+        <thead><tr><th>Booking</th><th>Customer</th><th>Paid</th><th>Refunded</th><th>Status</th><th></th></tr></thead>
+        <tbody id="payRows">
+          <tr data-id="BK-1001">
+            <td class="mono">BK-1001</td>
+            <td>Tom Baker</td>
+            <td class="price serif">£90.00</td>
+            <td class="price serif refunded-cell">£0.00</td>
+            <td class="status-cell"><span class="status-pill lime">succeeded</span></td>
+            <td style="text-align:right" class="action-cell"><button class="a-btn a-btn-primary a-btn-row" onclick="openRefund(this,'BK-1001','Tom Baker','Hidden City','1 Aug 2026',90.00,0.00)">Refund</button></td>
+          </tr>
+          <tr data-id="BK-1002">
+            <td class="mono">BK-1002</td>
+            <td>Priya Shah</td>
+            <td class="price serif">£180.00</td>
+            <td class="price serif refunded-cell">£0.00</td>
+            <td class="status-cell"><span class="status-pill lime">succeeded</span></td>
+            <td style="text-align:right" class="action-cell"><button class="a-btn a-btn-primary a-btn-row" onclick="openRefund(this,'BK-1002','Priya Shah','Riverside Loop','3 Aug 2026',180.00,0.00)">Refund</button></td>
+          </tr>
+          <tr data-id="BK-1003">
+            <td class="mono">BK-1003</td>
+            <td>James Okafor</td>
+            <td class="price serif">£90.00</td>
+            <td class="price serif refunded-cell">£90.00</td>
+            <td class="status-cell"><span class="status-pill cyan">refunded</span></td>
+            <td style="text-align:right" class="action-cell"><a class="a-btn a-btn-secondary a-btn-row" href="#">View</a></td>
+          </tr>
+          <tr data-id="BK-1004">
+            <td class="mono">BK-1004</td>
+            <td>Lena Fischer</td>
+            <td class="price serif">£0.00</td>
+            <td class="price serif refunded-cell">£0.00</td>
+            <td class="status-cell"><span class="status-pill pink">requires_payment</span></td>
+            <td style="text-align:right" class="action-cell"><a class="a-btn a-btn-secondary a-btn-row" href="#">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:14px">Provider references only — card numbers are never rendered anywhere (UXC-CMP-4).</p>
+    </div>
+  </div>
+</div>
+
+<!-- UXD-01: cumulative refund modal — blocking, dismissed only by Cancel/Confirm (UXC-MOD-1) -->
+<div class="a-modal-scrim hidden" id="refundModal">
+  <div class="a-modal">
+    <div class="eyebrow" id="refund-eyebrow">REFUND · BK-1001</div>
+    <h2 class="serif" style="font-weight:600;font-size:1.4rem;margin:.2em 0 .1em">Issue refund</h2>
+    <p class="body-text" style="font-size:13px;margin-top:0" id="refund-subtitle">Hidden City &middot; 1 Aug 2026 &middot; Tom Baker</p>
+
+    <div style="display:flex;gap:20px;margin:18px 0">
+      <div class="a-field" style="flex:1;margin-bottom:0"><label>Paid</label><div class="money-val" id="refund-paid">£90.00</div></div>
+      <div class="a-field" style="flex:1;margin-bottom:0"><label>Refunded so far</label><div class="money-val" id="refund-sofar">£0.00</div></div>
+    </div>
+
+    <div class="a-field">
+      <label>Refund amount</label>
+      <input id="refund-amount" value="90.00" oninput="recomputeRefund()">
+    </div>
+    <p class="mono" style="font-size:11.5px;color:var(--text-muted)">Cumulative refunded after this: <strong style="color:var(--pink-text-light)" id="refund-cumulative">£90.00</strong></p>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:22px">
+      <button class="a-btn a-btn-secondary" onclick="closeRefund()">Cancel</button>
+      <button class="a-btn a-btn-primary" id="refund-confirm-btn" onclick="confirmRefund()">Refund £90.00</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shell.js"></script>
+<script>
+renderAdminShell('a8', 'A8 · BOOKINGS & PAYMENTS', 'Payments & refunds',
+  "Every booking's payment state and cumulative refund total. Refunds use your operator session — no separate admin key.");
+
+var refundCtx = null;
+
+function openRefund(btn, bookingId, customer, tour, date, paid, refundedSoFar){
+  refundCtx = { row: btn.closest('tr'), bookingId: bookingId, paid: paid, refundedSoFar: refundedSoFar };
+  document.getElementById('refund-eyebrow').textContent = 'REFUND · ' + bookingId;
+  document.getElementById('refund-subtitle').textContent = tour + ' · ' + date + ' · ' + customer;
+  document.getElementById('refund-paid').textContent = money(paid);
+  document.getElementById('refund-sofar').textContent = money(refundedSoFar);
+  document.getElementById('refund-amount').value = (paid - refundedSoFar).toFixed(2);
+  recomputeRefund();
+  document.getElementById('refundModal').classList.remove('hidden');
+}
+function closeRefund(){
+  document.getElementById('refundModal').classList.add('hidden');
+  refundCtx = null;
+}
+// blocking modal: no scrim-click / Escape dismissal (UXC-MOD-1) — Cancel/Confirm only, intentionally no listener attached to the scrim.
+
+function recomputeRefund(){
+  if (!refundCtx) return;
+  var amt = parseFloat(document.getElementById('refund-amount').value) || 0;
+  var cumulative = refundCtx.refundedSoFar + amt;
+  document.getElementById('refund-cumulative').textContent = money(cumulative);
+  document.getElementById('refund-confirm-btn').textContent = 'Refund ' + money(amt);
+}
+function confirmRefund(){
+  if (!refundCtx) return;
+  var amt = parseFloat(document.getElementById('refund-amount').value) || 0;
+  var cumulative = refundCtx.refundedSoFar + amt;
+  var row = refundCtx.row;
+  row.querySelector('.refunded-cell').textContent = money(cumulative);
+  row.querySelector('.status-cell').innerHTML = '<span class="status-pill cyan">refunded</span>';
+  row.querySelector('.action-cell').innerHTML = '<a class="a-btn a-btn-secondary a-btn-row" href="#">View</a>';
+  closeRefund();
+}
+function money(n){ return '£' + n.toFixed(2); }
+</script>
+</body>
+</html>

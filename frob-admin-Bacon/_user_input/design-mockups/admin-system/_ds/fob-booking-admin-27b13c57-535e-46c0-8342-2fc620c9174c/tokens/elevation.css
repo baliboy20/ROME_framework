@@ -1,0 +1,14 @@
+/* ============================================================
+   FOB ELEVATION
+   Blur is reserved for overlays; resting surfaces use a 1px border.
+   ============================================================ */
+:root {
+  --shadow-console: 0 24px 70px rgba(0,0,0,.4);   /* console card / floating panel */
+  --shadow-email:   0 18px 50px rgba(0,0,0,.28);  /* email preview                 */
+  --shadow-modal:   0 40px 100px rgba(40,30,20,.35); /* modal / dialog             */
+  --shadow-inline:  none;                          /* resting = 1px border, no shadow */
+
+  --overlay-scrim:  rgba(46,44,36,.42);            /* light-theme modal scrim       */
+  --overlay-scrim-dark: rgba(9,4,15,.7);           /* console modal scrim           */
+  --overlay-blur:   blur(4px);
+}

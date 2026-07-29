@@ -1,0 +1,41 @@
+ID: REQ-FLEET04
+
+Actor: Owner
+
+Intent: submit service-flag
+
+Preconditions:
+  - a bike fails an inspection, is flagged in an after-ride review, or the Owner identifies a fault directly
+
+Conditions:
+  - the flag records the reason, the source of the flag, and any note or photo attached
+
+Postconditions:
+  - the bike's status becomes flagged-for-service
+  - the bike cannot be assigned to a tour until cleared
+
+Outcomes:
+  - Owner sees the flagged bike with its reason in the fleet readiness view
+
+Invariants:
+  - a flagged bike is never assignable to a tour until it is cleared
+
+NonFunctional:
+  Reliability:
+    - the flag is visible immediately, not batched
+
+Errors:
+  - error: "flag submitted with no reason recorded"
+    message: "A service flag requires a reason before it can be saved"
+    httpCode: 400
+    userAction: "Add a reason for the flag and resubmit"
+
+ScopeBoundary:
+  InScope:
+    - recording a service flag from any valid source
+  OutOfScope:
+    - the repair itself
+
+OpenQuestions: []
+
+CopilotMode: STRICT

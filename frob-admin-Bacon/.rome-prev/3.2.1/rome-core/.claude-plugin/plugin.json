@@ -1,0 +1,55 @@
+{
+  "name": "rome-core",
+  "version": "1.0.0",
+  "description": "ROME Framework foundation - shared libraries and orchestrator",
+  "type": "foundation",
+  "provides": {
+    "libraries": [
+      "aordlParser",
+      "aordlValidator"
+    ],
+    "mcpServers": [
+      "activity-log-file"
+    ],
+    "templates": [
+      "aordl"
+    ]
+  },
+  "dependencies": {},
+  "requires": {
+    "robots": [
+      {
+        "name": "roma",
+        "mode": "phase-agnostic",
+        "source": "agents/roma"
+      }
+    ],
+    "mcpServers": [
+      {
+        "name": "activity-log-file",
+        "reason": "Core framework dependency — all robots log activity via this server",
+        "optional": false
+      }
+    ]
+  },
+  "exports": {
+    "lib/aordl-parser/validate-aordl.js": "AORDL requirement validation utility",
+    "lib/aordl-parser/transform-aordl-to-bdd.js": "AORDL to BDD transformation utility",
+    "servers/activity-log/activity-log-file/": "Activity logging MCP server",
+    "templates/aordl/": "AORDL requirement authoring templates"
+  },
+  "author": "ROME Framework Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rome-framework/rome-core"
+  },
+  "keywords": [
+    "rome",
+    "framework",
+    "orchestration",
+    "aordl",
+    "requirements",
+    "activity-logging"
+  ]
+}

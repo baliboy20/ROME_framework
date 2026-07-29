@@ -1,0 +1,51 @@
+ID: REQ-OPS10
+
+Actor: Guide
+
+Intent: submit ride-completion-review
+
+Preconditions:
+  - the tour has ended and been handed back from the navigation journey
+
+Conditions:
+  - structured fields capture hazards and route changes, incidents and near-misses, a quality assessment, and required follow-up actions
+  - each ticked action triggers its own downstream flow, such as a risk-assessment review, an incident report, an insurer notification, a bike-service flag, or a review request
+
+Postconditions:
+  - the review is saved and visible to the Owner
+  - ticked actions are queued
+
+Outcomes:
+  - Owner sees a complete structured record of how the tour went
+  - any flagged bike is excluded from tomorrow's assignment pool automatically
+
+Invariants:
+  - a submitted review is never lost
+  - an incomplete draft still exists until submitted or the 24-hour window lapses
+
+NonFunctional:
+  Reliability:
+    - a flagged bike is excluded from assignment before the next tour-day begins
+
+Errors:
+  - error: "the review is not completed immediately"
+    message: "The review was not completed immediately, such as before a back-to-back tour. It has been saved as a draft with a reminder before the 24-hour deadline."
+    httpCode: 202
+    userAction: "Complete and submit the draft review before the 24-hour deadline"
+  - error: "a high-severity issue is mentioned in free text but the corresponding action isn't ticked"
+    message: "A high-severity issue was mentioned but its corresponding action isn't ticked. Confirm before submitting."
+    httpCode: 409
+    userAction: "Tick the corresponding action or confirm the review is correct as written"
+
+ScopeBoundary:
+  InScope:
+    - structured ride-completion review
+    - downstream action triggers
+  OutOfScope:
+    - photo capture
+    - the incident report's full narrative
+    - the hazard log entry's full detail
+
+OpenQuestions: []
+
+CopilotMode: STRICT

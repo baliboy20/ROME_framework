@@ -1,0 +1,46 @@
+ID: REQ-FLEET02
+
+Actor: Owner
+
+Intent: create equipment-record
+
+Preconditions:
+  - equipment has been physically acquired, or an existing item needs replacement
+
+Conditions:
+  - each item is entered individually with a description, one at a time
+  - a replacement links to the item it replaces, and the replaced item is retired with a reason
+
+Postconditions:
+  - the equipment record exists and is tracked
+  - if a replacement, the prior item's status is set to retired
+
+Outcomes:
+  - Owner sees the new equipment available for use
+  - a helmet enters an annual review reminder at onboarding
+
+Invariants:
+  - a helmet's annual review reminder is always scheduled at onboarding, never left unset
+
+NonFunctional:
+  Reliability:
+    - the review reminder is set correctly at the moment of onboarding
+
+Errors:
+  - error: "helmet has been involved in an impact"
+    message: "This helmet has been involved in an impact and must be retired immediately — a replacement record is required"
+    httpCode: 409
+    userAction: "Retire the helmet and create a replacement equipment record"
+
+ScopeBoundary:
+  InScope:
+    - individual equipment onboarding
+    - equipment replacement with reason
+  OutOfScope:
+    - bike onboarding
+    - bulk entry
+    - photo capture
+
+OpenQuestions: []
+
+CopilotMode: STRICT

@@ -1,0 +1,33 @@
+ID: REQ-TOUR10
+Actor: System
+Intent: submit no-show-record
+Preconditions:
+  - the tour has started with one or more booked attendees missing beyond the grace period, per rider check-in records
+Conditions:
+  - the no-show policy is applied per the aligned, Owner-decided approach, not an independent automated rule
+Postconditions:
+  - the no-show is recorded against the booking
+  - the customer is notified of the outcome
+Outcomes:
+  - Customer is notified of the no-show and any applicable remediation
+  - Owner can see no-show patterns for a booker over time
+Invariants:
+  - a no-show is recorded only after the grace period has genuinely passed, per rider check-in data
+NonFunctional:
+  Reliability:
+    - the no-show record and customer notification are never both silently skipped
+Errors:
+  - error: a late-arrival notice arrives after the tour has started
+    message: The late-arrival notice was logged but does not override the recorded no-show.
+    httpCode: 200
+    userAction: No action needed; the no-show record stands
+ScopeBoundary:
+  InScope:
+    - no-show recording, policy application, and customer notification
+  OutOfScope:
+    - the grace-period and hold decision itself
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: "D-TOUR-8 closed: manual, Owner-decided no-show policy, per DR-B5's precedent"
+CopilotMode: STRICT

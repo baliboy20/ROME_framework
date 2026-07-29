@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G12 · Incident report — Guide App</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — G12 Incident report &middot; 2h window; submit disabled without a narrative (UXC-FRM-3) <a href="index.html">index</a></div>
+<div class="guide-frame">
+  <div id="header-mount"></div>
+  <div class="guide-content">
+    <div class="warning-banner">Only if applicable. Must be filed within 2 hours of the incident.</div>
+    <div class="a-field"><label>Narrative</label><input id="f-narrative" placeholder="What happened, who was involved" oninput="checkGate()"></div>
+    <div id="gateMsg"></div>
+    <button class="g-btn g-btn-primary gate-btn" id="submitBtn" disabled onclick="submit()">Submit incident report</button>
+    <div id="submitNote"></div>
+    <a class="g-btn g-btn-secondary" href="guide-playbook.html">Back to playbook</a>
+  </div>
+</div>
+<script src="guide-shell.js"></script>
+<script>
+renderGuideHeader('guide-playbook.html', 'G12 · 2H WINDOW', 'Incident report');
+function checkGate(){
+  var v = document.getElementById('f-narrative').value.trim();
+  document.getElementById('submitBtn').disabled = v.length < 5;
+  document.getElementById('gateMsg').innerHTML = v.length < 5 ? '<div class="guard-msg">A narrative is required to submit (UXC-FRM-3).</div>' : '';
+}
+checkGate();
+function submit(){
+  document.getElementById('submitNote').innerHTML = '<div class="inline-confirm">Submitted — routes to A10 Incident review for William.</div>';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+ID: REQ-PRE04
+Actor: Prospect
+Intent: submit enquiry
+Preconditions:
+  - None — reachable from the catalogue, tour detail, or availability check
+Conditions:
+  - Required fields are name, preferred contact channel, party size, preferred dates, and message
+  - Phone is required when WhatsApp or phone is the chosen channel
+  - An explicit response-time target is set at submission
+Postconditions:
+  - An enquiry record exists in open status with a response-time target
+  - The Owner is alerted, unless the submission is flagged spam
+Outcomes:
+  - Prospect sees an acknowledgement stating the response-time target
+  - Owner sees the enquiry with party size, dates, channel, message, and source tour
+Invariants:
+  - Every non-spam enquiry has a response-time target set at creation
+  - An enquiry is never silently lost
+NonFunctional:
+  Reliability:
+    - The owner alert fires reliably for every non-spam enquiry
+Errors:
+  - error: Required field missing or invalid
+    message: Please complete all required fields, including a valid phone number if needed.
+    httpCode: 422
+    userAction: Correct the highlighted fields and resubmit
+  - error: Submission is flagged spam
+    message: Your enquiry has been received.
+    httpCode: 200
+    userAction: No action needed; the enquiry is recorded without an owner alert
+ScopeBoundary:
+  InScope:
+    - Enquiry capture, response-time target, and owner alert
+  OutOfScope:
+    - The Owner's reply itself
+    - Automated overdue follow-up to the Prospect
+OpenQuestions:
+  - question: None
+    status: RESOLVED
+    resolution: Owner alert routing resolved as daily digest email; spam enquiries suppress the owner alert entirely
+CopilotMode: STRICT

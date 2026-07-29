@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/colors.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/typography.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/alpha-ladder.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/styles.css">
+</helmet>
+<div style="display:flex;align-items:center;gap:9px;width:100%">
+  <div style="flex:1;height:7px;border-radius:99px;background:var(--wb12);overflow:hidden">
+    <div style="{{ fillStyle }}"></div>
+  </div>
+  <div style="{{ labelStyle }}">{{ text }}</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:240,&quot;height&quot;:40},&quot;value&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;},&quot;max&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:6,&quot;min&quot;:1,&quot;max&quot;:12,&quot;tsType&quot;:&quot;number&quot;},&quot;label&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onDark&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals(){
+    const value = Number(this.props.value ?? 0);
+    const max = Number(this.props.max ?? 6);
+    const onDark = this.props.onDark ?? false;
+    const pct = max>0 ? Math.max(0, Math.min(100, value/max*100)) : 0;
+    return {
+      text: this.props.label ?? (value+'/'+max),
+      fillStyle:'height:100%;width:'+pct+'%;border-radius:99px;transition:width .25s;background:'+(onDark?'var(--pill-ink)':'var(--gradient-brand)'),
+      labelStyle:'font:700 12px var(--font-mono);color:'+(onDark?'var(--pill-ink)':'var(--text-strong)')
+    };
+  }
+}
+</script>
+</body>
+</html>

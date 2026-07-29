@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A9 · Enquiries — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A9 Enquiries &middot; UXD-12 overdue flag, no auto-email, spam tab (no alert) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+
+      <div class="tabs-row" id="enqTabs">
+        <button class="tab-btn active" onclick="setActiveTab(document.getElementById('enqTabs'),this,'a9-','open')">Open</button>
+        <button class="tab-btn" onclick="setActiveTab(document.getElementById('enqTabs'),this,'a9-','overdue')">Overdue</button>
+        <button class="tab-btn" onclick="setActiveTab(document.getElementById('enqTabs'),this,'a9-','spam')">Spam</button>
+      </div>
+
+      <div data-panel="a9-open">
+        <table class="a-table">
+          <thead><tr><th>Enquiry</th><th>Contact</th><th>Received</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><span class="tour serif">Corporate group tour</span><br><span class="date">ENQ-2003</span></td><td>Sarah Kim</td><td class="mono" style="font-size:11px">Today, 09:12</td><td style="text-align:right"><a class="a-btn a-btn-secondary a-btn-row" href="#">Reply</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div data-panel="a9-overdue" class="hidden">
+        <table class="a-table">
+          <thead><tr><th>Enquiry</th><th>Contact</th><th>Received</th><th></th></tr></thead>
+          <tbody>
+            <tr style="border-left:3px solid var(--accent-orange)">
+              <td><span class="tour serif">Group/private booking</span><br><span class="date">ENQ-2001</span></td>
+              <td>Marie Dupont</td>
+              <td class="mono" style="font-size:11px">3 days ago</td>
+              <td style="text-align:right"><a class="a-btn a-btn-secondary a-btn-row" href="#">Reply</a></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note-msg" style="margin-top:14px">Overdue enquiries stay visibly flagged here — no email is auto-sent to the prospect. William decides whether/when to respond (UXD-12).</p>
+      </div>
+
+      <div data-panel="a9-spam" class="hidden">
+        <table class="a-table">
+          <thead><tr><th>Enquiry</th><th>Contact</th><th>Received</th><th></th></tr></thead>
+          <tbody>
+            <tr><td><span class="tour serif">"Free bikes giveaway???"</span><br><span class="date">ENQ-1998</span></td><td>unknown@spamdomain.example</td><td class="mono" style="font-size:11px">1 week ago</td><td style="text-align:right"><a class="a-btn a-btn-secondary a-btn-row" href="#">Delete</a></td></tr>
+          </tbody>
+        </table>
+        <p class="note-msg" style="margin-top:14px">Spam-flagged enquiries live on this separate tab and raise no alert.</p>
+      </div>
+
+      <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:18px">Owner notification is a daily digest (UXC-FBK-4) — no per-enquiry push, no WhatsApp channel.</p>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>
+renderAdminShell('a9', 'A9 · BOOKINGS & PAYMENTS', 'Enquiries',
+  'Group/private/corporate enquiries. Overdue ones stay flagged; nothing is auto-emailed to the prospect.');
+</script>
+</body>
+</html>

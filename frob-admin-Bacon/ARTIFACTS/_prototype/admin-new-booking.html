@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A7 · New booking — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A7 New booking &middot; governed by UXC defaults (FRM-1/2/4/5) <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+
+      <div class="tabs-row" id="a7Tabs">
+        <button class="tab-btn active" onclick="setActiveTab(document.getElementById('a7Tabs'),this,'a7-','enq')">From enquiry</button>
+        <button class="tab-btn" onclick="setActiveTab(document.getElementById('a7Tabs'),this,'a7-','prov')">Provisional / pay-later</button>
+      </div>
+
+      <div class="a-card" style="max-width:560px">
+        <div class="a-field"><label>Tour</label><input value="Hidden City"></div>
+        <div class="a-field"><label>Departure</label><input value="1 August 2026, 10:00"></div>
+        <div class="a-field"><label>Party size</label><input value="2" oninput="this.value=Math.min(10,Math.max(1,this.value||1))"><p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:4px">Max 10 per departure (UXC-FRM-5).</p></div>
+        <div class="a-field"><label>Agreed price</label><input value="£45.00"></div>
+        <div data-panel="a7-prov" class="hidden">
+          <div class="a-field"><label>Hold duration</label><input placeholder="e.g. 72 hours"></div>
+          <div class="a-field"><label>Deposit</label><input placeholder="£0.00"></div>
+          <div class="a-field"><label>Reminder cadence</label><input placeholder="e.g. 48h, 12h"></div>
+        </div>
+        <button class="a-btn a-btn-primary">Create booking</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="admin-shell.js"></script>
+<script>renderAdminShell('a7', 'A7 · BOOKINGS & PAYMENTS', 'New booking', 'William-initiated booking, from an enquiry or provisional/pay-later. No defaults on hold/deposit/reminder terms.');</script>
+</body>
+</html>

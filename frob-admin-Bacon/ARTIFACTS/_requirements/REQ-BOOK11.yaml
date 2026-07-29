@@ -1,0 +1,39 @@
+ID: REQ-BOOK11
+Actor: Owner
+Intent: create departure
+Preconditions:
+  - a published tour exists to schedule against
+  - Owner is in an operator session
+Conditions:
+  - a departure is a single dated, timed instance of one tour, with recurring patterns out of scope
+  - capacity does not exceed the maximum group size of 10
+  - a guide may optionally be assigned at creation
+  - the same tour may not have two departures at the identical date and time
+Postconditions:
+  - a bookable departure exists with zero bookings and full remaining capacity
+  - if no guide is assigned, the departure is flagged not-ready-to-run
+Outcomes:
+  - Owner sees the departure open for booking and available to allocate a guide and bikes against
+  - a Customer's booking selection can now proceed against a real departure
+Invariants:
+  - a departure's capacity never exceeds the maximum group size
+  - a departure belongs to exactly one tour
+NonFunctional:
+  Security:
+    - only an authenticated Owner may create a departure
+Errors:
+  - error: capacity set above the maximum group size
+    message: A departure can hold at most 10 riders
+  - error: a departure already exists for that tour at that date and time
+    message: That tour is already scheduled at that time
+ScopeBoundary:
+  InScope:
+    - single-dated departure scheduling with capacity and optional guide
+  OutOfScope:
+    - recurring departure patterns
+    - gift-voucher or online-travel-agency departures
+OpenQuestions:
+  - question: must a guide be assigned before a departure can be created
+    status: RESOLVED
+    resolution: a guide is optional at creation; the departure is flagged not-ready-to-run until one is assigned, closed by DR-BO5
+CopilotMode: STRICT

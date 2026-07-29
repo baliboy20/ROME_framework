@@ -1,0 +1,33 @@
+ID: REQ-BOOK04
+Actor: Customer
+Intent: submit payment
+Preconditions:
+  - booking consent is recorded for the draft
+  - the slot hold is active
+Conditions:
+  - a payment session is created for the draft's total price, carrying a client-supplied idempotency key
+Postconditions:
+  - a payment attempt exists, pending the payment provider's outcome
+Outcomes:
+  - Customer completes payment inline, without being redirected away
+Invariants:
+  - a booking draft has at most one active, non-superseded payment attempt at a time
+NonFunctional:
+  Security:
+    - card data is never handled directly by this system; sensitive payment operations flow through the payment provider
+Errors:
+  - error: card declined
+    message: Your card was declined
+  - error: repeated identical submission with the same idempotency key
+    message: no duplicate payment attempt is created; the same payment session is returned
+ScopeBoundary:
+  InScope:
+    - one payment attempt per submission, idempotent on retry
+  OutOfScope:
+    - split payments
+    - multi-currency payment
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: no open questions remain for this requirement
+CopilotMode: STRICT

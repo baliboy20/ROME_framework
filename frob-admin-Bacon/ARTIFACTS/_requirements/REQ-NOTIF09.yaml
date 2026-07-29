@@ -1,0 +1,39 @@
+ID: REQ-NOTIF09
+Actor: Owner
+Intent: submit thread-reply
+Preconditions:
+  - a received_email exists whose email_thread is categorised linked to a Booking
+Conditions:
+  - the reply addresses whatever the inbound message raised; free text, no template
+  - the reply is authored and sent in-tool, routed through the shared send() path (REQ-NOTIF01)
+Postconditions:
+  - a new sent message is recorded in the same email_thread as the message being replied to
+  - the reply is delivered to the address that sent the original message
+Outcomes:
+  - Owner sees the reply appear in the thread, alongside the message it answers
+  - the original sender receives the reply
+Invariants:
+  - a thread-reply is always attached to an existing linked email_thread; it never creates or infers a Booking association itself (that is REQ-NOTIF05/07's job)
+  - replying to an unlinked/ambiguous thread is out of scope until it is linked
+NonFunctional: {}
+Errors:
+  - error: Empty reply
+    message: Add a reply before sending.
+    httpCode: 422
+    userAction: Enter the reply text and resend
+ScopeBoundary:
+  InScope:
+    - composing and sending a free-text reply to a linked thread, recorded in the archive
+  OutOfScope:
+    - replying to Enquiries (REQ-PRE05, pre-booking)
+    - replying to an unlinked/ambiguous thread (link it first, REQ-NOTIF07)
+    - attachments; anything beyond plain text
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      Genuinely new (EML reintegration §3), from REQ-EML17 (DR-13, live-tested). DR-17 (§5b) confirms
+      in-tool reply governs. Scope boundary vs REQ-PRE05: enquiry replies are pre-booking; this is
+      post-booking, already-linked-to-a-thread correspondence. Source:
+      EML-reintegration-handover/2-eml-spec/EML.md REQ-EML17.
+CopilotMode: STRICT

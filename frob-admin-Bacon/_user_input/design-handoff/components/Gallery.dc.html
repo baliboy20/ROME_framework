@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/fonts/fonts.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/fonts.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/colors.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/typography.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/spacing.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/elevation.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/alpha-ladder.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/styles.css">
+  <script src="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/_ds_bundle.js"></script>
+</helmet>
+<div style="min-height:100vh;background:var(--surface-bg-lo);font-family:var(--font-sans);color:var(--text-body);padding:44px 40px 90px">
+  <div style="max-width:1080px;margin:0 auto">
+    <div style="margin-bottom:8px;font:600 11px var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--text-label)">FOB Booking Admin · extensions</div>
+    <h1 style="margin:0 0 6px;font:600 30px var(--font-serif);color:var(--text-strong)">Component library</h1>
+    <p style="margin:0 0 36px;font:500 13.5px var(--font-sans);color:var(--text-muted);max-width:640px">Eleven token-driven components extending the FOB design system, extracted from the admin console and guide app. Each is a sibling DC — import with <span style="font-family:var(--font-mono);font-size:12px;color:var(--text-body)">&lt;dc-import name="…"&gt;</span>.</p>
+
+    <div style="display:flex;flex-direction:column;gap:34px">
+
+      <!-- Admin -->
+      <div style="font:600 10.5px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-label);border-bottom:1px solid var(--wb12);padding-bottom:8px">Admin console components</div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">StatCard</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px">
+          <dc-import name="StatCard" value="11" label="In service" tone="lime" hint-size="100%,110px"></dc-import>
+          <dc-import name="StatCard" value="2" label="Flagged" tone="orange" hint-size="100%,110px"></dc-import>
+          <dc-import name="StatCard" value="1" label="Awaiting service" tone="cyan" hint-size="100%,110px"></dc-import>
+          <dc-import name="StatCard" value="1" label="Retired" tone="neutral" hint-size="100%,110px"></dc-import>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">ReadinessBadge</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <dc-import name="ReadinessBadge" state="ok" label="guide" hint-size="auto,30px"></dc-import>
+          <dc-import name="ReadinessBadge" state="partial" label="bikes" hint-size="auto,30px"></dc-import>
+          <dc-import name="ReadinessBadge" state="miss" label="guide" hint-size="auto,30px"></dc-import>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">TreeNav <span style="{{ tagStyle }}">stateful · collapsible</span></div>
+        <div style="display:flex;gap:28px;align-items:flex-start">
+          <div style="width:248px;flex:none;background:var(--surface-rail);border:1px solid var(--wb12);border-radius:var(--radius-card)">
+            <dc-import name="TreeNav" groups="{{ navGroups }}" active="a8" hint-size="100%,420px"></dc-import>
+          </div>
+          <div style="width:68px;flex:none;background:var(--surface-rail);border:1px solid var(--wb12);border-radius:var(--radius-card)">
+            <dc-import name="TreeNav" groups="{{ navGroups }}" active="a8" collapsed="{{ true }}" hint-size="100%,420px"></dc-import>
+          </div>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">TransferList <span style="{{ tagStyle }}">stateful</span></div>
+        <dc-import name="TransferList" items="{{ bikeItems }}" assigned="{{ bikeAssigned }}" need="{{ 2 }}" hint-size="100%,240px"></dc-import>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">CalendarMonth</div>
+        <dc-import name="CalendarMonth" year="{{ 2026 }}" month="{{ 7 }}" events="{{ calEvents }}" hint-size="100%,560px"></dc-import>
+      </div>
+
+      <!-- Guide -->
+      <div style="font:600 10.5px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--text-label);border-bottom:1px solid var(--wb12);padding-bottom:8px;margin-top:8px">Guide app components</div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">StepRow</div>
+        <div style="display:flex;flex-direction:column;gap:9px;max-width:420px">
+          <dc-import name="StepRow" num="1" title="Travel kit checklist" sub="G3 · Typed confirm" status="done" hint-size="100%,64px"></dc-import>
+          <dc-import name="StepRow" num="2" title="Bike inspection grid" sub="G4 · Full signature" status="current" hint-size="100%,64px"></dc-import>
+          <dc-import name="StepRow" num="3" title="Risk assessment" sub="G5 · Typed confirm" status="todo" hint-size="100%,64px"></dc-import>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">ProgressBar</div>
+        <div style="display:flex;flex-direction:column;gap:16px;max-width:320px">
+          <dc-import name="ProgressBar" value="{{ 2 }}" max="{{ 6 }}" hint-size="100%,40px"></dc-import>
+          <dc-import name="ProgressBar" value="{{ 5 }}" max="{{ 6 }}" hint-size="100%,40px"></dc-import>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">ChecklistRow <span style="{{ tagStyle }}">stateful</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px;max-width:420px">
+          <dc-import name="ChecklistRow" label="First-aid kit" hint-size="100%,50px"></dc-import>
+          <dc-import name="ChecklistRow" label="Spare tubes ×3" checked="{{ true }}" hint-size="100%,50px"></dc-import>
+          <dc-import name="ChecklistRow" label="Pump" hint-size="100%,50px"></dc-import>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">SignatureField <span style="{{ tagStyle }}">stateful</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:640px">
+          <dc-import name="SignatureField" label="Guide signature" placeholder="Tap to sign" signatory="Emma Hart" hint-size="100%,120px"></dc-import>
+          <dc-import name="SignatureField" label="Signed" signatory="Emma Hart" signed="{{ true }}" hint-size="100%,120px"></dc-import>
+        </div>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">CategoryChips <span style="{{ tagStyle }}">stateful · single-select</span></div>
+        <dc-import name="CategoryChips" options="{{ eventCats }}" value="Mechanical" hint-size="100%,48px"></dc-import>
+      </div>
+
+      <div style="{{ cardStyle }}">
+        <div style="{{ nameStyle }}">StarRating <span style="{{ tagStyle }}">stateful</span></div>
+        <dc-import name="StarRating" value="{{ 4 }}" hint-size="200px,48px"></dc-import>
+      </div>
+
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals(){
+    return {
+      sections: [],
+      cardStyle:'background:var(--surface-card);border:1px solid var(--wb12);border-radius:var(--radius-card);padding:22px',
+      nameStyle:'font:600 14px var(--font-mono);color:var(--text-strong);margin-bottom:16px',
+      tagStyle:'font:500 10px var(--font-mono);color:var(--text-faint);text-transform:none;letter-spacing:0;margin-left:8px',
+      navGroups:[
+        { title:'Bookings & payments', items:[{id:'a7',label:'New booking',code:'A7'},{id:'a8',label:'Payments & refunds',code:'A8'},{id:'a9',label:'Enquiries',code:'A9'}] },
+        { title:'Scheduling', items:[{id:'a17',label:'Departure calendar',code:'A17'},{id:'a18',label:'Scheduler',code:'A18'},{id:'a20',label:'Bike allocation',code:'A20'}] },
+        { title:'Fleet & equipment', items:[{id:'a14',label:'Fleet readiness',code:'A14'},{id:'a12',label:'Add bike',code:'A12'}] }
+      ],
+      bikeItems:[
+        {id:'FOB-002',status:'ok'},{id:'FOB-003',status:'ok'},{id:'FOB-005',status:'ok'},
+        {id:'FOB-009',status:'oos',reason:'out of service — choose another'},
+        {id:'FOB-004',status:'busy',reason:'already out on another tour at that time'}
+      ],
+      bikeAssigned:['FOB-001'],
+      calEvents:[
+        {day:1,label:'Hidden City',sub:'10:00 · 6/10',tone:'orange'},
+        {day:1,label:'Hidden City',sub:'14:00 · 2/10',tone:'orange'},
+        {day:3,label:'Riverside Loop',sub:'10:00 · 8/10',tone:'lime'},
+        {day:8,label:'Hidden City',sub:'10:00 · 4/10',tone:'lime'},
+        {day:12,label:'Corporate group',sub:'09:30 · 0/10',tone:'orange'}
+      ],
+      eventCats:['Mechanical','Illness','Early leave']
+    };
+  }
+}
+</script>
+</body>
+</html>

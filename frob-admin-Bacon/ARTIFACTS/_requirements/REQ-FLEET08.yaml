@@ -1,0 +1,43 @@
+ID: REQ-FLEET08
+
+Actor: Owner
+
+Intent: update compliance-item
+
+Preconditions:
+  - a compliance alert exists, either pending or critical
+
+Conditions:
+  - renewal is recorded with a new expiry date
+  - for insurance or ICO, a certificate or confirmation may be attached
+
+Postconditions:
+  - the item's expiry date is updated
+  - the alert clears
+  - a new alert will fire the next time this item's classification changes
+
+Outcomes:
+  - Owner sees the compliance item return to in-date status
+
+Invariants:
+  - a renewed item's new expiry date is always in the future relative to the renewal date
+
+NonFunctional:
+  Reliability:
+    - the alert clears immediately on renewal, not after the next daily check
+
+Errors:
+  - error: "new expiry date is not in the future"
+    message: "The renewal date must be after today's date"
+    httpCode: 400
+    userAction: "Enter a valid future expiry date and resubmit"
+
+ScopeBoundary:
+  InScope:
+    - recording a compliance renewal
+  OutOfScope:
+    - the external renewal process itself
+
+OpenQuestions: []
+
+CopilotMode: STRICT

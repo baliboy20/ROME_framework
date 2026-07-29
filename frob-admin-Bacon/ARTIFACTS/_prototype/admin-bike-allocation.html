@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=1280">
+<title>A20 · Bike allocation — Back Office</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — A20 Bike allocation &middot; UXD-09 transfer lists, coverage counter, non-blocking under-provisioned warning <a href="index.html">index</a></div>
+<div class="admin-shell">
+  <div id="rail-mount"></div>
+  <div class="admin-main">
+    <div id="topbar-mount"></div>
+    <div class="admin-content">
+      <div class="eyebrow" id="page-eyebrow"></div>
+      <h1 class="page-title" id="page-title"></h1>
+      <p class="body-text" id="page-desc"></p>
+      <p class="body-text" style="margin-top:-8px"><a href="admin-calendar.html" style="color:var(--pink-text-light)">&larr; Back to calendar</a></p>
+
+      <div class="two-panel" style="margin-top:8px">
+        <div class="a-card">
+          <div class="eyebrow" style="margin-bottom:6px">DEP-HID-2026-08-01-1000</div>
+          <div class="card-title serif">Hidden City</div>
+          <div class="mono" style="font-size:12px;color:var(--text-muted);margin-bottom:14px">1 Aug 2026, 10:00 &middot; 90 min</div>
+          <div class="a-field"><label>Party size</label><div style="font-family:var(--font-serif);font-size:18px">6 / 10</div></div>
+          <div class="a-field"><label>Guide</label><div>Emma <span class="status-pill cyan" style="margin-left:6px">GUIDE ✓</span></div></div>
+          <div class="a-field"><label>Deposit / price</label><div class="money-val">£45.00</div></div>
+        </div>
+
+        <div class="a-card">
+          <div class="eyebrow" style="margin-bottom:8px">A20 &middot; BIKE ALLOCATION</div>
+          <div class="coverage" id="coverageText"></div>
+          <div id="underProvisionedWarning"></div>
+          <div class="two-panel" style="grid-template-columns:1fr 1fr;margin-top:14px">
+            <div>
+              <div class="eyebrow" style="margin-bottom:8px">AVAILABLE BIKES</div>
+              <div class="avail-list" id="availList"></div>
+            </div>
+            <div>
+              <div class="eyebrow" style="margin-bottom:8px">ASSIGNED TO DEPARTURE</div>
+              <div class="assigned-list" id="assignedList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="admin-shell.js"></script>
+<script>
+renderAdminShell('a20', 'A20 · SCHEDULING', 'Bike allocation',
+  'Assign bikes to this departure. Under-provisioning is allowed and saveable — it just warns and feeds the A17 readiness dot.');
+
+var RIDERS = 6;
+var bikes = [
+  {id:'FOB-001', state:'assigned', rider:'Tom Baker'},
+  {id:'FOB-002', state:'assigned', rider:'Tom Baker (jr)'},
+  {id:'FOB-003', state:'assigned', rider:'Marie Dubois'},
+  {id:'FOB-005', state:'available'},
+  {id:'FOB-006', state:'available'},
+  {id:'FOB-009', state:'oos'},
+  {id:'FOB-011', state:'busy', busyNote:'already out on another tour at that time'}
+];
+
+function render(){
+  var avail = document.getElementById('availList');
+  var assigned = document.getElementById('assignedList');
+  var availHtml = '', assignedHtml = '';
+  bikes.forEach(function(b, i){
+    if (b.state === 'available') {
+      availHtml += '<div class="bike-chip">' + b.id + ' <button onclick="assign(' + i + ')">Assign →</button></div>';
+    } else if (b.state === 'oos') {
+      availHtml += '<div class="bike-chip disabled-oos">' + b.id + ' <span style="font-size:10px">out of service</span></div>';
+    } else if (b.state === 'busy') {
+      availHtml += '<div class="bike-chip disabled-busy">' + b.id + ' <span style="font-size:10px">busy — another tour</span></div>';
+    } else if (b.state === 'assigned') {
+      assignedHtml += '<div class="bike-chip">' + b.id + ' <span>' + (b.rider || '—') + '</span> <button onclick="unassign(' + i + ')">Remove</button></div>';
+    }
+  });
+  if (!availHtml) availHtml = '<div class="empty-state" style="padding:20px">No available bikes for this slot — check the fleet.</div>';
+  avail.innerHTML = availHtml;
+  assigned.innerHTML = assignedHtml || '<div class="empty-state" style="padding:20px">No bikes assigned yet.</div>';
+
+  var assignedCount = bikes.filter(function(b){ return b.state === 'assigned'; }).length;
+  var covText = assignedCount + ' of ' + RIDERS + ' riders covered';
+  var covEl = document.getElementById('coverageText');
+  var warnEl = document.getElementById('underProvisionedWarning');
+  if (assignedCount < RIDERS) {
+    covEl.className = 'coverage orange'; covEl.textContent = covText;
+    warnEl.innerHTML = '<div class="guard-msg" style="margin-top:6px">Under-provisioned — saveable, but flags this departure on A17.</div>';
+  } else {
+    covEl.className = 'coverage cyan'; covEl.textContent = covText;
+    warnEl.innerHTML = '';
+  }
+}
+function assign(i){ bikes[i].state = 'assigned'; bikes[i].rider = '—'; render(); }
+function unassign(i){ bikes[i].state = 'available'; delete bikes[i].rider; render(); }
+
+// out-of-service / double-booked bikes are disabled with a reason and cannot be moved (UXD-09)
+document.getElementById('availList').addEventListener('click', function(){});
+render();
+
+var oos = bikes.find(function(b){ return b.state === 'oos'; });
+if (oos) {
+  var note = document.createElement('p');
+  note.className = 'mono';
+  note.style.cssText = 'font-size:11px;color:var(--pink-text-light);margin-top:12px';
+  note.textContent = oos.id + ' is out of service — choose another.';
+  document.querySelector('.a-content, .admin-content').appendChild(note);
+}
+</script>
+</body>
+</html>

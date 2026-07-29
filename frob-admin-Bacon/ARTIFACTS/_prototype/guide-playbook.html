@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G2 · Tour-day playbook — Guide App</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — G2 Tour-day home &middot; StepRow/ProgressBar (high-fidelity handoff), done/current/todo states <a href="index.html">index</a></div>
+<div class="guide-frame">
+  <div class="guide-header">
+    <div class="eyebrow">SIX STEPS BEFORE YOU ROLL</div>
+    <h1 class="page-title" style="font-size:1.7rem">Tour-day playbook</h1>
+    <div class="identity-row">
+      <span class="identity-chip mono">DEV-EMMA-01</span>
+      <span class="identity-name">Emma &middot; guide</span>
+    </div>
+  </div>
+
+  <div class="hero-card">
+    <div class="tour-name">Hidden City</div>
+    <div class="meta mono">1 Aug 2026, 10:00 &middot; TOUR-HID &middot; 90 min</div>
+    <div class="progress-row">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="counter" id="progressCounter">0/6</div>
+    </div>
+  </div>
+
+  <div class="playbook-title">PRE-DEPARTURE PLAYBOOK</div>
+  <div class="step-list" id="stepList"></div>
+
+  <div class="playbook-title" style="margin-top:22px">DURING THE TOUR</div>
+  <div class="step-list">
+    <a class="step-row" href="guide-midtour.html"><div class="step-num" style="background:var(--accent-cyan);color:var(--pill-ink)">9</div><div class="step-body"><div class="title serif">Mid-tour event logger</div><div class="sub mono">G9 &middot; Log entries</div></div></a>
+    <a class="step-row" href="guide-emergency.html"><div class="step-num" style="background:var(--accent-orange);color:#fff">10</div><div class="step-body"><div class="title serif">Emergency / incident logger</div><div class="sub mono">G10 &middot; Offline-tolerant</div></div></a>
+  </div>
+
+  <div class="playbook-title" style="margin-top:22px">AFTER THE TOUR</div>
+  <div class="step-list">
+    <a class="step-row" href="guide-postride.html"><div class="step-num" style="background:var(--accent-cyan);color:var(--pill-ink)">11</div><div class="step-body"><div class="title serif">Post-ride review</div><div class="sub mono">G11 &middot; Draft or submit</div></div></a>
+    <a class="step-row" href="guide-incident.html"><div class="step-num" style="background:var(--accent-orange);color:#fff">12</div><div class="step-body"><div class="title serif">Incident report</div><div class="sub mono">G12 &middot; 2h window, if applicable</div></div></a>
+    <a class="step-row" href="guide-hazard.html"><div class="step-num" style="background:var(--accent-cyan);color:var(--pill-ink)">13</div><div class="step-body"><div class="title serif">Hazard observation</div><div class="sub mono">G13 &middot; Dedupes by street</div></div></a>
+  </div>
+
+  <p style="text-align:center;color:var(--text-muted);font-size:11px;margin:20px 0 4px">Offline-first &middot; syncs on reconnect</p>
+  <p style="text-align:center;font-size:11px"><button class="g-small-btn" onclick="resetGuideProgress();location.reload()">Reset demo progress</button></p>
+</div>
+<script src="guide-shell.js"></script>
+<script>
+var STEPS = [
+  { id:'g3', num:1, title:'Travel kit checklist', sub:'G3 · Typed confirm', href:'guide-checklist.html' },
+  { id:'g4', num:2, title:'Bike inspection grid', sub:'G4 · Full signature', href:'guide-bike-inspection.html' },
+  { id:'g5', num:3, title:'Risk assessment', sub:'G5 · Typed confirm', href:'guide-risk.html' },
+  { id:'g6', num:4, title:'Rider check-in', sub:'G6 · Full signature', href:'guide-checkin.html' },
+  { id:'g7', num:5, title:'Safety briefing script', sub:'G7 · On-screen', href:'guide-briefing.html' },
+  { id:'g8', num:6, title:'Pre-departure sign-off summary', sub:'G8 · Full signature, gated', href:'guide-complete.html' }
+];
+var html = '';
+var doneCount = 0;
+var currentAssigned = false;
+STEPS.forEach(function(s){
+  var done = isStepDone(s.id);
+  if (done) doneCount++;
+});
+// StepRow status: done / current (first not-done) / todo — matches g4done.png + handoff screenshots
+STEPS.forEach(function(s){
+  var done = isStepDone(s.id);
+  var status = done ? 'done' : (!currentAssigned ? 'current' : 'todo');
+  if (!done && !currentAssigned) currentAssigned = true;
+  var numClass = done ? 'done' : (status === 'current' ? 'notstarted' : 'todo');
+  var pillClass = done ? 'lime' : (status === 'current' ? 'outline-pink' : 'todo');
+  var pillLabel = done ? 'DONE' : (status === 'current' ? 'START' : 'TO DO');
+  html += '<a class="step-row' + (status === 'current' ? ' current' : '') + '" href="' + s.href + '">' +
+    '<div class="step-num ' + numClass + '">' + s.num + '</div>' +
+    '<div class="step-body"><div class="title serif">' + s.title + '</div><div class="sub mono">' + s.sub + '</div></div>' +
+    '<span class="status-pill ' + pillClass + '">' + pillLabel + '</span></a>';
+});
+document.getElementById('stepList').innerHTML = html;
+document.getElementById('progressCounter').textContent = doneCount + '/6';
+document.getElementById('progressFill').style.width = Math.round(doneCount / 6 * 100) + '%';
+</script>
+</body>
+</html>

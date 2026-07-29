@@ -1,0 +1,35 @@
+ID: REQ-PRE06
+Actor: Prospect
+Intent: create saved-tour
+Preconditions:
+  - A tour is being viewed or has been shortlisted
+Conditions:
+  - The transactional tour-summary email requires no consent
+  - The follow-up nudge is opt-in and never pre-ticked
+Postconditions:
+  - A saved-tour record exists in pending nudge status, or with nudge suppressed if consent was not given
+  - The tour summary is emailed immediately
+Outcomes:
+  - Prospect receives the tour summary by email with a deep link back
+  - Prospect optionally receives one follow-up nudge later, only if they opted in
+Invariants:
+  - At most one nudge is ever sent per prospect-tour pair
+  - A nudge is never sent without recorded consent
+NonFunctional:
+  Reliability:
+    - The transactional email sends regardless of the nudge consent choice
+Errors:
+  - error: Invalid or missing email
+    message: Please provide a valid email address to save this tour.
+    httpCode: 422
+    userAction: Correct the email address and resubmit
+ScopeBoundary:
+  InScope:
+    - Identified save with transactional email and optional consent-gated nudge
+  OutOfScope:
+    - Anonymous saves with no email, which stay client-side only
+OpenQuestions:
+  - question: None
+    status: RESOLVED
+    resolution: No open questions for this requirement
+CopilotMode: STRICT

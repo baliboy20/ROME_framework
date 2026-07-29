@@ -1,0 +1,38 @@
+# Valid AORDL requirement fixture — must PASS in STRICT mode.
+ID: REQ-001
+Actor: ProjectManager
+Intent: create invoice
+Preconditions:
+  - ProjectManager authenticated
+  - ProjectManager has active subscription
+Conditions:
+  - Order total exceeds agreed threshold
+Postconditions:
+  - Invoice status set to draft
+  - ProjectManager notified
+Outcomes:
+  - Invoice saved with a unique identifier
+  - ProjectManager receives a confirmation
+Invariants:
+  - Invoice total equals sum of line items plus tax
+  - Invoice number is sequential and unique
+NonFunctional:
+  Performance:
+    - Invoice creation completes within two seconds
+  Security:
+    - Requires authenticated session
+Errors:
+  - error: If line items are empty
+    message: Invoice must have at least one line item
+  - error: If subscription is inactive
+    message: Active subscription required to create an invoice
+ScopeBoundary:
+  InScope:
+    - Create invoice with line items and tax
+  OutOfScope:
+    - Invoice payment processing
+OpenQuestions:
+  - question: Should invoice editing be allowed after submission?
+    status: RESOLVED
+    resolution: No editing after submission
+CopilotMode: STRICT

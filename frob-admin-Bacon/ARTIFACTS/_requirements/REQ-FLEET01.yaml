@@ -1,0 +1,48 @@
+ID: REQ-FLEET01
+
+Actor: Owner
+
+Intent: create bike-record
+
+Preconditions:
+  - a bike has been physically acquired
+
+Conditions:
+  - the bike identifier is unique across the fleet
+  - route eligibility (which tours can use this bike) is recorded
+
+Postconditions:
+  - a bike record exists with status in-service
+  - the bike is immediately available for tour assignment
+
+Outcomes:
+  - Owner sees the new bike in the fleet view, eligible for tours
+
+Invariants:
+  - a bike identifier is unique across the fleet, always
+
+NonFunctional:
+  Reliability:
+    - a bike is available for assignment immediately on save
+
+Errors:
+  - error: "bike identifier already in use"
+    message: "This bike identifier is already in use — a next-sequential identifier has been suggested"
+    httpCode: 409
+    userAction: "Accept the suggested identifier or choose another unique one"
+  - error: "no serial number provided"
+    message: "No serial number was provided — the record has been saved with a warning"
+    httpCode: 200
+    userAction: "Add the serial number later if it becomes available"
+
+ScopeBoundary:
+  InScope:
+    - bike onboarding
+    - route eligibility recording
+  OutOfScope:
+    - equipment onboarding
+    - photo capture
+
+OpenQuestions: []
+
+CopilotMode: STRICT

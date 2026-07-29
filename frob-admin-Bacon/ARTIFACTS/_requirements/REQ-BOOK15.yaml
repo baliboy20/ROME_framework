@@ -1,0 +1,41 @@
+ID: REQ-BOOK15
+Actor: Owner
+Intent: update booking (owner-assisted)
+Preconditions:
+  - a booking exists, any status except cancelled
+  - DR-B4 already routes party-size/attendee changes and this-close-to-departure date changes to the Owner directly, rather than self-service
+Conditions:
+  - the Owner may change the booking's departure (date/time — subject to the same capacity constraint as REQ-BOOK01)
+  - the Owner may change the attendee list (add/remove/edit attendees, subject to REQ-BOOK02's exactly-one-leader invariant)
+  - the Owner may change each attendee's contact_role
+  - this is a direct edit — no customer round-trip, since none of these fields are consent-bearing (unlike DR-B11's completion link, which exists specifically because waiver acceptance must be the customer's own act, DR-B7)
+Postconditions:
+  - the booking's departure and/or attendee records reflect the Owner's edit
+  - old departure capacity is released and new departure capacity is held if the departure changed
+Outcomes:
+  - Owner sees the booking updated immediately
+  - Customer's booking record (visible via the manage-booking hub) reflects the change
+Invariants:
+  - a booking edit never leaves two departures simultaneously holding capacity for the same booking (same invariant as REQ-BOOK06)
+  - exactly one attendee is leader after any attendee edit
+NonFunctional:
+  Reliability:
+    - capacity release-and-reacquire is atomic across the old and new departure, same guarantee as REQ-BOOK06
+Errors:
+  - error: the new departure has no capacity for the party size
+    message: edit rejected, booking unchanged
+  - error: the edited attendee list leaves zero or more than one leader
+    message: edit rejected, booking unchanged
+  - error: the booking is cancelled
+    message: a cancelled booking cannot be edited
+ScopeBoundary:
+  InScope:
+    - Owner-side date, attendee, and contact-role edits for an existing booking
+  OutOfScope:
+    - payment amount changes, handled by refund/additional-charge flows, not this edit
+    - customer-initiated edits, REQ-BOOK06 self-service date-change remains the customer's own path
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: no open questions remain for this requirement, closed by DR-B12b
+CopilotMode: STRICT

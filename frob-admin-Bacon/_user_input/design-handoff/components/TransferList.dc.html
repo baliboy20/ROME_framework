@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/colors.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/typography.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/spacing.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/tokens/alpha-ladder.css">
+  <link rel="stylesheet" href="../_ds/fob-booking-admin-27b13c57-535e-46c0-8342-2fc620c9174c/styles.css">
+</helmet>
+<div>
+  <sc-if value="{{ hasCounter }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px">
+      <div style="font:700 22px var(--font-serif);color:{{ counterColor }}">{{ counterText }}</div>
+      <sc-if value="{{ under }}" hint-placeholder-val="{{ false }}">
+        <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--orange-text-light)">Under-provisioned</div>
+      </sc-if>
+    </div>
+  </sc-if>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+    <div>
+      <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:9px">{{ availTitle }}</div>
+      <sc-if value="{{ availEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px;text-align:center;font:500 12.5px var(--font-sans);color:var(--text-muted);background:var(--wb03);border-radius:var(--radius-field)">{{ emptyText }}</div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ available }}" as="b" hint-placeholder-count="4">
+          <div style="{{ b.rowStyle }}">
+            <div style="flex:1"><span style="font:600 13px var(--font-mono);color:var(--text-strong)">{{ b.id }}</span><span style="{{ b.reasonStyle }}">{{ b.reason }}</span></div>
+            <div onClick="{{ b.onAdd }}" style="{{ b.btnStyle }}">+</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div>
+      <div style="font:600 10.5px var(--font-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--text-label);margin-bottom:9px">{{ assignedTitle }}</div>
+      <sc-if value="{{ assignedEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:18px;text-align:center;font:500 12.5px var(--font-sans);color:var(--text-faint);background:var(--wb03);border-radius:var(--radius-field)">Nothing assigned yet</div>
+      </sc-if>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <sc-for list="{{ assigned }}" as="b" hint-placeholder-count="2">
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(198,255,63,.1);border:1px solid rgba(198,255,63,.3);border-radius:var(--radius-field)">
+            <div style="flex:1"><span style="font:600 13px var(--font-mono);color:var(--text-strong)">{{ b.id }}</span></div>
+            <div onClick="{{ b.onRemove }}" style="width:26px;height:26px;flex:none;border-radius:50%;background:var(--wb09);color:var(--text-body);display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 15px var(--font-sans)">−</div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:520,&quot;height&quot;:260},&quot;items&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;{ id: string; status?: 'ok' | 'oos' | 'busy'; reason?: string }[]&quot;},&quot;assigned&quot;:{&quot;editor&quot;:null,&quot;default&quot;:[],&quot;tsType&quot;:&quot;string[]&quot;},&quot;need&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:2,&quot;min&quot;:0,&quot;max&quot;:10,&quot;tsType&quot;:&quot;number&quot;},&quot;availableTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Available bikes&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;assignedTitle&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Assigned&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;emptyText&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;No available bikes for this slot — check the fleet.&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(ids: string[]) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  // items: [{id, status?: 'ok'|'oos'|'busy', reason?}]
+  constructor(props){ super(props); this.state = { assignedIds: null }; }
+  getAssigned(){
+    if(this.state.assignedIds != null) return this.state.assignedIds;
+    return this.props.assigned ?? [];
+  }
+  add = (id) => () => {
+    const next = [...this.getAssigned(), id];
+    this.setState({ assignedIds: next }); if(this.props.onChange) this.props.onChange(next);
+  };
+  remove = (id) => () => {
+    const next = this.getAssigned().filter(x => x!==id);
+    this.setState({ assignedIds: next }); if(this.props.onChange) this.props.onChange(next);
+  };
+  renderVals(){
+    let items = this.props.items ?? [];
+    if(typeof items === 'string') items = items.split(',').map(s=>({id:s.trim(),status:'ok'}));
+    const assignedIds = this.getAssigned();
+    const need = Number(this.props.need ?? 0);
+    const covered = assignedIds.length;
+    const available = items.filter(it => !assignedIds.includes(it.id)).map(it => {
+      const ok = (it.status ?? 'ok') === 'ok';
+      return { id:it.id, reason: it.reason ? ' — '+it.reason : '', onAdd: ok ? this.add(it.id) : (()=>{}),
+        rowStyle:'display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--wb12);border-radius:var(--radius-field);'+(ok?'background:var(--surface-card)':'background:var(--wb03);opacity:.75'),
+        reasonStyle: it.reason ? 'font:500 11.5px var(--font-sans);color:var(--orange-text-light)' : 'display:none',
+        btnStyle: ok
+          ? 'width:26px;height:26px;flex:none;border-radius:50%;background:var(--gradient-brand);color:var(--pill-ink);display:flex;align-items:center;justify-content:center;cursor:pointer;font:600 16px var(--font-sans)'
+          : 'width:26px;height:26px;flex:none;border-radius:50%;background:var(--wb05);color:var(--text-faint);display:flex;align-items:center;justify-content:center;font:600 16px var(--font-sans)' };
+    });
+    const assigned = assignedIds.map(id => ({ id, onRemove: this.remove(id) }));
+    return {
+      availTitle: this.props.availableTitle ?? 'Available',
+      assignedTitle: this.props.assignedTitle ?? 'Assigned',
+      emptyText: this.props.emptyText ?? 'None available',
+      available, assigned,
+      availEmpty: available.filter(b=>b.onAdd!==undefined && !/opacity/.test(b.rowStyle)).length===0 && available.length===0,
+      assignedEmpty: assigned.length===0,
+      hasCounter: need>0,
+      counterText: covered+' of '+need+(need===1?' covered':' covered'),
+      counterColor: covered>=need ? 'var(--lime-text-light)' : 'var(--orange-text-light)',
+      under: covered<need
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "activity-log": {
+      "command": "node",
+      "args": [
+        "${pluginPath}/servers/activity-log/activity-log-file/index.js"
+      ],
+      "env": {
+        "PROJECT_ROOT": "${projectRoot}"
+      }
+    }
+  }
+}

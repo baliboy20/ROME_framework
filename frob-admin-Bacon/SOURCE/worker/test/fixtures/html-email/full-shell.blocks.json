@@ -1,0 +1,7 @@
+[
+  { "type": "header", "tagline": "See you on the road 🚲" },
+  { "type": "text", "text": "Hi {{ name }}, your place on {{ tour }} is confirmed for {{ date }} at {{ time }}." },
+  { "type": "divider" },
+  { "type": "button", "label": "View your booking", "href": "https://friendsonbikes.uk/en/book/?ref={{ booking_ref }}" },
+  { "type": "footer", "text": "Questions? Just reply to this email." }
+]

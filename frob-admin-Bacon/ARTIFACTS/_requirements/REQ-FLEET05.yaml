@@ -1,0 +1,47 @@
+ID: REQ-FLEET05
+
+Actor: Owner
+
+Intent: submit maintenance-event
+
+Preconditions:
+  - a bike is flagged-for-service or in-maintenance
+
+Conditions:
+  - the event records work performed and parts replaced
+  - time and cost are optional
+  - external repairs performed off-system are not logged here
+
+Postconditions:
+  - the event is added to the bike's permanent history
+
+Outcomes:
+  - Owner has a durable record of what was done and when
+
+Invariants:
+  - a maintenance event is never modified or deleted once saved
+
+NonFunctional:
+  Security:
+    - the event is timestamped and attributed to the Owner
+
+Errors:
+  - error: "no work description provided"
+    message: "A maintenance event requires a description of the work performed"
+    httpCode: 400
+    userAction: "Add a description of the work performed and resubmit"
+
+ScopeBoundary:
+  InScope:
+    - logging in-house repair work against a flagged or in-maintenance bike
+  OutOfScope:
+    - changing the bike's status
+    - external-service logging
+    - photo capture
+
+OpenQuestions:
+  - question: "Should a scheduled maintenance trigger based on time and mileage also generate maintenance events, in addition to the flag-driven path covered here?"
+    status: OPEN
+    resolution: ""
+
+CopilotMode: STRICT

@@ -1,0 +1,34 @@
+ID: REQ-BOOK03
+Actor: Customer
+Intent: submit booking-consent
+Preconditions:
+  - attendee details are complete for the booking draft
+Conditions:
+  - waiver acceptance and terms-and-conditions acceptance are both required before payment
+  - marketing consent is optional and never pre-selected
+Postconditions:
+  - the booking draft records waiver and terms-and-conditions acceptance
+  - any marketing consent decision is appended via the consent-audit record
+Outcomes:
+  - Customer proceeds to payment having accepted the waiver and terms
+  - Owner can later prove waiver and terms-and-conditions acceptance for this booking
+Invariants:
+  - a booking is never confirmed without recorded waiver and terms-and-conditions acceptance
+  - marketing consent defaults to withheld
+NonFunctional:
+  Security:
+    - acceptance is recorded with a timestamp
+Errors:
+  - error: waiver or terms-and-conditions not accepted
+    message: Please accept the waiver and terms to continue
+ScopeBoundary:
+  InScope:
+    - waiver and terms-and-conditions acceptance
+    - optional marketing consent
+  OutOfScope:
+    - the on-day individual waiver re-confirmation, owned by tour-operations' rider check-in journey
+CopilotMode: STRICT
+OpenQuestions:
+  - question: what is the waiver timing and format
+    status: RESOLVED
+    resolution: both a party-level digital acceptance at booking (this requirement) and a separate individual digital re-confirmation on the day owned by tour-operations, closed by DR-B7

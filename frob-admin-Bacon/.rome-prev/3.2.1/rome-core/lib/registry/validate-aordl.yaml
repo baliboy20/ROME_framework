@@ -1,0 +1,104 @@
+# AORDL Validation Rules Manifest
+#
+# UID: ROME-STD-AORDL-RULES
+# Machine-readable rule data consumed by lib/aordl-parser/validate-aordl.js.
+# SINGLE SOURCE OF TRUTH for AORDL validation rule *values*.
+# Human-readable rationale: ROME/rome-core/docs/standards/aordl-standard.md
+#
+# Restored/authored 2026-06-18 (ROME-PLAN-035 Stage 1.x) — the original
+# manifest was missing from the repo, leaving validate-aordl.js non-runnable.
+# Values sourced from templates/aordl/REQ-TEMPLATE.yaml and the validate-aordl
+# skill definitions.
+
+# The 13 required AORDL fields (must all be present). Order matches REQ-TEMPLATE.yaml.
+required_fields:
+  - ID
+  - Actor
+  - Intent
+  - Preconditions
+  - Conditions
+  - Postconditions
+  - Outcomes
+  - Invariants
+  - NonFunctional
+  - Errors
+  - ScopeBoundary
+  - OpenQuestions
+  - CopilotMode
+
+# Approved atomic verbs for Intent ("<verb> <business-object>").
+approved_verbs:
+  - create
+  - read
+  - update
+  - delete
+  - submit
+  - approve
+  - reject
+  - cancel
+  - archive
+  - restore
+  - export
+  - import
+  - view
+  - search
+
+anti_patterns:
+  # UI language — requirements describe business intent, not interface actions.
+  ui_keywords:
+    - click
+    - button
+    - screen
+    - form
+    - page
+    - dropdown
+    - checkbox
+    - menu
+    - dialog
+    - popup
+    - tab
+    - textbox
+
+  # Technical jargon — implementation detail, not domain language.
+  # NOTE: business terms containing these (e.g. "api token", "JSON format")
+  # are whitelisted in validate-aordl.js (BUSINESS_WHITELISTED_TERMS).
+  technical_keywords:
+    - sql
+    - endpoint
+    - rest
+    - http
+    - post
+    - patch
+    - backend
+    - frontend
+    - microservice
+    - database
+    - schema
+    - query
+
+  # Generic actors — matched by EXACT (case-insensitive) equality to Actor.
+  # A specific role (ProjectManager, Administrator, Customer) is required.
+  generic_actors:
+    - user
+    - person
+    - someone
+    - anybody
+    - somebody
+    - end-user
+    - actor
+    - role
+    - stakeholder
+    - admin
+
+  # Ambiguous verbs — non-atomic / non-observable; rejected in Intent.
+  ambiguous_verbs:
+    - manage
+    - handle
+    - process
+    - do
+    - perform
+    - support
+    - enable
+    - facilitate
+    - maintain
+    - deal

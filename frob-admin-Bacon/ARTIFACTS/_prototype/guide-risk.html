@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>G5 · Risk assessment — Guide App</title>
+<link rel="stylesheet" href="shared.css"><link rel="stylesheet" href="parchment.css">
+</head>
+<body class="parchment">
+<div class="proto-banner">T2 PROTOTYPE — G5 Risk assessment &middot; UXD-15 unresolved high-risk blocks sign-off; mitigation flows to G7 <a href="index.html">index</a></div>
+<div class="guide-frame">
+  <div id="header-mount"></div>
+  <div class="guide-content">
+    <p class="body-text" style="font-size:13.5px">Log today's risk items. An unresolved high-risk item blocks sign-off.</p>
+
+    <div class="risk-item high" id="risk-1">
+      <div class="risk-sev">HIGH RISK</div>
+      <div class="risk-title">Wet cobblestones on Riverside descent</div>
+      <div id="risk-1-body">
+        <input class="mitigation-input" id="risk-1-mitigation" placeholder="Describe mitigation (e.g. reroute, reduced pace)">
+        <button class="g-small-btn" onclick="resolveRisk(1)">Log mitigation &amp; downgrade</button>
+      </div>
+    </div>
+
+    <div class="risk-item" id="risk-2">
+      <div class="risk-sev" style="color:var(--text-muted)">MEDIUM RISK</div>
+      <div class="risk-title">Roadworks near Market Street</div>
+      <p class="mono" style="font-size:11px;color:var(--text-muted);margin-top:6px">Non-blocking — noted for briefing.</p>
+    </div>
+
+    <div id="gateMsg"></div>
+    <div class="typed-confirm" style="margin-top:14px">
+      <div class="mono" style="font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-label)">G5 &middot; Typed confirm</div>
+      <p style="font-size:13px;margin:6px 0 0">Type your full name to confirm the risk log.</p>
+      <input type="text" id="typedName" placeholder="Type full name" oninput="checkGate()">
+    </div>
+
+    <button class="g-btn g-btn-primary gate-btn" id="confirmBtn" disabled onclick="confirmStep()">Confirm &amp; continue</button>
+    <a class="g-btn g-btn-secondary" href="guide-playbook.html">Back to playbook</a>
+  </div>
+</div>
+<script src="guide-shell.js"></script>
+<script>
+renderGuideHeader('guide-playbook.html', 'G5 · TYPED CONFIRM', 'Risk assessment');
+var risk1Resolved = false;
+function resolveRisk(n){
+  var text = document.getElementById('risk-' + n + '-mitigation').value.trim();
+  if (!text) return;
+  localStorage.setItem('fob_mitigation_' + n, text);
+  var item = document.getElementById('risk-' + n);
+  item.classList.remove('high'); item.classList.add('mitigated');
+  document.getElementById('risk-' + n + '-body').innerHTML = '<div class="inline-confirm">Mitigated: ' + text + '</div>';
+  risk1Resolved = true;
+  checkGate();
+}
+function checkGate(){
+  var name = document.getElementById('typedName').value.trim();
+  var msg = document.getElementById('gateMsg');
+  var ok = risk1Resolved && name.length > 1;
+  document.getElementById('confirmBtn').disabled = !ok;
+  if (!risk1Resolved) msg.innerHTML = '<div class="guard-msg blocked">Resolve all high-risk items first.</div>';
+  else if (!name) msg.innerHTML = '<div class="guard-msg">Type your full name to enable Confirm.</div>';
+  else msg.innerHTML = '';
+}
+checkGate();
+function confirmStep(){
+  markStepDone('g5');
+  window.location.href = 'guide-checkin.html';
+}
+</script>
+</body>
+</html>

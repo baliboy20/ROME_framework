@@ -1,0 +1,49 @@
+ID: REQ-OPS04
+
+Actor: Guide
+
+Intent: submit risk-assessment
+
+Preconditions:
+  - the kit check and bike inspection are complete or in progress
+
+Conditions:
+  - weather, route, participant, and readiness conditions are reviewed
+  - any unresolved high-risk item blocks sign-off
+  - day-specific mitigations are recorded and optionally tagged for inclusion in the safety briefing
+
+Postconditions:
+  - conditions are assessed, mitigations recorded, and the assessment signed off
+
+Outcomes:
+  - Guide has a recorded, timestamped risk assessment with day-specific mitigations
+  - mitigations tagged for the briefing automatically populate the briefing confirmation step
+
+Invariants:
+  - the assessment is never signed off with an unresolved high-risk item
+
+NonFunctional:
+  Reliability:
+    - weather and route data reflects the current forecast at assessment time, not a stale cache
+
+Errors:
+  - error: "a high-severity weather condition is detected"
+    message: "A high-severity weather condition was detected. Consider escalating to the Owner for a possible cancellation."
+    httpCode: 409
+    userAction: "Escalate to the Owner before proceeding"
+  - error: "an item required for safe departure cannot be confirmed"
+    message: "A required safety item, such as an insurance certificate, could not be confirmed. Sign-off is blocked."
+    httpCode: 409
+    userAction: "Resolve the unconfirmed item before signing off"
+
+ScopeBoundary:
+  InScope:
+    - condition review
+    - day-specific mitigations
+    - sign-off
+  OutOfScope:
+    - the formal static risk assessment document itself
+
+OpenQuestions: []
+
+CopilotMode: STRICT

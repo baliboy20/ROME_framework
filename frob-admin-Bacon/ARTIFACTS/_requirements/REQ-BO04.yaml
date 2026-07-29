@@ -1,0 +1,33 @@
+ID: REQ-BO04
+Actor: Owner
+Intent: view departure-calendar
+Preconditions:
+  - Owner is in an operator session
+Conditions:
+  - the calendar shows scheduled departures across a date range
+  - each departure shows its tour, time, assigned guide, booked-versus-capacity count, and bike-allocation readiness
+Postconditions:
+  - none, this is a read-only view
+Outcomes:
+  - Owner sees, for any date range, which departures are scheduled, how full each is, and which lack a guide or bikes
+Invariants:
+  - the calendar reflects the current state of departures and their bookings at read time
+NonFunctional:
+  Usability:
+    - a departure's fill level and readiness, guide and bikes assigned, are visible at a glance
+Errors:
+  - error: a date range with no departures
+    message: No departures scheduled in this range.
+    httpCode: 200
+    userAction: Choose a different date range
+ScopeBoundary:
+  InScope:
+    - a read-only calendar of departures with fill and readiness
+  OutOfScope:
+    - editing a departure from the calendar, which routes to the departure-update capability
+    - customer-facing availability, which is a separate capability
+CopilotMode: STRICT
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: D-BO-3 closed - dedicated calendar (DR-BO3)
