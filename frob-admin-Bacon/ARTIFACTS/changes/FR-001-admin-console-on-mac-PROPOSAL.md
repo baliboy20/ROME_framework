@@ -5,7 +5,7 @@
 | **Type** | Feature request (new capability) — routes through the **increment** mechanism, not a change record |
 | **Intent** | `extension` |
 | **Raised by** | Roma, on sponsor direction, 2026-07-28 |
-| **Status** | PROPOSAL — not yet opened as an increment |
+| **Status** | **SCOPE NARROWED 2026-07-29 (sponsor).** Four workstreams delivered; two deferred — see "Scope reduction" below. Carried by increment 17. |
 | **Supersedes** | CR-006, CR-007, CR-008, CR-009, CR-010 (drafts retained, not deleted) |
 | **Excludes** | FINDING-008 remediation; CR-003 (customer website banner) |
 
@@ -27,6 +27,36 @@ bundling removes a queue rather than creating one.
 cannot be delayed behind feature decisions. The customer-site banner is excluded
 because it is a different app, a different brand track and a different audience,
 with no overlap — bundling would only make it inherit this work's delays.
+
+## Scope reduction — sponsor-directed, 2026-07-29
+
+Two of the six workstreams are **deferred out of this increment**, so what was
+built is the whole of its scope and it can be sealed truthfully. Sealed
+increments are immutable (ROME-AX-19), so declaring delivered something that was
+not would be permanent.
+
+**Workstream 1 (platform) — signing and distribution DEFERRED, platform DELIVERED.**
+The move to macOS is done: the app builds, runs natively, and is in daily use.
+Code signing, notarisation and an update-distribution channel are stashed — the
+sponsor will run it unsigned. CONSEQUENCE, recorded rather than assumed: an
+unsigned `.app` runs on the machine that built it, but macOS Gatekeeper will
+warn or refuse on any other machine. This is acceptable for a single-operator
+console run locally; it is NOT a distributable build, and the Apple Developer
+dependency that DEV-6 reinstated is not yet satisfied.
+
+**Workstream 6 (Claude/MCP tool) — DEFERRED to its own major feature release.**
+Sponsor's reasoning, and it is sound: this is a separate application, not a
+feature of the console. It has its own authentication model (no machine-to-machine
+path exists today, and `lib/auth.ts` records rejecting the static-key pattern at
+DR-B9), its own trust boundary, and its own release cadence. Bundling it inside a
+console increment would have hidden that. The mapping work already done —
+~90 operations across 27 route groups, 45 read / 30 safe-write / 14 dangerous-write
+— is retained in `CR-008-admin-mcp-server-PROPOSAL.md` as the seed for that
+future request. Its three open questions (OQ-2/3/4 below) move with it and are
+NO LONGER blocking this increment.
+
+**Remaining scope, all delivered:** workstreams 2, 3, 4, 5 plus the platform
+half of 1.
 
 ## Scope — six workstreams
 

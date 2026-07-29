@@ -1,4 +1,11 @@
-> **SUPERSEDED 2026-07-28 by FR-001** (`changes/FR-001-admin-console-on-mac-PROPOSAL.md`),
+> **STATUS 2026-07-29: DEFERRED to its own major feature release** (sponsor).
+> This is a separate application with its own authentication model, trust
+> boundary and release cadence — not a feature of the admin console. It was
+> briefly folded into FR-001 as workstream 6; that has been undone. This
+> document remains the operation map and analysis, and is the seed for that
+> future request. Its three open questions move with it.
+>
+> Previously: **SUPERSEDED 2026-07-28 by FR-001** (`changes/FR-001-admin-console-on-mac-PROPOSAL.md`),
 > which carries this scope as workstream 6. This document remains the detailed
 > operation map and analysis; FR-001 references it rather than restating it.
 
