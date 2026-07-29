@@ -2,6 +2,53 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-28] - v3.3.1 "Severus" — TDR register integrity (PROP-056)
+
+PATCH release fixing two HIGH field defects found on a live project
+(`frob-admin-Bacon`, ROME-DEFECT-001): an intake carrying no TDRs silently
+erased the whole TDR register (and the conformance gate then passed
+unconditionally on the empty register), and a TDR could only ever be deviated
+from once — multi-component decisions became unamendable, forcing
+sponsor-approved deviations to live outside orchestration state. Convention
+change: NO (additive state fields, `load()`-derived defaults; migration step
+MIG-3.3.0→3.3.1 shipped, gap-free).
+
+### Fixed
+- **Silent register wipe (AX-36)** — `state.js#finalizeIntake`: no `tdrs` key
+  → register unchanged; a replacement dropping ids is refused unless
+  `clearTdrs:true`; any accepted reduction audits `TDR_REGISTER_REDUCED` with
+  the lost ids.
+- **Silent false pass (AX-36)** — `verification.js#checkTdrConformance`: an
+  empty register that was ever populated now FAILS ("register lost") instead
+  of passing trivially; never-populated projects unchanged.
+- **Duplicate DEV ids (AX-36)** — deviation ids minted from persisted
+  `state.tdrDeviationSeq` (monotonic), derived from history on legacy states.
+- **One-shot deviation trap (AX-37)** — `recordTdrDeviation` accepts `scope`
+  (guard-cli `--scope`); scoped sponsor approval records a carve-out and the
+  TDR stays APPROVED for all other scopes. Unscoped approval keeps legacy
+  whole-TDR supersession. Only unscoped approvals exempt conformance.
+
+### Added
+- **Change-queue priority + stash (PROP-054 v1.4, sponsor request)** — queue
+  entries carry sponsor-set `priority` (HIGH/NORMAL/LOW, default NORMAL);
+  `prioritizeChange`/`reopenChange` in `state.js` (audited; PARKED formalized
+  as the stash, classification kept on reopen); `rome-change.cjs`
+  `--priority/--prioritize/--reopen` and priority-ordered `--list`. Priority
+  is an ordering signal only — never a routing or classification input.
+- `rome-doctor.cjs` — read-only project health check: lost register,
+  duplicate DEV ids, over-supersession advisories. Repairs are sponsor
+  decisions, never automatic.
+- `tests/tdr-integrity.test.cjs` — 15 tagged violation tests (AX-36/37 +
+  AX-29 reinforcement); wired into `tests/run.cjs`; fidelity 6b enforces.
+- Migration step `3.3.0-3.3.1/step.md` (AX-35): auto field defaults + doctor
+  semantics duties.
+- Ontology v1.7 (AX-36/37), lexicon v1.7 (Carve-Out; Deviation Request
+  updated), uid-registry v4.18 (also backfills missing PROP-053/054/055
+  registrations from v3.3.0).
+
+406 tests pass across suites; the pre-existing `impact-experts.test.cjs`
+failure ("parse pack selected for parse-server service") remains, unrelated.
+
 ## [2026-07-27] - v3.3.0 "Severus" — change-type taxonomy + project version migration (PROP-054/055)
 
 Codename **Severus**. Two gaps closed: (1) there was no right-sized path for

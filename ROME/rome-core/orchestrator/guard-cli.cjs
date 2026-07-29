@@ -12,7 +12,7 @@
  *   guard-cli.cjs intake  <state.json> --icr <icr.json> --ts <iso>          (PROP-047/051/052: finalize routing + persist TDRs/constraints)
  *   guard-cli.cjs aib     <state.json> issue   --phase P3 --revision r1 --ts <iso>
  *   guard-cli.cjs aib     <state.json> respond --phase P3 --revision r1 --type CONFIRM|REDIRECT|DELEGATE --ts <iso>
- *   guard-cli.cjs deviation <state.json> file    --tdr TDR-1 --phase P3 --reason "..." --alt "..." --ts <iso>
+ *   guard-cli.cjs deviation <state.json> file    --tdr TDR-1 --phase P3 [--scope <component>] --reason "..." --alt "..." --ts <iso>
  *   guard-cli.cjs deviation <state.json> resolve --id DEV-1 --approved true|false --sponsor --ts <iso>
  *
  * Exit codes: 0 = allowed/done, 1 = BLOCKED/invalid, 2 = usage error.
@@ -84,7 +84,9 @@ try {
   if (cmd === 'deviation') {
     const sub = process.argv[4];
     if (sub === 'file') {
-      guard.recordTdrDeviation(state, { tdr: arg('--tdr'), phase: arg('--phase'), reason: arg('--reason'), proposedAlternative: arg('--alt'), timestamp: arg('--ts') });
+      // --scope (PROP-056/AX-37): deviation applies to one component/app only;
+      // omit for whole-TDR supersession (legacy semantics).
+      guard.recordTdrDeviation(state, { tdr: arg('--tdr'), phase: arg('--phase'), scope: arg('--scope'), reason: arg('--reason'), proposedAlternative: arg('--alt'), timestamp: arg('--ts') });
     } else if (sub === 'resolve') {
       // --sponsor is a bare flag: its presence asserts the resolution is the
       // sponsor's recorded answer (ROME-AX-30). Without it, guard refuses.

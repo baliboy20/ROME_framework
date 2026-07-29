@@ -360,11 +360,20 @@ function checkTdrConformance(state, phase, citations) {
   // Default source: citations accumulated from producer returns
   // (subagent.js#processReturn → state.tdrCitations[phase]).
   if (citations === undefined) citations = (state.tdrCitations || {})[phase] || [];
+  // PROP-056 (AX-36): a register that was populated and is now empty is a
+  // failure, not conformance — "nothing to check" only holds for projects
+  // that never had a spec input.
+  if (!(state.tdrs || []).length && state.tdrsEverPopulated) {
+    return { pass: false, unaddressed: [], pendingDeviations: [], detail: `TDR register is empty but was previously populated — register lost, nothing to check is a failure (ROME-AX-36)` };
+  }
   const binding = (state.tdrs || []).filter(t => t.status === 'APPROVED' && (t.binds || []).includes(phase));
   if (!binding.length) return { pass: true, unaddressed: [], pendingDeviations: [], detail: `no APPROVED TDRs bind ${phase} — trivially conformant` };
   const cited = new Set(citations.map(c => (typeof c === 'string' ? c : c.tdr)));
   const deviations = state.tdrDeviations || [];
-  const approvedDeviation = id => deviations.some(d => d.tdr === id && d.status === 'SPONSOR_APPROVED');
+  // AX-37: only a whole-TDR (unscoped) approved deviation exempts the TDR; a
+  // scoped carve-out exempts just its scope — every other scope still binds,
+  // so the TDR must still be cited.
+  const approvedDeviation = id => deviations.some(d => d.tdr === id && d.status === 'SPONSOR_APPROVED' && !d.scope);
   const openDeviation = id => deviations.some(d => d.tdr === id && d.status === 'OPEN');
   const pendingDeviations = binding.filter(t => openDeviation(t.id)).map(t => t.id);
   const unaddressed = binding.filter(t => !cited.has(t.id) && !approvedDeviation(t.id) && !openDeviation(t.id)).map(t => t.id);
