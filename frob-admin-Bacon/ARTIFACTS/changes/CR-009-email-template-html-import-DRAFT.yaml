@@ -42,12 +42,14 @@ as_built:
     "body_html is server-rendered from body_blocks and cannot be submitted
     directly." The rule is enforced a second time on the client, as an
     assertion in `buildTemplateSavePayload`.
-  - `body_html` is derived on every save by `renderBlocksToHtml(body_blocks)`.
-    It is always a projection, never input.
-  - The house shell spec (`email-house-shell.md`) states its hard rules as
-    invariants "never violated by any block": inline styles only, no `<style>`
-    element, no classes, no external CSS, table-based layout only. It lists
-    "raw HTML" explicitly as OUT OF SCOPE.
+  - >-
+      `body_html` is derived on every save by `renderBlocksToHtml(body_blocks)`.
+      It is always a projection, never input.
+  - >-
+      The house shell spec (`email-house-shell.md`) states its hard rules as
+      invariants "never violated by any block": inline styles only, no `<style>`
+      element, no classes, no external CSS, table-based layout only. It lists
+      "raw HTML" explicitly as OUT OF SCOPE.
   - Merge substitution uses `/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g`. The HTML
     variant HTML-escapes every merge VALUE so customer data cannot inject
     markup.
@@ -62,53 +64,56 @@ reference_file:
     - GOOD — merge syntax already matches. All 14 placeholders in the file use
       `{{snake_case}}` and satisfy the existing regex exactly. Substitution
       would work with no parser change.
-    - BLOCKING — 7 of its 14 merge fields are NOT supplied by the system:
-      calendar_link, deposit_paid, map_link, subtotal, support_email,
-      support_phone, unsubscribe_link. Substitution resolves an unknown key to
-      the EMPTY STRING (`vars[key] ?? ""`), so these fail SILENTLY. A customer
-      would receive a confirmation email with blank gaps where the meeting-point
-      map link and support phone number should be. `deposit_paid` is very likely
-      meant to be the system's existing `amount_paid`.
+    - >-
+        BLOCKING — 7 of its 14 merge fields are NOT supplied by the system:
+        calendar_link, deposit_paid, map_link, subtotal, support_email,
+        support_phone, unsubscribe_link. Substitution resolves an unknown key to
+        the EMPTY STRING (`vars[key] ?? ""`), so these fail SILENTLY. A customer
+        would receive a confirmation email with blank gaps where the meeting-point
+        map link and support phone number should be. `deposit_paid` is very likely
+        meant to be the system's existing `amount_paid`.
     - BLOCKING — size. At 707KB the message exceeds Gmail's ~102KB clipping
       threshold by roughly 7x. Gmail truncates the message and hides the
       remainder behind "View entire message". The unsubscribe link sits at the
       very bottom of this document, so it is exactly what gets cut — a
       compliance exposure, not only a cosmetic one.
-    - BLOCKING — 98.1% of the file (693,672 of 707,003 bytes) is inline
-      base64 image data. The template itself — markup, styles, copy — is only
-      13,331 bytes. There are TWO unique images embedded FOUR times:
+    - >-
+        BLOCKING — 98.1% of the file (693,672 of 707,003 bytes) is inline
+        base64 image data. The template itself — markup, styles, copy — is only
+        13,331 bytes. There are TWO unique images embedded FOUR times:
         * hero background, 1024x1024 lossy WebP, 149KB decoded, embedded 3x
         * logo, 800x534 LOSSLESS WebP, 73KB decoded, embedded 1x
-      The three hero embeds are NOT redundant and must not be deduplicated in
-      place: they are the standard bulletproof-background pattern — a
-      `background=` attribute (legacy clients), a `background-image:url()`
-      style (modern clients), and a `<v:fill src=>` inside the `<!--[if mso]>`
-      block (Outlook VML). Each serves a different client. While the images
-      remain inline, the 707KB is therefore IRREDUCIBLE.
-      Gmail and Outlook do not render `data:` URI images in email, so hosting
-      is required for correctness anyway; hosting is also the only thing that
-      shrinks the file, because each 198KB blob collapses to a short URL.
-      R2 (`ASSETS`) is already bound and is the natural home. Hosted, the
-      email drops from 707KB to ~14KB and the bulletproof pattern is preserved
-      exactly (one URL referenced three times).
-    - Image quality/format assessment (advisory, not blocking):
+        The three hero embeds are NOT redundant and must not be deduplicated in
+        place: they are the standard bulletproof-background pattern — a
+        `background=` attribute (legacy clients), a `background-image:url()`
+        style (modern clients), and a `<v:fill src=>` inside the `<!--[if mso]>`
+        block (Outlook VML). Each serves a different client. While the images
+        remain inline, the 707KB is therefore IRREDUCIBLE.
+        Gmail and Outlook do not render `data:` URI images in email, so hosting
+        is required for correctness anyway; hosting is also the only thing that
+        shrinks the file, because each 198KB blob collapses to a short URL.
+        R2 (`ASSETS`) is already bound and is the natural home. Hosted, the
+        email drops from 707KB to ~14KB and the bulletproof pattern is preserved
+        exactly (one URL referenced three times).
+    - >-
+        Image quality/format assessment (advisory, not blocking):
         * Hero: 149KB for a 1024px lossy photo is an efficient encode and is
-          NOT oversized. It is however square in a 600x420 landscape slot, so
-          `background-size:cover` crops ~40% of its height away unseen, and at
-          1024px it is slightly under retina for a 600px display. Re-cropping
-          to ~1200x840 gives better quality at similar weight.
+        NOT oversized. It is however square in a 600x420 landscape slot, so
+        `background-size:cover` crops ~40% of its height away unseen, and at
+        1024px it is slightly under retina for a 600px display. Re-cropping
+        to ~1200x840 gives better quality at similar weight.
         * Logo: 800px wide to display at 180px — 4.4x oversampled, where 360px
-          covers retina — and encoded LOSSLESS. Resized it would be ~15-25KB
-          rather than 73KB with no visible difference. This one IS excessive.
+        covers retina — and encoded LOSSLESS. Resized it would be ~15-25KB
+        rather than 73KB with no visible difference. This one IS excessive.
         * FORMAT RISK: classic Outlook desktop (Word rendering engine) does not
-          decode WebP. The logo would break there, and the VML fallback — the
-          mechanism written specifically to serve Outlook — currently points at
-          a WebP the client cannot read, so the hero degrades to the flat
-          `bgcolor="#3a2f28"`. Newer WebView2-based Outlook does support WebP.
-          RECOMMENDATION: serve JPEG (hero) + PNG (logo) from R2. Once hosted,
-          the compression advantage of WebP is worth nothing at ~14KB total,
-          and universal client support is worth a great deal. Verify against
-          the real recipient mix rather than on this assessment alone.
+        decode WebP. The logo would break there, and the VML fallback — the
+        mechanism written specifically to serve Outlook — currently points at
+        a WebP the client cannot read, so the hero degrades to the flat
+        `bgcolor="#3a2f28"`. Newer WebView2-based Outlook does support WebP.
+        RECOMMENDATION: serve JPEG (hero) + PNG (logo) from R2. Once hosted,
+        the compression advantage of WebP is worth nothing at ~14KB total,
+        and universal client support is worth a great deal. Verify against
+        the real recipient mix rather than on this assessment alone.
     - CONFLICT — the file carries a `<style>` element with `@media` queries and
       class-based rules. The house shell forbids all three.
     - NOTE — a 707KB `body_html` value approaches D1's ~1MB row ceiling. Two

@@ -68,13 +68,14 @@ BlastRadius:
   verified: false
   designImpacted: true
   requirements:
-    - REQ-NOTIF11 (send booking-outcome confirmation email) — DIRECT CONFLICT.
-      See OQ-1. The delivered requirement guarantees a confirmed booking is
-      never left un-notified (it falls back to built-in plain text when no
-      active template exists) and its stated purpose is to close the
-      confirmation-email half of the UXC-FBK-1 two-channel rule. An owner-facing
-      "auto-reply on booking: off" switch would let the Owner repeal that
-      guarantee from a settings page.
+    - >-
+        REQ-NOTIF11 (send booking-outcome confirmation email) — DIRECT CONFLICT.
+        See OQ-1. The delivered requirement guarantees a confirmed booking is
+        never left un-notified (it falls back to built-in plain text when no
+        active template exists) and its stated purpose is to close the
+        confirmation-email half of the UXC-FBK-1 two-channel rule. An owner-facing
+        "auto-reply on booking: off" switch would let the Owner repeal that
+        guarantee from a settings page.
     - REQ-NOTIF10 (update email-template) — adjacent, and currently under
       concurrent edit by the CR-002 session. Sequence after CR-002 seals.
     - REQ-NOTIF02 (deliverability state) / REQ-TOUR07 (cancellation notices) —
@@ -83,18 +84,21 @@ BlastRadius:
     - NEW REQ (unassigned ID) — no delivered requirement covers an owner-facing
       workflow-automation configuration capability as such.
   design:
-    - UXC-FBK-1 (two-channel rule: page AND email) — the binding constraint.
-      Making confirmation email optional needs this rule amended or an explicit
-      carve-out, at design tier, with sponsor sign-off.
+    - >-
+        UXC-FBK-1 (two-channel rule: page AND email) — the binding constraint.
+        Making confirmation email optional needs this rule amended or an explicit
+        carve-out, at design tier, with sponsor sign-off.
     - A1 Navigation / screen inventory — see drift_note above.
     - _design/component-specs.md — tabbed settings shell.
-    NOTE: the _design documents are project-wide (one file covers all four apps)
-    and are in the CR-002 session's uncommitted working set.
+    - >-
+        NOTE: the _design documents are project-wide (one file covers all four apps)
+        and are in the CR-002 session's uncommitted working set.
   code:
     - webapp-admin/lib/features/settings/** (entity, model, repo, bloc, page —
       the whole slice widens if OperatorSettings gains workflow fields)
-    - webapp-admin/pubspec.yaml — currently `version: 0.1.0`. Displaying a
-      version means deciding what the version MEANS (see OQ-2).
+    - >-
+        webapp-admin/pubspec.yaml — currently `version: 0.1.0`. Displaying a
+        version means deciding what the version MEANS (see OQ-2).
     - the dispatcher path that REQ-NOTIF11 hooks (Stripe webhook fulfilment +
       reconciliation sweep) if any toggle is to be honoured at send time
 

@@ -31,7 +31,7 @@ measured:
     FINDING-008 stated "12 explicit call sites". The actual count is 5. The
     finding OVERSTATED existing coverage, so the gap is wider than reported.
 
-unaudited_examples:
+unaudited_examples: |-
   Drawn from the ~14 dangerous writes mapped during CR-008 work — none of these
   currently write an audit entry:
     - refund issued (money leaves the business)
@@ -56,9 +56,10 @@ proposed:
     future.
   - Per-handler enrichment can then add domain detail (amounts, old/new state)
     where it matters, on top of a guaranteed baseline.
-  - Add a conformance test in the FINDING-008 style: assert that a successful
-    mutating request to each `/admin/*` route produces an audit row. Mechanical,
-    and it prevents silent regression.
+  - >-
+      Add a conformance test in the FINDING-008 style: assert that a successful
+      mutating request to each `/admin/*` route produces an audit row. Mechanical,
+      and it prevents silent regression.
 
 open_questions:
   - id: OQ-1
@@ -77,8 +78,9 @@ open_questions:
     blocking: false
 
 notes:
-  - Interaction with FR-001 workstream 6 (MCP): if an assistant can drive admin
-    operations, attribution stops being a nicety — "who did this" must
-    distinguish the Owner from an agent acting on their behalf. This CR should
-    land BEFORE the MCP work, or the MCP work inherits an audit trail that
-    cannot answer the question it will most be asked.
+  - >-
+      Interaction with FR-001 workstream 6 (MCP): if an assistant can drive admin
+      operations, attribution stops being a nicety — "who did this" must
+      distinguish the Owner from an agent acting on their behalf. This CR should
+      land BEFORE the MCP work, or the MCP work inherits an audit trail that
+      cannot answer the question it will most be asked.

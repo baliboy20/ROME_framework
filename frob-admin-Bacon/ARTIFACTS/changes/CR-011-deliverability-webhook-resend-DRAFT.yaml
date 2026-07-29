@@ -31,9 +31,10 @@ problem:
     **currently unserved** — bounces and complaints are not being ingested at
     all. This is the more consequential half and was not obvious until the route
     was traced.
-  - So the two failure modes point in opposite directions: deleting the route
-    drops a delivered requirement; leaving it keeps an open injection point on a
-    feature that does not work.
+  - >-
+      So the two failure modes point in opposite directions: deleting the route
+      drops a delivered requirement; leaving it keeps an open injection point on a
+      feature that does not work.
 
 why_not_just_delete:
   It looked deletable when first raised in FINDING-008. It is not — it carries
@@ -64,6 +65,7 @@ open_questions:
       reporting defect worth raising on its own.
 
 notes:
-  - Interim exposure while deferred: the open endpoint can still be posted to by
-    anyone. Impact is limited to corrupting deliverability state (no PII read,
-    no money path), which is why deferring is defensible — but it is not zero.
+  - >-
+      Interim exposure while deferred: the open endpoint can still be posted to by
+      anyone. Impact is limited to corrupting deliverability state (no PII read,
+      no money path), which is why deferring is defensible — but it is not zero.

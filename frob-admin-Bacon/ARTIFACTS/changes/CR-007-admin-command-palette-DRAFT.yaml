@@ -52,24 +52,27 @@ BlastRadius:
   verified: false
   designImpacted: true
   requirements:
-    - NEW REQ (unassigned ID) — Actor: Owner, Intent: navigate by search.
-      No prior art exists.
+    - >-
+        NEW REQ (unassigned ID) — Actor: Owner, Intent: navigate by search.
+        No prior art exists.
   design:
-    - A1 · Navigation (UXC-NAV-*) — the console is specified as "one persistent
-      shell: a left sidebar tree-nav (collapsible to a 68px icon rail) + a top
-      bar (context label left, operator + Sign out right)". This adds a second
-      navigation modality alongside the sidebar tree and a new control to the
-      top bar, whose contents are currently fully enumerated.
+    - >-
+        A1 · Navigation (UXC-NAV-*) — the console is specified as "one persistent
+        shell: a left sidebar tree-nav (collapsible to a 68px icon rail) + a top
+        bar (context label left, operator + Sign out right)". This adds a second
+        navigation modality alongside the sidebar tree and a new control to the
+        top bar, whose contents are currently fully enumerated.
     - A3 · Modals & popups (UXC-MOD-*) — overlay behaviour, stacking. Note
       CR-001 already established that this console permits multiple concurrent
       modals which all auto-dismiss on navigation away; the palette both is an
       overlay and CAUSES navigation, so its interaction with that rule needs
       stating rather than assuming.
-    - A11 · Accessibility (UXC-A11Y-*) — a typeahead overlay is a combobox
-      pattern, and the demanding one: focus trap, `role="combobox"` +
-      `aria-expanded` + `aria-activedescendant`, arrow-key traversal without
-      losing input focus, screen-reader result-count announcement, Escape to
-      close, focus returned to the top-bar trigger.
+    - >-
+        A11 · Accessibility (UXC-A11Y-*) — a typeahead overlay is a combobox
+        pattern, and the demanding one: focus trap, `role="combobox"` +
+        `aria-expanded` + `aria-activedescendant`, arrow-key traversal without
+        losing input focus, screen-reader result-count announcement, Escape to
+        close, focus returned to the top-bar trigger.
     - A8 · Motion (UXC-MOT-*) — entrance/exit, honouring reduced-motion.
     - _design/component-specs.md — new component spec (Track B / Parchment).
   code:
@@ -124,11 +127,13 @@ OpenQuestions:
     blocking: false
 
 Sequencing:
-  - Blocked twice over: CT-4 cannot route as a change, and an increment cannot
-    open while increment 2 is unsealed.
-  - Natural pairing: CR-004 (settings console) and CR-005 are both admin-shell
-    work with no dependency on each other. If an increment is opened for CR-005,
-    consider admitting CR-004's tabbed-shell portion into the same increment
-    rather than running it separately.
+  - >-
+      Blocked twice over: CT-4 cannot route as a change, and an increment cannot
+      open while increment 2 is unsealed.
+  - >-
+      Natural pairing: CR-004 (settings console) and CR-005 are both admin-shell
+      work with no dependency on each other. If an increment is opened for CR-005,
+      consider admitting CR-004's tabbed-shell portion into the same increment
+      rather than running it separately.
 
 CopilotMode: STRICT

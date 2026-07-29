@@ -97,9 +97,10 @@ BlastRadius:
       entry (dismissal behaviour, persistence, accessibility, reduced-motion).
     - _design/design-assets/design-system.md — overlay/scrim treatment.
     - _design/api-contracts.md — only if the application submits to an endpoint.
-    NOTE: all four _design documents are project-wide (they cover all 4 apps in
-    one file each) and are currently under concurrent edit by the CR-002
-    session. Sequence after CR-002 lands.
+    - >-
+        NOTE: all four _design documents are project-wide (they cover all 4 apps in
+        one file each) and are currently under concurrent edit by the CR-002
+        session. Sequence after CR-002 lands.
   code:
     - webapp-customer/en/*.html (11 pages) + styles.css + a first-open
       suppression mechanism alongside the existing consent.js / island-loader.js
@@ -158,23 +159,25 @@ BuildEvidence:
     no longer exists in the codebase. Rebuilt from scratch per
     DesignSupersession above.
   files:
-    - webapp-customer/en/announce.js (REWRITTEN) — builds the full-screen
-      takeover DOM: 5 countdown steps (numeral + tagline + image, each with
-      the mock's own named keyframe: fob_zoom/fob_wipe/fob_rise/fob_focus/
-      fob_split), Ken Burns hero fade-in, "waiting" line, final reveal
-      (logo/headline/rule/eyebrow/CTA). Loads Cormorant Garamond + Jost from
-      Google Fonts on demand (only when the takeover actually renders, not
-      on every page load). Dismiss via close-button click or Escape key.
-      localStorage key renamed fob_launch_dismissed (functional preference,
-      not a cookie — OQ-2 resolution carried over unchanged).
-    - webapp-customer/en/site.css — old .topsheet component and the
-      --banner-h nav/body push-down mechanism REMOVED (dead weight; a
-      full-screen overlay needs no content-shifting). New .launch component
-      tree + all 16 named keyframes ported verbatim from the mock's values
-      (durations, easings, delays, transforms all match). Added a
-      prefers-reduced-motion block NOT present in the raw mock: collapses
-      straight to the final reveal panel with no slideshow, consistent with
-      this site's UXC-MOT-2 convention applied everywhere else.
+    - >-
+        webapp-customer/en/announce.js (REWRITTEN) — builds the full-screen
+        takeover DOM: 5 countdown steps (numeral + tagline + image, each with
+        the mock's own named keyframe: fob_zoom/fob_wipe/fob_rise/fob_focus/
+        fob_split), Ken Burns hero fade-in, "waiting" line, final reveal
+        (logo/headline/rule/eyebrow/CTA). Loads Cormorant Garamond + Jost from
+        Google Fonts on demand (only when the takeover actually renders, not
+        on every page load). Dismiss via close-button click or Escape key.
+        localStorage key renamed fob_launch_dismissed (functional preference,
+        not a cookie — OQ-2 resolution carried over unchanged).
+    - >-
+        webapp-customer/en/site.css — old .topsheet component and the
+        --banner-h nav/body push-down mechanism REMOVED (dead weight; a
+        full-screen overlay needs no content-shifting). New .launch component
+        tree + all 16 named keyframes ported verbatim from the mock's values
+        (durations, easings, delays, transforms all match). Added a
+        prefers-reduced-motion block NOT present in the raw mock: collapses
+        straight to the final reveal panel with no slideshow, consistent with
+        this site's UXC-MOT-2 convention applied everywhere else.
     - webapp-customer/en/img/man-womam-stpauls.jpg (NEW) — the one mock
       asset not already present on-site; copied in for the "2" countdown
       step. All other countdown/hero images reused existing site assets.
@@ -203,14 +206,15 @@ BuildEvidence:
     every run.
 
 Sequencing:
-  - SUPERSEDED 2026-07-28: CR-002 (increment 2) sealed long ago; the project is
-    now at increment 16 (CHG-015 delivered). The still-live constraint is the
-    same one, against a different increment: increment 17 ("extension" intent,
-    INCREMENT_BEGUN/INTAKE_FINALIZED 2026-07-28T15:19) is OPEN and unsealed at
-    P0, in flight from a separate work session (CR-006..CR-013 territory).
-    state.js#beginChange throws while a prior increment is unsealed
-    (ROME-AX-19); CR-003 cannot start its own change-scoped increment until
-    increment 17 seals. Do not force through it.
+  - >-
+      SUPERSEDED 2026-07-28: CR-002 (increment 2) sealed long ago; the project is
+      now at increment 16 (CHG-015 delivered). The still-live constraint is the
+      same one, against a different increment: increment 17 ("extension" intent,
+      INCREMENT_BEGUN/INTAKE_FINALIZED 2026-07-28T15:19) is OPEN and unsealed at
+      P0, in flight from a separate work session (CR-006..CR-013 territory).
+      state.js#beginChange throws while a prior increment is unsealed
+      (ROME-AX-19); CR-003 cannot start its own change-scoped increment until
+      increment 17 seals. Do not force through it.
   - Content/scope blockers are CLEARED (OQ-1, OQ-3 resolved by sponsor
     2026-07-28 — see OpenQuestions). Only OQ-2 (dismissal/persistence) remains
     open and is non-blocking. CR-003 is READY_TO_QUEUE, pending increment 17.
