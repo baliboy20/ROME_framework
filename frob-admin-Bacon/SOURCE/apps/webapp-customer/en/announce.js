@@ -64,7 +64,7 @@
             '<div class="rule"></div>'+
             '<p class="eyebrow-launch">Guided rides through London</p>'+
           '</div>'+
-          '<a class="launch-cta" href="/en/book/">Book a free ride <span>&#8594;</span></a>'+
+          '<a class="launch-cta" href="/en/book/">Book a FREE ride while tour is in Preview <span>&#8594;</span></a>'+
         '</div>'+
       '</div></div>'+
       '<div class="progress-track"><div class="progress-bar"></div></div>'+
