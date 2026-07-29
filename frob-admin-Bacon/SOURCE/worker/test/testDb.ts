@@ -35,6 +35,7 @@ const migrationFiles = [
   "0008_settings_reply_mode_deposit.sql",
   "0009_raw_html_templates.sql",
   "0010_retire_postmark_default.sql",
+  "0011_repair_orphaned_raw_templates.sql",
 ];
 
 function bindParams(stmt: ReturnType<DatabaseSync["prepare"]>, params: unknown[]) {

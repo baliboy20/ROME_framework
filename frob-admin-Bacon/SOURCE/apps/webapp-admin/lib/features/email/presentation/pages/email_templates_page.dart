@@ -395,6 +395,12 @@ class TemplateEditorState extends State<TemplateEditor> {
   /// opened — so a successful import looked like it had done nothing.
   late int? _rawBytes = widget.template?.bodyHtml?.length;
 
+  /// Whether the SAVED record still has blocks. Mutable, because
+  /// `widget.template` is captured when the dialog opens and never refreshed —
+  /// after an import it still reports the pre-import blocks, which is what made
+  /// a save destroy the document just imported.
+  late bool _hadBlocks = widget.template?.bodyBlocks.isNotEmpty ?? false;
+
   /// UXD-21: unsaved block edits disable the editor's test-send — the test
   /// sends the saved version.
   bool get _blocksDirty {
@@ -439,7 +445,8 @@ class TemplateEditorState extends State<TemplateEditor> {
       body: _body.text.trim(),
       status: _status,
       blocks: _blocks,
-      hadBlocks: widget.template?.bodyBlocks.isNotEmpty ?? false,
+      hadBlocks: _hadBlocks,
+      bodySource: _bodySource,
     );
     final r = await sl<SaveTemplate>()(SaveTemplateParams(id: widget.template?.id, body: body));
     r.fold(
@@ -534,6 +541,10 @@ class TemplateEditorState extends State<TemplateEditor> {
             _bodySource = 'raw';
             _blocks = [];
             _rawBytes = report.processedBytes;
+            // The import cleared body_blocks server-side; forgetting this is
+            // what let the next save send `body_blocks: null` and wipe the
+            // document.
+            _hadBlocks = false;
           });
         }
         return report;

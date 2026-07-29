@@ -12,7 +12,7 @@ import { createDb } from "../db/client";
 import type { Env } from "../env";
 import { type AuthedVariables, requireOperatorSession } from "../lib/auth";
 import { send } from "../modules/notifications/send";
-import { renderTemplate, substituteMergeFields, substituteMergeFieldsHtml } from "../modules/notifications/templates";
+import { renderTemplateById, substituteMergeFields, substituteMergeFieldsHtml } from "../modules/notifications/templates";
 import { blocksSchema, renderBlocksToHtml } from "../modules/notifications/html-render";
 import {
   BOOKING_FLAVOURS,
@@ -251,7 +251,7 @@ emailRoutes.patch("/admin/email-templates/:id", async (c) => {
   }
   const existing = await c.env.DB.prepare(`SELECT * FROM email_templates WHERE id = ?`)
     .bind(id)
-    .first<{ id: string; use_case: string }>();
+    .first<{ id: string; use_case: string; body_source: string | null }>();
   if (!existing) return c.json({ error: "not_found" }, 404);
 
   // Publishing to active: retire any current active template for this use_case
@@ -270,8 +270,23 @@ emailRoutes.patch("/admin/email-templates/:id", async (c) => {
     // CR-002: body_blocks writes both columns — re-render body_html on every
     // save; explicit null clears both (template reverts to text-only).
     if (k === "body_blocks") {
+      // FR-001 safety net. A `body_blocks: null` clear against a RAW template
+      // would wipe an imported document that save does not own. The client is
+      // fixed not to send it, but the server must not depend on that: this
+      // destroyed data in exactly one keystroke and left the row claiming to be
+      // raw HTML with no HTML at all.
+      if (v === null && existing.body_source === "raw") {
+        continue; // ignore the clear; body_html belongs to the import endpoint
+      }
       sets.push("body_blocks = ?", "body_html = ?");
       params.push(v === null ? null : JSON.stringify(v), v === null ? null : renderBlocksToHtml(v));
+      // Real blocks arriving means this template is block-authored again, so
+      // body_source must follow — otherwise the row keeps claiming 'raw' while
+      // holding rendered block HTML.
+      if (v !== null) {
+        sets.push("body_source = ?");
+        params.push("blocks");
+      }
       continue;
     }
     sets.push(`${k} = ?`);
@@ -419,7 +434,9 @@ emailRoutes.post("/admin/bookings/:id/send-email", requireOperatorSession, async
 
   // One active per use_case ⇒ this renders exactly the validated template
   // (both bodies; merge values HTML-escaped in body_html — CR-002 invariant).
-  const rendered = await renderTemplate(c.env.DB, tmpl.use_case, vars);
+  // The Owner picked THIS template by id — render that row, not whichever
+  // one happens to be active for its use_case.
+  const rendered = await renderTemplateById(c.env.DB, tmpl.id, vars);
   if (!rendered) return c.json({ error: "not_booking_aware" }, 422);
 
   const result = await send(db, c.env, {

@@ -139,3 +139,185 @@ describe("imported HTML — size", () => {
     expect(report.notes.join(" ")).toMatch(/<style>/);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Saving after an import must not destroy the imported document.
+//
+// The original defect: the editor sent `body_blocks: null` (because it read a
+// stale pre-import record), and PATCH treated that as "clear both columns".
+// One keystroke destroyed the document and left the row claiming to be raw HTML
+// with none. Guarded on the server too, so a client that has not been updated —
+// or any other caller — cannot reproduce it.
+// ---------------------------------------------------------------------------
+import worker from "../src/index";
+import { signJwt } from "../src/modules/auth/jwt";
+import { putSession } from "../src/kv/session";
+
+const ctx = { waitUntil() {}, passThroughOnException() {} } as unknown as ExecutionContext;
+
+async function operatorToken(env: Awaited<ReturnType<typeof createTestEnv>>) {
+  const token = await signJwt(env.JWT_SECRET, { actorId: "owner@x", actorType: "owner" });
+  await putSession(env.SESSIONS, { token, actor_type: "owner", actor_id: "owner@x" });
+  return token;
+}
+
+describe("saving a raw template does not destroy the imported document", () => {
+  it("ignores a body_blocks:null clear when the row is raw", async () => {
+    const env = await createTestEnv();
+    const token = await operatorToken(env);
+    const now = new Date().toISOString();
+
+    await env.DB.prepare(
+      `INSERT INTO email_templates (id, use_case, name, subject, body, variables, status,
+                                    body_blocks, body_html, body_source, created_at, updated_at)
+       VALUES ('t1','booking_confirmed_paid','n','s','b','[]','draft', NULL,
+               '<h1>imported</h1>','raw', ?, ?)`
+    ).bind(now, now).run();
+
+    // Exactly what the old editor sent: an ordinary field edit that also
+    // carried a null blocks clear.
+    const res = await worker.fetch(
+      new Request("https://api.test/admin/email-templates/t1", {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ subject: "edited", body_blocks: null }),
+      }),
+      env,
+      ctx
+    );
+    expect(res.status).toBe(200);
+
+    const row = await env.DB.prepare(`SELECT * FROM email_templates WHERE id = 't1'`)
+      .first<{ subject: string; body_html: string | null; body_source: string }>();
+    expect(row?.subject).toBe("edited");        // the real edit landed
+    expect(row?.body_html).toBe("<h1>imported</h1>"); // the document survived
+    expect(row?.body_source).toBe("raw");
+  });
+
+  it("switches a raw template back to blocks when real blocks are supplied", async () => {
+    const env = await createTestEnv();
+    const token = await operatorToken(env);
+    const now = new Date().toISOString();
+    await env.DB.prepare(
+      `INSERT INTO email_templates (id, use_case, name, subject, body, variables, status,
+                                    body_blocks, body_html, body_source, created_at, updated_at)
+       VALUES ('t2','booking_confirmed_paid','n','s','b','[]','draft', NULL,
+               '<h1>imported</h1>','raw', ?, ?)`
+    ).bind(now, now).run();
+
+    const res = await worker.fetch(
+      new Request("https://api.test/admin/email-templates/t2", {
+        method: "PATCH",
+        headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ body_blocks: [{ type: "text", text: "hello" }] }),
+      }),
+      env,
+      ctx
+    );
+    expect(res.status).toBe(200);
+
+    const row = await env.DB.prepare(`SELECT * FROM email_templates WHERE id = 't2'`)
+      .first<{ body_source: string; body_html: string | null }>();
+    // Deliberately switching back is allowed — the row must not keep claiming
+    // 'raw' while holding rendered block HTML.
+    expect(row?.body_source).toBe("blocks");
+    expect(row?.body_html).toContain("hello");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// The Owner's chosen template must be the one that is sent.
+//
+// `renderTemplate` selects by use_case + status='active', which is correct for
+// the AUTOMATIC path — a process asks for "the current template for this
+// outcome". The booking send route validated the Owner's choice by id and then
+// rendered by use_case, so a different row could go out than the one picked.
+// ---------------------------------------------------------------------------
+import { renderTemplate, renderTemplateById } from "../src/modules/notifications/templates";
+
+describe("rendering the chosen template", () => {
+  // Migration 0005 already seeds an ACTIVE template for booking_confirmed_paid,
+  // and a partial unique index allows only one active row per use_case. So the
+  // fixture replaces that seeded row with a known one, then adds a draft
+  // alongside it — which is exactly the real situation: the Owner picks a
+  // template that is NOT the currently active one.
+  async function seedTwo(env: Awaited<ReturnType<typeof createTestEnv>>) {
+    const now = new Date().toISOString();
+    await env.DB.prepare(
+      `DELETE FROM email_templates WHERE use_case = 'booking_confirmed_paid'`
+    ).run();
+    await env.DB.prepare(
+      `INSERT INTO email_templates (id, use_case, name, subject, body, variables, status,
+                                    body_blocks, body_html, created_at, updated_at)
+       VALUES ('active-one','booking_confirmed_paid','A','ACTIVE SUBJECT','active body','[]','active',
+               NULL, NULL, ?, ?)`
+    ).bind(now, now).run();
+    await env.DB.prepare(
+      `INSERT INTO email_templates (id, use_case, name, subject, body, variables, status,
+                                    body_blocks, body_html, created_at, updated_at)
+       VALUES ('chosen-one','booking_confirmed_paid','B','CHOSEN SUBJECT','chosen body','[]','draft',
+               NULL, NULL, ?, ?)`
+    ).bind(now, now).run();
+  }
+
+  it("renders the row asked for by id, not whichever is active", async () => {
+    const env = await createTestEnv();
+    await seedTwo(env);
+    const rendered = await renderTemplateById(env.DB, "chosen-one", {});
+    expect(rendered?.templateId).toBe("chosen-one");
+    expect(rendered?.subject).toBe("CHOSEN SUBJECT");
+  });
+
+  it("the automatic path is unchanged — still resolves by use_case to the active row", async () => {
+    const env = await createTestEnv();
+    await seedTwo(env);
+    const rendered = await renderTemplate(env.DB, "booking_confirmed_paid", {});
+    expect(rendered?.templateId).toBe("active-one");
+  });
+
+  it("returns null for an unknown id rather than falling back to something else", async () => {
+    const env = await createTestEnv();
+    await seedTwo(env);
+    expect(await renderTemplateById(env.DB, "no-such-template", {})).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Documents that cannot render in email at all.
+//
+// The sponsor imported a self-extracting bundle — valid HTML, 99% JavaScript,
+// with the real email held inside as a string. It was accepted silently and
+// reported no problems, because nothing was malformed. A recipient would have
+// seen its "Unpacking…" loading screen.
+// ---------------------------------------------------------------------------
+describe("imported HTML — documents that cannot render", () => {
+  it("flags a document containing a script", async () => {
+    const env = await createTestEnv();
+    const html = "<p>Hi {{name}}</p><script>document.write('x')</script>";
+    const { report } = await processImportedHtml(env, html, baseOpts);
+    expect(report.notes.join(" ")).toMatch(/BLOCKING.*<script>/);
+  });
+
+  it("flags a noscript fallback — the document expects to run", async () => {
+    const env = await createTestEnv();
+    const html = "<noscript>enable javascript</noscript><p>{{name}}</p>";
+    const { report } = await processImportedHtml(env, html, baseOpts);
+    expect(report.notes.join(" ")).toMatch(/BLOCKING.*<noscript>/);
+  });
+
+  it("flags a document that is mostly JavaScript by weight", async () => {
+    const env = await createTestEnv();
+    const html = `<p>Hi</p><script>${"var x=1;".repeat(4000)}</script>`;
+    const { report } = await processImportedHtml(env, html, baseOpts);
+    expect(report.notes.join(" ")).toMatch(/% of this document is/);
+  });
+
+  // A tracking pixel snippet is not the same problem as a document that IS a
+  // program — the weight check must not fire on ordinary content.
+  it("does not raise the weight warning for a normal document", async () => {
+    const env = await createTestEnv();
+    const html = `<p>${"Real email content. ".repeat(200)}</p>`;
+    const { report } = await processImportedHtml(env, html, baseOpts);
+    expect(report.notes.join(" ")).not.toMatch(/% of this document is/);
+  });
+});

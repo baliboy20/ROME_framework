@@ -69,7 +69,7 @@
       '</div></div>'+
       '<div class="progress-track"><div class="progress-bar"></div></div>'+
       '<div class="brand-label"><span class="rule-mini"></span>Friends on Bikes &middot; London</div>'+
-      '<button type="button" class="skip">Preview Rides now available <span>&#8594;</span></button>'+
+      '<button type="button" class="skip">SKIP</button>'+
       '<button type="button" class="close" aria-label="Close">&times;</button>'+
     '</div>';
 

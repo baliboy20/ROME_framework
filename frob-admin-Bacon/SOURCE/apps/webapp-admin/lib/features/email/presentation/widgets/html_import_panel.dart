@@ -58,6 +58,10 @@ class _HtmlImportPanelState extends State<HtmlImportPanel> {
           width: 620,
           child: TextField(
             controller: controller,
+            // Without this the cursor is never in the box, so the paste
+            // shortcut has no target and the field appears dead. The
+            // Send-a-test dialog already autofocuses; this one did not.
+            autofocus: true,
             maxLines: 14,
             style: const TextStyle(fontFamily: FobText.mono, fontSize: 11.5),
             decoration: const InputDecoration(

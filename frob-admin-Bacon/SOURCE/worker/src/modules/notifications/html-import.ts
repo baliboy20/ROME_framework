@@ -161,6 +161,38 @@ export async function processImportedHtml(
     );
   }
 
+  // ---- documents that cannot render in email at all ------------------------
+  // Mail clients strip <script> unconditionally, every one of them. A document
+  // that BUILDS itself at runtime therefore arrives as whatever its loading
+  // screen happens to be. This is not hypothetical: a self-extracting bundle
+  // was imported here and accepted silently, because it is perfectly valid
+  // HTML — 99% of it JavaScript, with the real email held inside as a string.
+  const scriptCount = (processed.match(/<script[\s>]/gi) ?? []).length;
+  if (scriptCount > 0) {
+    notes.push(
+      `BLOCKING: the document contains ${scriptCount} <script> ` +
+        `element${scriptCount === 1 ? "" : "s"}. Every mail client strips scripts, so anything ` +
+        `the page builds when it loads will simply be missing. If this file unpacks itself in a ` +
+        `browser, open it there and save the finished page, then import that.`
+    );
+  }
+  if (/<noscript[\s>]/i.test(processed)) {
+    notes.push(
+      "BLOCKING: the document has a <noscript> fallback, which means it expects to run " +
+        "JavaScript. Email cannot."
+    );
+  }
+  // Weight, not just presence: a tracking pixel snippet is not the same problem
+  // as a document that IS a program.
+  const scriptBytes = (processed.match(/<script[\s\S]*?<\/script>/gi) ?? [])
+    .reduce((sum, block) => sum + block.length, 0);
+  if (processedBytes > 0 && scriptBytes / processedBytes > 0.5) {
+    notes.push(
+      `BLOCKING: ${Math.round((scriptBytes / processedBytes) * 100)}% of this document is ` +
+        `JavaScript rather than email content. It is a program that draws an email, not an email.`
+    );
+  }
+
   return {
     html: processed,
     report: { originalBytes, processedBytes, imagesHosted: hosted, unknownFields, knownFields, notes },

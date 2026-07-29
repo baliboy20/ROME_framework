@@ -102,8 +102,9 @@ a{color:inherit;text-decoration:none}
    instead of re-watching the full sequence on every page navigation.
    Reuses the reduced-motion "jump to final state" treatment above,
    triggered by a class instead of a media feature. */
-.launch .skip{position:absolute;left:50%;bottom:3.4vmin;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 22px;border:1px solid rgba(246,241,230,.55);border-radius:2px;background:rgba(12,13,12,.4);backdrop-filter:blur(3px);color:#f6f1e6;font-family:'Jost',system-ui,sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s ease,color .3s ease,border-color .3s ease}
-.launch .skip:hover,.launch .skip:focus-visible{background:rgba(246,241,230,.94);border-color:#f6f1e6;color:#101110}
+.launch .skip{position:absolute;right:3.6vmin;bottom:3.6vmin;z-index:2;display:grid;place-items:center;width:76px;height:76px;border:none;border-radius:50%;background:linear-gradient(145deg,#ff8a3d 0%,#f0651c 45%,#b8380c 100%);color:#fff;font-family:'Jost',system-ui,sans-serif;font-size:12px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;box-shadow:0 12px 28px rgba(184,56,12,.5),0 4px 12px rgba(0,0,0,.35);transition:transform .25s cubic-bezier(.2,.7,.2,1),box-shadow .25s ease,filter .25s ease}
+.launch .skip:hover,.launch .skip:focus-visible{transform:scale(1.08);box-shadow:0 16px 36px rgba(184,56,12,.6),0 6px 16px rgba(0,0,0,.4);filter:brightness(1.08)}
+.launch .skip:active{transform:scale(.97)}
 .launch.launch--skip .slide,.launch.launch--skip .rings,.launch.launch--skip .taglines,.launch.launch--skip .waiting,.launch.launch--skip .progress-bar,.launch.launch--skip .skip{display:none!important}
 .launch.launch--skip,.launch.launch--skip *{animation:none!important;transition:none!important}
 .launch.launch--skip .shell{opacity:1;transform:none}

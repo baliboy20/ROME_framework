@@ -44,12 +44,23 @@ export async function renderTemplate(
   useCase: string,
   vars: Record<string, string>
 ): Promise<RenderedTemplate | null> {
-  const row = await queryOne<{ id: string; subject: string; body: string; body_html: string | null }>(
+  const row = await queryOne<TemplateRow>(
     db,
     `SELECT id, subject, body, body_html FROM email_templates WHERE use_case = ? AND status = 'active' LIMIT 1`,
     [useCase]
   );
-  if (!row) return null;
+  return row ? renderRow(row, vars) : null;
+}
+
+interface TemplateRow {
+  id: string;
+  subject: string;
+  body: string;
+  body_html: string | null;
+}
+
+/** Shared row → rendered mapping, so the by-use_case and by-id paths cannot drift. */
+function renderRow(row: TemplateRow, vars: Record<string, string>): RenderedTemplate {
   return {
     templateId: row.id,
     subject: substituteMergeFields(row.subject, vars),
@@ -57,4 +68,31 @@ export async function renderTemplate(
     // CR-002: text-only templates return null — behaviour unchanged.
     htmlBody: row.body_html ? substituteMergeFieldsHtml(row.body_html, vars) : null,
   };
+}
+
+/**
+ * Render one SPECIFIC template by id.
+ *
+ * `renderTemplate` above selects by use_case + status='active', which is right
+ * for the automatic send path — a process asks for "the current template for
+ * this outcome". It is WRONG when the Owner has chosen a particular template:
+ * `POST /admin/bookings/:id/send-email` validated the choice by id and then
+ * rendered by use_case, so the email actually sent could come from a different
+ * row than the one picked.
+ *
+ * No status filter here: the Owner may deliberately send a draft or a retired
+ * template from a booking, and the route has already established that the id is
+ * a legitimate choice.
+ */
+export async function renderTemplateById(
+  db: D1Database,
+  id: string,
+  vars: Record<string, string>
+): Promise<RenderedTemplate | null> {
+  const row = await queryOne<TemplateRow>(
+    db,
+    `SELECT id, subject, body, body_html FROM email_templates WHERE id = ?`,
+    [id]
+  );
+  return row ? renderRow(row, vars) : null;
 }
