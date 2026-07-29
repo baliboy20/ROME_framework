@@ -132,13 +132,22 @@ OpenQuestions:
       or cookie policy is engaged.
     status: RESOLVED
     resolution: >-
-      Roma default 2026-07-28 (sponsor asked to proceed without waiting on
-      this one — non-blocking): once per browser, until launch. A dismissal
-      flag is stored in localStorage (`fob_prelaunch_dismissed`), not a
-      cookie; the banner never reappears on that device once closed. Treated
-      as a first-party functional preference, same category as the existing
-      cookie banner's "strictly necessary" bucket — does not engage the
-      optional-analytics consent gate (consent.js unchanged).
+      SUPERSEDED 2026-07-29. Original answer (Roma default, non-blocking):
+      once per browser via localStorage, until launch — reported back to the
+      sponsor along with the redesign. Sponsor found this wrong on review:
+      "appear every time" — the takeover should replay on every visit, not
+      be suppressed after first dismissal. All localStorage persistence was
+      removed; the takeover now mounts unconditionally on every page load.
+      To offset the obvious cost of that (this is a static multi-page site —
+      every internal link click is a full page reload, so without an escape
+      hatch the full ~14s sequence would replay on every single navigation),
+      sponsor asked for "a prominent button to allow direct skip to the final
+      card." Added: a persistent, always-visible "Skip to Friends on Bikes"
+      button (not part of the staggered reveal, visible from frame one) that
+      jumps straight to the final "opening for tours" panel, reusing the
+      same instant-final-state CSS treatment as the reduced-motion path. No
+      state is stored at all now — OQ-2's original consent/cookie framing no
+      longer applies, there is nothing to persist.
   - id: OQ-3
     question: >-
       Does the announcement supersede or coexist with the live pricing and
@@ -205,7 +214,26 @@ BuildEvidence:
     the final panel with the slideshow hidden; zero console errors across
     every run.
 
-Sequencing:
+BuildEvidence2_SkipAndReplay:
+  reason: OQ-2 superseded 2026-07-29 (see above) — replay-every-visit + skip button.
+  files:
+    - announce.js — removed all localStorage read/write; overlay mounts
+      unconditionally; added a "Skip to Friends on Bikes" button + skipToEnd()
+      handler that adds a .launch--skip class.
+    - site.css — new .launch .skip component (always-visible, bottom-center,
+      same visual language as the close button); .launch.launch--skip rule
+      block mirrors the prefers-reduced-motion "jump to final state" rules
+      verbatim (same properties, triggered by a class instead of a media
+      query) rather than duplicating logic ad hoc; skip button itself hidden
+      under prefers-reduced-motion (redundant there — final state already
+      instant).
+  verification: >-
+    Headless-Chrome CDP: overlay confirmed present on first visit, present
+    again after navigating to a different page (about.html), and present
+    again after a plain reload of that page — all three without any
+    persistence suppressing it. Skip button clicked at ~0.4s into the
+    sequence: slides hidden, reveal panel opacity 1, CTA opacity 1 and href
+    still /en/book/, all within ~200ms of the click. Zero console errors.
   - >-
       SUPERSEDED 2026-07-28: CR-002 (increment 2) sealed long ago; the project is
       now at increment 16 (CHG-015 delivered). The still-live constraint is the

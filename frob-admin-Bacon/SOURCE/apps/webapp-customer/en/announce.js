@@ -1,15 +1,12 @@
 // Friends on Bikes — launch countdown takeover (CR-003).
 // Rebuilt against sponsor mock "Launch Countdown Banner.dc.html": a
-// full-screen, once-per-browser cinematic countdown (5..1, rotating
-// imagery + taglines) resolving into the "opening for tours" reveal.
-// Shows once per browser via localStorage (functional preference, not a
-// cookie — no consent.js interaction, same as the site's existing cookie
-// banner's "strictly necessary" bucket). No-JS-safe: site is fully
-// readable without this running.
+// full-screen cinematic countdown (5..1, rotating imagery + taglines)
+// resolving into the "opening for tours" reveal. Shows on every visit
+// (sponsor directive 2026-07-28 — supersedes the earlier "once per
+// browser" persistence) with a prominent Skip button so repeat visits
+// and internal page navigation aren't forced to sit through the full
+// sequence. No-JS-safe: site is fully readable without this running.
 (function(){
-  var KEY='fob_launch_dismissed';
-  if(localStorage.getItem(KEY))return;
-
   // Countdown steps: mock's stagger is 1.35s apart (0.4, 1.75, 3.1, 4.45, 5.8s).
   var STEPS=[
     {n:5,tag:'Five years riding these streets',img:'/en/img/img-tours-hero-cityscape.png',anim:'fob_zoom'},
@@ -18,7 +15,6 @@
     {n:2,tag:'Two wheels, no traffic',img:'/en/img/man-womam-stpauls.jpg',anim:'fob_focus'},
     {n:1,tag:'One London you\'ve never seen',img:'/en/img/img-about-founders-barbican.png',anim:'fob_split'}
   ];
-  var STEP_MS=1350, HERO_AT=STEP_MS*STEPS.length; // 7.15s (matches mock: 5*1.35=6.75, hero fades in 0.4s after)
 
   // Fonts loaded on demand — only when the takeover actually renders.
   var fontLink=document.createElement('link');
@@ -73,24 +69,21 @@
       '</div></div>'+
       '<div class="progress-track"><div class="progress-bar"></div></div>'+
       '<div class="brand-label"><span class="rule-mini"></span>Friends on Bikes &middot; London</div>'+
+      '<button type="button" class="skip">Skip to Friends on Bikes <span>&#8594;</span></button>'+
       '<button type="button" class="close" aria-label="Close">&times;</button>'+
     '</div>';
 
   document.body.appendChild(overlay);
 
   function dismiss(){
-    localStorage.setItem(KEY,'1');
     overlay.remove();
     document.removeEventListener('keydown',onKey);
+  }
+  function skipToEnd(){
+    overlay.classList.add('launch--skip');
   }
   function onKey(e){ if(e.key==='Escape')dismiss(); }
   document.addEventListener('keydown',onKey);
   overlay.querySelector('.close').addEventListener('click',dismiss);
-
-  // The CTA itself is a real link (not a dismiss-then-navigate double-step);
-  // clear the flag proactively so the takeover doesn't reappear if the user
-  // returns via back-button before the load naturally re-checks localStorage.
-  overlay.querySelector(".launch-cta").addEventListener('click',function(){
-    localStorage.setItem(KEY,'1');
-  });
+  overlay.querySelector('.skip').addEventListener('click',skipToEnd);
 })();

@@ -90,12 +90,27 @@ a{color:inherit;text-decoration:none}
 @media(prefers-reduced-motion:reduce){
   .launch,.launch *{animation:none!important;transition:none!important}
   .launch .shell{opacity:1;transform:none}
-  .launch .slide,.launch .rings,.launch .taglines,.launch .waiting,.launch .progress-bar{display:none!important}
+  .launch .slide,.launch .rings,.launch .taglines,.launch .waiting,.launch .progress-bar,.launch .skip{display:none!important}
   .launch .hero-final{opacity:1}
   .launch .hero-final img{transform:none}
   .launch .reveal{opacity:1;position:relative}
   .launch .eyebrow-launch,.launch .launch-cta{opacity:1}
 }
+
+/* Skip-to-end (NEW): shows on every visit, not just first — a prominent
+   skip button lets repeat visitors jump straight past the countdown
+   instead of re-watching the full sequence on every page navigation.
+   Reuses the reduced-motion "jump to final state" treatment above,
+   triggered by a class instead of a media feature. */
+.launch .skip{position:absolute;left:50%;bottom:3.4vmin;transform:translateX(-50%);z-index:2;display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 22px;border:1px solid rgba(246,241,230,.55);border-radius:2px;background:rgba(12,13,12,.4);backdrop-filter:blur(3px);color:#f6f1e6;font-family:'Jost',system-ui,sans-serif;font-size:12px;letter-spacing:.22em;text-transform:uppercase;cursor:pointer;transition:background .3s ease,color .3s ease,border-color .3s ease}
+.launch .skip:hover,.launch .skip:focus-visible{background:rgba(246,241,230,.94);border-color:#f6f1e6;color:#101110}
+.launch.launch--skip .slide,.launch.launch--skip .rings,.launch.launch--skip .taglines,.launch.launch--skip .waiting,.launch.launch--skip .progress-bar,.launch.launch--skip .skip{display:none!important}
+.launch.launch--skip,.launch.launch--skip *{animation:none!important;transition:none!important}
+.launch.launch--skip .shell{opacity:1;transform:none}
+.launch.launch--skip .hero-final{opacity:1}
+.launch.launch--skip .hero-final img{transform:none}
+.launch.launch--skip .reveal{opacity:1;position:relative}
+.launch.launch--skip .eyebrow-launch,.launch.launch--skip .launch-cta{opacity:1}
 
 /* Focus (NEW, §5.2) — green ring on light, cream ring on dark surfaces */
 :focus-visible{outline:2px solid var(--green);outline-offset:2px}
