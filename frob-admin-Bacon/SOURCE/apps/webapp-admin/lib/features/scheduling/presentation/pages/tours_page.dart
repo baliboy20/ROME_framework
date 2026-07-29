@@ -107,11 +107,7 @@ class _ToursView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(_money(t.pricePence),
-                    style: const TextStyle(
-                        fontFamily: FobText.serif,
-                        fontWeight: FontWeight.w700,
-                        color: FobColors.textPrice,
-                        fontFeatures: FobText.moneyFontFeatures)),
+                    style: FobText.moneyAt(weight: FontWeight.w700)),
                 const SizedBox(height: 6),
                 PillLabel.hue(FobStatusHue.forTour(t.status), t.status),
               ],

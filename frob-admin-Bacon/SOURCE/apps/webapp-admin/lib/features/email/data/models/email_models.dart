@@ -63,6 +63,9 @@ EmailTemplate templateFromJson(Map<String, dynamic> j) {
     status: j['status']?.toString() ?? 'draft',
     bodyBlocks: blocks,
     bodyHtml: rawHtml is String && rawHtml.isNotEmpty ? rawHtml : null,
+    // FR-001: how the HTML was authored. Anything unrecognised is treated as
+    // 'blocks' — the safe default, since that keeps the house shell applied.
+    bodySource: j['body_source']?.toString() == 'raw' ? 'raw' : 'blocks',
     // CHG-003 (REQ-NOTIF10): row timestamps — tolerant of missing values.
     createdAt: j['created_at'] is String && (j['created_at'] as String).isNotEmpty ? j['created_at'] as String : null,
     updatedAt: j['updated_at'] is String && (j['updated_at'] as String).isNotEmpty ? j['updated_at'] as String : null,

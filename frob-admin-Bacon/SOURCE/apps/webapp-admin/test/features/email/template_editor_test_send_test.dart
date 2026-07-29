@@ -3,6 +3,7 @@
 // default) instead of sending immediately.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:fob_webapp_admin/features/email/domain/entities/email_entities.dart';
 import 'package:fob_webapp_admin/features/email/presentation/pages/email_templates_page.dart';
@@ -18,6 +19,10 @@ const _tpl = EmailTemplate(
 );
 
 void main() {
+  // The Send-a-test prompt now offers previously used addresses, which reads
+  // from local preferences.
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
   testWidgets('editor Send test prompts for an address before sending (CHG-007)', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: Scaffold(body: TemplateEditor(template: _tpl))));
     await tester.pumpAndSettle();

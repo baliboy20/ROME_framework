@@ -1,6 +1,7 @@
 import '../../../../core/network/api_result.dart';
 import '../../domain/entities/email_entities.dart';
 import '../models/email_models.dart';
+import '../../domain/entities/html_import_report.dart';
 
 abstract class EmailRemoteDataSource {
   Future<ArchiveResults> searchArchive(String query);
@@ -12,6 +13,10 @@ abstract class EmailRemoteDataSource {
   Future<void> updateTemplate(String id, Map<String, dynamic> body);
   Future<void> deleteTemplate(String id);
   Future<String> testSendTemplate(String id, {String? to});
+
+  /// FR-001 workstream 5 — send a complete HTML document to be stored as this
+  /// template's body. Returns the server's report on what it found.
+  Future<HtmlImportReport> importTemplateHtml(String id, String html);
 }
 
 class EmailRemoteDataSourceImpl implements EmailRemoteDataSource {
@@ -93,5 +98,16 @@ class EmailRemoteDataSourceImpl implements EmailRemoteDataSource {
       body: {if (to != null && to.isNotEmpty) 'to': to},
     );
     return (data as Map)['sentTo']?.toString() ?? '';
+  }
+
+  @override
+  Future<HtmlImportReport> importTemplateHtml(String id, String html) async {
+    final data = await http.post(
+      '/admin/email-templates/$id/import-html',
+      body: {'html': html},
+    );
+    return HtmlImportReport.fromJson(
+      ((data as Map)['report'] as Map).cast<String, dynamic>(),
+    );
   }
 }

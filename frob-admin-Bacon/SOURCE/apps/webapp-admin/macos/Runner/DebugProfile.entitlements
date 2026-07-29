@@ -10,5 +10,11 @@
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>
+	<!-- FR-001 workstream 5: the Owner picks an HTML document to import.
+	     Without this a sandboxed app's open panel silently returns nothing —
+	     no error, no dialog, the button simply appears dead. Read-only is
+	     deliberate: import never writes to the chosen file. -->
+	<key>com.apple.security.files.user-selected.read-only</key>
+	<true/>
 </dict>
 </plist>

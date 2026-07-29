@@ -1,6 +1,7 @@
 import '../../../../core/data/repository_guard.dart';
 import '../../../../core/types/result.dart';
 import '../../domain/entities/email_entities.dart';
+import '../../domain/entities/html_import_report.dart';
 import '../../domain/repositories/email_repository.dart';
 import '../datasources/email_remote_data_source.dart';
 
@@ -42,4 +43,8 @@ class EmailRepositoryImpl with RepositoryGuard implements EmailRepository {
   @override
   Future<Result<String>> testSendTemplate(String id, {String? to}) =>
       guard(() async => await remote.testSendTemplate(id, to: to));
+
+  @override
+  Future<Result<HtmlImportReport>> importTemplateHtml(String id, String html) =>
+      guard(() async => await remote.importTemplateHtml(id, html));
 }

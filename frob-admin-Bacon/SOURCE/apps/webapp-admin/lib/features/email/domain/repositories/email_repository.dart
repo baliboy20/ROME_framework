@@ -1,3 +1,4 @@
+import '../entities/html_import_report.dart';
 import '../../../../core/types/result.dart';
 import '../entities/email_entities.dart';
 
@@ -11,4 +12,5 @@ abstract class EmailRepository {
   Future<Result<void>> updateTemplate(String id, Map<String, dynamic> body);
   Future<Result<void>> deleteTemplate(String id);
   Future<Result<String>> testSendTemplate(String id, {String? to});
+  Future<Result<HtmlImportReport>> importTemplateHtml(String id, String html);
 }

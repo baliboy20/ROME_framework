@@ -106,24 +106,49 @@ class FobRadius {
 class FobText {
   FobText._();
 
-  // Source Serif 4 — titles and money only (TDR-15 update; upright lining
-  // figures, replaces Playfair Display).
-  static const serif = 'Source Serif 4';
-  // Plus Jakarta Sans — functional text.
-  static const sans = 'Plus Jakarta Sans';
-  // monospace — ids, codes, micro-labels.
-  static const mono = 'monospace';
+  // FR-001 workstream 2 (sponsor-decided 2026-07-28): system fonts.
+  //
+  // THE SERIF ROLE IS REMOVED, not repointed. `FobText.serif` no longer exists.
+  // Track B previously used a serif for titles + money — Playfair Display, then
+  // Source Serif 4 (for upright lining figures). Under DEV-5 this app is a
+  // macOS desktop app, so the platform's own faces are both the native choice
+  // and free of any bundling/licensing question.
+  //
+  // Georgia was evaluated as the serif and REJECTED: it has old-style figures
+  // (digits at varying heights, several below the baseline) and ships no lining
+  // alternate set, so the `lnum` feature below would silently do nothing —
+  // reintroducing exactly the currency-legibility defect Source Serif 4 was
+  // adopted to fix. It also has no 600 weight, which `pageTitle` asks for.
+  // Evidence: ARTIFACTS/_design/design-assets/CR-010-type-specimen.html.
+  //
+  // `sans` is deliberately NULL rather than a family name. Flutter does not
+  // parse CSS stacks, so '-apple-system' would resolve to nothing; and the
+  // leading-dot Apple internals ('.AppleSystemUIFont') are undocumented and
+  // have changed across OS releases. Passing null lets the engine resolve the
+  // platform UI face — SF Pro on macOS — which is the durable spelling.
+  //
+  // SCOPE: webapp-admin ONLY. `mobile-guide` shares the Track B colour/space/
+  // radius tokens but keeps its bundled faces — it is a Web PWA on non-Apple
+  // platforms, where SF is neither available nor licensed. design-system.md
+  // §8.6 is amended accordingly: the shared token set no longer covers type.
+  static const String? sans = null;
+  // SF Mono for ids, codes and micro-labels. Named explicitly (unlike `sans`)
+  // because the monospace face is not the platform default; Menlo is the
+  // reliable macOS fallback if SF Mono is not exposed by name.
+  static const mono = 'SF Mono';
+  static const monoFallback = ['Menlo', 'monospace'];
 
-  // Lining + tabular figures — applied to every serif style (titles + money)
-  // so currency reads with upright, column-aligned digits (the design-system
-  // reason Source Serif 4 replaced Playfair). Sans figures are already lining.
+  // Lining + tabular figures. SF Pro's figures are already lining, so `lnum` is
+  // a no-op here — `tnum` is the one that still earns its place, holding money
+  // columns in alignment. Kept explicit rather than dropped: the intent is
+  // "money aligns in columns", and that must survive any future face change.
   static const liningFigures = [
     FontFeature.enable('lnum'),
     FontFeature.enable('tnum'),
   ];
 
   static const pageTitle = TextStyle(
-    fontFamily: serif,
+    fontFamily: sans,
     fontSize: 30,
     fontWeight: FontWeight.w600,
     letterSpacing: -0.63, // -0.021em at 30px
@@ -148,24 +173,35 @@ class FobText {
 
   static const microLabel = TextStyle(
     fontFamily: mono,
+    fontFamilyFallback: monoFallback,
     fontSize: 10.5,
     fontWeight: FontWeight.w600,
     letterSpacing: 1.1,
     color: FobColors.textLabel,
   );
 
-  // Retained alias (Source Serif 4 has native lining figures; the feature
-  // request keeps tabular alignment in money columns). Kept so existing
-  // call sites (`FobText.moneyFontFeatures`) compile unchanged.
+  // Retained alias so existing call sites (`FobText.moneyFontFeatures`)
+  // compile unchanged.
   static const moneyFontFeatures = liningFigures;
 
+  // FR-001: money moves serif -> sans. SF Pro has lining TABULAR figures, so
+  // amounts stay column-aligned; that alignment was the whole reason the serif
+  // was chosen, and it is preserved rather than traded away.
   static const money = TextStyle(
-    fontFamily: serif,
+    fontFamily: sans,
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: FobColors.textPrice,
     fontFeatures: liningFigures,
   );
+
+  /// Money at a caller-chosen size/weight. Added because three call sites were
+  /// hand-rolling `TextStyle(fontFamily: serif, fontFeatures: moneyFontFeatures)`
+  /// instead of using [money] — which is why deleting the serif broke them, and
+  /// why they had silently diverged from the token in the first place. Use this
+  /// rather than reaching for a font family directly.
+  static TextStyle moneyAt({double size = 16, FontWeight weight = FontWeight.w600}) =>
+      money.copyWith(fontSize: size, fontWeight: weight);
 }
 
 ThemeData buildFobTheme() {

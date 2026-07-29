@@ -100,7 +100,13 @@ class EmailTemplate extends Equatable {
   final List<String> variables;
   final String status; // draft | active | retired
   final List<EmailBlock> bodyBlocks; // empty = text-only template
-  final String? bodyHtml; // server-rendered from bodyBlocks; null = text-only
+  final String? bodyHtml; // rendered from bodyBlocks, OR an imported document
+  /// FR-001 workstream 5 — how this template's HTML was authored.
+  /// 'blocks' : built in the block editor; bodyHtml is a rendered projection
+  ///            wrapped in the FOB house shell (CR-002, unchanged).
+  /// 'raw'    : a complete HTML document the Owner imported. It REPLACES the
+  ///            house shell — the document brings its own header and footer.
+  final String bodySource;
   // CHG-003 (REQ-NOTIF10, A5c): row timestamps (ISO strings from D1);
   // nullable — older rows/tests may lack them.
   final String? createdAt;
@@ -114,6 +120,7 @@ class EmailTemplate extends Equatable {
     required this.variables,
     required this.status,
     this.bodyBlocks = const [],
+    this.bodySource = 'blocks',
     this.bodyHtml,
     this.createdAt,
     this.updatedAt,
@@ -122,6 +129,9 @@ class EmailTemplate extends Equatable {
   /// The template sends multipart text + HTML (UXD-21 confirmation copy).
   bool get hasHtmlVersion => bodyHtml != null && bodyHtml!.isNotEmpty;
 
+  /// True when the HTML came from an imported document rather than blocks.
+  bool get isRawHtml => bodySource == 'raw';
+
   @override
-  List<Object?> get props => [id, useCase, name, subject, body, variables, status, bodyBlocks, bodyHtml, createdAt, updatedAt];
+  List<Object?> get props => [id, useCase, name, subject, body, variables, status, bodyBlocks, bodyHtml, bodySource, createdAt, updatedAt];
 }

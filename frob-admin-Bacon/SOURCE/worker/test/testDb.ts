@@ -32,6 +32,8 @@ const migrationFiles = [
   "0005_booking_outcome_templates.sql",
   "0006_html_email_templates.sql",
   "0007_resend_transport.sql",
+  "0008_settings_reply_mode_deposit.sql",
+  "0009_raw_html_templates.sql",
 ];
 
 function bindParams(stmt: ReturnType<DatabaseSync["prepare"]>, params: unknown[]) {

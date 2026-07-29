@@ -222,6 +222,10 @@ function parseSettings(row: Record<string, unknown> | null) {
     refund_cutoff_hours: (row?.refund_cutoff_hours as number) ?? 48,
     reminder_milestones: j(row?.reminder_milestones, ["t_minus_1"]),
     cancellation_remediation_options: j(row?.cancellation_remediation_options, ["refund", "rebook", "credit"]),
+    // FR-001: when the booking confirmation goes out — never whether.
+    reply_mode: (row?.reply_mode as string) ?? "auto",
+    // FR-001: default deposit offered on a new booking, in pence (TDR-04).
+    deposit_default_pence: (row?.deposit_default_pence as number) ?? 0,
     updated_at: (row?.updated_at as string) ?? null,
   };
 }
@@ -236,6 +240,9 @@ const settingsSchema = z.object({
   refund_cutoff_hours: z.number().int().min(0).max(720).optional(),
   reminder_milestones: z.array(z.enum(MILESTONES)).min(1).optional(),
   cancellation_remediation_options: z.array(z.enum(REMEDIATION)).min(1).optional(),
+  // FR-001.
+  reply_mode: z.enum(["auto", "manual"]).optional(),
+  deposit_default_pence: z.number().int().nonnegative().max(1_000_00).optional(),
 });
 
 backoffice.put("/admin/settings", async (c) => {
@@ -247,7 +254,8 @@ backoffice.put("/admin/settings", async (c) => {
   const params: unknown[] = [];
   for (const [k, v] of Object.entries(parsed.data)) {
     sets.push(`${k} = ?`);
-    params.push(Array.isArray(v) ? JSON.stringify(v) : v);
+    // Arrays are stored as JSON text; booleans as 0/1 (SQLite has no boolean).
+    params.push(Array.isArray(v) ? JSON.stringify(v) : typeof v === "boolean" ? (v ? 1 : 0) : v);
   }
   if (sets.length) {
     sets.push("updated_at = ?");

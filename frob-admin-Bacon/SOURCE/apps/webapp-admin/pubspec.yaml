@@ -19,6 +19,10 @@ dependencies:
   http: ^1.2.2
   intl: ^0.19.0
   table_calendar: ^3.1.2
+  package_info_plus: ^10.2.1
+  image: ^4.9.1
+  file_selector: ^1.1.0
+  shared_preferences: ^2.5.5
 
 dev_dependencies:
   flutter_test:
@@ -27,15 +31,18 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  # FINDING-003: bundle the parchment mockup fonts the theme references
-  # (Playfair Display serif for titles/price; Plus Jakarta Sans for body).
-  fonts:
-    # Source Serif 4 (variable) — titles + money. Replaces Playfair Display
-    # (TDR-15 design-system update): upright lining figures fix currency
-    # legibility in tables; tabular widths keep money columns aligned.
-    - family: Source Serif 4
-      fonts:
-        - asset: assets/fonts/SourceSerif4.ttf
-    - family: Plus Jakarta Sans
-      fonts:
-        - asset: assets/fonts/PlusJakartaSans.ttf
+  # FR-001 workstream 2 (2026-07-28): no bundled fonts. This app is a macOS
+  # desktop app (DEV-5) and now renders in the platform faces — SF Pro (resolved
+  # by passing a null fontFamily) and SF Mono, with Menlo as fallback. See
+  # lib/theme/tokens.dart#FobText.
+  #
+  # The previously bundled faces (Source Serif 4, Plus Jakarta Sans) are
+  # unbundled here rather than deleted from assets/fonts/, so the change is
+  # reversible in one edit if the platform faces prove unsatisfactory in situ.
+  # Delete the .ttf files once this is gated and settled.
+  #
+  # NOTE the history this supersedes: FINDING-003 was raised precisely because
+  # the theme referenced fonts that were NOT bundled. Referencing nothing is
+  # safe in a way that referencing-but-not-bundling was not — a null family
+  # always resolves, whereas a missing named family fails silently to whatever
+  # the platform substitutes.

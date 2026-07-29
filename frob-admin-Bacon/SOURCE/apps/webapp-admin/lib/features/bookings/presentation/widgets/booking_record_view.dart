@@ -67,7 +67,7 @@ class BookingRecordView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(_money(d.priceTotalPence),
-                    style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w700, fontSize: 22, color: FobColors.textPrice, fontFeatures: FobText.moneyFontFeatures)),
+                    style: FobText.moneyAt(size: 22, weight: FontWeight.w700)),
                 const SizedBox(height: 4),
                 PillLabel.forStatus(d.status),
               ],

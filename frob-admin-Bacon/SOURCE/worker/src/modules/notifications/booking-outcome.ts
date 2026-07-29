@@ -144,12 +144,40 @@ export async function buildBookingMergeVars(
  * Send the confirmation email that matches a booking's current payment
  * position. Safe to call repeatedly — the idempotency key guards duplicates.
  */
+/**
+ * FR-001 — is the Owner sending confirmations by hand?
+ *
+ * Reads the singleton settings row. Defaults to 'auto' on any failure or
+ * missing row: the confirmation is a transactional guarantee (REQ-NOTIF11), so
+ * a broken settings lookup must never be the reason a paying customer hears
+ * nothing. Failing closed here would be the more dangerous choice.
+ */
+async function isManualReplyMode(env: Env): Promise<boolean> {
+  try {
+    const rows = await query<{ reply_mode: string | null }>(
+      env.DB,
+      `SELECT reply_mode FROM operator_settings WHERE id = 'singleton'`
+    );
+    return rows[0]?.reply_mode === "manual";
+  } catch {
+    return false;
+  }
+}
+
 export async function sendBookingOutcome(
   db: Db,
   env: Env,
   bookingId: string,
-  opts?: { completionLink?: string }
+  opts?: { completionLink?: string; force?: boolean }
 ): Promise<DispatchResult> {
+  // In manual mode the automatic path stands down and the Owner sends the same
+  // template from the booking screen. `force: true` is how that manual send
+  // (and any admin-initiated resend) bypasses the check — the setting governs
+  // the AUTOMATIC trigger only, never the Owner's own action.
+  if (!opts?.force && (await isManualReplyMode(env))) {
+    return { flavour: null, status: "deferred_manual_reply" };
+  }
+
   const merge = await buildBookingMergeVars(db, env, bookingId, opts);
   if (!merge) return { flavour: null, status: "booking_not_found" };
 

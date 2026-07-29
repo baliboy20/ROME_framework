@@ -20,6 +20,7 @@ import {
   buildBookingMergeVars,
   type BookingFlavour,
 } from "../modules/notifications/booking-outcome";
+import { processImportedHtml } from "../modules/notifications/html-import";
 
 export const emailRoutes = new Hono<{ Bindings: Env; Variables: AuthedVariables }>();
 
@@ -433,4 +434,62 @@ emailRoutes.post("/admin/bookings/:id/send-email", requireOperatorSession, async
     templateId: rendered.templateId,
   });
   return c.json({ status: result.status, sentTo: recipient, messageId: result.message?.id ?? null });
+});
+
+// ---------------------------------------------------------------------------
+// FR-001 workstream 5 — import a complete HTML document as a template.
+//
+// Deliberately a SEPARATE endpoint rather than loosening the create/PATCH
+// schemas. CR-002's rule — "a client never submits body_html" — still holds
+// for the block editor, and `rejectsClientHtml` still guards both those
+// routes. Raw HTML has exactly one sanctioned door, and using it is an
+// explicit, auditable act rather than an extra field someone can slip into an
+// ordinary save.
+//
+// No sanitisation is applied (sponsor decision, 2026-07-28). The document is
+// stored as supplied.
+// ---------------------------------------------------------------------------
+const importHtmlSchema = z.object({
+  html: z.string().min(1, "Paste or choose an HTML document."),
+});
+
+emailRoutes.post("/admin/email-templates/:id/import-html", async (c) => {
+  const id = c.req.param("id");
+  const parsed = importHtmlSchema.safeParse(await c.req.json().catch(() => ({})));
+  if (!parsed.success) {
+    return c.json({ error: "validation", message: parsed.error.issues[0]?.message }, 422);
+  }
+
+  const tmpl = await c.env.DB.prepare(`SELECT id, use_case FROM email_templates WHERE id = ?`)
+    .bind(id)
+    .first<{ id: string; use_case: string }>();
+  if (!tmpl) return c.json({ error: "not_found" }, 404);
+
+  // The fields this template's process actually supplies. Anything the
+  // document references beyond these resolves to an empty string at send time
+  // — silently — so the import reports them rather than letting blank gaps
+  // reach a customer.
+  const supplied = OUTCOME_FIELDS[tmpl.use_case as BookingFlavour]?.fields ?? [];
+
+  // Images are served back by this same Worker (see GET /email-assets/*), so
+  // the base is simply our own origin — no extra infrastructure, and it is
+  // guaranteed reachable by a mail client.
+  const assetBaseUrl = new URL(c.req.url).origin;
+
+  const { html, report } = await processImportedHtml(c.env, parsed.data.html, {
+    templateId: id,
+    assetBaseUrl,
+    suppliedFields: supplied,
+  });
+
+  const now = new Date().toISOString();
+  await c.env.DB.prepare(
+    `UPDATE email_templates
+        SET body_html = ?, body_source = 'raw', body_blocks = NULL, updated_at = ?
+      WHERE id = ?`
+  )
+    .bind(html, now, id)
+    .run();
+
+  return c.json({ id, body_source: "raw", report });
 });

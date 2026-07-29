@@ -244,7 +244,7 @@ class _MasterViewState extends State<_MasterView> {
               flex: 2,
               child: Text(_money(r.paidPence),
                   textAlign: TextAlign.right,
-                  style: const TextStyle(fontFamily: FobText.serif, fontWeight: FontWeight.w600, color: FobColors.textPrice, fontFeatures: FobText.moneyFontFeatures)),
+                  style: FobText.money),
             ),
             const SizedBox(width: 16),
             Expanded(flex: 2, child: Align(alignment: Alignment.centerLeft, child: PillLabel.forStatus(r.status))),

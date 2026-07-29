@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/prefs/recent_test_addresses.dart';
 import '../../../../injection_container.dart';
 import '../../../../theme/tokens.dart';
 import '../../../../widgets/fob_primitives.dart';
@@ -11,6 +12,9 @@ import '../../domain/usecases/template_save_payload.dart';
 import '../bloc/templates_bloc.dart';
 import '../widgets/email_block_editor.dart';
 import '../widgets/email_preview_pane.dart';
+import '../widgets/html_import_panel.dart';
+import '../../domain/entities/html_import_report.dart';
+import '../../domain/repositories/email_repository.dart';
 
 const _useCases = [
   'booking_confirmed_paid',
@@ -52,27 +56,86 @@ String? templateDatesLine(EmailTemplate t) {
 /// surface. Returns the trimmed "Send to" address ('' = owner default), or
 /// null when cancelled. UXD-21: the copy states the multipart/plain variant.
 Future<String?> promptTestSendAddress(BuildContext context, EmailTemplate t) async {
-  final ctrl = TextEditingController();
   final versions = t.hasHtmlVersion ? 'Sends the text + HTML versions.' : 'Sends the plain-text version.';
+  // Loaded before the dialog opens so the list is there on first keystroke —
+  // an autocomplete that populates a moment later is worse than none.
+  const store = RecentTestAddresses();
+  final recents = await store.load();
+  if (!context.mounted) return null;
+
+  var typed = '';
   final send = await showDialog<bool>(
     context: context,
     builder: (dctx) => AlertDialog(
       title: const Text('Send a test'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Renders “${t.name}” with sample data and emails it. $versions',
-              style: const TextStyle(fontSize: 13, color: FobColors.textMuted)),
-          const SizedBox(height: 14),
-          TextField(
-            controller: ctrl,
-            decoration: const InputDecoration(
-              labelText: 'Send to',
-              hintText: 'Leave blank to send to the owner',
+      content: SizedBox(
+        width: 460,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Renders “${t.name}” with sample data and emails it. $versions',
+                style: const TextStyle(fontSize: 13, color: FobColors.textMuted)),
+            const SizedBox(height: 14),
+            RawAutocomplete<String>(
+              // Empty input offers the whole list, so clicking into the box
+              // reveals the addresses rather than hiding them behind a guess
+              // at the first character.
+              optionsBuilder: (value) => matchAddresses(recents, value.text),
+              onSelected: (v) => typed = v,
+              fieldViewBuilder: (context, controller, focusNode, onSubmit) {
+                controller.addListener(() => typed = controller.text);
+                return TextField(
+                  controller: controller,
+                  focusNode: focusNode,
+                  autofocus: true,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: InputDecoration(
+                    labelText: 'Send to',
+                    hintText: 'Leave blank to send to the owner',
+                    suffixIcon: recents.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Recent addresses',
+                            icon: const Icon(Icons.expand_more, size: 20),
+                            // Re-focusing with empty text is what makes the
+                            // full list appear.
+                            onPressed: () {
+                              controller.clear();
+                              focusNode.requestFocus();
+                            },
+                          ),
+                  ),
+                  onSubmitted: (_) => Navigator.pop(dctx, true),
+                );
+              },
+              optionsViewBuilder: (context, onSelected, options) => Align(
+                alignment: Alignment.topLeft,
+                child: Material(
+                  elevation: 4,
+                  borderRadius: BorderRadius.circular(FobRadius.field),
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 190, maxWidth: 440),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.zero,
+                      itemCount: options.length,
+                      itemBuilder: (context, i) {
+                        final option = options.elementAt(i);
+                        return ListTile(
+                          dense: true,
+                          leading: const Icon(Icons.history, size: 16, color: FobColors.textFaint),
+                          title: Text(option, style: FobText.body),
+                          onTap: () => onSelected(option),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       actions: [
         TextButton(onPressed: () => Navigator.pop(dctx, false), child: const Text('Cancel')),
@@ -80,7 +143,13 @@ Future<String?> promptTestSendAddress(BuildContext context, EmailTemplate t) asy
       ],
     ),
   );
-  return send == true ? ctrl.text.trim() : null;
+
+  if (send != true) return null;
+  final address = typed.trim();
+  // Remembered on send rather than on typing, so a half-typed address never
+  // ends up in the list.
+  await store.remember(address);
+  return address;
 }
 
 /// REQ-NOTIF10 — email template management.
@@ -315,6 +384,17 @@ class TemplateEditorState extends State<TemplateEditor> {
   bool _narrowShowPreview = false;
   String? _error;
 
+  /// FR-001 workstream 5 — which authoring mode this template uses.
+  /// Set from the saved record, so re-opening an imported template shows the
+  /// import panel rather than an empty block editor.
+  late String _bodySource = widget.template?.bodySource ?? 'blocks';
+
+  /// Size of the stored imported document, kept in state so the preview
+  /// reflects an import IMMEDIATELY. Reading it from `widget.template` meant
+  /// the preview still described the template as it was when the dialog
+  /// opened — so a successful import looked like it had done nothing.
+  late int? _rawBytes = widget.template?.bodyHtml?.length;
+
   /// UXD-21: unsaved block edits disable the editor's test-send — the test
   /// sends the saved version.
   bool get _blocksDirty {
@@ -431,6 +511,116 @@ class TemplateEditorState extends State<TemplateEditor> {
     );
   }
 
+  /// FR-001 workstream 5 — send an imported document to the server.
+  ///
+  /// Only available on a saved template: the document is stored against a
+  /// template id, so there must be a record to attach it to. Creating first is
+  /// a small extra step, and it keeps import from inventing a half-saved state.
+  /// Deliberately does NOT refresh the templates list from here. This dialog is
+  /// opened by `showDialog`, whose context sits outside the BlocProvider, so
+  /// `context.read<TemplatesBloc>()` throws — and the throw escaped before the
+  /// import panel could clear its spinner, which is why a SUCCESSFUL import
+  /// looked like a hang. `_openEditor` already reloads the list when the dialog
+  /// closes, so the refresh was redundant as well as wrong.
+  Future<HtmlImportReport?> _importHtml(String html) async {
+    final id = widget.template?.id;
+    if (id == null) return null;
+    final result = await sl<EmailRepository>().importTemplateHtml(id, html);
+    return result.fold(
+      (failure) => null,
+      (report) {
+        if (mounted) {
+          setState(() {
+            _bodySource = 'raw';
+            _blocks = [];
+            _rawBytes = report.processedBytes;
+          });
+        }
+        return report;
+      },
+    );
+  }
+
+  /// The preview region. `EmailPreviewPane` renders BLOCKS; it reports "no HTML
+  /// version" whenever the block list is empty, which is always true in raw
+  /// mode — so it told the Owner the template was plain text while it was in
+  /// fact sending an imported HTML document. Raw mode gets its own panel.
+  Widget _previewArea() {
+    if (_bodySource != 'raw') {
+      return EmailPreviewPane(blocks: _blocks, useCase: _useCase);
+    }
+    final bytes = _rawBytes ?? 0;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: FobColors.surfaceRaised,
+        border: Border.all(color: FobColors.hairline),
+        borderRadius: BorderRadius.circular(FobRadius.card),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Icon(bytes > 0 ? Icons.description_outlined : Icons.upload_file_outlined,
+              size: 26, color: FobColors.textFaint),
+          const SizedBox(height: 10),
+          Text(
+            bytes > 0 ? 'Imported HTML document' : 'No document imported yet',
+            style: FobText.cardTitle,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 6),
+          Text(
+            bytes > 0
+                ? '$bytes bytes. This is what will be sent, exactly as written.\n'
+                    'It cannot be previewed here — send a test to see it in a real inbox.'
+                : 'Choose a file or paste HTML to import a document.',
+            style: const TextStyle(fontSize: 12.5, color: FobColors.textMuted, height: 1.5),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _modeToggle() {
+    Widget tab(String value, String label) {
+      final active = _bodySource == value;
+      return GestureDetector(
+        onTap: () => setState(() => _bodySource = value),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 6),
+          decoration: BoxDecoration(
+            color: active ? FobColors.surfaceCard : Colors.transparent,
+            borderRadius: BorderRadius.circular(9),
+            border: active ? Border.all(color: FobColors.hairline) : null,
+          ),
+          child: Text(label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: active ? FobColors.textStrong : FobColors.textMuted,
+              )),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+        color: FobColors.surfaceRail,
+        borderRadius: BorderRadius.circular(FobRadius.button),
+        border: Border.all(color: FobColors.hairline),
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        tab('blocks', 'Blocks'),
+        const SizedBox(width: 3),
+        tab('raw', 'Full HTML document'),
+      ]),
+    );
+  }
+
   Widget _htmlSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -438,12 +628,27 @@ class TemplateEditorState extends State<TemplateEditor> {
         const Text('HTML version (optional)',
             style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: FobColors.textLabel)),
         const SizedBox(height: 8),
-        EmailBlockEditor(
-          initialBlocks: widget.template?.bodyBlocks ?? const [],
-          useCase: _useCase,
-          showErrors: _showBlockErrors,
-          onChanged: (b) => setState(() => _blocks = b),
-        ),
+        _modeToggle(),
+        const SizedBox(height: 12),
+        if (_bodySource == 'raw')
+          if (!_isEdit)
+            const Text(
+              'Save this template first, then import a document into it.',
+              style: TextStyle(fontSize: 12.5, color: FobColors.textMuted),
+            )
+          else
+            HtmlImportPanel(
+              isRaw: widget.template?.isRawHtml ?? false,
+              currentBytes: widget.template?.bodyHtml?.length,
+              onImport: _importHtml,
+            )
+        else
+          EmailBlockEditor(
+            initialBlocks: widget.template?.bodyBlocks ?? const [],
+            useCase: _useCase,
+            showErrors: _showBlockErrors,
+            onChanged: (b) => setState(() => _blocks = b),
+          ),
       ],
     );
   }
@@ -476,7 +681,7 @@ class TemplateEditorState extends State<TemplateEditor> {
                           SizedBox(
                             width: 340,
                             height: 520,
-                            child: EmailPreviewPane(blocks: _blocks, useCase: _useCase),
+                            child: _previewArea(),
                           ),
                         ],
                       )
@@ -495,7 +700,7 @@ class TemplateEditorState extends State<TemplateEditor> {
                               label: Text(_narrowShowPreview ? 'Hide preview' : 'Show preview'),
                             ),
                             if (_narrowShowPreview)
-                              SizedBox(height: 420, child: EmailPreviewPane(blocks: _blocks, useCase: _useCase)),
+                              SizedBox(height: 420, child: _previewArea()),
                           ],
                         ),
                       ),

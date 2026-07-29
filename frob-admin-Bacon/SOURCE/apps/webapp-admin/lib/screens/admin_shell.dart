@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/presentation/bloc/auth_bloc.dart';
 import '../theme/tokens.dart';
+import '../widgets/command_palette.dart';
 import '../widgets/tree_nav.dart';
 
 const kNavGroups = [
@@ -59,6 +61,18 @@ class AdminShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Cmd-K anywhere in the shell. Registered here rather than on the icon so
+    // it works regardless of what currently holds focus.
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () =>
+            showCommandPalette(context),
+      },
+      child: Focus(autofocus: true, child: _buildShell(context)),
+    );
+  }
+
+  Widget _buildShell(BuildContext context) {
     return Scaffold(
       backgroundColor: FobColors.surfaceBg,
       body: Row(
@@ -82,6 +96,16 @@ class AdminShell extends StatelessWidget {
                     children: [
                       Text(location.replaceFirst('/', '').toUpperCase(), style: FobText.microLabel),
                       const Spacer(),
+                      // FR-001 workstream 4 — quick navigation. Cmd-K is the
+                      // macOS convention (DEV-5) and does not collide with a
+                      // system or menu-bar shortcut.
+                      IconButton(
+                        key: const Key('palette-open'),
+                        tooltip: 'Go to…  (⌘K)',
+                        icon: const Icon(Icons.search, size: 18, color: FobColors.textMuted),
+                        onPressed: () => showCommandPalette(context),
+                      ),
+                      const SizedBox(width: 4),
                       const Text('William · Owner', style: FobText.body),
                       const SizedBox(width: 12),
                       TextButton(
