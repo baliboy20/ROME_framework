@@ -79,7 +79,9 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
     stagePlan: null,    // PROP-049: { stages:[{id, inputs, provides, presumes, dependsOn}], decisions:[] }
     stubs: [],          // PROP-049 stub ledger: { id, subsystem, contract?, stubbedIn, implementBy, sponsorDecision, status, timestamp }
     tdrs: [],           // PROP-052: validated TDRs from decisions.tdr.yaml (post carrier-reliability downgrade)
-    tdrDeviations: [],  // PROP-052 §2.5: { id, tdr, phase?, reason, proposedAlternative, status:OPEN|SPONSOR_APPROVED|SPONSOR_REJECTED, timestamp }
+    tdrsEverPopulated: false, // PROP-056 (AX-36): empty-after-populated is a conformance failure, not a trivial pass
+    tdrDeviations: [],  // PROP-052 §2.5: { id, tdr, phase?, scope?, reason, proposedAlternative, status:OPEN|SPONSOR_APPROVED|SPONSOR_REJECTED, timestamp }
+    tdrDeviationSeq: 0, // PROP-056 (AX-36): monotonic — DEV ids survive register loss without reuse
     infraConstraints: null, // PROP-051: sponsor's existing infra/vendor constraints from intake (ICR passthrough)
     // PROP-055 (AX-34): the rule-set these artifacts were built under = the
     // framework version at last build/upgrade. Raised ONLY by rome-upgrade.
@@ -95,13 +97,17 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
 // (PARKED reachable from any pre-IN_PROGRESS status). Entries are never removed.
 
 const CHANGE_STATUS = Object.freeze(['QUEUED', 'CLASSIFIED', 'CONFIRMED', 'IN_PROGRESS', 'DELIVERED', 'PARKED']);
+// PROP-054 v1.4: sponsor-set ordering signal. Priority is the sponsor's call,
+// never computed — the trace decides the path, the sponsor decides the order.
+const CHANGE_PRIORITY = Object.freeze(['HIGH', 'NORMAL', 'LOW']);
 
 /** Capture a sponsor observation — B.2 step 1: capture, don't chase. */
-function queueChange(state, { description, source = 'sponsor', timestamp }) {
+function queueChange(state, { description, source = 'sponsor', priority = 'NORMAL', timestamp }) {
   if (!timestamp) throw new Error('queueChange: timestamp required');
   if (!description) throw new Error('queueChange: description required');
+  if (!CHANGE_PRIORITY.includes(priority)) throw new Error(`queueChange: priority must be one of ${CHANGE_PRIORITY.join('|')}`);
   state.changeQueue = state.changeQueue || [];
-  const entry = { id: `CHG-${String(state.changeQueue.length + 1).padStart(3, '0')}`, description, source, status: 'QUEUED', timestamp };
+  const entry = { id: `CHG-${String(state.changeQueue.length + 1).padStart(3, '0')}`, description, source, status: 'QUEUED', priority, timestamp };
   state.changeQueue.push(entry);
   state.audit.push({ event: 'CHANGE_QUEUED', change: entry.id, timestamp });
   state.updatedAt = timestamp;
@@ -134,6 +140,39 @@ function confirmChange(state, changeId, { park = false, timestamp }) {
   }
   entry.status = park ? 'PARKED' : 'CONFIRMED';
   state.audit.push({ event: park ? 'CHANGE_PARKED' : 'CHANGE_CONFIRMED', change: changeId, timestamp });
+  state.updatedAt = timestamp;
+  return entry;
+}
+
+/**
+ * Sponsor re-ranks a queue entry (PROP-054 v1.4). Any status before DELIVERED;
+ * priority is an ordering signal only — it never routes, classifies, or
+ * bypasses confirmation.
+ */
+function prioritizeChange(state, changeId, { priority, timestamp }) {
+  if (!timestamp) throw new Error('prioritizeChange: timestamp required');
+  if (!CHANGE_PRIORITY.includes(priority)) throw new Error(`prioritizeChange: priority must be one of ${CHANGE_PRIORITY.join('|')}`);
+  const entry = (state.changeQueue || []).find(c => c.id === changeId);
+  if (!entry) throw new Error(`prioritizeChange: unknown change ${changeId}`);
+  if (entry.status === 'DELIVERED') throw new Error(`prioritizeChange: ${changeId} is DELIVERED — nothing left to order`);
+  entry.priority = priority;
+  state.audit.push({ event: 'CHANGE_PRIORITIZED', change: changeId, priority, timestamp });
+  state.updatedAt = timestamp;
+  return entry;
+}
+
+/**
+ * Sponsor pulls a stashed entry back into play (PROP-054 v1.4). PARKED →
+ * CLASSIFIED if it was classified before parking (classification is kept —
+ * the trace verdict doesn't expire), else back to QUEUED.
+ */
+function reopenChange(state, changeId, { timestamp }) {
+  if (!timestamp) throw new Error('reopenChange: timestamp required');
+  const entry = (state.changeQueue || []).find(c => c.id === changeId);
+  if (!entry) throw new Error(`reopenChange: unknown change ${changeId}`);
+  if (entry.status !== 'PARKED') throw new Error(`reopenChange: ${changeId} is ${entry.status}, not PARKED`);
+  entry.status = entry.ct ? 'CLASSIFIED' : 'QUEUED';
+  state.audit.push({ event: 'CHANGE_REOPENED', change: changeId, status: entry.status, timestamp });
   state.updatedAt = timestamp;
   return entry;
 }
@@ -182,7 +221,22 @@ function finalizeIntake(state, routed, timestamp) {
   if (!inc.currentPhase || !routing.includes(inc.currentPhase)) inc.currentPhase = routing.find(pid => inc.phases[pid].status !== STATUS.COMPLETE) || null;
   if (inc.currentPhase) inc.phases[inc.currentPhase].status = STATUS.IN_PROGRESS;
   inc.awaitingIntake = false;
-  if (Array.isArray(routed.tdrs)) state.tdrs = routed.tdrs;
+  // PROP-056 (AX-36): the register never shrinks silently. Key absent →
+  // unchanged; a shrinking replacement is refused unless clearTdrs:true, and
+  // any accepted reduction audits the lost ids.
+  if (Array.isArray(routed.tdrs)) {
+    const before = state.tdrs || [];
+    const afterIds = new Set(routed.tdrs.map(t => t.id));
+    const lostIds = before.map(t => t.id).filter(id => !afterIds.has(id));
+    if (lostIds.length && routed.clearTdrs !== true) {
+      throw new Error(`finalizeIntake: intake would drop TDRs from the register (${before.length} → ${routed.tdrs.length}; lost: ${lostIds.join(', ')}). An intake that carries no TDRs must omit the key; pass clearTdrs:true to remove decisions deliberately (ROME-AX-36).`);
+    }
+    if (lostIds.length) {
+      state.audit.push({ event: 'TDR_REGISTER_REDUCED', before: before.length, after: routed.tdrs.length, lostIds, clearTdrs: true, timestamp });
+    }
+    state.tdrs = routed.tdrs;
+  }
+  if ((state.tdrs || []).length) state.tdrsEverPopulated = true;
   if (routed.infraConstraints !== undefined) state.infraConstraints = routed.infraConstraints;
   if (routed.sponsorCheckpointOmitted) {
     // Sponsor-authorized omission (AX-27): record it so checkSponsorAib passes.
@@ -303,7 +357,9 @@ function migrateV1(v1) {
     stagePlan: null,
     stubs: [],
     tdrs: [],
+    tdrsEverPopulated: false,
     tdrDeviations: [],
+    tdrDeviationSeq: 0,
     infraConstraints: null,
     conventionLevel: (v1.framework && v1.framework.version) || v1.frameworkVersion || 'unknown',
     upgrade: null,
@@ -324,6 +380,19 @@ function load(file) {
   if (state.conventionLevel === undefined) state.conventionLevel = (state.framework && state.framework.version) || state.frameworkVersion || 'unknown';
   if (state.upgrade === undefined) state.upgrade = null;
   if (!Array.isArray(state.changeQueue)) state.changeQueue = [];
+  for (const c of state.changeQueue) { if (c.priority === undefined) c.priority = 'NORMAL'; }
+  // PROP-056 additive fields (AX-36): derive from history so legacy states
+  // never re-mint DEV ids or mistake an emptied register for a virgin one.
+  if (state.tdrsEverPopulated === undefined) {
+    state.tdrsEverPopulated = (state.tdrs || []).length > 0 ||
+      (state.audit || []).some(a => a.event === 'INTAKE_FINALIZED' && a.tdrs > 0);
+  }
+  if (state.tdrDeviationSeq === undefined) {
+    state.tdrDeviationSeq = (state.tdrDeviations || []).reduce((max, d) => {
+      const n = parseInt(String(d.id).replace(/^DEV-/, ''), 10);
+      return Number.isFinite(n) && n > max ? n : max;
+    }, 0);
+  }
   return state;
 }
 
@@ -334,4 +403,4 @@ function save(file, state, timestamp) {
   return file;
 }
 
-module.exports = { SCHEMA_VERSION, CHANGE_STATUS, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, queueChange, classifyChange, confirmChange, beginChange, migrateV1, load, save };
+module.exports = { SCHEMA_VERSION, CHANGE_STATUS, CHANGE_PRIORITY, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, queueChange, classifyChange, confirmChange, prioritizeChange, reopenChange, beginChange, migrateV1, load, save };

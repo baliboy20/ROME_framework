@@ -198,16 +198,29 @@ function isComplete(state) {
  * building past an unresolved deviation is structurally impossible.
  * Mutates and returns state.
  */
-function recordTdrDeviation(state, { tdr, phase, reason, proposedAlternative, timestamp }) {
+function recordTdrDeviation(state, { tdr, phase, scope, reason, proposedAlternative, timestamp }) {
   if (!timestamp) throw new Error('recordTdrDeviation: timestamp required');
   const target = (state.tdrs || []).find(t => t.id === tdr);
   if (!target) throw new Error(`recordTdrDeviation: unknown TDR "${tdr}"`);
-  if (target.status !== 'APPROVED') throw new Error(`recordTdrDeviation: TDR ${tdr} is ${target.status}, not APPROVED — nothing to deviate from`);
+  // PROP-056 (AX-37): a deviation strips authority only within its scope.
+  // APPROVED TDRs are always deviable unless the exact scope is already carved
+  // out; a SUPERSEDED TDR is deviable only for a scope its supersession never
+  // covered (whole-TDR supersession covers everything).
+  const carved = (target.carveOuts || []).map(c => c.scope);
+  if (target.status === 'APPROVED') {
+    if (scope && carved.includes(scope)) throw new Error(`recordTdrDeviation: TDR ${tdr} scope "${scope}" already carved out (${(target.carveOuts.find(c => c.scope === scope) || {}).deviation}) — deviate from the carve-out's decision, not the TDR`);
+  } else if (target.status === 'SUPERSEDED') {
+    throw new Error(`recordTdrDeviation: TDR ${tdr} is SUPERSEDED in full (by ${target.supersededBy}) — nothing left to deviate from`);
+  } else {
+    throw new Error(`recordTdrDeviation: TDR ${tdr} is ${target.status}, not APPROVED — nothing to deviate from`);
+  }
   if (!reason || !proposedAlternative) throw new Error('recordTdrDeviation: reason and proposedAlternative required');
   state.tdrDeviations = state.tdrDeviations || [];
-  const id = `DEV-${state.tdrDeviations.length + 1}`;
-  state.tdrDeviations.push({ id, tdr, phase: phase || null, reason, proposedAlternative, status: 'OPEN', timestamp });
-  state.audit.push({ event: 'TDR_DEVIATION_FILED', deviation: id, tdr, phase: phase || null, timestamp });
+  // PROP-056 (AX-36): persisted monotonic counter — ids never reused after loss.
+  state.tdrDeviationSeq = Math.max(state.tdrDeviationSeq || 0, ...state.tdrDeviations.map(d => parseInt(String(d.id).replace(/^DEV-/, ''), 10) || 0)) + 1;
+  const id = `DEV-${state.tdrDeviationSeq}`;
+  state.tdrDeviations.push({ id, tdr, phase: phase || null, scope: scope || null, reason, proposedAlternative, status: 'OPEN', timestamp });
+  state.audit.push({ event: 'TDR_DEVIATION_FILED', deviation: id, tdr, phase: phase || null, scope: scope || null, timestamp });
   return state;
 }
 
@@ -231,7 +244,17 @@ function resolveTdrDeviation(state, { deviation, approved, sponsor, timestamp })
   d.resolvedAt = timestamp;
   if (approved) {
     const t = (state.tdrs || []).find(x => x.id === d.tdr);
-    if (t) { t.status = 'SUPERSEDED'; t.supersededBy = deviation; }
+    if (t) {
+      if (d.scope) {
+        // PROP-056 (AX-37): scoped approval carves out only that scope — the
+        // TDR stays APPROVED and binding everywhere else. Full supersession of
+        // an all-scopes-carved TDR is a doctor/sponsor action, never automatic.
+        t.carveOuts = t.carveOuts || [];
+        t.carveOuts.push({ scope: d.scope, deviation, timestamp });
+      } else {
+        t.status = 'SUPERSEDED'; t.supersededBy = deviation;
+      }
+    }
   }
   state.audit.push({ event: 'TDR_DEVIATION_RESOLVED', deviation, tdr: d.tdr, approved: !!approved, timestamp });
   return state;

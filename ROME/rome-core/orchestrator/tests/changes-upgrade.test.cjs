@@ -9,7 +9,7 @@ const os = require('os');
 const path = require('path');
 const { execFileSync } = require('child_process');
 const { VERDICT, PHASE_BY_ID } = require('../lifecycle');
-const { createState, active, sealActive, queueChange, classifyChange, confirmChange, beginChange, save, load } = require('../state');
+const { createState, active, sealActive, queueChange, classifyChange, confirmChange, prioritizeChange, reopenChange, beginChange, save, load } = require('../state');
 const { recordGateVerdict, advance } = require('../guard');
 const { recordVerification } = require('../verification');
 const { routeChange } = require('../routing');
@@ -116,6 +116,28 @@ console.log('changes + upgrade regression:');
   save(path.join(dir, 'ARTIFACTS/_orchestration/state.json'), s2, TS);
   const out = execFileSync('node', [path.join(__dirname, '..', 'rome-upgrade.cjs'), dir, '--ts', TS, '--to', '3.2.1'], { encoding: 'utf8' });
   ok('AX-35 retro ladder 3.0.0→3.2.1 composes (4 boundaries, dry run)', /3\.0\.0→3\.1\.0/.test(out) && /3\.2\.0→3\.2\.1 \(no-op\)/.test(out));
+  fs.rmSync(dir, { recursive: true, force: true });
+})();
+
+// ── PROP-054 v1.4: queue priority + stash ────────────────────────────────────
+(() => {
+  const s = createState({ project: 'prio', frameworkVersion: '3.3.1', timestamp: TS });
+  const a = queueChange(s, { description: 'typo', priority: 'LOW', timestamp: TS });
+  const b = queueChange(s, { description: 'crash', timestamp: TS });
+  ok('priority: defaults NORMAL, accepts explicit level', b.priority === 'NORMAL' && a.priority === 'LOW');
+  ok('priority: invalid level refused', threw(/priority/, () => queueChange(s, { description: 'x', priority: 'URGENT', timestamp: TS })));
+  prioritizeChange(s, b.id, { priority: 'HIGH', timestamp: TS });
+  ok('priority: sponsor re-rank recorded with audit', b.priority === 'HIGH' && s.audit.some(e => e.event === 'CHANGE_PRIORITIZED' && e.change === b.id));
+  classifyChange(s, a.id, { ct: 'CT-2', blastRadius: { verified: true }, timestamp: TS });
+  confirmChange(s, a.id, { park: true, timestamp: TS });
+  reopenChange(s, a.id, { timestamp: TS });
+  ok('stash: reopen restores CLASSIFIED, classification kept', a.status === 'CLASSIFIED' && a.ct === 'CT-2');
+  ok('stash: reopen refuses a non-PARKED entry', threw(/not PARKED/, () => reopenChange(s, b.id, { timestamp: TS })));
+  delete b.priority;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'rome-prio-'));
+  const f = path.join(dir, 'state.json');
+  save(f, s, TS);
+  ok('priority: load() defaults legacy entries to NORMAL', load(f).changeQueue.find(c => c.id === b.id).priority === 'NORMAL');
   fs.rmSync(dir, { recursive: true, force: true });
 })();
 

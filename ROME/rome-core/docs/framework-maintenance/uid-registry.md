@@ -207,6 +207,12 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-051 | Sponsor Architecture & Infrastructure Agreement | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-051-sponsor-architecture-agreement.md` | Implemented (v3.2.0) |
 | ROME-PROP-052 | Technical Specification Standard (TDRs) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-052-technical-spec-standard.md` | Implemented (v3.2.0) |
 | ROME-PROP-050 | Input Format Standard (ROME-STD-INPUT) | `/ROME_framework_maintenance/proposals/ROME-PROP-050-input-format-standard.md` | Draft |
+| ROME-PROP-053 | P5 Seam Integrity | `/ROME_framework_maintenance/proposals/ROME-PROP-053-p5-seam-integrity.md` | Draft |
+| ROME-PROP-054 | Change-Type Taxonomy & Sponsor Communication | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-054-change-type-taxonomy-and-sponsor-communication.md` | Implemented (v3.3.0) |
+| ROME-PROP-055 | Project Version Migration | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-055-project-version-migration.md` | Implemented (v3.3.0) |
+| ROME-PROP-056 | TDR Register Integrity | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-056-tdr-register-integrity.md` | Implemented (v3.3.1) |
+| ROME-DEFECT-001 | Field Defect Report — TDR Register Integrity (frob-admin-Bacon) | `/ROME_framework_maintenance/defect-reports/ROME-DEFECT-001-tdr-register-integrity.md` | Closed (superseded by ROME-PROP-056) |
+| ROME-PROP-057 | Formal Workflows (FLOW artifacts above AORDL) | `/ROME_framework_maintenance/proposals/ROME-PROP-057-formal-workflows.md` | Draft |
 
 ### Implementation Plans
 
@@ -308,6 +314,8 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.19 | 2026-07-29T00:00:00Z | Registered ROME-PROP-057 (Formal Workflows — FLOW artifacts above AORDL; statechart-disciplined, journey-presented; AX-38/39 reserved). Draft. |
+| 4.18 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1 — PATCH) and registered; ROME-DEFECT-001 (field defect report, frob-admin-Bacon) archived to defect-reports/ and registered Closed. Backfilled missing v3.3.0 registrations: PROP-053 (Draft), PROP-054/055 (Implemented v3.3.0). Companions: ontology v1.7 (AX-36/37), lexicon v1.7 (Carve-Out), MIG-3.3.0→3.3.1. |
 | 4.17 | 2026-07-17T00:00:00Z | PROP-051 and PROP-052 implemented (v3.2.0 — MINOR); moved to implemented-proposals/ and registered. Registered ROME-STD-TECHSPEC; ROME-GUIDE-002 promoted Draft → Active. Companion updates: ontology v1.5 (ENT-20, REL-22..24, AX-27..30), lexicon v1.4, GOV-006 v3.0 (per-row enforcement citations), gate-decision-standard v1.4. |
 | 4.16 | 2026-07-17T00:00:00Z | Registered ROME-GUIDE-002 (Technical Spec Authoring — portable TDR guide, Draft; companion to ROME-PROP-052, activates with ROME-STD-TECHSPEC). |
 | 4.15 | 2026-07-17T00:00:00Z | ROME-GUIDE-001 relocated to repo root (`/REQUIREMENTS-AUTHORING-GUIDE.md`) — sponsor-facing external document, sits beside GETTING-STARTED.md outside rome-core. |
