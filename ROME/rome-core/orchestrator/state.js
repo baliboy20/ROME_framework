@@ -145,6 +145,24 @@ function confirmChange(state, changeId, { park = false, timestamp }) {
 }
 
 /**
+ * Record the sponsor's flows decision for the active increment
+ * (ROME-PROP-057 / ROME-AX-38, the AX-27 omission pattern): a project with
+ * no business journeys records that as an explicit sponsor decision — never
+ * a default. Confirmation of authored flows lives IN the FLOW artifacts
+ * (Status/Confirmation), not here.
+ */
+function recordFlowsOmission(state, { sponsorAuthorized, reason, timestamp }) {
+  if (!timestamp) throw new Error('recordFlowsOmission: timestamp required');
+  if (sponsorAuthorized !== true) throw new Error('recordFlowsOmission: only the sponsor omits journeys (sponsorAuthorized: true required — ROME-AX-38)');
+  const inc = active(state);
+  if (inc.sealed) throw new Error(`Increment ${inc.id} is sealed (ROME-AX-19)`);
+  inc.flows = { omitted: true, sponsorAuthorized: true, reason: reason || null, timestamp };
+  state.audit.push({ event: 'FLOWS_OMITTED', increment: inc.id, reason: reason || null, timestamp });
+  state.updatedAt = timestamp;
+  return state;
+}
+
+/**
  * Sponsor re-ranks a queue entry (PROP-054 v1.4). Any status before DELIVERED;
  * priority is an ordering signal only — it never routes, classifies, or
  * bypasses confirmation.
@@ -403,4 +421,4 @@ function save(file, state, timestamp) {
   return file;
 }
 
-module.exports = { SCHEMA_VERSION, CHANGE_STATUS, CHANGE_PRIORITY, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, queueChange, classifyChange, confirmChange, prioritizeChange, reopenChange, beginChange, migrateV1, load, save };
+module.exports = { SCHEMA_VERSION, CHANGE_STATUS, CHANGE_PRIORITY, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, recordFlowsOmission, queueChange, classifyChange, confirmChange, prioritizeChange, reopenChange, beginChange, migrateV1, load, save };

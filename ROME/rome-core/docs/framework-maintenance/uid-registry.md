@@ -212,7 +212,8 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-055 | Project Version Migration | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-055-project-version-migration.md` | Implemented (v3.3.0) |
 | ROME-PROP-056 | TDR Register Integrity | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-056-tdr-register-integrity.md` | Implemented (v3.3.1) |
 | ROME-DEFECT-001 | Field Defect Report — TDR Register Integrity (frob-admin-Bacon) | `/ROME_framework_maintenance/defect-reports/ROME-DEFECT-001-tdr-register-integrity.md` | Closed (superseded by ROME-PROP-056) |
-| ROME-PROP-057 | Formal Workflows (FLOW artifacts above AORDL) | `/ROME_framework_maintenance/proposals/ROME-PROP-057-formal-workflows.md` | Draft |
+| ROME-PROP-057 | Formal Workflows (FLOW artifacts above AORDL) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-057-formal-workflows.md` | Implemented (v3.4.0) |
+| ROME-STD-FLOW | Flow Standard (formal workflow artifacts) | `/ROME/rome-core/docs/standards/flow-standard.md` | Active |
 
 ### Implementation Plans
 
@@ -314,6 +315,7 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.20 | 2026-07-29T00:00:00Z | PROP-057 implemented (v3.4.0 "Hadrian" — MINOR) and moved to implemented-proposals/. Registered ROME-STD-FLOW (Active). Companions: ontology v1.8 (ENT-21, REL-25/26, AX-38/39), lexicon v1.8, MIG-3.3.1→3.4.0. |
 | 4.19 | 2026-07-29T00:00:00Z | Registered ROME-PROP-057 (Formal Workflows — FLOW artifacts above AORDL; statechart-disciplined, journey-presented; AX-38/39 reserved). Draft. |
 | 4.18 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1 — PATCH) and registered; ROME-DEFECT-001 (field defect report, frob-admin-Bacon) archived to defect-reports/ and registered Closed. Backfilled missing v3.3.0 registrations: PROP-053 (Draft), PROP-054/055 (Implemented v3.3.0). Companions: ontology v1.7 (AX-36/37), lexicon v1.7 (Carve-Out), MIG-3.3.0→3.3.1. |
 | 4.17 | 2026-07-17T00:00:00Z | PROP-051 and PROP-052 implemented (v3.2.0 — MINOR); moved to implemented-proposals/ and registered. Registered ROME-STD-TECHSPEC; ROME-GUIDE-002 promoted Draft → Active. Companion updates: ontology v1.5 (ENT-20, REL-22..24, AX-27..30), lexicon v1.4, GOV-006 v3.0 (per-row enforcement citations), gate-decision-standard v1.4. |

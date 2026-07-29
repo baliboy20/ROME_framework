@@ -151,6 +151,24 @@ All retries/escalations/blocks are recorded in `state.json` + audit. No silent r
 
 ---
 
+## Flows at P1 (PROP-057)
+
+GATE-P1 now requires the mechanical fact `flowValidation`
+(`verification.js#checkFlowValidation`): every FLOW artifact under
+`ARTIFACTS/_requirements/flows/` validator-clean AND SPONSOR_CONFIRMED, or a
+recorded sponsor flows-omission (`state.js#recordFlowsOmission`). Sequence:
+Talib authors requirements → drafts flows (`lib/flow/flow-draft.cjs`) → the
+sponsor routes every UNROUTED error and confirms (one voice, plain English,
+diagrams via `flow-render.cjs` on Seez) → record the fact. A DRAFT at the
+gate is unfinished sponsor work — never record the fact true over one.
+Absence of journeys is a sponsor decision, never a default (ROME-AX-38).
+Confirmed flows are binding inputs downstream: P2 seeds the dependency graph
+from them; P3 (PMA/Clara) designs against them; Clara's `user-flows.md` is a
+rendering of FLOW artifacts, not an independent drawing. Flow edits on a
+delivered project are CT-3 (requirement-tier rework).
+
+---
+
 ## Re-entry mode (PROP-054): the project is already delivered
 
 When `state.json` exists with a sealed, delivered increment, you are in

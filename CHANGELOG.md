@@ -2,6 +2,53 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-07-29] - v3.4.0 "Hadrian" — formal workflows (PROP-057)
+
+Codename **Hadrian**. Closes the workflow gap: AORDL captures atomic actions
+but not the arrows between them — order, system-triggered steps, timers, and
+what happens after a failure. Those now live in FLOW artifacts: sponsor-owned
+journeys above the requirements, statechart discipline underneath, journey
+presentation on top. Convention change: YES (new artifact kind + new GATE-P1
+fact; migration step MIG-3.3.1→3.4.0 with one sponsor gap: flows-or-omission
+at next re-entry — nothing retro-gated).
+
+### Added
+- **FLOW artifacts** (`ARTIFACTS/_requirements/flows/FLOW-###.yaml`,
+  ROME-STD-FLOW): steps reference REQ ids (never restate content); system
+  behaviour lives ONLY in flow system steps (AORDL's actor rule untouched);
+  transitions carry actor/system/timer/error triggers; per-error routing.
+- **Deterministic validator** (`lib/flow/validate-flow.cjs`, V0–V7):
+  reachability (error routes count as arrows), path-to-end, both-direction
+  error routing (unrouted error AND stale route fail — AX-39), recorded
+  sponsor Confirmation (AX-38). Writes the DERIVED reverse index
+  `flow-index.json`; surfaces orphan requirements.
+- **Draft-and-confirm** (`lib/flow/flow-draft.cjs`): DRAFT skeletons
+  generated from pre/postcondition chains (heuristic validated against a
+  90-requirement live set: 17 drafts, 15 structurally valid); every inference
+  carries confidence; every error starts UNROUTED; refuses to overwrite
+  sponsor-owned flows. `flow-render.cjs` generates Mermaid views (never
+  hand-edited).
+- **GATE-P1 fact `flowValidation`** (`verification.js#checkFlowValidation`):
+  passes only on all-flows-confirmed-and-clean, or a recorded sponsor
+  omission (`state.js#recordFlowsOmission`, AX-27 pattern — absence is a
+  decision, never a default).
+- **AX-38/39** (ontology v1.8, ENT-21 Flow, REL-25/26) with 20 tagged tests
+  in `flows.test.cjs`; lexicon v1.8 (Flow, Error Routing, Flow Index);
+  fidelity ENFORCED list extended.
+
+### Fixed (post-implementation coherence review, same release)
+- Flow tooling works in VENDORED engines (which exclude node_modules):
+  `flow-lib.cjs` bundles a YAML-subset fallback parser (verified equivalent
+  to js-yaml on an 89-file live requirement set, 0 mismatches; fallback dump
+  is JSON — valid YAML). Without this, re-entry P1 on a vendored project
+  would have crashed.
+- `gate-decision-standard.md` §3 fact table: P1 row gained `flowValidation`
+  (had drifted from lifecycle.js on release day); USER-GUIDE gains the
+  sponsor-facing journey-confirmation step.
+
+391+ tests green across suites; the pre-existing `impact-experts.test.cjs`
+failure remains, unrelated.
+
 ## [2026-07-28] - v3.3.1 "Severus" — TDR register integrity (PROP-056)
 
 PATCH release fixing two HIGH field defects found on a live project

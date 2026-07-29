@@ -391,4 +391,36 @@ function checkTdrConformance(state, phase, citations) {
   };
 }
 
-module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets, checkSponsorAib, checkEnvDivergence, checkTdrConformance };
+/**
+ * Flow validation (ROME-PROP-057 / ROME-AX-38/39): backs GATE-P1 required
+ * fact `flowValidation`. Pass requires ONE of:
+ *  - a recorded sponsor flows-omission on the increment (AX-27 pattern —
+ *    absence of journeys is a decision, never a default), or
+ *  - ≥1 FLOW artifact, every one validator-clean AND SPONSOR_CONFIRMED
+ *    (a DRAFT at the gate is unfinished sponsor work, not a pass).
+ * Returns { pass, detail }.
+ */
+function checkFlowValidation(state, { flowsDir, reqDir } = {}) {
+  const decision = active(state).flows;
+  if (decision && decision.omitted) {
+    return decision.sponsorAuthorized === true
+      ? { pass: true, detail: 'flows omitted with recorded sponsor authorization (AX-38)' }
+      : { pass: false, detail: 'flows omitted WITHOUT sponsor authorization (ROME-AX-38)' };
+  }
+  if (!flowsDir || !reqDir) return { pass: false, detail: 'flowValidation: flowsDir and reqDir required (or record a sponsor omission)' };
+  const { loadReqs, loadFlows, validateFlow } = require('../lib/flow/flow-lib.cjs');
+  const flows = loadFlows(flowsDir);
+  if (!flows.length) return { pass: false, detail: 'no FLOW artifacts and no recorded sponsor omission — the sponsor decides journeys or their absence (ROME-AX-38)' };
+  const { byId } = loadReqs(reqDir);
+  const bad = [];
+  for (const { doc, file } of flows) {
+    const { errors } = validateFlow(doc, byId);
+    if (errors.length) bad.push(`${file}: ${errors[0]}${errors.length > 1 ? ` (+${errors.length - 1} more)` : ''}`);
+    else if (doc.Status !== 'SPONSOR_CONFIRMED') bad.push(`${file}: ${doc.ID} is ${doc.Status} — sponsor must confirm or remove (ROME-AX-38)`);
+  }
+  return bad.length
+    ? { pass: false, detail: `flow validation failed: ${bad.join('; ')}` }
+    : { pass: true, detail: `${flows.length} flow(s) validator-clean and sponsor-confirmed (AX-38/39)` };
+}
+
+module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets, checkSponsorAib, checkEnvDivergence, checkTdrConformance, checkFlowValidation };

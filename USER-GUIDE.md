@@ -45,6 +45,11 @@ Every transition is gated by **Sarah**; the guard enforces it.
    process its return, request the gate verdict, advance via the guard.
 4. **Answer questions** — when a sub-agent needs a decision, it surfaces a
    clarification (sponsor input). Bad/insufficient inputs are refused, not guessed.
+   At requirements time you also confirm the **workflows**: the framework drafts
+   your business journeys from the requirements, shows them as diagrams, and asks
+   you to fill the arrows it cannot know — especially *what happens after each
+   failure*. Journeys become checked artifacts that design builds against; a
+   project with no journeys records that as your explicit decision.
 5. **Delivery** — when all phases are COMPLETE with APPROVE gates and the code is
    verified (it builds and its tests pass), the project is done.
 

@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.7 |
+| **Version** | 1.8 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
@@ -54,6 +54,9 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **TDR (Technical Decision Record)** | One made technical decision: id, status, scope, one checkable decision sentence, and the phases it binds. APPROVED TDRs from a Reliable carrier constrain producers (ROME-AX-29); PROPOSED TDRs surface as checkpoint questions and never bind. | TDR-## | Decision authority unit (ROME-STD-TECHSPEC; ENT-20) |
 | **Deviation Request** | A producer's recorded request to depart from an APPROVED TDR (reason + proposed alternative), optionally bounded to one scope. Surfaced via the AIB (or blocking sponsor question); only sponsor approval strips authority, and only within the deviation's scope (ROME-AX-30, AX-37). While OPEN it fails `tdrConformance`. Ids minted from a persisted monotonic counter (AX-36). | `state.tdrDeviations[]` DEV-# | TDR override path (PROP-052 §2.5; PROP-056) |
 | **Carve-Out** | The record on a TDR that a sponsor-approved *scoped* deviation has replaced its decision for one scope only. The TDR stays APPROVED and binding for all other scopes; a TDR becomes SUPERSEDED only by an unscoped (whole-TDR) approval, never by accumulation of carve-outs without sponsor confirmation (ROME-AX-37). | `tdr.carveOuts[]` | Partial supersession record (PROP-056 §2.4) |
+| **Flow** | A sponsor-owned formal workflow artifact composing Requirements by reference: steps (REQ refs, system actions, decisions, ends), transitions carrying the arrows AORDL cannot hold (actor/system/timer/error triggers), and per-error routing. DRAFT until sponsor-confirmed with recorded Confirmation; only confirmed, validator-clean Flows bind design (ROME-AX-38). System behaviour lives ONLY in Flow system steps — AORDL's actor rule is untouched. | `FLOW-###` (`ARTIFACTS/_requirements/flows/`) | Journey artifact (ROME-STD-FLOW; ROME-ONT-001 ENT-21; PROP-057) |
+| **Error Routing** | A Flow's explicit map from every error declared by its referenced Requirements to an onward route (step or terminal). `UNROUTED` marks a pending sponsor decision — permitted only while DRAFT; a confirmed Flow with an unrouted or stale route fails validation (ROME-AX-39). | `ErrorRouting[]` | Failure-path record (ROME-STD-FLOW; PROP-057) |
+| **Flow Index** | The DERIVED reverse map Requirement → Flows, written by the validator, never hand-authored (it cannot go stale). Requirements referenced by no Flow surface as orphans for sponsor disposition. | `flows/flow-index.json` | Derived cross-reference (PROP-057) |
 | **Carrier Reliability** | The rule that TDR authority never exceeds the reliability of the document carrying it: in a non-Reliable input every APPROVED TDR is downgraded to PROPOSED at extraction (ROME-AX-30). | `intake.js#applyCarrierReliability` | Authority bound (PROP-052 §2.1) |
 | **Infra Constraint** | A sponsor-declared fact about existing infrastructure or vendor commitments (hosting/vendor accounts, operated stacks, vendors to avoid), captured by Surveyor at intake into the ICR. A P3/P4 choice contradicting one must surface in the AIB, never silently. | ICR `infraConstraints` | Intake capture (PROP-051 §2.4) |
 
@@ -243,6 +246,8 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.8 | 2026-07-29T00:00:00Z | PROP-057 companion additions: Flow, Error Routing, Flow Index (cross-linked to ENT-21, AX-38/39, ROME-STD-FLOW). |
+| 1.7 | 2026-07-28T00:00:00Z | PROP-056 companion additions (revision row backfilled — changes shipped v3.3.1): Carve-Out added; Deviation Request updated (scope-bounded authority, monotonic ids); Change Queue updated (priority, stash — PROP-054 v1.4). |
 | 1.6 | 2026-07-27T00:00:00Z | PROP-054/055 companion additions: Change Type (CT-1..5, with the intent-vs-CT boundary resolving the refinement/extension overlap), Change Queue, Change-Scoped Run, Blast Radius, Convention Level, Migration Step, Migration Log (cross-linked to AX-31..35). |
 | 1.5 | 2026-07-17T00:00:00Z | v3.2.1 consistency pass: duplicate "Technical Specification" resolved (P4 artifact renamed **Technical Specs Artifact**, cross-referenced to the spec-input term); Constraint ↔ Infra Constraint distinct-from note. |
 | 1.4 | 2026-07-17T00:00:00Z | PROP-051/052 companion additions: AIB, Sponsor Checkpoint Response (CONFIRM/REDIRECT/DELEGATE), Technical Specification (spec input), TDR, Deviation Request, Carrier Reliability, Infra Constraint (cross-linked to ENT-20 and AX-27..30). |

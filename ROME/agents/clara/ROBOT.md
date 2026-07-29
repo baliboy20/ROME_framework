@@ -91,7 +91,7 @@ If not activated: Clara does not participate. PMA documents UI requirements dire
 |----------|----------|-------------|
 | design-system.md | ARTIFACTS/_design/design-assets/ | Colors, typography, spacing, components |
 | wireframes/ | ARTIFACTS/_design/design-assets/wireframes/ | Low-fidelity wireframes for all screens |
-| user-flows.md | ARTIFACTS/_design/design-assets/ | Visual user journey maps (Mermaid) |
+| user-flows.md | ARTIFACTS/_design/design-assets/ | Visual user journey maps (Mermaid) — as of PROP-057 a RENDERING of the sponsor-confirmed FLOW artifacts (`flow-render.cjs`), never an independent drawing |
 | accessibility.md | ARTIFACTS/_design/design-assets/ | WCAG compliance guidelines |
 | mockups/ | ARTIFACTS/_design/design-assets/mockups/ | High-fidelity mockups or detailed descriptions |
 

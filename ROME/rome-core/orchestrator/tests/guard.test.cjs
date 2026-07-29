@@ -101,6 +101,8 @@ console.log('guard regression:');
   recordVerification(s, 'P1', 'aordl', true, null, TS);
   ok('still blocked with only one fact', canAdvance(s).ok === false);
   recordVerification(s, 'P1', 'traceability', true, null, TS);
+  ok('still blocked with two of three facts', canAdvance(s).ok === false);
+  recordVerification(s, 'P1', 'flowValidation', true, null, TS); // PROP-057
   ok('advance allowed once verdict + all facts present', canAdvance(s).ok === true);
   // a FAILED fact blocks even with APPROVE
   recordVerification(s, 'P1', 'traceability', false, 'REQ-003 has no test', TS);

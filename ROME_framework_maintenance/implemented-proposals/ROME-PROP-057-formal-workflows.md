@@ -1,7 +1,7 @@
 # ROME-PROP-057 — Formal Workflows (FLOW artifacts above AORDL)
 
 Document UID: ROME-PROP-057
-Status: Draft
+Status: Implemented (v3.4.0)
 Document Type: Framework Proposal
 Origin: Sponsor discussion 2026-07-29 (workflow/user-journey gap analysis)
 Targets: new `ROME-STD-FLOW` standard, `validate-flow.js`, P1/P3 integration, ontology/lexicon companions
@@ -160,3 +160,5 @@ by inference — historical fact, not a violation.
 | Rev | Date (ISO 8601) | Summary |
 |-----|------------------|---------|
 | v1.0 | 2026-07-29 | Initial draft: FLOW artifact (statechart-disciplined, journey-presented), deterministic validator, derived reverse index, P1 draft-and-confirm integration, AX-38/39. |
+| v1.1 | 2026-07-29 | Pre-implementation review amendments: V4 checks BOTH directions (unrouted error AND stale route); sponsor omission recorded in state (`recordFlowsOmission`, AX-27 pattern); draft generator lives in rome-core (`lib/flow/`), plugin stays independent; raw workflow-shaped inputs seed drafts (intake recognition — future ICR `form: workflow`). |
+| v1.2 | 2026-07-29 | Implemented (v3.4.0 "Hadrian"): `lib/flow/` (flow-lib + validate-flow/flow-draft/flow-render CLIs), `checkFlowValidation` gate fact at P1, `recordFlowsOmission`, ROME-STD-FLOW, ontology v1.8 (ENT-21, REL-25/26, AX-38/39), lexicon v1.8, MIG-3.3.1→3.4.0; 20 tagged tests in `flows.test.cjs`, all green; validated end-to-end against a 90-requirement live set (17 drafts, 15 structurally valid). Moved to implemented-proposals/. |

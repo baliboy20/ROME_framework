@@ -39,6 +39,7 @@ const CODE_SATISFIES = Object.freeze(['implements', 'enforces']);
 // evidence in state.verification[phase]) BEFORE a gated advance — not just the
 // gate role's verdict (ROME-PROP-035 §3.5 hardening). Keys:
 //   aordl        — AORDL STRICT validation passed (P1)
+//   flowValidation — FLOW artifacts validator-clean + sponsor-confirmed, or recorded sponsor omission (P1; PROP-057, AX-38/39)
 //   traceability — every in-scope requirement maps requirement→artifact(s);
 //                  at P5, requirement→code AND →test (ALWAYS-ON, iterative safety)
 //   secrets      — no-secrets-in-source scan clean
@@ -51,7 +52,7 @@ const CODE_SATISFIES = Object.freeze(['implements', 'enforces']);
 const PHASES = Object.freeze([
   { id: 'P0',   name: 'bootstrap',    owner: 'bootstrap',            gate: null,                              optional: false, requires: [] },
   { id: 'P0.5', name: 'intake',       owner: 'surveyor',             gate: { id: 'GATE-P0.5', role: 'sarah' }, optional: true,  requires: [] },
-  { id: 'P1',   name: 'requirements', owner: 'talib',                gate: { id: 'GATE-P1',   role: 'sarah' }, optional: false, requires: ['aordl', 'traceability'] },
+  { id: 'P1',   name: 'requirements', owner: 'talib',                gate: { id: 'GATE-P1',   role: 'sarah' }, optional: false, requires: ['aordl', 'traceability', 'flowValidation'] },
   { id: 'P2',   name: 'analysis',     owner: 'talib',                gate: { id: 'GATE-P2',   role: 'sarah' }, optional: false, requires: ['traceability', 'sponsorOq', 'stageConsistency'] },
   { id: 'P3',   name: 'design',       owner: 'pma|clara',            gate: { id: 'GATE-P3',   role: 'sarah' }, optional: false, requires: ['traceability', 'matrix', 'designAssets', 'sponsorArch', 'tdrConformance'] },
   { id: 'P3.5', name: 'prototype',    owner: 'reena|charlie',        gate: { id: 'GATE-P3.5', role: 'sarah' }, optional: true,  requires: ['traceability', 'matrix'] },

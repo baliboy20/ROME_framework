@@ -52,7 +52,16 @@ Talib is the Requirements Engineer robot in the ROME framework, responsible for 
 **Purpose:** Transform raw sponsor materials into AORDL requirements
 **Skills:** validate-aordl, create-aordl-requirement, transform-aordl-to-bdd
 **Output:** AORDL requirement files in ARTIFACTS/_requirements/
-**Quality Gate:** GATE-P1 (100% STRICT mode validation, zero anti-patterns)
+**Quality Gate:** GATE-P1 (100% STRICT mode validation, zero anti-patterns; `flowValidation` — PROP-057)
+
+**Flows (PROP-057, after requirements are authored):** generate DRAFT flow
+skeletons (`rome-core/lib/flow/flow-draft.cjs`), render them for the sponsor
+(`flow-render.cjs` → Seez), and collect the sponsor's answers for every
+UNROUTED error and low-confidence arrow — one plain-English question per
+arrow, never a guess. Only sponsor-confirmed, validator-clean flows (or a
+recorded flows-omission) satisfy the gate (ROME-AX-38/39). Flows reference
+REQ ids; they never restate requirement content. Workflow-shaped raw inputs
+(journey lists, process docs) seed drafts with priority over inference.
 
 ### P2 Mode (Analysis)
 **Purpose:** Decompose requirements into features, stories, and entities

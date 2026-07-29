@@ -3,7 +3,7 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.7 |
+| **Version** | 1.8 |
 | **Date** | 2026-07-16T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
@@ -48,6 +48,7 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | ENT-18 | Core Subsystem (cross-cutting capability multiple Stages presume — auth, schema, design system, …) | ROME-LEX-001; PROP-049 |
 | ENT-19 | Stub (sponsor-declared contract-shaped stand-in with an `implementBy` due Stage) | ROME-LEX-001; PROP-049 |
 | ENT-20 | TDR (Technical Decision Record — one made technical decision with status, scope, binds) | ROME-STD-TECHSPEC; PROP-052 |
+| ENT-21 | Flow (formal workflow artifact — sponsor-owned journey composing Requirements by reference) | ROME-STD-FLOW; PROP-057 |
 
 **Deprecation note:** "Robot" is not an entity. ROME-STD-AGENT-ROLES §1 retires it in favour of **Role** + **Instance**. It survives in the lexicon only as a legacy alias, and in filenames (`ROBOT.md`) which are deliberately not renamed.
 
@@ -81,6 +82,8 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | REL-22 | TDR `constrains` Phase-producer | TDR(N) → Phase(1..3) per `binds` (PROP-052) |
 | REL-23 | Deviation `supersedes` TDR `by` Sponsor | Deviation(1) → TDR(1); sponsor-approved only (PROP-052 §2.5) |
 | REL-24 | Sponsor `confirms/redirects/delegates` AIB | Sponsor(1) → AIB(1 per P3/P4), bound to AIB revision (PROP-051) |
+| REL-25 | Flow `references` Requirement | Flow(N) → Requirement(M) — by id only, never restated; reverse index derived (PROP-057) |
+| REL-26 | Sponsor `confirms/omits` Flows | Sponsor(1) → Flow(N) confirmation, or one recorded omission per Increment (PROP-057; AX-38) |
 
 ---
 
@@ -136,6 +139,8 @@ contiguous with its siblings.)
 | AX-35 | No unreachable version: a release that changes artifact conventions or state semantics ships its migration step (transforms/gaps/semantics + postconditions) in the same release; convention-neutral releases declare a no-op boundary. The upgrade ladder refuses any boundary without a step — never guesses. | ENFORCED (`rome-upgrade.cjs#composeLadder` refuses holes; fidelity boundary-coverage check; PROP-055) |
 | AX-36 | The TDR register never shrinks silently: intake input with no `tdrs` key leaves it unchanged; a replacement that drops ids is refused unless `clearTdrs:true`, and any accepted reduction audits every lost id. A register that was ever populated and is now empty fails `tdrConformance` — "nothing to check" is a failure, not conformance. Deviation ids are minted from a persisted monotonic counter, never from list length. | ENFORCED (`state.js#finalizeIntake` shrink refusal + `TDR_REGISTER_REDUCED` audit; `verification.js#checkTdrConformance` empty-after-populated failure; `guard.js#recordTdrDeviation` seq ids; PROP-056) |
 | AX-37 | A deviation strips a TDR's authority only within its declared scope: scoped sponsor approval records a carve-out and the TDR remains APPROVED and binding for every other scope; only an unscoped (whole-TDR) approval supersedes it. A fully superseded TDR refuses further deviations; an already-carved scope refuses re-deviation. | ENFORCED (`guard.js#recordTdrDeviation`/`#resolveTdrDeviation` scope handling; `verification.js#checkTdrConformance` counts only unscoped approvals as exemption; PROP-056) |
+| AX-38 | Business flow is authored and sponsor-confirmed, never inferred into bindingness: GATE-P1 requires every FLOW validator-clean and SPONSOR_CONFIRMED (with recorded Confirmation), or a recorded sponsor flows-omission. Generated skeletons are drafts until confirmed; absence of journeys is a decision, never a default. | ENFORCED (`verification.js#checkFlowValidation` as required `flowValidation` fact via `guard.js#canAdvance`; `state.js#recordFlowsOmission` refuses non-sponsor omission; PROP-057) |
+| AX-39 | No unrouted failure: every error declared by a requirement referenced in a flow has an explicit onward route (step or terminal). UNROUTED survives only in DRAFT; a confirmed flow carrying one fails validation, and a route for an error the requirement no longer declares fails as stale. | ENFORCED (`flow-lib.cjs#validateFlow` V4a/V4b; PROP-057) |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
 
@@ -182,6 +187,7 @@ contiguous with its siblings.)
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.8 | 2026-07-29T00:00:00Z | PROP-057 implemented (v3.4.0). Added ENT-21 Flow, REL-25/26, AX-38 flows sponsor-confirmed or omission recorded (ENFORCED via `checkFlowValidation` gate fact + `recordFlowsOmission`), AX-39 no unrouted failure (ENFORCED via `validateFlow` V4a/V4b). Tagged violation tests in `flows.test.cjs`. |
 | 1.7 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1). Added AX-36 TDR register integrity — no silent shrink, empty-after-populated fails conformance, monotonic DEV ids (ENFORCED) and AX-37 scope-bounded deviation authority — carve-outs, whole-TDR supersession only when unscoped (ENFORCED). Tagged violation tests in `tdr-integrity.test.cjs`. Field defect source: frob-admin-Bacon (ROME-DEFECT-001). |
 | 1.6 | 2026-07-27T00:00:00Z | PROP-054/055 implemented (v3.3.0). Added AX-31..35: AX-31 trace-verified change classification (ENFORCED via `routeChange`/`classifyChange`/`beginChange` refusals), AX-32 no untraced delivery — every change path ends at a guard-evidenced gate (ENFORCED via change-scoped increments), AX-33 sponsor register + one-voice questions (ASSERTED; Seez inheritance fidelity-checked), AX-34 declared conventionLevel + compatibility read mode (ENFORCED), AX-35 no unreachable version — per-boundary migration steps, ladder refuses holes (ENFORCED). Tagged violation tests in `changes-upgrade.test.cjs`. |
 | 1.6 | 2026-07-17T00:00:00Z | v3.2.1 consistency pass (post-implementation review): AX-08 table P2 row corrected (+`stageConsistency` — was self-contradicting AX-22; lifecycle.js was always right). |
