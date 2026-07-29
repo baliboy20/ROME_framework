@@ -1,6 +1,6 @@
 ID: CR-011
 title: Deliverability webhook — rebuild on Resend with signature verification
-status: DRAFT — logged 2026-07-28, deferred by sponsor ("not today")
+status: DELIVERED 2026-07-29 — implemented in full; see notes
 raised_by: Roma, from FINDING-008 remaining item 1
 requirement: REQ-NOTIF02
 surface: worker — src/routes/notifications.ts
@@ -69,3 +69,53 @@ notes:
       Interim exposure while deferred: the open endpoint can still be posted to by
       anyone. Impact is limited to corrupting deliverability state (no PII read,
       no money path), which is why deferring is defensible — but it is not zero.
+
+delivered:
+  - >-
+    Implemented 2026-07-29 on sponsor instruction to remove Postmark as stale.
+    POST /webhooks/postmark deleted and replaced by POST /webhooks/resend with
+    Svix signature verification (lib/svix-signature.ts) — raw-body HMAC-SHA256,
+    300s replay window, constant-time comparison, multiple signatures tolerated
+    for secret rotation. Fails CLOSED with no secret configured, unlike the
+    login limiter which deliberately fails open: an unverifiable delivery event
+    should be discarded, not trusted.
+  - >-
+    REQ-NOTIF02 is served again. It had been unserved since the transport switch
+    — no bounce or complaint had been ingested at all, which was the more
+    consequential half of this record and was not visible until the route was
+    traced.
+  - >-
+    Found while implementing, beyond the original scope. Eight sites in live code
+    wrote provider "postmark" directly into the message log (posttour x2,
+    tourops, pretour x3, cron x2), bypassing send(). That was false provenance,
+    not a stale comment. All now write "pending"; send() sets the real transport
+    on dispatch. Migration 0010 repairs historical rows that were never
+    dispatched, and deliberately leaves rows that genuinely did go via Postmark
+    before the switch — rewriting those would falsify the send log.
+  - >-
+    Also found: the message table declares DEFAULT 'postmark' (0001_init.sql).
+    Unreachable from application code now that every INSERT supplies the column,
+    but recorded in migration 0010 rather than silently left.
+  - >-
+    lib/postmark.ts deleted — dead code, imported nowhere. POSTMARK_TOKEN
+    removed from env.ts, wrangler.toml and .dev.vars.example, replaced by
+    RESEND_WEBHOOK_SECRET.
+  - >-
+    TDR-09 ("Outbound transactional email is Postmark for v1") retired properly
+    through guard.recordTdrDeviation as DEV-5, sponsor-approved — the first
+    deviation on this project to go through the sanctioned API rather than being
+    written straight into state. TDR-09 now reads SUPERSEDED -> DEV-5.
+  - >-
+    Tests: 268 passing. The webhook suite was rewritten for Resend and now
+    includes four signature cases the old route could not have had — unsigned,
+    wrong secret, tampered body, and no secret configured.
+  - >-
+    NOT done, and required before this works in production: the webhook must be
+    registered at Resend's end and RESEND_WEBHOOK_SECRET set per environment.
+    Until then the route correctly refuses everything, so bounce ingestion stays
+    dark. This is configuration, not code.
+  - >-
+    Historical records were deliberately NOT rewritten. Findings, the EML
+    reintegration notes and the state audit trail all still name Postmark,
+    because they record what was true at the time. Removing it there would be
+    falsifying history rather than removing staleness.

@@ -13,7 +13,7 @@ FOB is a **greenfield build** (DEV-4) — nothing reused from `admin-rome`/`guid
 ## The 5 sponsor-directed deviations (headline deltas)
 | Dev | TDR | Change |
 |---|---|---|
-| **DEV-5** | TDR-13 | **`webapp-admin` = Flutter macOS desktop app** (Web SPA retired — replacement, not fallback). Cloudflare Pages deploy no longer applies; **Apple Developer account dependency reinstated** (removed by DEV-3); TDR-07 owner session must be restated for a native client. PROPOSED — see `architecture-impact-brief-DEV-5.md`. |
+| **DEV-6** | TDR-13 | **`webapp-admin` = Flutter macOS desktop app** (Web SPA retired — replacement, not fallback). Cloudflare Pages deploy no longer applies; **Apple Developer account dependency reinstated** (removed by DEV-3); TDR-07 owner session must be restated for a native client. PROPOSED — see `architecture-impact-brief-DEV-6.md`. |
 | **DEV-4** | TDR-12 | **Build from scratch.** `admin-rome` no longer canonical; no source/schema reuse. DDL authored fresh. Cloudflare stack + local-D1 Wrangler dev unchanged. |
 | **DEV-3** | TDR-13 | **`mobile-guide` = Flutter Web PWA only** (iOS-native dropped). Apple Developer account dependency removed. |
 | **DEV-2** | TDR-16 | **Guide PWA storage swap.** FMTC + native `sembast` → **service-worker / Cache-Storage** tiles + **`sembast_web` (IndexedDB)**. `flutter_map`, CyclOSM, `flutter_bloc`, `go_router`, GetIt retained. |
@@ -23,7 +23,7 @@ FOB is a **greenfield build** (DEV-4) — nothing reused from `admin-rome`/`guid
 A verified Stripe **Embedded Checkout** PoC is staged at `_user_input/reference/stripe-poc/` (worker `checkoutSession`/`sessionStatus`/`webhook`/`reconcile`, pinned `apiVersion 2025-02-24.acacia`, `INSERT OR IGNORE` idempotency, `0001_init.sql`, Flutter Web JS interop, `LEARNINGS.md`). The `api-worker` payment routes + customer checkout island **follow its patterns as REFERENCE ONLY** — no code seeding (greenfield). Two required divergences: **Postmark not Resend** (TDR-09), and a **core-auth operator session not the PoC's static admin-key guard** (DR-B9). This retires the "no confirmed-schema shortcut" caveat **for the payment path specifically**; all other DDL/code remains greenfield-authored from spec.
 
 ## Architecture shape (unchanged)
-7 components — `webapp-customer` (static HTML + Flutter islands, SEO-first, forest tokens), `webapp-admin` (**Flutter macOS desktop app, DEV-5**, **parchment**), `webapp-editor` (Flutter Web SPA, forest), `mobile-guide` (**Flutter Web PWA only, parchment**, offline-critical), `api-worker` (Hono + Zod), `core-data-access` (single D1 layer + migration runner), `cron-workers`. Capacity = atomic D1 decrement (TDR-08); idempotency = D1 store (TDR-05); auth = JWT HS256 1h + KV, guides via `X-Device-ID` (TDR-07); payments = Stripe Embedded Checkout, webhook-only fulfilment (TDR-06); manual static publish (TDR-14). No Durable Objects/Queues/AI/Access (TDR-02).
+7 components — `webapp-customer` (static HTML + Flutter islands, SEO-first, forest tokens), `webapp-admin` (**Flutter macOS desktop app, DEV-6**, **parchment**), `webapp-editor` (Flutter Web SPA, forest), `mobile-guide` (**Flutter Web PWA only, parchment**, offline-critical), `api-worker` (Hono + Zod), `core-data-access` (single D1 layer + migration runner), `cron-workers`. Capacity = atomic D1 decrement (TDR-08); idempotency = D1 store (TDR-05); auth = JWT HS256 1h + KV, guides via `X-Device-ID` (TDR-07); payments = Stripe Embedded Checkout, webhook-only fulfilment (TDR-06); manual static publish (TDR-14). No Durable Objects/Queues/AI/Access (TDR-02).
 
 ## Named third-party dependencies / vendors
 | Vendor | Why | Swappable |
@@ -34,7 +34,7 @@ A verified Stripe **Embedded Checkout** PoC is staged at `_user_input/reference/
 | Twilio (SMS/WhatsApp) | Channel configured; **PROPOSED, deferred** (TDR-10) | yes |
 | Met Office DataHub + TfL | Advisory reads via Worker proxy (TDR-17) | yes |
 
-*(Apple Developer account removed after DEV-3 — **reinstated by DEV-5** for macOS code signing and notarisation of `webapp-admin`.)*
+*(Apple Developer account removed after DEV-3 — **reinstated by DEV-6** for macOS code signing and notarisation of `webapp-admin`.)*
 
 ## Remaining real risks
 - **Offline-mid-tour under a PWA (DEV-2):** browser storage quota/eviction (Cache-Storage + IndexedDB) is weaker than native — relies on pre-caching before a tour + no eviction under pressure. Validate in P5.
@@ -51,4 +51,4 @@ A verified Stripe **Embedded Checkout** PoC is staged at `_user_input/reference/
 ## Open questions (PROPOSED TDRs / infra)
 - TDR-10 messaging vendor. Met Office paid tier for severe-weather (R-D6) — not v1. Staging namespace creation — P4.
 
-**Deviation status:** DEV-1..DEV-4 are sponsor-directed and filed by Roma; this revision conforms to them. **DEV-5 (2026-07-28) is sponsor-directed, filed, and PROPOSED — not yet approved or gated**; its design-artifact amendments are applied but the CT-5 routing and P1/P3/P4/P5 work it triggers are outstanding (`architecture-impact-brief-DEV-5.md`). No PMA-originated deviations are proposed.
+**Deviation status:** DEV-1..DEV-4 are sponsor-directed and filed by Roma; this revision conforms to them. **DEV-6 (2026-07-28) is sponsor-directed, filed, and PROPOSED — not yet approved or gated**; its design-artifact amendments are applied but the CT-5 routing and P1/P3/P4/P5 work it triggers are outstanding (`architecture-impact-brief-DEV-6.md`). No PMA-originated deviations are proposed.

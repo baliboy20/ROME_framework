@@ -327,7 +327,7 @@ tourops.post("/guide/incidents", async (c) => {
     recipient: "owner",
     event: "incident_reported",
     idempotency_key: `incident:${incident.id}`,
-    provider: "postmark",
+    provider: "pending", // real provider is set by send() on dispatch,
     provider_ref: null,
     status: "queued",
     created_at: nowIso(),

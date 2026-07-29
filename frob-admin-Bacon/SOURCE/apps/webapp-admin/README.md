@@ -1,9 +1,9 @@
 # webapp-admin (Owner/operator console)
 
 **Flutter macOS desktop app** — full app, no SEO (satisfies: TDR-13 as revised
-by **DEV-5**; the Flutter Web SPA target is retired). The directory and pubspec
+by **DEV-6**; the Flutter Web SPA target is retired). The directory and pubspec
 name still say `webapp-admin`/`fob_webapp_admin` — accepted naming debt, see
-`architecture-impact-brief-DEV-5.md`. Design system:
+`architecture-impact-brief-DEV-6.md`. Design system:
 sponsor parchment mockup tokens (DEV-1 / TDR-15), ported to a Flutter theme
 by Clara (P5 design-system work) — mockup React components are layout
 reference only, not reused code.
@@ -37,7 +37,7 @@ flutter build macos --release
 # then: codesign with a Developer ID, notarise, and staple
 ```
 
-**NOT YET PROVISIONED.** DEV-5 reinstates the Apple Developer account
+**NOT YET PROVISIONED.** DEV-6 reinstates the Apple Developer account
 dependency that DEV-3 removed, and `_config/infra-impact-brief.md` has no
 signing, notarisation, or update-distribution provision. The previous
 Cloudflare Pages pipeline (`wrangler pages deploy build/web`) no longer

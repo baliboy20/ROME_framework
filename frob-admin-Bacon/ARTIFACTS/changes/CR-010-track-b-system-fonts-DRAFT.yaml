@@ -40,17 +40,17 @@ provenance:
     could not load the real faces because the artifact sandbox blocks external
     font loading. Roma flags this because adopting an accidental fallback as a
     specification is a different act from choosing it — but see below: there is
-    a genuinely good post-DEV-5 argument for system fonts, so this is recorded
+    a genuinely good post-DEV-6 argument for system fonts, so this is recorded
     as a real option, not dismissed.
 
 # ---------------------------------------------------------------------------
-# The case FOR (strengthened by DEV-5)
+# The case FOR (strengthened by DEV-6)
 # ---------------------------------------------------------------------------
 supports:
-  - DEV-5 made webapp-admin a macOS desktop app. SF Pro and SF Mono ARE the
+  - DEV-6 made webapp-admin a macOS desktop app. SF Pro and SF Mono ARE the
     macOS system fonts, so the console would look native rather than like a web
     page in a window. This is a coherent argument that did not exist before
-    DEV-5, and it is the strongest point in favour.
+    DEV-6, and it is the strongest point in favour.
   - Removes both bundled font assets — smaller binary, no font-loading path,
     no risk of the unbundled-font defect class (FINDING-003 lineage) recurring.
   - Georgia and SF Pro/SF Mono ship with every macOS install; nothing to licence

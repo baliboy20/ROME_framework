@@ -12,14 +12,14 @@ All routes are JSON over HTTPS at the edge; validation via Zod; persistence via 
 ## Auth model {#auth}
 **satisfies: TDR-07.** Three actor mechanisms, no Cloudflare Access:
 - **Owner / secondary-operator:** `POST /auth/owner/login` → validates credentials, mints **JWT (Web Crypto HS256, 1h TTL)**, writes `auth_session` to **KV**. Middleware verifies JWT signature + checks `auth_session.expires_at` **server-side on every request** (AUTH04 — never trusts client expiry).
-  > **DEV-5 impact (OPEN — not yet respecified).** The Owner client is now a
+  > **DEV-6 impact (OPEN — not yet respecified).** The Owner client is now a
   > **Flutter macOS desktop app**, not a browser page. A native client has no
   > web origin and sends no cookies, so the `*.friendsonbikes.uk` CORS
   > reflection ceases to be an access control for this surface, and the bearer
   > token must be held in the **macOS keychain** rather than browser storage.
   > The JWT+KV mechanism itself is unchanged; its delivery, storage, and
   > origin assumptions are not. Respecify in P3 per
-  > `architecture-impact-brief-DEV-5.md`.
+  > `architecture-impact-brief-DEV-6.md`.
 
 - **Customer:** `POST /auth/customer/verify-link` → verifies a signed link, mints a **booking-scoped** JWT + KV session (`booking_id` set), granting access to exactly one booking (AUTH02). This is the endpoint the **DR-B11 booking-completion link** resolves through: the customer lands on the webapp-customer island at `?mode=complete&token=<link>`, which calls `verify-link` to obtain the session, then runs the standard BOOK02→BOOK03 attendee/consent flow (owner never enters this on the customer's behalf).
 - **Guide:** every `/guide/*` request carries **`X-Device-ID`**; middleware matches it to a registered `devices` row → `guides` (AUTH03). No JWT/KV session for guides.
@@ -46,8 +46,8 @@ All routes are JSON over HTTPS at the edge; validation via Zod; persistence via 
 ## Notifications (NOTIF)
 | Route | REQ | Notes |
 |---|---|---|
-| internal `send(message)` → Postmark | NOTIF01 | idempotency-keyed; provider = `postmark` v1 (TDR-09) |
-| `POST /webhooks/postmark` | NOTIF02 | delivery/bounce/complaint → `email_events`, update `message.status` |
+| internal `send(message)` → Resend | NOTIF01 | idempotency-keyed; transport per `EMAIL_TRANSPORT` (CHG-008/DR-18). **TDR-09 retired by DEV-5, 2026-07-29** — Postmark is no longer used or considered operationally. |
+| `POST /webhooks/resend` | NOTIF02 | **Replaced `POST /webhooks/postmark` (CR-011, 2026-07-29).** Svix-signed; every request must carry valid `svix-id`/`svix-timestamp`/`svix-signature` or it is refused 401. Verification is against the raw body, within a 300s window, constant-time. Fails CLOSED when no secret is configured — an unverifiable delivery event is discarded, not trusted. Events `email.delivered`/`email.bounced`/`email.complained` set `message.status`; `email.sent`/`opened`/`clicked` are recorded as `email_events` but never overwrite a terminal status, so an open after a bounce cannot resurrect a message as healthy. Idempotency keyed `resend:<email_id>:<type>`. Secret: `wrangler secret put RESEND_WEBHOOK_SECRET`. |
 | internal idempotency guard | NOTIF03 | D1 `webhook_events` (**satisfies: TDR-05**) |
 | internal `ownerAlert()` | NOTIF04 | `message.message_type=owner_alert` |
 

@@ -13,14 +13,11 @@ export interface Env {
   SESSIONS: KVNamespace;
   IDEMPOTENCY: KVNamespace;
   ASSETS: R2Bucket;
-  // Cloudflare Email Sending binding (DR-18, supersedes Postmark/TDR-09).
+  // Cloudflare Email Sending binding (DR-18, supersedes TDR-09).
   // Optional so tests/local dev without the binding still typecheck; send()
   // falls back to a logged "delivery_pending" when absent.
   EMAIL?: SendEmail;
   JWT_SECRET: string;
-  // Legacy Postmark token — retained for backward compatibility only; the
-  // send path now targets EMAIL (DR-18). Optional.
-  POSTMARK_TOKEN?: string;
   STRIPE_SECRET_KEY: string;
   STRIPE_WEBHOOK_SECRET: string;
   MET_OFFICE_KEY: string;
@@ -38,6 +35,14 @@ export interface Env {
    *  RESEND_API_KEY [--env …]` / .dev.vars. Missing key under the `resend`
    *  transport is a recorded transport failure, never a throw. */
   RESEND_API_KEY?: string;
+  /**
+   * Signing secret for inbound Resend (Svix) delivery webhooks — CR-011.
+   * `wrangler secret put RESEND_WEBHOOK_SECRET [--env staging|production]`.
+   * Optional in the TYPE only so tests and local dev typecheck; the webhook
+   * route refuses every request when it is absent, which is the safe failure:
+   * an unverifiable event is discarded rather than trusted.
+   */
+  RESEND_WEBHOOK_SECRET?: string;
   /** Dev only: when set, the rendered outgoing email is logged to the console
    *  (Cloudflare Email cannot deliver from local `wrangler dev`). */
   EMAIL_DEBUG?: string;

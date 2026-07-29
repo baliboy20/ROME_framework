@@ -1,7 +1,7 @@
 # FINDING-009 — The TDR register was silently erased by a later intake, disabling TDR conformance at every subsequent gate
 
 - **Component:** orchestration (`state.json`) + framework (`state.js#finalizeIntake`)
-- **Raised by:** Roma, 2026-07-28, while attempting to register DEV-5
+- **Raised by:** Roma, 2026-07-28, while attempting to register DEV-6
 - **Severity:** **HIGH** (raised from MEDIUM on evidence) — 17 ratified
   technical decisions were destroyed, and every `tdrConformance` verdict
   recorded since is a false pass.
@@ -87,13 +87,13 @@ intake**, which is the sanctioned path.
 1. **At the next intake, supply `decisions.tdr.yaml`** and mark the carrying
    input **Reliable** — otherwise `applyCarrierReliability` downgrades all 17
    APPROVED entries to PROPOSED.
-2. **Re-file DEV-5** (macOS) through `guard.recordTdrDeviation` once TDR-13 is
+2. **Re-file DEV-6** (macOS) through `guard.recordTdrDeviation` once TDR-13 is
    back in the register; it currently exists only in the design artifacts.
 3. **Give the design-system's "DEV-4" a distinct id** (DEV-6) and register it.
 4. **Resolve TDR-13's double supersession.** The schema allows one
    `supersededBy`; TDR-13 is now superseded twice (DEV-3 for mobile-guide,
-   DEV-5 for webapp-admin). Either model per-component supersession or record
-   DEV-5 as superseding DEV-3's revision of TDR-13.
+   DEV-6 for webapp-admin). Either model per-component supersession or record
+   DEV-6 as superseding DEV-3's revision of TDR-13.
 5. **Framework fix (ROME_architect scope):** `finalizeIntake` must not let an
    empty/absent `tdrs` array erase a populated register. Treat absent as "no
    change", require an explicit flag to clear, and audit any reduction in

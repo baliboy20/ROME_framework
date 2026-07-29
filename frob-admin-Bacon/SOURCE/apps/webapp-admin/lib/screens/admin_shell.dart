@@ -97,7 +97,7 @@ class AdminShell extends StatelessWidget {
                       Text(location.replaceFirst('/', '').toUpperCase(), style: FobText.microLabel),
                       const Spacer(),
                       // FR-001 workstream 4 — quick navigation. Cmd-K is the
-                      // macOS convention (DEV-5) and does not collide with a
+                      // macOS convention (DEV-6) and does not collide with a
                       // system or menu-bar shortcut.
                       IconButton(
                         key: const Key('palette-open'),

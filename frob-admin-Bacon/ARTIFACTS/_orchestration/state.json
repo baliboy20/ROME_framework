@@ -8,7 +8,7 @@
     "vendored": true
   },
   "createdAt": "2026-07-21T20:33:50Z",
-  "updatedAt": "2026-07-28T15:19:37Z",
+  "updatedAt": "2026-07-29T11:26:29Z",
   "activeIncrement": 17,
   "increments": [
     {
@@ -17568,13 +17568,14 @@
     },
     {
       "id": "TDR-09",
-      "status": "APPROVED",
+      "status": "SUPERSEDED",
       "scope": "vendor",
       "binds": [
         "P4",
         "P5"
       ],
-      "decision": "Outbound transactional email is Postmark for v1."
+      "decision": "Outbound transactional email is Postmark for v1.",
+      "supersededBy": "DEV-5"
     },
     {
       "id": "TDR-10",
@@ -17699,6 +17700,16 @@
       "status": "SPONSOR_APPROVED",
       "timestamp": "2026-07-21T21:49:22Z",
       "resolvedAt": "2026-07-21T22:16:42Z"
+    },
+    {
+      "id": "DEV-5",
+      "tdr": "TDR-09",
+      "phase": "P5",
+      "reason": "Postmark is not used and is no longer considered operationally. Outbound transport moved to Resend by CHG-008/DR-18; the Postmark client was dead code, the schema still defaulted message.provider to 'postmark', and the inbound webhook listened for a provider that no longer calls it — leaving REQ-NOTIF02 both unauthenticated and unserved. Sponsor-directed 2026-07-29.",
+      "proposedAlternative": "Outbound transactional email is Resend (EMAIL_TRANSPORT=resend), with Cloudflare Email Sending retained as the DR-18 rollback path. Inbound delivery/bounce/complaint ingestion is POST /webhooks/resend with Svix signature verification.",
+      "status": "SPONSOR_APPROVED",
+      "timestamp": "2026-07-29T11:26:21Z",
+      "resolvedAt": "2026-07-29T11:26:29Z"
     }
   ],
   "infraConstraints": null,
@@ -22074,6 +22085,20 @@
       ],
       "tdrs": 17,
       "timestamp": "2026-07-28T15:19:37Z"
+    },
+    {
+      "event": "TDR_DEVIATION_FILED",
+      "deviation": "DEV-5",
+      "tdr": "TDR-09",
+      "phase": "P5",
+      "timestamp": "2026-07-29T11:26:21Z"
+    },
+    {
+      "event": "TDR_DEVIATION_RESOLVED",
+      "deviation": "DEV-5",
+      "tdr": "TDR-09",
+      "approved": true,
+      "timestamp": "2026-07-29T11:26:29Z"
     }
   ],
   "tdrCitations": {

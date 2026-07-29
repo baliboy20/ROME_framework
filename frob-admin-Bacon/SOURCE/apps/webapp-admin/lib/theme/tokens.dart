@@ -110,7 +110,7 @@ class FobText {
   //
   // THE SERIF ROLE IS REMOVED, not repointed. `FobText.serif` no longer exists.
   // Track B previously used a serif for titles + money — Playfair Display, then
-  // Source Serif 4 (for upright lining figures). Under DEV-5 this app is a
+  // Source Serif 4 (for upright lining figures). Under DEV-6 this app is a
   // macOS desktop app, so the platform's own faces are both the native choice
   // and free of any bundling/licensing question.
   //

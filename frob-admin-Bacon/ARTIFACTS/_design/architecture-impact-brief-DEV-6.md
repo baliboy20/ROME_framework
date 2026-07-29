@@ -1,11 +1,11 @@
-# Architecture Impact Brief — DEV-5 — `webapp-admin` target platform: Flutter Web SPA → **Flutter macOS desktop**
+# Architecture Impact Brief — DEV-6 — `webapp-admin` target platform: Flutter Web SPA → **Flutter macOS desktop**
 
 | | |
 |---|---|
 | **From** | Roma (ROME orchestrator), filing a sponsor-directed deviation |
 | **For** | Sponsor sign-off; GATE-P3 re-confirmation of the amended TDR-13 |
 | **Date** | 2026-07-28 |
-| **Deviation** | **DEV-5** — supersedes **TDR-13** for `webapp-admin` only |
+| **Deviation** | **DEV-6** — supersedes **TDR-13** for `webapp-admin` only |
 | **Change type** | **CT-5 (restructure)** — routes `['P1','P3','P4','P5']` |
 | **Status** | **APPROVED — sponsor-directed, 2026-07-28** ("target platform is macos for frob admin"). The deviation itself is now ratified, which resolves the irregularity of design artifacts asserting an unapproved platform. The downstream routing and gate steps below remain outstanding — approval of the deviation is not delivery of the work. |
 
@@ -14,7 +14,7 @@
 `webapp-admin` is no longer a Flutter Web SPA. It is a **Flutter macOS desktop
 application**, distributed as a signed `.app`, run locally by the Owner. Web is
 **retired** for this component, not kept as a fallback — this is a replacement,
-which distinguishes DEV-5 from DEV-3 (where the guide app kept a PWA path).
+which distinguishes DEV-6 from DEV-3 (where the guide app kept a PWA path).
 
 The three other frontend components are **unaffected**: `webapp-customer`
 (static + islands), `webapp-editor` (Flutter Web SPA), and `mobile-guide`
@@ -53,7 +53,7 @@ These are **not** documentation changes and none are resolved by this brief.
    an Apple Developer account, code signing, and notarisation, plus a channel
    for getting updates to the Owner's machine. `_config/infra-impact-brief.md`
    has no provision for any of this, and the Apple Developer dependency was
-   **explicitly removed from the project by DEV-3** — DEV-5 reinstates it.
+   **explicitly removed from the project by DEV-3** — DEV-6 reinstates it.
 2. **Auth assumptions break.** TDR-07's owner session is a browser mechanism:
    JWT in KV, delivered to a page served from a trusted origin, with CORS
    reflecting `*.friendsonbikes.uk` and `credentials: true`. A native client has
@@ -72,16 +72,16 @@ These are **not** documentation changes and none are resolved by this brief.
    finding) stops protecting the admin surface once the client is native — the
    unauthenticated-route defects it raises are **unaffected** and remain open.
 
-## Recording gap — DEV-5 is not in orchestration state
+## Recording gap — DEV-6 is not in orchestration state
 
-DEV-5 is approved in this document but is **absent from
+DEV-6 is approved in this document but is **absent from
 `state.tdrDeviations`**. It could not be registered through the sanctioned API:
 `guard.recordTdrDeviation` rejects any TDR that is not in `state.tdrs`, and that
 registry is empty on this project (zero entries, though DEV-1…DEV-4 reference
 four TDRs). See **FINDING-009**. `state.json` was deliberately not hand-edited
 to force it through — `CLAUDE.md` reserves that file to `state.js`/`driver.js`.
 
-Until FINDING-009 is resolved, treat this document as the record of DEV-5, and
+Until FINDING-009 is resolved, treat this document as the record of DEV-6, and
 note that orchestration state does not know the deviation exists.
 
 ## What still has to happen
@@ -105,4 +105,4 @@ Outstanding, in order:
 
 | Rev | Date (ISO 8601) | Summary |
 |-----|------------------|---------|
-| v1.0 | 2026-07-28 | Initial: files DEV-5, supersedes TDR-13 for `webapp-admin` (Flutter Web SPA → Flutter macOS desktop, web retired). |
+| v1.0 | 2026-07-28 | Initial: files DEV-6, supersedes TDR-13 for `webapp-admin` (Flutter Web SPA → Flutter macOS desktop, web retired). |

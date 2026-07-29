@@ -62,7 +62,7 @@ bucket_name = "fob-assets-dev"
 
 # ---------------------------------------------------------------------------
 # Email Sending — satisfies: DR-18 (Cloudflare Email Sending supersedes
-# Postmark/TDR-09). Bound as `EMAIL`; NOTIF01's send() calls env.EMAIL.send().
+# TDR-09). Bound as `EMAIL`; NOTIF01's send() calls env.EMAIL.send().
 # Inbound (REQ-NOTIF05) uses zone-level Email Routing -> this Worker's email()
 # handler, configured in the Cloudflare dashboard (not here). See
 # EML-reintegration-handover/3-reference-only/CLOUDFLARE-ARCHITECTURE.md.
@@ -213,7 +213,7 @@ local_protocol = "http"
 #   wrangler secret put STRIPE_SECRET_KEY       [--env staging|production]
 #   wrangler secret put STRIPE_WEBHOOK_SECRET   [--env staging|production]
 #   wrangler secret put JWT_SECRET              [--env staging|production]
-#   wrangler secret put POSTMARK_TOKEN          [--env staging|production]
+#   wrangler secret put RESEND_WEBHOOK_SECRET   [--env staging|production]
 #   wrangler secret put MET_OFFICE_KEY          [--env staging|production]
 #   wrangler secret put TFL_APP_KEY             [--env staging|production]
 # Local dev secrets go in SOURCE/worker/.dev.vars (gitignored) — copy from

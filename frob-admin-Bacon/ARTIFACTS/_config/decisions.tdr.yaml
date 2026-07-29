@@ -19,7 +19,7 @@
 # `intake.js#applyCarrierReliability` will downgrade every APPROVED entry here
 # to PROPOSED.
 #
-# NOT YET REFLECTED BELOW — TDR-13 requires a second supersession for DEV-5
+# NOT YET REFLECTED BELOW — TDR-13 requires a second supersession for DEV-6
 # (webapp-admin -> Flutter macOS desktop, sponsor-approved 2026-07-28). The
 # schema allows only ONE `supersededBy`, and DEV-3 already holds it. Resolve
 # before intake; see FINDING-009 recommendation 4.

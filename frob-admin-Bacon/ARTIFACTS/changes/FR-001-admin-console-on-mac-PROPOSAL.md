@@ -30,13 +30,13 @@ with no overlap — bundling would only make it inherit this work's delays.
 
 ## Scope — six workstreams
 
-### 1. Platform: Flutter Web SPA → Flutter macOS desktop (DEV-5)
+### 1. Platform: Flutter Web SPA → Flutter macOS desktop (DEV-6)
 Sponsor-approved 2026-07-28. Web is retired for this component — a replacement,
 not a fallback. Reinstates the Apple Developer dependency that DEV-3 removed
 (signing, notarisation, update distribution), none of which
 `_config/infra-impact-brief.md` currently provides for. The Cloudflare Pages
 deploy no longer applies and `SOURCE/.github/workflows/ci.yml` still builds the
-retired web target. Detail: `_design/architecture-impact-brief-DEV-5.md`.
+retired web target. Detail: `_design/architecture-impact-brief-DEV-6.md`.
 
 **Verified feasible:** the `macos/` target is already scaffolded, both
 entitlement files already declare `com.apple.security.network.client`, and the
@@ -71,7 +71,7 @@ Icon in the top bar opens a search box; typing "Pay" offers Payments and other
 matches; closes with a close button. Single-operator system, so no permission
 filtering is needed. `app_router.dart` is the only enumeration of destinations.
 
-Under DEV-5 the binding should follow macOS convention (Cmd-K) and must not
+Under DEV-6 the binding should follow macOS convention (Cmd-K) and must not
 collide with a system or menu-bar shortcut.
 
 ### 5. Email template — import a full HTML document
@@ -143,7 +143,7 @@ parallel concern. Three questions remain open (OQ-2, OQ-3, OQ-4).
    Supply `_config/decisions.tdr.yaml` (recovered, 17 TDRs, schema-validated)
    and mark the carrying input **Reliable**, or all 17 downgrade to PROPOSED.
    Until then `tdrConformance` passes trivially and verifies nothing.
-2. **Re-file DEV-5** through `guard.recordTdrDeviation` once TDR-13 is back in
+2. **Re-file DEV-6** through `guard.recordTdrDeviation` once TDR-13 is back in
    the register; it currently exists only in the design artifacts.
 3. **FINDING-008** must be gated before workstream 6.
 

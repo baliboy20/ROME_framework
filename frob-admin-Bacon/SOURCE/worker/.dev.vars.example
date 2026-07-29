@@ -13,8 +13,9 @@ STRIPE_WEBHOOK_SECRET=whsec_replace_me
 # core-auth (TDR-07 JWT HS256 1h sessions, Owner/customer signed-link)
 JWT_SECRET=replace_with_a_long_random_string
 
-# Postmark (TDR-09 — interim email vendor, D-NOTIF-2)
-POSTMARK_TOKEN=replace_me
+# Resend inbound delivery webhooks (CR-011) — signing secret from the Resend
+# dashboard, format whsec_<base64>. Without it the webhook refuses everything.
+RESEND_WEBHOOK_SECRET=replace_me
 
 # Resend (CHG-008 / REQ-NOTIF01 — outbound transactional email). Only needed
 # when EMAIL_TRANSPORT=resend; local default is `debug` (simulated sends).

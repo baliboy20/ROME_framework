@@ -9,9 +9,11 @@
 // Pattern adapted (REFERENCE ONLY, no code copied — DEV-4 greenfield) from
 // `_user_input/reference/stripe-poc/SOURCE/worker/src/lib/stripeClient.ts`,
 // `routes/checkoutSession.ts`, `routes/webhook.ts`. Divergences from the
-// PoC: (1) email via Postmark, not Resend (TDR-09) — left to the
-// core-notifications module via `db.reminders`/`message` tables, not
-// implemented here; (2) admin/refund access is a core-auth operator
+// PoC: (1) email is left to the core-notifications module via
+// `db.reminders`/`message` tables, not implemented here. (This once read
+// "Postmark, not Resend" per TDR-09; TDR-09 was retired by CHG-008/DR-18 and
+// the transport IS Resend — the note had inverted into the opposite of the
+// truth, which is why it is spelled out rather than deleted.) (2) admin/refund access is a core-auth operator
 // session, not a static admin key (DR-B9, see `src/lib/auth.ts`).
 
 import Stripe from "stripe";

@@ -9,7 +9,7 @@
 // ops/testing use.
 //
 // satisfies: TDR-05 (idempotent sends via `message.idempotency_key`
-// UNIQUE + INSERT-once semantics), TDR-09 (Postmark).
+// UNIQUE + INSERT-once semantics), TDR-09 (retired — transport is Resend, CHG-008/DR-18).
 
 import { Hono } from "hono";
 import { z } from "zod";
@@ -64,7 +64,7 @@ export async function sendThankYouMessage(
     recipient,
     event: "post_tour_thankyou",
     idempotency_key: idempotencyKey,
-    provider: "postmark",
+    provider: "pending", // real provider is set by send() on dispatch,
     provider_ref: null,
     status: "queued" as const,
     created_at: nowIso(),
@@ -138,7 +138,7 @@ posttour.post("/feedback", async (c) => {
       recipient: c.env.NOTIFICATIONS_EMAIL_FROM ?? "owner@friendsonbikes.uk",
       event: "low_feedback_rating",
       idempotency_key: `low_rating:${row.id}`,
-      provider: "postmark",
+      provider: "pending", // real provider is set by send() on dispatch,
       provider_ref: null,
       status: "queued",
       created_at: row.created_at,

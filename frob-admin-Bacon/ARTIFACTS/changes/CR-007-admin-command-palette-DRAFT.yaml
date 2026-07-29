@@ -90,7 +90,7 @@ DesignNotes:
     user. This materially simplifies the capability; confirm it stays true
     before building.
   - The admin console is specified as Mac only, fixed wide-screen, NOT
-    responsive (TDR-13 as revised by DEV-5 — Flutter macOS desktop app, Web SPA
+    responsive (TDR-13 as revised by DEV-6 — Flutter macOS desktop app, Web SPA
     retired). No mobile layout is required. Note the palette's keyboard
     shortcut must now respect macOS conventions (Cmd-K, and it must not
     collide with a system or menu-bar shortcut) rather than browser ones.

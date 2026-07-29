@@ -215,7 +215,7 @@ returned 401, the 11th returned 429.
 5. Most admin mutations remain unaudited.
 
 CORS reflection (contributing weakness 3) is unchanged and partly reshaped by
-DEV-5 — a native macOS client sends no browser origin, so CORS stops being an
+DEV-6 — a native macOS client sends no browser origin, so CORS stops being an
 access control for the admin surface regardless.
 
 ### Bearing on the gate

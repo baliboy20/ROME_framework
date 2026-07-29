@@ -143,13 +143,42 @@ describe("REQ-NOTIF04 — ownerAlert is transactional, unaffected by consent", (
 });
 
 // ---------------------------------------------------------------------------
-// POST /webhooks/postmark — REQ-NOTIF02
+// POST /webhooks/resend — REQ-NOTIF02
+//
+// Replaces the Postmark webhook (CR-011). Every request must now carry a valid
+// Svix signature; the old route accepted anything from anyone.
 // ---------------------------------------------------------------------------
 
-describe("POST /webhooks/postmark", () => {
+const WEBHOOK_SECRET = "whsec_" + btoa("test-signing-secret-0123456789");
+
+/** Sign a body the way Resend/Svix does, so the tests exercise the real check. */
+async function signed(body: string, secretOverride?: string) {
+  const secret = secretOverride ?? WEBHOOK_SECRET;
+  const id = "msg_test_1";
+  const timestamp = String(Math.floor(Date.now() / 1000));
+  const raw = atob(secret.replace(/^whsec_/, ""));
+  const keyBytes = new Uint8Array(raw.length);
+  for (let i = 0; i < raw.length; i++) keyBytes[i] = raw.charCodeAt(i);
+  const key = await crypto.subtle.importKey("raw", keyBytes, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  const sig = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${id}.${timestamp}.${body}`));
+  let bin = "";
+  for (const b of new Uint8Array(sig)) bin += String.fromCharCode(b);
+  return {
+    "Content-Type": "application/json",
+    "svix-id": id,
+    "svix-timestamp": timestamp,
+    "svix-signature": "v1," + btoa(bin),
+  };
+}
+
+function resendEvent(type: string, emailId: string | null | undefined) {
+  return JSON.stringify({ type, created_at: new Date().toISOString(), data: { email_id: emailId } });
+}
+
+describe("POST /webhooks/resend", () => {
   it("updates message status and logs an email_event on delivery", async () => {
     stubPostmarkSuccess();
-    const env = await createTestEnv();
+    const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
     const db = createDb(env.DB);
     const sendResult = await send(db, env, {
       messageType: "transactional",
@@ -160,28 +189,63 @@ describe("POST /webhooks/postmark", () => {
       textBody: "x",
     });
     const messageId = sendResult.message!.id;
+    const body = resendEvent("email.delivered", sendResult.message!.provider_ref);
 
     const res = await app().request(
-      "/webhooks/postmark",
-      {
-        method: "POST",
-        body: JSON.stringify({ RecordType: "Delivery", MessageID: sendResult.message!.provider_ref }),
-        headers: { "Content-Type": "application/json" },
-      },
+      "/webhooks/resend",
+      { method: "POST", body, headers: await signed(body) },
       env
     );
     expect(res.status).toBe(200);
 
     const message = await db.messages.get(messageId);
     expect(message?.status).toBe("delivered");
+    expect((await db.emailEvents.listByMessage(messageId)).length).toBe(1);
+  });
 
-    const events = await db.emailEvents.listByMessage(messageId);
-    expect(events.length).toBe(1);
+  it("records a bounce", async () => {
+    stubPostmarkSuccess();
+    const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
+    const db = createDb(env.DB);
+    const sendResult = await send(db, env, {
+      messageType: "transactional",
+      recipient: "tom@example.com",
+      event: "booking_confirmed",
+      idempotencyKey: "evt-webhook-bounce",
+      subject: "x",
+      textBody: "x",
+    });
+    const body = resendEvent("email.bounced", sendResult.message!.provider_ref);
+    await app().request("/webhooks/resend", { method: "POST", body, headers: await signed(body) }, env);
+    expect((await db.messages.get(sendResult.message!.id))?.status).toBe("bounced");
+  });
+
+  // An open arriving after a bounce must not resurrect the message as healthy.
+  it("records an open as an event without overwriting a terminal status", async () => {
+    stubPostmarkSuccess();
+    const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
+    const db = createDb(env.DB);
+    const sendResult = await send(db, env, {
+      messageType: "transactional",
+      recipient: "tom@example.com",
+      event: "booking_confirmed",
+      idempotencyKey: "evt-webhook-open",
+      subject: "x",
+      textBody: "x",
+    });
+    const ref = sendResult.message!.provider_ref;
+    const bounce = resendEvent("email.bounced", ref);
+    await app().request("/webhooks/resend", { method: "POST", body: bounce, headers: await signed(bounce) }, env);
+    const opened = resendEvent("email.opened", ref);
+    await app().request("/webhooks/resend", { method: "POST", body: opened, headers: await signed(opened) }, env);
+
+    expect((await db.messages.get(sendResult.message!.id))?.status).toBe("bounced");
+    expect((await db.emailEvents.listByMessage(sendResult.message!.id)).length).toBe(2);
   });
 
   it("is idempotent — the same provider callback delivered twice only records once", async () => {
     stubPostmarkSuccess();
-    const env = await createTestEnv();
+    const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
     const db = createDb(env.DB);
     const sendResult = await send(db, env, {
       messageType: "transactional",
@@ -191,29 +255,62 @@ describe("POST /webhooks/postmark", () => {
       subject: "x",
       textBody: "x",
     });
-    const messageId = sendResult.message!.id;
-
-    const payload = JSON.stringify({ RecordType: "Delivery", MessageID: sendResult.message!.provider_ref });
-    await app().request("/webhooks/postmark", { method: "POST", body: payload, headers: { "Content-Type": "application/json" } }, env);
-    await app().request("/webhooks/postmark", { method: "POST", body: payload, headers: { "Content-Type": "application/json" } }, env);
-
-    const events = await db.emailEvents.listByMessage(messageId);
-    expect(events.length).toBe(1);
+    const body = resendEvent("email.delivered", sendResult.message!.provider_ref);
+    const headers = await signed(body);
+    await app().request("/webhooks/resend", { method: "POST", body, headers }, env);
+    await app().request("/webhooks/resend", { method: "POST", body, headers }, env);
+    expect((await db.emailEvents.listByMessage(sendResult.message!.id)).length).toBe(1);
   });
 
   it("200s with a review flag when the callback references an unknown message", async () => {
-    const env = await createTestEnv();
+    const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
+    const body = resendEvent("email.delivered", "unknown-message-id");
     const res = await app().request(
-      "/webhooks/postmark",
-      {
-        method: "POST",
-        body: JSON.stringify({ RecordType: "Delivery", MessageID: "unknown-message-id" }),
-        headers: { "Content-Type": "application/json" },
-      },
+      "/webhooks/resend",
+      { method: "POST", body, headers: await signed(body) },
       env
     );
     expect(res.status).toBe(200);
-    const body = (await res.json()) as { message: string };
-    expect(body.message).toMatch(/flagged for review/);
+    expect(((await res.json()) as { message: string }).message).toMatch(/flagged for review/);
+  });
+
+  // The whole reason this route was replaced.
+  describe("signature verification", () => {
+    it("rejects an unsigned request — the old route accepted these from anyone", async () => {
+      const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
+      const body = resendEvent("email.bounced", "any-id");
+      const res = await app().request(
+        "/webhooks/resend",
+        { method: "POST", body, headers: { "Content-Type": "application/json" } },
+        env
+      );
+      expect(res.status).toBe(401);
+    });
+
+    it("rejects a request signed with the wrong secret", async () => {
+      const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
+      const body = resendEvent("email.bounced", "any-id");
+      const headers = await signed(body, "whsec_" + btoa("a-different-secret-9876543210"));
+      const res = await app().request("/webhooks/resend", { method: "POST", body, headers }, env);
+      expect(res.status).toBe(401);
+    });
+
+    it("rejects a tampered body whose signature no longer matches", async () => {
+      const env = await createTestEnv({ RESEND_WEBHOOK_SECRET: WEBHOOK_SECRET });
+      const original = resendEvent("email.delivered", "id-1");
+      const headers = await signed(original);
+      const tampered = resendEvent("email.bounced", "id-1");
+      const res = await app().request("/webhooks/resend", { method: "POST", body: tampered, headers }, env);
+      expect(res.status).toBe(401);
+    });
+
+    // Fails CLOSED, unlike the login limiter which deliberately fails open:
+    // an unverifiable delivery event should be discarded, not trusted.
+    it("rejects everything when no signing secret is configured", async () => {
+      const env = await createTestEnv();
+      const body = resendEvent("email.delivered", "any-id");
+      const res = await app().request("/webhooks/resend", { method: "POST", body, headers: await signed(body) }, env);
+      expect(res.status).toBe(401);
+    });
   });
 });

@@ -1,7 +1,7 @@
 // FOB core-notifications — Cloudflare Email Sending client.
 //
 // satisfies: DR-18 (EML reintegration — Cloudflare Email Sending supersedes
-// Postmark/TDR-09; D-NOTIF-2 closed). Sends via the `send_email` binding
+// TDR-09; D-NOTIF-2 closed). Sends via the `send_email` binding
 // (env.EMAIL, wrangler.toml [[send_email]] name = "EMAIL"). The domain
 // verification / SPF-DKIM-DMARC / `remote = true` setup is described in
 // EML-reintegration-handover/3-reference-only/CLOUDFLARE-ARCHITECTURE.md.

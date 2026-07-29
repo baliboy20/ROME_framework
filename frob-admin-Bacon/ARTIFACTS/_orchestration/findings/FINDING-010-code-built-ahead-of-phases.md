@@ -80,7 +80,7 @@ Written after the fact, at sponsor request:
 1. **No gate verdicts exist.** Documentation is not verification. Increment 17 remains at P0 and
    nothing has been independently reviewed. This is the substantive gap.
 2. **No traceability edges** link the new code to REQ-BO07/BO08 or the amended NOTIF requirements.
-3. **DEV-5 is still unregistered** in `state.tdrDeviations` (blocked by FINDING-009 §7a).
+3. **DEV-6 is still unregistered** in `state.tdrDeviations` (blocked by FINDING-009 §7a).
 4. **Nothing is committed to git** — the work sits in the working tree alongside a concurrent
    session's changes.
 5. The settings surface still has **no A-series surface id** (pre-existing drift, now recorded).

@@ -118,7 +118,7 @@ export async function runSendReviewRequests(env: Env, now: Date = new Date()): P
       recipient: "customer", // resolved recipient is out of scope for this schema slice
       event: "post_tour_review_request",
       idempotency_key: idempotencyKey,
-      provider: "postmark",
+      provider: "pending", // real provider is set by send() on dispatch,
       provider_ref: null,
       status: "queued",
       created_at: now.toISOString(),
@@ -165,7 +165,7 @@ export async function runComplianceCheck(env: Env, now: Date = new Date()): Prom
         recipient: env.NOTIFICATIONS_EMAIL_FROM ?? "owner@friendsonbikes.uk",
         event: "compliance_alert",
         idempotency_key: `compliance_alert:${item.id}:${newStatus}`,
-        provider: "postmark",
+        provider: "pending", // real provider is set by send() on dispatch,
         provider_ref: null,
         status: "queued",
         created_at: now.toISOString(),

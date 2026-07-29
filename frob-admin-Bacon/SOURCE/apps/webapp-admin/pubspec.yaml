@@ -32,7 +32,7 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   # FR-001 workstream 2 (2026-07-28): no bundled fonts. This app is a macOS
-  # desktop app (DEV-5) and now renders in the platform faces — SF Pro (resolved
+  # desktop app (DEV-6) and now renders in the platform faces — SF Pro (resolved
   # by passing a null fontFamily) and SF Mono, with Menlo as fallback. See
   # lib/theme/tokens.dart#FobText.
   #
