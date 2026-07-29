@@ -1,0 +1,180 @@
+# SUPERSEDED 2026-07-28 by FR-001 (changes/FR-001-admin-console-on-mac-PROPOSAL.md).
+# Retained for its reasoning and the sponsor decisions recorded in it, which
+# FR-001 carries across. Do NOT route this record: its scope now belongs to an
+# increment, not a change.
+ID: CR-010
+title: Track B typography — adopt platform system fonts (Georgia / SF Pro / SF Mono)
+status: DRAFT
+raised_by: Roma (sponsor request, 2026-07-28)
+date: 2026-07-28
+requirement: TDR-15 / DEV-1 (Track B — Internal Apps Parchment)
+surface: webapp-admin (A1–A20); mobile-guide (G1–G13) shares the Track B token set
+
+request:
+  Source Serif 4  -> Georgia
+  Plus Jakarta Sans -> SF Pro (via -apple-system)
+  monospace       -> SF Mono
+
+change_type:
+  declared: CT-3
+  rationale: >
+    Changes a ratified design decision (Track B typography under DEV-1/TDR-15),
+    not a defect fix or minor amendment. Design is impacted, so the expected
+    route is ['P1','P3','P5'].
+  blast_radius:
+    verified: false
+    note: NOT trace-verified (ROME-AX-31); cannot be routed as it stands.
+    touches:
+      - SOURCE/apps/webapp-admin/lib/theme/tokens.dart (FobText: serif/sans/mono + 5 styles)
+      - SOURCE/apps/webapp-admin/pubspec.yaml (bundled font assets become dead)
+      - SOURCE/apps/webapp-admin/assets/fonts/ (SourceSerif4.ttf, PlusJakartaSans.ttf)
+      - ARTIFACTS/_design/design-assets/design-system.md §8.2 and §8.6
+      - mobile-guide (shares Track B tokens — NOT a Mac platform; see RISK-2)
+
+# ---------------------------------------------------------------------------
+# Where the request comes from
+# ---------------------------------------------------------------------------
+provenance:
+  note: >
+    These three fonts are the FALLBACKS observed in the CR-009 mockup, which
+    could not load the real faces because the artifact sandbox blocks external
+    font loading. Roma flags this because adopting an accidental fallback as a
+    specification is a different act from choosing it — but see below: there is
+    a genuinely good post-DEV-5 argument for system fonts, so this is recorded
+    as a real option, not dismissed.
+
+# ---------------------------------------------------------------------------
+# The case FOR (strengthened by DEV-5)
+# ---------------------------------------------------------------------------
+supports:
+  - DEV-5 made webapp-admin a macOS desktop app. SF Pro and SF Mono ARE the
+    macOS system fonts, so the console would look native rather than like a web
+    page in a window. This is a coherent argument that did not exist before
+    DEV-5, and it is the strongest point in favour.
+  - Removes both bundled font assets — smaller binary, no font-loading path,
+    no risk of the unbundled-font defect class (FINDING-003 lineage) recurring.
+  - Georgia and SF Pro/SF Mono ship with every macOS install; nothing to licence
+    or host for a Mac-only app.
+
+# ---------------------------------------------------------------------------
+# BLOCKING problem — money
+# ---------------------------------------------------------------------------
+risks:
+  - id: RISK-1
+    severity: BLOCKING
+    title: Georgia has old-style figures — this re-opens the exact defect Source
+      Serif 4 was adopted to fix.
+    detail: >
+      `tokens.dart:109` records why the serif is Source Serif 4: "upright lining
+      figures, replaces Playfair Display", and `liningFigures`
+      (lnum + tnum) is applied to every serif style so "currency reads with
+      upright, column-aligned digits (the design-system reason Source Serif 4
+      replaced Playfair)".
+      Georgia's defining characteristic is TEXT (old-style) figures: digits sit
+      at varying heights with ascenders and descenders, so 3/4/5/7/9 drop below
+      the baseline. It ships no lining alternate set, so
+      `FontFeature.enable('lnum')` has nothing to switch to and will silently do
+      nothing. `£90.00` in a money column would render with bouncing digits —
+      precisely the regression that motivated the move OFF Playfair.
+      `FobText.money` is used in payments_page, bookings_master_page,
+      booking_record_view, tours_page and app_field — i.e. the money columns.
+    options:
+      - Keep the serif as Source Serif 4 for `money` only, and take Georgia for
+        `pageTitle` (titles have few digits). Splits the serif role in two.
+      - Move `money` to the sans face. SF Pro has lining tabular figures and
+        would column-align correctly. Loses the serif money treatment, which is
+        a deliberate Track B signature.
+      - Accept old-style figures in money as a visual choice. NOT recommended —
+        the handoff's hard rule is money is pence-accurate and column-readable.
+    recommendation: >
+      Move `money` to the sans face (SF Pro) if system fonts are adopted. It is
+      the only option that keeps figures correct without re-bundling a font,
+      and it is a smaller loss than bouncing digits in a payments table.
+
+  - id: RISK-2
+    severity: HIGH
+    title: mobile-guide shares the Track B token set and is NOT an Apple platform.
+    detail: >
+      design-system.md §8.6 mandates ONE shared Track B ThemeData consumed by
+      both webapp-admin and mobile-guide. mobile-guide is a Flutter Web PWA
+      (DEV-3), so SF Pro and SF Mono are unavailable to it — non-Apple browsers
+      would fall back to arbitrary local faces, and Apple's licence for SF
+      restricts use to Apple platforms in any case. Adopting system fonts
+      therefore FORKS the shared Track B theme that §8.6 explicitly forbids
+      merging or branching.
+    options:
+      - Scope CR-010 to webapp-admin only and accept that Track B is no longer a
+        single shared theme (amend §8.6 accordingly).
+      - Keep mobile-guide on the bundled faces; the two apps stop being
+        typographically identical.
+    recommendation: Scope to webapp-admin only, and amend §8.6 to say the shared
+      token set covers colour/space/radius but not the type stack.
+
+  - id: RISK-3
+    severity: MEDIUM
+    title: "`-apple-system` is a CSS mechanism and does not exist in Flutter."
+    detail: >
+      Flutter does not parse CSS font stacks. `fontFamily: '-apple-system'`
+      resolves to nothing and falls through to the default. The correct Flutter
+      spelling for the macOS system face is `.AppleSystemUIFont` (or leaving
+      fontFamily null and letting the platform default apply); SF Mono is
+      `.AppleSystemUIFontMonospaced` / 'SF Mono'. The leading-dot family names
+      are undocumented Apple internals and have changed across OS releases —
+      passing null is the more durable option. This is an implementation note,
+      not an argument against the change.
+  - id: RISK-4
+    severity: LOW
+    title: Third documented state for the Track B serif.
+    detail: >
+      design-system.md §8.2 still specifies Playfair Display; the code ships
+      Source Serif 4; this CR would make it Georgia. The doc is ALREADY stale
+      (reported 2026-07-28). Whatever is decided, §8.2 must be rewritten once to
+      match reality rather than patched a third time.
+
+# ---------------------------------------------------------------------------
+open_questions:
+  - id: OQ-1
+    blocking: true
+    status: >
+      DECIDED (sponsor, 2026-07-28) — `money` moves to SF Pro (the sans face),
+      which has lining tabular figures. RISK-1 is thereby resolved: Georgia
+      never carries digits in a column. `FobText.money` changes fontFamily
+      serif -> sans; `liningFigures` stays (SF Pro honours tnum for column
+      alignment). The 5 call sites are unaffected — they reference the token.
+    question: Given RISK-1, what happens to `money`?
+    recommendation: Move it to SF Pro (sans). See RISK-1 options.
+  - id: OQ-2
+    blocking: true
+    status: >
+      DECIDED (sponsor, 2026-07-28) — webapp-admin ONLY. mobile-guide keeps the
+      bundled Source Serif 4 / Plus Jakarta Sans faces. design-system.md §8.6
+      must be amended: the shared Track B token set covers colour, spacing and
+      radius, but the type stack now forks per app.
+    question: Does this apply to mobile-guide too, or webapp-admin only?
+    recommendation: webapp-admin only (RISK-2).
+  - id: OQ-3
+    blocking: false
+    status: >
+      DECIDED (sponsor, 2026-07-28, SUPERSEDING the earlier same-day "retain
+      Georgia" decision) — SF PRO ONLY. The serif role is REMOVED from Track B
+      for webapp-admin. Georgia is not adopted. `pageTitle` moves to SF Pro
+      alongside every other token, so the app ships a single type family (plus
+      SF Mono for micro-labels).
+      This also disposes of RISK-1 and the Georgia-has-no-600-weight caveat
+      raised by the type specimen — neither can arise if Georgia is never used.
+      Consequences: `FobText.serif` is deleted, not reassigned; `liningFigures`
+      is retained on `money` for tnum column alignment (SF Pro figures are
+      already lining, so `lnum` becomes a no-op but is harmless and honest);
+      the design-system's "titles and money in the serif face" rule — a Track B
+      signature dating to the sponsor handoff — is REPEALED for this app.
+      design-system.md §8.2 must state that webapp-admin has no serif.
+    question: >
+      Keep the serif role at all? If Georgia is only carrying page titles, and
+      money moves to sans, the serif earns very little. A single-face SF Pro
+      console is a legitimate simpler end state.
+
+sequencing:
+  - Increment 8 is UNSEALED — cannot route (ROME-AX-19).
+  - Trace-verify blast radius before routing (ROME-AX-31).
+  - Fold the §8.2 Playfair correction into the same P3 pass rather than
+    doing it twice.

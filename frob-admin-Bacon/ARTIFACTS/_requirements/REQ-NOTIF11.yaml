@@ -10,6 +10,9 @@ Conditions:
   - the matching active email_template for that use_case is rendered (REQ-NOTIF10) with the booking's merge data; if no active template exists a built-in plain-text fallback is used so a confirmed booking is never left un-notified
   - the automatic send is idempotency-keyed per (booking_id, flavour) so webhook redelivery and the reconciliation sweep never double-send, and an unpaid→paid transition still notifies each flavour exactly once
   - "owner-initiated send (CR-004): from a booking record the Owner may send an active, booking-aware template to the lead — only templates whose use_case declares booking merge fields are offered; the send is template-only in this increment (no untemplated composing)"
+  - "reply mode (FR-001, REQ-BO08): the Owner configures whether the automatic outcome send fires immediately (auto) or stands down in favour of an owner-initiated send (manual). The template, merge data and resulting content are identical either way"
+  - "reply mode: an owner-initiated send is NEVER suppressed by reply mode — the setting governs the automatic trigger only, never the Owner's own action"
+  - "reply mode: if the setting cannot be read, the system behaves as though it were auto — a configuration failure must not be the reason a paying customer hears nothing"
   - "owner-initiated send: the recipient address is prefilled from the booking's lead contact email and is editable before sending"
   - "owner-initiated send: merge fields fill from THIS booking's data; a template may include an optional {{personal_message}} merge slot the Owner fills with a personal note — templates lacking the slot offer no personal-message entry"
   - "owner-initiated send: the Owner previews the rendered email before sending; the send goes via the standard transport and is never idempotency-suppressed"
@@ -23,6 +26,8 @@ Outcomes:
   - the Owner can, from a booking record, choose a booking-aware template, add an optional personal message where the template supports it, preview, correct the recipient address if needed, and send — then sees the sent message linked to the booking (CR-004)
 Invariants:
   - an automatic booking outcome is never notified more than once per flavour
+  - reply mode changes WHEN a confirmation is sent, never WHETHER. There is no configuration in
+    which a paying customer is told nothing (REQ-BO08 invariant; UXC-FBK-1 two-channel rule)
   - no confirmation blocks or fails the booking/payment transaction — dispatch is best-effort and post-commit
   - an owner-initiated send is never idempotency-suppressed and always uses an active template (never untemplated content) in this increment
 NonFunctional: {}
@@ -46,6 +51,8 @@ ScopeBoundary:
     - reminders (REQ-NOTIF02) and cancellation notices (REQ-TOUR07)
     - the deposit/partial flavour's own template (dispatcher wired; template authored later — falls back until then)
     - free-form (no-template) compose from a booking (deferred by CR-004 DECIDE-3)
+    - the reply-mode SETTING itself and its interface — owned by REQ-BO08; this requirement
+      owns only the sending behaviour that honours it
 OpenQuestions:
   - question: none
     status: RESOLVED
@@ -61,4 +68,12 @@ OpenQuestions:
       templates only; {{personal_message}} merge slot (templates without it offer no message
       entry); template-only in this increment. Source:
       ARTIFACTS/changes/CR-004-booking-email-and-masterdetail-PROPOSAL.md.
+  - question: none (FR-001 amendment provenance)
+    status: RESOLVED
+    resolution: >-
+      Amended per sponsor clarification 2026-07-29 ("auto reply is configurable, auto/manual"),
+      admitted through FR-001 workstream 3. The sponsor's original request named a switch to
+      turn auto-reply off, which would have repealed this requirement's guarantee; auto/manual
+      delivers the intent without doing so. Source:
+      ARTIFACTS/changes/FR-001-admin-console-on-mac-PROPOSAL.md.
 CopilotMode: STRICT

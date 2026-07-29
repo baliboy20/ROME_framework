@@ -1,3 +1,7 @@
+# SUPERSEDED 2026-07-28 by FR-001 (changes/FR-001-admin-console-on-mac-PROPOSAL.md).
+# Retained for its reasoning and the sponsor decisions recorded in it, which
+# FR-001 carries across. Do NOT route this record: its scope now belongs to an
+# increment, not a change.
 ID: CR-006
 Type: UI_CHANGE
 Status: DRAFT

@@ -2,8 +2,9 @@
 
 | | |
 |---|---|
-| **Author** | PMA, dispatch `pma-P3` · **Status** PROPOSED |
+| **Author** | PMA, dispatch `pma-P3` · **Status** PROPOSED · **Amended** 2026-07-28/29 (FINDING-008 guard behaviour; FR-001 import-html, email-assets, operator settings) — see inline markers |
 | **Surface** | Single Cloudflare Worker `api-worker` (Hono + Zod), one origin on `friendsonbikes.uk` |
+| **Public exceptions** | `GET /health` and **`GET /email-assets/*`** (FR-001) are deliberately unauthenticated. Mail clients fetch images from the recipient's device with no session of any kind, so anything behind auth would simply not load. Scope is narrow by construction — the key is always prefixed `email-assets/`, so no other object in the bucket is reachable — and the contents are Owner-authored marketing imagery, never customer data. Served immutable (`max-age=31536000`); a fresh import writes new keys rather than editing in place. |
 | **Binds** | TDR-06 (Stripe), TDR-07 (auth), TDR-08 (capacity), TDR-05 (idempotency) |
 
 All routes are JSON over HTTPS at the edge; validation via Zod; persistence via `core-data-access` only. Internal (system-actor) operations have no public route and are invoked by cron or by another module's service call — listed for completeness.
@@ -11,9 +12,19 @@ All routes are JSON over HTTPS at the edge; validation via Zod; persistence via 
 ## Auth model {#auth}
 **satisfies: TDR-07.** Three actor mechanisms, no Cloudflare Access:
 - **Owner / secondary-operator:** `POST /auth/owner/login` → validates credentials, mints **JWT (Web Crypto HS256, 1h TTL)**, writes `auth_session` to **KV**. Middleware verifies JWT signature + checks `auth_session.expires_at` **server-side on every request** (AUTH04 — never trusts client expiry).
+  > **DEV-5 impact (OPEN — not yet respecified).** The Owner client is now a
+  > **Flutter macOS desktop app**, not a browser page. A native client has no
+  > web origin and sends no cookies, so the `*.friendsonbikes.uk` CORS
+  > reflection ceases to be an access control for this surface, and the bearer
+  > token must be held in the **macOS keychain** rather than browser storage.
+  > The JWT+KV mechanism itself is unchanged; its delivery, storage, and
+  > origin assumptions are not. Respecify in P3 per
+  > `architecture-impact-brief-DEV-5.md`.
+
 - **Customer:** `POST /auth/customer/verify-link` → verifies a signed link, mints a **booking-scoped** JWT + KV session (`booking_id` set), granting access to exactly one booking (AUTH02). This is the endpoint the **DR-B11 booking-completion link** resolves through: the customer lands on the webapp-customer island at `?mode=complete&token=<link>`, which calls `verify-link` to obtain the session, then runs the standard BOOK02→BOOK03 attendee/consent flow (owner never enters this on the customer's behalf).
 - **Guide:** every `/guide/*` request carries **`X-Device-ID`**; middleware matches it to a registered `devices` row → `guides` (AUTH03). No JWT/KV session for guides.
 - **Logout:** `POST /auth/logout` deletes the KV `auth_session` synchronously (AUTH05).
+- **Guard behaviour (FINDING-008 remediation, 2026-07-28).** Deny-by-default middleware is mounted at the app level BEFORE any sub-app: `/admin/*` and `/internal/*` require an operator session, `/tour-hub/*` a booking-scoped customer session, `/notices/*` a customer session plus an ownership lookup (its `:id` is a notice, not a booking, so the generic param check cannot scope it). Protection no longer depends on each module opting in. Both `lib/auth.ts` guards now verify the JWT signature before the KV lookup, matching `modules/auth/middleware.ts#resolveSession` — previously the token was treated as an opaque KV key, so a forged token needed no valid signature. `POST /auth/owner/login` is rate-limited to 10 attempts per 15 minutes per client, checked before any credential work so a throttled caller learns nothing; the limiter fails OPEN, because a broken limiter must not lock the Owner out of their own back office.
 
 | Route | REQ | Notes |
 |---|---|---|
@@ -49,6 +60,7 @@ Amendments to the existing `/admin/email-templates` surface (operator-guarded, `
 | `GET /admin/email-templates` | Rows now include `body_blocks` (JSON string or null) and `body_html` (string or null). |
 | `POST /admin/email-templates` | Body accepts optional `body_blocks: Block[]` (Zod-validated against the 5 block types; unknown types rejected 422). When present the worker renders it through the canonical block→HTML renderer + house shell and stores **both** `body_blocks` and the derived `body_html`. Clients never submit `body_html` directly (server-rendered only — keeps the email-safe invariant by construction). |
 | `PATCH /admin/email-templates/:id` | Same optional `body_blocks`; sending `body_blocks: null` clears both columns (template reverts to text-only). `body_html` is never patchable directly. |
+| `POST /admin/email-templates/:id/import-html` | **NEW (FR-001, 2026-07-29).** Operator-guarded. Body `{ html: string }` — a complete HTML document. Stores it as this template's `body_html`, sets `body_source='raw'` and clears `body_blocks`. Returns `{ id, body_source, report }`. This is the ONLY route that accepts client HTML: `POST`/`PATCH` still refuse `body_html` outright, so the block editor's guarantee is untouched and raw HTML has one auditable door. **The document is NOT sanitised** (sponsor decision — the trust boundary is "the Owner is trusted"). The `report` carries: `originalBytes`/`processedBytes`, `imagesHosted`, `unknownFields` (merge fields this use_case does not supply — they resolve to an empty string at send time and therefore fail silently), `knownFields`, and `notes` (e.g. a document still above Gmail's ~102KB clipping threshold, a WebP image classic Outlook cannot display, a `<style>` block some clients strip). Embedded `data:` images are extracted to R2 under `email-assets/<templateId>/<n>-email.<ext>` and every reference rewritten — a repeated image is stored once but keeps all its references, because the bulletproof-background pattern needs each one. |
 | `POST /admin/email-templates/:id/test-send` | Unchanged request shape. When the template has `body_html`, the test message is sent `multipart/alternative` (merge-substituted text + HTML from the use_case sample data) — so the Owner sees the HTML version in a real inbox. Still never idempotency-suppressed. |
 | internal `send()` / `renderTemplate()` | `renderTemplate` additionally returns `htmlBody` (merge-substituted `body_html`, or null); `send()` passes it to the Cloudflare email client which builds `multipart/alternative` when an HTML body is present, `text/plain` otherwise. |
 
@@ -120,6 +132,13 @@ Amendments to the existing `/admin/email-templates` surface (operator-guarded, `
 | `PATCH /admin/incidents/:id/dispatch` | OPS12 | insurer dispatch **stub, D-OPS-5** (webapp-admin) |
 | `POST /guide/hazards` | OPS13 | |
 | `PATCH /admin/hazards/:id` | OPS14 | dedupe by street, set severity (webapp-admin) |
+
+### Operator settings (REQ-BO08, FR-001)
+
+| Route | Contract |
+|---|---|
+| `GET /admin/settings` | Returns the singleton row: `refund_cutoff_hours`, `reminder_milestones[]`, `cancellation_remediation_options[]`, **`reply_mode`** (`auto`\|`manual`), **`deposit_default_pence`** (integer, pence), `updated_at`. |
+| `PUT /admin/settings` | All fields optional; only those supplied are written. `reply_mode` is an enum — anything else is 422, so there is no way to reach a value that would stop confirmations sending. `deposit_default_pence` is a non-negative integer. Booleans are persisted as 0/1 (SQLite has no boolean) and always returned as their proper type. |
 
 ## Pre-tour (TOUR)
 | Route | REQ | Notes |

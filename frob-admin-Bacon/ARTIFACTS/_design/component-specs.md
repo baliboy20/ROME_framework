@@ -3,9 +3,9 @@
 | | |
 |---|---|
 | **Author** | PMA, dispatch `pma-P3` · **Status** PROPOSED (rev 2 — DEV-1..DEV-4) |
-| **Binds** | **TDR-13** (frontend stacks), **TDR-16** (guide app stack), TDR-01, TDR-03, TDR-15 |
+| **Binds** | **TDR-13** (frontend stacks — superseded for `webapp-admin` by **DEV-5**), **TDR-16** (guide app stack), TDR-01, TDR-03, TDR-15 |
 
-Seven components realize the 13 modules. Frontend stacks are fixed by TDR-13/16 (as revised by sponsor deviations DEV-1/2/3); no alternative is chosen. This is a **greenfield build (DEV-4)** — no `admin-rome`/`guide_app` code or schema is reused; all DDL is authored fresh from `Data_Dictionary.md` + module specs in P4/P5.
+Seven components realize the 13 modules. Frontend stacks are fixed by TDR-13/16 (as revised by sponsor deviations DEV-1/2/3, and by **DEV-5** which retargets `webapp-admin` to Flutter macOS desktop); no alternative is chosen. This is a **greenfield build (DEV-4)** — no `admin-rome`/`guide_app` code or schema is reused; all DDL is authored fresh from `Data_Dictionary.md` + module specs in P4/P5.
 
 ---
 
@@ -17,8 +17,25 @@ Seven components realize the 13 modules. Frontend stacks are fixed by TDR-13/16 
 
 ## `webapp-admin`
 - **Responsibility:** Owner/operator planning & oversight console.
-- **Stack (satisfies: TDR-13):** full **Flutter Web SPA** (no SEO). **Design system (DEV-1 / TDR-15):** renders from the **sponsor-supplied admin mockup design system in the PARCHMENT theme** — the mockup's parchment tokens are ported into a Flutter theme (Clara owns the token detail). The mockup's React components/screens are **layout reference only**, not reused code. **Parchment now covers `webapp-admin` AND `mobile-guide`** (DEV-1 widened); `webapp-customer` and `webapp-editor` stay on the forest-palette CSS tokens per TDR-15.
-- **Owns REQ IDs:** BO04–06, BOOK08, BOOK10, BOOK11, BOOK12, BOOK13, BOOK14, FLEET01–08, OPS12, OPS14, PRE05, NOTIF02, NOTIF04, CNA03, SEO03, AUTH01, AUTH05 (owner).
+- **Stack (satisfies: TDR-13 as revised by DEV-5):** **Flutter macOS desktop application** (no SEO), distributed as a signed/notarised `.app` and run locally by the Owner. The Flutter Web SPA target is **retired** for this component — web is not kept as a fallback (unlike `mobile-guide` under DEV-3). Consequences are traced in `architecture-impact-brief-DEV-5.md`: Cloudflare Pages deployment no longer applies, the Apple Developer dependency removed by DEV-3 is reinstated, and the TDR-07 owner session must be restated for a native client (no browser origin, no CORS control, token in the macOS keychain). **Design system (DEV-1 / TDR-15):** renders from the **sponsor-supplied admin mockup design system in the PARCHMENT theme** — the mockup's parchment tokens are ported into a Flutter theme (Clara owns the token detail). The mockup's React components/screens are **layout reference only**, not reused code. **Parchment now covers `webapp-admin` AND `mobile-guide`** (DEV-1 widened); `webapp-customer` and `webapp-editor` stay on the forest-palette CSS tokens per TDR-15.
+- **Owns REQ IDs:** BO04–06, **BO07 (quick navigation, FR-001)**, **BO08 (settings console, FR-001)**, BOOK08, BOOK10, BOOK11, BOOK12, BOOK13, BOOK14, FLEET01–08, OPS12, OPS14, PRE05, NOTIF02, NOTIF04, CNA03, SEO03, AUTH01, AUTH05 (owner).
+- **Added by FR-001 (2026-07-29):**
+  - **Quick-navigation overlay (REQ-BO07)** — top-bar control plus Cmd-K; searches the ~24
+    console destinations by name, synonym or surface id. The searchable set is DERIVED from the
+    shell's own `kNavGroups` definition, never maintained separately, and a test fails if the two
+    diverge — so a screen added to the sidebar becomes searchable with no further action.
+  - **Settings console (REQ-BO08)** — tabbed (About / Notifications / Booking policy). About
+    reads the version from the running application, so it cannot disagree with what was
+    installed. Note this surface still has **no A-series surface id**; it is referenced as A6b in
+    the shell's navigation but has no entry in the surface inventory — pre-existing drift,
+    recorded here rather than silently assigned.
+  - **Raw-HTML template import (REQ-NOTIF10 as amended)** — a Blocks / Full HTML toggle in the
+    A5c editor. Images are converted **in the app** before upload (the Workers runtime has no
+    image codec; the Mac has a full image stack), transparent → PNG, everything else → JPEG.
+    **An imported document currently has no in-app preview**; the preview pane renders blocks
+    only, so the Owner uses a test-send to check a real inbox. If a preview is ever added it MUST
+    be isolated with scripts disabled — imported HTML is unsanitised by decision, and a live
+    preview would otherwise make the console an execution surface for it.
 - **Depends on:** `api-worker`, owner JWT+KV session (TDR-07).
 
 ## `webapp-editor`

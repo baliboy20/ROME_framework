@@ -63,4 +63,22 @@ OpenQuestions:
       sample merge data plus HTML test-send; multipart text+HTML sends with merge fields
       filling both bodies; attachments and asset uploads out of scope. Source:
       ARTIFACTS/changes/CR-002-html-email-templates-PROPOSAL.md.
+  - question: none (FR-001 amendment provenance)
+    status: RESOLVED
+    resolution: >-
+      Amended per sponsor decision 2026-07-28, admitted through FR-001 workstream 5: a template
+      may alternatively be authored by IMPORTING a complete HTML document. This AMENDS CR-002
+      (CHG-001), whose rule that body_html is always a server-rendered projection of body_blocks
+      and never client input now holds for BLOCK templates only. An imported document REPLACES
+      the house shell (it brings its own header and footer), is scoped per template by
+      body_source, and is NOT sanitised (sponsor decision — the trust boundary is "the Owner is
+      trusted"). Import is a separate, explicit endpoint rather than a field on save, so the
+      block editor's guarantee is unchanged and raw HTML has exactly one auditable door.
+      On import the system must: extract embedded images to object storage and rewrite every
+      reference (mail clients do not render data: URIs, and a repeated image must keep all its
+      references); report merge fields the template's process does not supply, because an unknown
+      field resolves to an empty string at send time and therefore fails SILENTLY; and report a
+      document still large enough for Gmail to truncate, since an unsubscribe link at the foot of
+      a clipped message is a compliance exposure. Source:
+      ARTIFACTS/changes/FR-001-admin-console-on-mac-PROPOSAL.md.
 CopilotMode: STRICT

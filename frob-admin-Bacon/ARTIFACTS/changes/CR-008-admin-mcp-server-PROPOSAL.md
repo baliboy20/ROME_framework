@@ -1,3 +1,7 @@
+> **SUPERSEDED 2026-07-28 by FR-001** (`changes/FR-001-admin-console-on-mac-PROPOSAL.md`),
+> which carries this scope as workstream 6. This document remains the detailed
+> operation map and analysis; FR-001 references it rather than restating it.
+
 # CR-008 — Admin MCP server: operate the back office from a Claude session
 
 | | |

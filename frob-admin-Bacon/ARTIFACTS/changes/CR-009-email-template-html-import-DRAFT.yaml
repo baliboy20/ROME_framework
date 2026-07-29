@@ -1,0 +1,198 @@
+# SUPERSEDED 2026-07-28 by FR-001 (changes/FR-001-admin-console-on-mac-PROPOSAL.md).
+# Retained for its reasoning and the sponsor decisions recorded in it, which
+# FR-001 carries across. Do NOT route this record: its scope now belongs to an
+# increment, not a change.
+ID: CR-009
+title: Email template editor — paste or import a complete HTML document as the template
+status: DRAFT
+raised_by: Roma (sponsor request, 2026-07-28)
+date: 2026-07-28
+requirement: REQ-NOTIF10
+surface: A5c (email template editor)
+
+change_type:
+  declared: CT-3
+  rationale: >
+    This is NOT a new capability bolted onto an untouched contract. It REPEALS a
+    ratified decision. CR-002 (CHG-001) established that `body_blocks` is the
+    only HTML input the API accepts and that `body_html` is a server-rendered
+    projection which a client may never submit. Accepting a pasted or imported
+    HTML document inverts that rule. A requirement changes, so CT-3, not CT-4.
+  blast_radius:
+    verified: false
+    note: >
+      NOT yet trace-verified (ROME-AX-31). The files below were read directly
+      and are believed complete, but the P1/P3 trace has not been run, so this
+      record cannot be routed as it stands.
+    touches:
+      - SOURCE/worker/src/routes/email.ts (rejectsClientHtml, both schemas)
+      - SOURCE/worker/src/modules/notifications/templates.ts (substitution)
+      - SOURCE/apps/webapp-admin/lib/features/email/ (editor, bloc, payload)
+      - ARTIFACTS/_design/api-contracts.md#cr-002
+      - ARTIFACTS/_design/design-assets/email-house-shell.md
+      - ARTIFACTS/_requirements/REQ-NOTIF10.yaml
+
+# ---------------------------------------------------------------------------
+# What exists today
+# ---------------------------------------------------------------------------
+as_built:
+  - The API rejects client HTML BY CONSTRUCTION, not by omission. Both
+    `POST /admin/email-templates` and `PATCH /admin/email-templates/:id` call
+    `rejectsClientHtml(raw)` and return 422 with the message
+    "body_html is server-rendered from body_blocks and cannot be submitted
+    directly." The rule is enforced a second time on the client, as an
+    assertion in `buildTemplateSavePayload`.
+  - `body_html` is derived on every save by `renderBlocksToHtml(body_blocks)`.
+    It is always a projection, never input.
+  - The house shell spec (`email-house-shell.md`) states its hard rules as
+    invariants "never violated by any block": inline styles only, no `<style>`
+    element, no classes, no external CSS, table-based layout only. It lists
+    "raw HTML" explicitly as OUT OF SCOPE.
+  - Merge substitution uses `/\{\{\s*([a-zA-Z0-9_]+)\s*\}\}/g`. The HTML
+    variant HTML-escapes every merge VALUE so customer data cannot inject
+    markup.
+
+# ---------------------------------------------------------------------------
+# Assessment of the sponsor's reference file
+# ---------------------------------------------------------------------------
+reference_file:
+  path: /Users/will/WebstormProjects/SconzApplications/untitled2/book-conf.html
+  size_bytes: 707011
+  findings:
+    - GOOD — merge syntax already matches. All 14 placeholders in the file use
+      `{{snake_case}}` and satisfy the existing regex exactly. Substitution
+      would work with no parser change.
+    - BLOCKING — 7 of its 14 merge fields are NOT supplied by the system:
+      calendar_link, deposit_paid, map_link, subtotal, support_email,
+      support_phone, unsubscribe_link. Substitution resolves an unknown key to
+      the EMPTY STRING (`vars[key] ?? ""`), so these fail SILENTLY. A customer
+      would receive a confirmation email with blank gaps where the meeting-point
+      map link and support phone number should be. `deposit_paid` is very likely
+      meant to be the system's existing `amount_paid`.
+    - BLOCKING — size. At 707KB the message exceeds Gmail's ~102KB clipping
+      threshold by roughly 7x. Gmail truncates the message and hides the
+      remainder behind "View entire message". The unsubscribe link sits at the
+      very bottom of this document, so it is exactly what gets cut — a
+      compliance exposure, not only a cosmetic one.
+    - BLOCKING — 98.1% of the file (693,672 of 707,003 bytes) is inline
+      base64 image data. The template itself — markup, styles, copy — is only
+      13,331 bytes. There are TWO unique images embedded FOUR times:
+        * hero background, 1024x1024 lossy WebP, 149KB decoded, embedded 3x
+        * logo, 800x534 LOSSLESS WebP, 73KB decoded, embedded 1x
+      The three hero embeds are NOT redundant and must not be deduplicated in
+      place: they are the standard bulletproof-background pattern — a
+      `background=` attribute (legacy clients), a `background-image:url()`
+      style (modern clients), and a `<v:fill src=>` inside the `<!--[if mso]>`
+      block (Outlook VML). Each serves a different client. While the images
+      remain inline, the 707KB is therefore IRREDUCIBLE.
+      Gmail and Outlook do not render `data:` URI images in email, so hosting
+      is required for correctness anyway; hosting is also the only thing that
+      shrinks the file, because each 198KB blob collapses to a short URL.
+      R2 (`ASSETS`) is already bound and is the natural home. Hosted, the
+      email drops from 707KB to ~14KB and the bulletproof pattern is preserved
+      exactly (one URL referenced three times).
+    - Image quality/format assessment (advisory, not blocking):
+        * Hero: 149KB for a 1024px lossy photo is an efficient encode and is
+          NOT oversized. It is however square in a 600x420 landscape slot, so
+          `background-size:cover` crops ~40% of its height away unseen, and at
+          1024px it is slightly under retina for a 600px display. Re-cropping
+          to ~1200x840 gives better quality at similar weight.
+        * Logo: 800px wide to display at 180px — 4.4x oversampled, where 360px
+          covers retina — and encoded LOSSLESS. Resized it would be ~15-25KB
+          rather than 73KB with no visible difference. This one IS excessive.
+        * FORMAT RISK: classic Outlook desktop (Word rendering engine) does not
+          decode WebP. The logo would break there, and the VML fallback — the
+          mechanism written specifically to serve Outlook — currently points at
+          a WebP the client cannot read, so the hero degrades to the flat
+          `bgcolor="#3a2f28"`. Newer WebView2-based Outlook does support WebP.
+          RECOMMENDATION: serve JPEG (hero) + PNG (logo) from R2. Once hosted,
+          the compression advantage of WebP is worth nothing at ~14KB total,
+          and universal client support is worth a great deal. Verify against
+          the real recipient mix rather than on this assessment alone.
+    - CONFLICT — the file carries a `<style>` element with `@media` queries and
+      class-based rules. The house shell forbids all three.
+    - NOTE — a 707KB `body_html` value approaches D1's ~1MB row ceiling. Two
+      such templates are fine; the column was not sized with this in mind.
+
+# ---------------------------------------------------------------------------
+# Open questions — sponsor decisions required
+# ---------------------------------------------------------------------------
+open_questions:
+  - id: OQ-1
+    blocking: true
+    status: DECIDED (sponsor, 2026-07-28) — REPLACE, scoped to templates
+      explicitly flagged as raw-HTML. Block-editor templates are unaffected and
+      keep the house shell and all its invariants.
+    question: >
+      Does an imported document REPLACE the house shell, or render INSIDE it?
+    detail: >
+      These are different features. "Replace" means the Owner owns the entire
+      email including header and footer, and FOB's brand consistency guarantee
+      and the shell's deliverability invariants no longer hold for that
+      template. "Inside" means we ingest only the document's content area,
+      which for this file is most of the work and largely defeats the purpose.
+      The reference file is a complete standalone document with its own header
+      and footer, which implies REPLACE.
+    recommendation: >
+      Replace, but only for templates explicitly flagged as raw-HTML, so the
+      block editor's guarantees remain intact and unambiguous for every other
+      template.
+  - id: OQ-2
+    blocking: true
+    status: >
+      DECIDED (sponsor, 2026-07-28) — NO sanitisation. Imported HTML is stored
+      and sent verbatim. Roma records the accepted consequences: (a) the admin
+      app's own live preview renders Owner-supplied markup, so the preview must
+      be isolated (sandboxed frame / no script execution) or it becomes an
+      execution surface inside the console; (b) `substituteMergeFieldsHtml`
+      still HTML-escapes merge VALUES, so customer data cannot inject markup —
+      that protection is unchanged and must not be removed alongside this; (c)
+      trust boundary is now "the Owner is trusted", consistent with the
+      single-operator model, but it means a malicious or careless paste is
+      not defended against. Sanitisation can be added later without breaking
+      the contract this CR establishes.
+    question: >
+      Is imported HTML sanitised, and if so against what policy?
+    detail: >
+      Today no arbitrary HTML can enter the system at all, so no sanitiser
+      exists. Accepting whole documents means accepting whatever they contain —
+      tracking pixels, external resource loads, `<script>` (inert in email
+      clients but NOT inert in the admin app's own live preview, which renders
+      the same HTML). Note the existing merge-value escaping still protects
+      against customer data injecting markup; this question is about the
+      Owner-supplied document itself.
+  - id: OQ-3
+    blocking: false
+    question: >
+      Should import VALIDATE rather than merely accept?
+    detail: >
+      Every problem found in the reference file above is mechanically
+      detectable at import time — unknown merge fields, total size against the
+      Gmail threshold, `data:` URI images, presence of a `<style>` block. A
+      silent import would have shipped all of them to customers.
+    recommendation: >
+      Yes. Import should report what it found and refuse on the unknown-merge-
+      field case, which is the one that fails invisibly at send time.
+  - id: OQ-4
+    blocking: false
+    question: >
+      Does import auto-upload inline images to R2 and rewrite the `src`
+      attributes, or does it reject `data:` URIs and require hosted URLs?
+    recommendation: >
+      Auto-upload. It is the difference between the feature working on the
+      sponsor's actual file and not.
+
+# ---------------------------------------------------------------------------
+# Sequencing
+# ---------------------------------------------------------------------------
+sequencing:
+  - Increment 8 is UNSEALED. Per ROME-AX-19 a change runs only against
+    delivered scope, so this cannot be routed until it seals.
+  - Trace-verify the blast radius before routing (ROME-AX-31).
+  - CR-002's api-contracts.md#cr-002 section must be reissued, not patched —
+    its central claim ("body_html is never client input") stops being true.
+
+notes:
+  - The request is reasonable and the reference file is a competent email
+    template. The obstacles are the ratified contract and four concrete
+    deliverability defects in the file, not the idea.

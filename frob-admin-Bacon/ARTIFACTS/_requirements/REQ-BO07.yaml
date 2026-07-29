@@ -1,0 +1,53 @@
+ID: REQ-BO07
+Actor: Owner
+Intent: navigate by search
+Preconditions:
+  - an operator session is active (the console shell is showing)
+Conditions:
+  - a control in the top bar opens a search overlay; the macOS convention Cmd-K opens it from anywhere in the shell without colliding with a system or menu-bar shortcut
+  - typing filters the console's destinations; matching is case-insensitive and matches anywhere in the destination's name, not only its start
+  - a destination is also findable by words a person would reasonably use that do not appear in its name (e.g. "refund" finds Payments, "insurance" finds Compliance, "version" finds Settings)
+  - a destination is findable by its surface id (e.g. "A17" finds the departure calendar)
+  - results rank a name that STARTS with the typed text above one that merely contains it
+  - with no text typed, every destination is offered, so the control reveals what is available rather than requiring a guess
+  - the arrow keys move the selection without taking focus off the text box; Enter goes to the selected destination
+  - the overlay closes on Escape or its close control, leaving the current screen unchanged
+  - when nothing matches, the overlay says so rather than showing an empty area
+Postconditions:
+  - selecting a result navigates to that destination exactly as the sidebar would
+  - the overlay is dismissed; no state is changed by opening or closing it
+Outcomes:
+  - the Owner reaches any console screen by typing a fragment of its name, without traversing the sidebar tree
+Invariants:
+  - the searchable set is DERIVED from the console's own navigation definition, never maintained separately — a destination added to the sidebar becomes searchable with no further action
+  - searching never changes data; it is navigation only
+NonFunctional:
+  - filtering is immediate as the Owner types (no perceptible wait on the ~24 destination set)
+Errors:
+  - error: no destination matches the typed text
+    message: Nothing matches that.
+    httpCode: n/a (client-side)
+    userAction: Clear or amend the search text
+ScopeBoundary:
+  InScope:
+    - searching and navigating to console DESTINATIONS (screens)
+    - keyboard opening, arrow-key traversal, Enter to go, Escape to close
+  OutOfScope:
+    - searching RECORDS (a booking reference, a customer name, a bike id). The request was
+      "quicklinks to the menu navigation"; record search reaches every repository and needs
+      paging, and is a materially larger capability. It is an addition later, not a rework.
+    - destinations that require a record id (e.g. a specific booking) — they cannot be reached
+      without choosing a record first, so they are excluded from the searchable set
+    - permission filtering — this is a single-operator console, so every destination is
+      reachable by the only user. Revisit if a second operator role ever exists.
+OpenQuestions:
+  - question: none
+    status: RESOLVED
+    resolution: >-
+      Sponsor-requested 2026-07-27 ("an app topsheet that provides via typeahead quicklinks to
+      the menu navigation... accessed by pressing an icon in the topbar and can be closed with
+      close button"). Admitted as new capability through FR-001 workstream 4 (CT-4 routes via
+      the increment mechanism, never a change record — PROP-054 A.1). Destinations-only scope
+      confirmed from the sponsor's own wording. Source:
+      ARTIFACTS/changes/FR-001-admin-console-on-mac-PROPOSAL.md.
+CopilotMode: STRICT

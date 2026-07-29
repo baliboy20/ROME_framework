@@ -1,0 +1,207 @@
+<title>CR-010 — Georgia vs SF Pro type specimen</title>
+<style>
+  :root{
+    --bg:#f8f6ef; --card:#fff; --raised:#fdfcf8; --rail:#f7f4ec;
+    --strong:#33322a; --body:#5b584c; --muted:#8a8778; --label:#9a9788;
+    --accent:#b83072; --price:#b83072;
+    --hair:rgba(51,50,42,.13);
+    --ok:#4e7a12; --ok-bg:rgba(198,255,63,.20);
+    --warn:#c2610a; --warn-bg:rgba(255,122,26,.14);
+    --geo:Georgia,"Times New Roman",serif;
+    --sf:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",sans-serif;
+    --sfmono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{--bg:#1c1b17;--card:#26251f;--raised:#2c2b24;--rail:#232219;
+      --strong:#efece1;--body:#c4c0b2;--muted:#948f7f;--label:#8d8878;
+      --accent:#ff86bd;--price:#ff86bd;--hair:rgba(239,236,225,.15);
+      --ok:#a8d95a;--ok-bg:rgba(198,255,63,.13);--warn:#f0a35c;--warn-bg:rgba(255,122,26,.14)}
+  }
+  :root[data-theme="dark"]{--bg:#1c1b17;--card:#26251f;--raised:#2c2b24;--rail:#232219;
+    --strong:#efece1;--body:#c4c0b2;--muted:#948f7f;--label:#8d8878;
+    --accent:#ff86bd;--price:#ff86bd;--hair:rgba(239,236,225,.15);
+    --ok:#a8d95a;--ok-bg:rgba(198,255,63,.13);--warn:#f0a35c;--warn-bg:rgba(255,122,26,.14)}
+  :root[data-theme="light"]{--bg:#f8f6ef;--card:#fff;--raised:#fdfcf8;--rail:#f7f4ec;
+    --strong:#33322a;--body:#5b584c;--muted:#8a8778;--label:#9a9788;
+    --accent:#b83072;--price:#b83072;--hair:rgba(51,50,42,.13);
+    --ok:#4e7a12;--ok-bg:rgba(198,255,63,.20);--warn:#c2610a;--warn-bg:rgba(255,122,26,.14)}
+
+  body{background:var(--bg);color:var(--body);font-family:var(--sf);font-size:13.5px;
+       font-weight:500;line-height:1.5;margin:0;padding:34px 22px 70px}
+  .wrap{max-width:1000px;margin:0 auto;display:flex;flex-direction:column;gap:24px}
+  .eyebrow{font-family:var(--sfmono);font-size:10.5px;font-weight:600;letter-spacing:1.1px;
+           text-transform:uppercase;color:var(--label)}
+  h1{font-family:var(--geo);font-size:30px;font-weight:600;letter-spacing:-.63px;line-height:1.14;
+     color:var(--strong);margin:6px 0 0;text-wrap:balance}
+  h2{font-family:var(--sf);font-size:16px;font-weight:600;color:var(--strong);margin:0 0 3px}
+  .sub{max-width:68ch;margin:10px 0 0}
+  .card{background:var(--card);border:1px solid var(--hair);border-radius:18px;padding:20px 22px}
+  .note{font-size:12px;color:var(--muted);margin:4px 0 0}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--hair);
+       border-radius:14px;overflow:hidden;margin-top:14px}
+  @media(max-width:720px){.two{grid-template-columns:1fr}}
+  .pane{padding:16px 18px}
+  .pane + .pane{border-left:1px solid var(--hair)}
+  @media(max-width:720px){.pane + .pane{border-left:0;border-top:1px solid var(--hair)}}
+  .pane h3{font-family:var(--sfmono);font-size:9.5px;font-weight:600;letter-spacing:1px;
+           text-transform:uppercase;color:var(--label);margin:0 0 12px}
+  .geo{font-family:var(--geo)} .sf{font-family:var(--sf)}
+
+  table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+  th{font-family:var(--sfmono);font-size:9.5px;font-weight:600;letter-spacing:.9px;
+     text-transform:uppercase;color:var(--label);text-align:left;padding:0 0 7px;font-weight:600}
+  th.r,td.r{text-align:right}
+  td{padding:5px 0;border-top:1px solid var(--hair);font-size:13.5px;color:var(--body)}
+  td.amt{font-size:16px;font-weight:600;color:var(--price)}
+  .big{font-size:34px;font-weight:600;color:var(--strong);letter-spacing:-.4px;
+       font-variant-numeric:tabular-nums;line-height:1.3}
+
+  .row{display:grid;grid-template-columns:118px 1fr;gap:14px;padding:13px 0;
+       border-top:1px solid var(--hair);align-items:baseline}
+  .row:first-of-type{border-top:0}
+  .rk{font-family:var(--sfmono);font-size:9.5px;font-weight:600;letter-spacing:.9px;
+      text-transform:uppercase;color:var(--label)}
+  .t-title{font-size:30px;font-weight:600;letter-spacing:-.63px;line-height:1.14;color:var(--strong)}
+  .t-card{font-size:16px;font-weight:600;color:var(--strong)}
+  .t-body{font-size:13.5px;font-weight:500;color:var(--body)}
+  .t-micro{font-family:var(--sfmono);font-size:10.5px;font-weight:600;letter-spacing:1.1px;
+           text-transform:uppercase;color:var(--label)}
+  .t-money{font-size:16px;font-weight:600;color:var(--price);font-variant-numeric:tabular-nums}
+
+  .flag{display:flex;gap:9px;border-radius:12px;padding:11px 13px;font-size:12.5px;margin-top:14px}
+  .f-warn{background:var(--warn-bg);border:1px solid rgba(194,97,10,.3)}
+  .f-ok{background:var(--ok-bg);border:1px solid rgba(78,122,18,.3)}
+  .flag strong{color:var(--strong)}
+  .assign{width:100%;border-collapse:collapse;margin-top:12px}
+  .assign td,.assign th{padding:8px 10px;border-bottom:1px solid var(--hair);font-size:12.5px;text-align:left}
+  .assign th{font-family:var(--sfmono);font-size:9.5px;letter-spacing:.9px;text-transform:uppercase;color:var(--label)}
+  .assign td:first-child{font-family:var(--sfmono);font-size:11px;color:var(--strong)}
+  .chg{color:var(--accent);font-weight:600}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">CR-010 · Track B · styling reference only</div>
+    <h1>Georgia and SF Pro, side by side</h1>
+    <p class="sub">Rendered in the real faces from your Mac — this heading is Georgia at the
+      exact <code>pageTitle</code> spec (30px / 600 / −0.63px). Not a UI mockup; it isolates
+      the typographic differences only.</p>
+  </header>
+
+  <!-- 1. FIGURES -->
+  <section class="card">
+    <h2>1. Figures — why money moved</h2>
+    <p class="note">Identical markup, identical <code>tabular-nums</code>. Only the face differs.</p>
+
+    <div class="two">
+      <div class="pane">
+        <h3>Georgia — old-style figures</h3>
+        <div class="big geo">£1,349.50<br>£90.00<br>£475.25</div>
+        <table style="margin-top:14px">
+          <tr><th>Booking</th><th class="r">Paid</th></tr>
+          <tr><td class="geo">BK-1001</td><td class="r amt geo">£90.00</td></tr>
+          <tr><td class="geo">BK-1002</td><td class="r amt geo">£135.75</td></tr>
+          <tr><td class="geo">BK-1003</td><td class="r amt geo">£47.00</td></tr>
+          <tr><td class="geo">BK-1004</td><td class="r amt geo">£1,349.50</td></tr>
+        </table>
+        <p class="note">3, 4, 5, 7 and 9 drop below the baseline; 6 and 8 rise above it. The
+          column edge is straight but the digits bounce.</p>
+      </div>
+      <div class="pane">
+        <h3>SF Pro — lining figures</h3>
+        <div class="big sf">£1,349.50<br>£90.00<br>£475.25</div>
+        <table style="margin-top:14px">
+          <tr><th>Booking</th><th class="r">Paid</th></tr>
+          <tr><td class="sf">BK-1001</td><td class="r amt sf">£90.00</td></tr>
+          <tr><td class="sf">BK-1002</td><td class="r amt sf">£135.75</td></tr>
+          <tr><td class="sf">BK-1003</td><td class="r amt sf">£47.00</td></tr>
+          <tr><td class="sf">BK-1004</td><td class="r amt sf">£1,349.50</td></tr>
+        </table>
+        <p class="note">All digits share one height and one width. This is what a payments
+          column needs.</p>
+      </div>
+    </div>
+
+    <div class="flag f-ok"><span aria-hidden="true">✓</span>
+      <span><strong>Decision applied:</strong> <code>FobText.money</code> moves to SF Pro, so
+        the left-hand case never ships. Georgia carries no digits in a column.</span></div>
+  </section>
+
+  <!-- 2. ROLE ASSIGNMENT -->
+  <section class="card">
+    <h2>2. What each token uses after CR-010</h2>
+    <table class="assign">
+      <tr><th>Token</th><th>Face</th><th>Spec</th><th>Change</th></tr>
+      <tr><td>pageTitle</td><td class="geo">Georgia</td><td>30 / 600 / −0.63</td><td class="chg">Source Serif 4 → Georgia</td></tr>
+      <tr><td>cardTitle</td><td class="sf">SF Pro</td><td>16 / 600</td><td class="chg">Plus Jakarta → SF Pro</td></tr>
+      <tr><td>body</td><td class="sf">SF Pro</td><td>13.5 / 500</td><td class="chg">Plus Jakarta → SF Pro</td></tr>
+      <tr><td>microLabel</td><td style="font-family:var(--sfmono)">SF Mono</td><td>10.5 / 600 / +1.1</td><td class="chg">monospace → SF Mono</td></tr>
+      <tr><td>money</td><td class="sf">SF Pro</td><td>16 / 600</td><td class="chg">serif → <strong>sans</strong> (role change)</td></tr>
+    </table>
+    <p class="note">Georgia is left carrying a single token. mobile-guide is untouched and keeps
+      the bundled faces.</p>
+  </section>
+
+  <!-- 3. SPECIMEN -->
+  <section class="card">
+    <h2>3. Every token, both faces</h2>
+    <p class="note">Same size, weight and spacing throughout — the only variable is the face.</p>
+    <div class="two">
+      <div class="pane">
+        <h3>Georgia</h3>
+        <div class="row"><span class="rk">Page title</span>
+          <span class="t-title geo">Scheduling</span></div>
+        <div class="row"><span class="rk">Card title</span>
+          <span class="t-card geo">Departure detail</span></div>
+        <div class="row"><span class="rk">Body</span>
+          <span class="t-body geo">Hidden City · 1 Aug 2026 · 10:00 · 8 of 10 booked</span></div>
+        <div class="row"><span class="rk">Money</span>
+          <span class="t-money geo">£1,349.50</span></div>
+      </div>
+      <div class="pane">
+        <h3>SF Pro</h3>
+        <div class="row"><span class="rk">Page title</span>
+          <span class="t-title sf">Scheduling</span></div>
+        <div class="row"><span class="rk">Card title</span>
+          <span class="t-card sf">Departure detail</span></div>
+        <div class="row"><span class="rk">Body</span>
+          <span class="t-body sf">Hidden City · 1 Aug 2026 · 10:00 · 8 of 10 booked</span></div>
+        <div class="row"><span class="rk">Money</span>
+          <span class="t-money sf">£1,349.50</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CAVEAT -->
+  <section class="card">
+    <h2>4. One thing to watch — Georgia has no 600 weight</h2>
+    <p class="note">Georgia ships Regular and Bold only. <code>pageTitle</code> asks for 600,
+      which does not exist, so it is synthesised or snapped to Bold (700).</p>
+    <div class="two">
+      <div class="pane">
+        <h3>Georgia — 400 / 600 / 700</h3>
+        <div class="geo" style="font-size:30px;letter-spacing:-.63px;color:var(--strong);line-height:1.35">
+          <div style="font-weight:400">Scheduling</div>
+          <div style="font-weight:600">Scheduling</div>
+          <div style="font-weight:700">Scheduling</div>
+        </div>
+        <p class="note">If rows 2 and 3 look identical, 600 is resolving to Bold — heavier than
+          Source Serif 4's true 600.</p>
+      </div>
+      <div class="pane">
+        <h3>SF Pro — 400 / 600 / 700</h3>
+        <div class="sf" style="font-size:30px;letter-spacing:-.63px;color:var(--strong);line-height:1.35">
+          <div style="font-weight:400">Scheduling</div>
+          <div style="font-weight:600">Scheduling</div>
+          <div style="font-weight:700">Scheduling</div>
+        </div>
+        <p class="note">SF Pro has a genuine Semibold, so all three are distinct.</p>
+      </div>
+    </div>
+    <div class="flag f-warn"><span aria-hidden="true">⚠</span>
+      <span><strong>Not blocking, but worth a look in situ.</strong> Georgia is also wider and
+        has a larger x-height than Source Serif 4, so page titles will occupy noticeably more
+        horizontal space — relevant given the fixed wide-screen layout.</span></div>
+  </section>
+</div>

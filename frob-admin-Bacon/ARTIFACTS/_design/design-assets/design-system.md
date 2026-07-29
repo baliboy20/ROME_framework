@@ -5,7 +5,7 @@
 | **Document** | P3 Design System (Clara, dispatch clara-P3) |
 | **Status** | APPROVED baseline — **TWO brand tracks**. Track A rewritten under sponsor-approved deviation **DEV-4** (2026-07-28): the **shipped customer-webapp look** (Newsreader/Instrument Sans, cream/ink/green) is now the Track A system of record, superseding TDR-15's forest/Syne-DM-Sans **for `webapp-customer`**; includes NEW approved accessibility defect fixes (§1/§5). Track B unchanged under **DEV-1** (internal apps, sponsor FINAL handoff tokens). `webapp-editor` track assignment: OPEN QUESTION (see DEV-4). |
 | **Sources** | `core-design-system.md` (F-10, DR-11, DR-12), `Handover_AllModules_ClaudeDesign_Aristotle_2026-07-21.md` §1, `Handover_BackOffice_ClaudeDesign_Bacon_2026-07-21.md`, `Surface_Journey_Coverage.md`; **Track A SOURCE OF TRUTH (per DEV-4): the shipped `SOURCE/apps/webapp-customer` pages themselves** — inline `<style>` blocks of `en/index.html`, `about.html`, `faq.html`, `contact.html`, `gift-vouchers.html`, `hub.html`, `saved.html`, `cancellation-policy.html`, `privacy-policy.html`, `terms-and-conditions.html`, `tours/index.html`, `tours/detail.html`, `book/index.html` (the stale forest-token `en/styles.css` is to be replaced by `en/site.css`, §7); **Track B token/component SOURCE OF TRUTH: `_user_input/design-handoff/README.md` (final tokens, screen inventory), `_user_input/design-handoff/components/README.md` (11-component library), `_user_input/design-handoff/FOB-UXIS.md` + `FOB-Guide-App-UXIS.md` (authoritative behavioural specs), `_user_input/design-handoff/screenshots/`**; earlier Track B layout corroboration from `_user_input/design-mockups/admin-system/` and `guide-system/` (`_ds` bundle + `scraps/` screens incl. `g4check.png`/`g4done.png`) remains valid as supplementary layout reference. |
-| **Binding TDRs** | **TDR-15** — **superseded for `webapp-customer` by DEV-4** (sponsor-approved 2026-07-28): the shipped Cream & Ink / Newsreader / Instrument Sans system (§1–§7) replaces the forest-palette + Syne/DM Sans mandate for the customer webapp; TDR-15's forest system has no remaining shipped consumer and survives only as the unresolved default for `webapp-editor` (OPEN QUESTION, see DEV-4); **DEV-1** remains a scoped deviation covering web-admin AND mobile-guide (Track B) · **TDR-13** (stack split: `webapp-customer` static HTML/CSS/JS + Flutter Web islands; `webapp-admin`/`webapp-editor` full Flutter Web SPA; `mobile-guide` Flutter iOS-native + Web PWA fallback) |
+| **Binding TDRs** | **TDR-15** — **superseded for `webapp-customer` by DEV-4** (sponsor-approved 2026-07-28): the shipped Cream & Ink / Newsreader / Instrument Sans system (§1–§7) replaces the forest-palette + Syne/DM Sans mandate for the customer webapp; TDR-15's forest system has no remaining shipped consumer and survives only as the unresolved default for `webapp-editor` (OPEN QUESTION, see DEV-4); **DEV-1** remains a scoped deviation covering web-admin AND mobile-guide (Track B) · **TDR-13** (stack split: `webapp-customer` static HTML/CSS/JS + Flutter Web islands; `webapp-admin` **Flutter macOS desktop app — superseded by DEV-5, Web SPA retired**; `webapp-editor` full Flutter Web SPA; `mobile-guide` Flutter Web PWA only per DEV-3) |
 
 ## DEV-1 — sponsor-directed deviation from TDR-15 (AIB-P3 redirect; extended)
 
@@ -18,7 +18,7 @@
 | **A — Shipped Cream & Ink (DEV-4)** | `webapp-customer` (W1–W21, P1–P2); `webapp-editor` = OPEN QUESTION | Cream/ink/green (`--cream #f6f4ee`, `--ink #14130f`, `--green #3f6b3f`) | Newsreader (display serif) / Instrument Sans (body) | §1–§7 below |
 | **B — Internal Apps Parchment** | `webapp-admin` (A1–A20) **and** `mobile-guide` (G1–G13) | Parchment neutrals + pink/lime/cyan/orange status accents | Playfair Display (titles & money) / Plus Jakarta Sans (functional) / mono (ids/labels) | §8 below |
 
-`webapp-admin` is a **Flutter Web SPA** and `mobile-guide` is a **Flutter iOS-native + Web PWA** app (TDR-13; guide-app PWA emphasis reconfirmed by Roma as DEV-2/DEV-3) — neither runs the mockup's React runtime. The mockups' compiled React component bundles (`window.FOBDesignSystem.*`) are **layout/token reference only**, to be rebuilt as Flutter widgets consuming a ported Flutter `ThemeData`/token set shared by both internal apps (§8.6). Do not attempt to embed or reuse the React bundle or the guide mockup's `ios-frame.jsx` as code — it is a device-frame layout reference.
+`webapp-admin` is a **Flutter macOS desktop app** (DEV-5 — the Web SPA target is retired) and `mobile-guide` is a **Flutter Web PWA** app (TDR-13; guide-app PWA emphasis reconfirmed by Roma as DEV-2/DEV-3) — neither runs the mockup's React runtime. The mockups' compiled React component bundles (`window.FOBDesignSystem.*`) are **layout/token reference only**, to be rebuilt as Flutter widgets consuming a ported Flutter `ThemeData`/token set shared by both internal apps (§8.6). Do not attempt to embed or reuse the React bundle or the guide mockup's `ios-frame.jsx` as code — it is a device-frame layout reference.
 
 **Guide app remains offline-first and safety-gated (TDR-16, DR-O1) — this deviation is visual/token-only.** The sequential sign-off flow, full-signature vs. typed-confirm distinction, sembast offline persistence, and no-photo-capture scope cuts are unchanged; only the theme (Parchment + Playfair/Plus Jakarta/mono in place of Forest + Syne/DM Sans) changes.
 
@@ -39,7 +39,7 @@
 - **DR-12**: the Flutter component library is **to-build** (this document is its spec) — it does not exist yet in code. This now applies to **two** Flutter widget libraries: Track A (Cream & Ink per DEV-4, for the customer booking island — currently TO-MIGRATE off forest tokens, §6 — and the editor if the sponsor so rules) and Track B (parchment, shared by web-admin and guide app).
 - **TDR-13**: rendering split per surface —
   - `webapp-customer` (W1–W21, P1–P2): vanilla static HTML/CSS/JS pages, per-locale dirs (`en/fr/es`), **plus Flutter Web island widgets** embedded into the static pages for anything stateful/transactional (booking, payment, consent forms, attendee forms, feedback). Simple content pages stay plain static HTML. Track A tokens.
-  - `webapp-admin` (A1–A20): **full Flutter Web SPA**, PC/iMac only, fixed wide-screen, not responsive. **Track B (Parchment) tokens per DEV-1.**
+  - `webapp-admin` (A1–A20): **Flutter macOS desktop app** (DEV-5 — Web SPA retired), Mac only, fixed wide-screen, not responsive. Native window chrome replaces the browser frame; the fixed-wide-screen layout assumption is unchanged. **Track B (Parchment) tokens per DEV-1.**
   - `webapp-editor`: full Flutter Web SPA. **Track assignment OPEN QUESTION per DEV-4** (never shipped; nominally forest by TDR-15 default, but forest now has no shipped consumer — sponsor to decide).
   - `mobile-guide` (G1–G13): **Flutter iOS-native** (primary) + Flutter Web PWA (fallback), extension of the existing GMT app shell, offline-critical mid-tour. **Track B (Parchment) tokens per DEV-1 (extended) — visual theme only, offline/native behaviour unchanged.**
 - Canonical fixtures for any spec/mock: Tom (customer, `BK-1001`), Marie (prospect, `ENQ-2001`), Sarah (prospect, `SAVE-2001`), William (Owner — always "William" in copy, never "Owner"/"admin"), Emma (guide, `DEV-EMMA-01`), Hidden City tour (`TOUR-HID`, £45, 90 min), Departure `DEP-HID-2026-08-01-1000` (cap 10), Bike `FOB-001`, Helmet `HEL-014`, Feedback `FB-1001` (5★). Same fixtures reused across both tracks (Riverside Loop `TOUR-RVL` also appears in the admin mockup screens as a second tour example).
@@ -288,6 +288,39 @@ Adding `class="fob-console"` remaps the same semantic aliases to a dark-plum pal
 
 ## 8.2 Typography (Parchment) — FINAL, per handoff README
 
+> ### TYPOGRAPHY: TRACK B NOW FORKS BY APP (FR-001, 2026-07-29)
+>
+> Everything in §8.2 below described ONE type stack shared by both internal
+> apps. That is no longer true, and part of it was already out of date. Read
+> this first; where it conflicts with the text below, this governs.
+>
+> | App | Serif | Functional text | Mono | Bundled? |
+> |---|---|---|---|---|
+> | `webapp-admin` | **none — the serif role is removed** | **SF Pro** (platform face) | **SF Mono**, Menlo fallback | no — nothing bundled |
+> | `mobile-guide` | Source Serif 4 | Plus Jakarta Sans | monospace | yes, bundled |
+>
+> **Two corrections to the record.**
+>
+> 1. **Playfair Display has not been in use for some time.** It was replaced by
+>    **Source Serif 4** before FR-001, because Playfair's old-style figures made
+>    currency read badly in columns — the very thing §8.2's hard rule cares
+>    about. Every "Playfair" below should be read as Source Serif 4 for
+>    `mobile-guide`, and as "not applicable" for `webapp-admin`.
+> 2. **`webapp-admin` has no serif at all.** Under DEV-5 it is a macOS desktop
+>    app, so it renders in the platform's own faces. Georgia was evaluated as a
+>    serif and rejected: it also has old-style figures and, unlike Source Serif
+>    4, no lining alternates, so the `lnum` feature would silently do nothing —
+>    reintroducing the defect Source Serif 4 was adopted to fix. It also has no
+>    600 weight, which the page-title style asks for. Evidence:
+>    `design-assets/CR-010-type-specimen.html`.
+>
+> **Money still governs the decision.** `webapp-admin` renders money in SF Pro
+> with **tabular lining figures**, so amounts stay column-aligned — the property
+> the serif existed to provide is preserved, not traded away.
+>
+> **Scope.** `mobile-guide` is untouched: it is a Web PWA on non-Apple
+> platforms, where SF is neither available nor licensed.
+
 **Titles & money: Playfair Display** (serif — money always pence-accurate, `£90.00` never `£90`). **Functional text/controls: Plus Jakarta Sans** (sans). **IDs/codes/micro-labels: monospace** (uppercase, letter-spaced).
 
 | Token | Family | Use |
@@ -377,7 +410,7 @@ P5 robots implementing Track B screens **must read both UXIS documents directly*
 - Derived, not stored: A17 readiness, G2 progress, TransferList coverage — compute from data, don't persist as separate fields.
 - Client-only transients (never entity state): nav collapse, tree expand, calendar view, active screen.
 
-## 8.5 Component inventory (Track B — Internal Apps Parchment) [all Flutter — TDR-13; web-admin = SPA, guide app = iOS-native/PWA]
+## 8.5 Component inventory (Track B — Internal Apps Parchment) [all Flutter — TDR-13; web-admin = **macOS desktop app** (DEV-5), guide app = PWA (DEV-3)]
 
 All components below are **Flutter widgets to-build**, theme-driven off the ported token set in §8.1–8.3. The `.dc.html` prototypes (`Admin System.dc.html`, `Guide App.dc.html`, `components/*.dc.html`) and their `support.js` runtime are **design references only — do not ship the `.dc` runtime**; recreate faithfully in Flutter per TDR-13.
 
@@ -427,8 +460,10 @@ Per `design-handoff/components/README.md` — documented with full prop contract
 ## 8.6 Flutter theme porting notes (for P5 — Charlie/Ashok)
 
 - Build **one shared** Track-B `ThemeData`/`ColorScheme` + `TextTheme` (Internal Apps Parchment) consumed by both `webapp-admin` and `mobile-guide`, separate from the Track A `ThemeData` used by the `webapp-customer` booking island (Cream & Ink per DEV-4; editor TBD). **Do not merge Track A and Track B into one theme with a runtime switch** — DEV-1 scopes Parchment strictly to the two internal apps, and each app still builds its own widget layer on the shared token set per DR-11.
-- `webapp-admin` is a wide-screen desktop SPA; `mobile-guide` is a narrow-viewport iOS-native/PWA app — the same colour/type/spacing *tokens* apply, but layout composition (fixed left rail vs. single-column step screens) differs per app, consistent with TDR-13's per-app component-layer principle.
-- Port `--font-serif` (Playfair Display) and `--font-sans` (Plus Jakarta Sans) as self-hosted variable fonts (self-hosting per TDR-15's asset-hosting convention — note Track A as shipped uses Google Fonts CDN per DEV-4 §2; Track B must still bundle) — do not rely on Google Fonts CDN at runtime, including in the guide app's offline-first build (fonts must be bundled, not fetched at runtime, given TDR-16's offline-critical requirement).
+- **TYPE NO LONGER SHARED (FR-001).** The single shared Track-B `ThemeData` above still holds for colour, spacing and radius — those remain identical across both apps and must not diverge. **The type stack forks**: `webapp-admin` uses the macOS platform faces (SF Pro / SF Mono, nothing bundled, no serif role); `mobile-guide` keeps its bundled faces. This is not a relaxation of the "do not branch the theme" rule but a scoped exception with a stated cause — SF is unavailable and unlicensed off Apple platforms, so the alternative would be a guide app falling back to arbitrary local fonts.
+- `webapp-admin` is a wide-screen **macOS desktop app** (DEV-5); `mobile-guide` is a narrow-viewport PWA — the same colour/type/spacing *tokens* apply, but layout composition (fixed left rail vs. single-column step screens) differs per app, consistent with TDR-13's per-app component-layer principle.
+- **`webapp-admin` bundles NO fonts (FR-001)** — it passes a null font family so the engine resolves the macOS platform face, which is the durable spelling (`-apple-system` is CSS and means nothing in Flutter; the leading-dot Apple internals are undocumented and have changed across OS releases). The instruction below now applies to `mobile-guide` only, where offline-first genuinely requires bundling.
+- Port `--font-serif` (Source Serif 4, formerly Playfair Display) and `--font-sans` (Plus Jakarta Sans) as self-hosted variable fonts (self-hosting per TDR-15's asset-hosting convention — note Track A as shipped uses Google Fonts CDN per DEV-4 §2; Track B must still bundle) — do not rely on Google Fonts CDN at runtime, including in the guide app's offline-first build (fonts must be bundled, not fetched at runtime, given TDR-16's offline-critical requirement).
 - Represent the alpha ladders (`--tx32…--tx75` text-ink steps, `--wb03…--wb16` hairline/fill steps — FINAL per handoff README §8.1) as Flutter `Color.withOpacity`/`Color.fromRGBO` helpers keyed off `--text-strong` (text ladder) and a neutral white/black base (hairline ladder) rather than hard-coded greys — this preserves the handoff's "no invented colours, type, or spacing" rule in Flutter.
 - `StatusPill` and `FilterChip` should be built as shared Track-B widgets consumed by every A-screen and by the guide app's step/status indicators, not re-implemented per screen — the handoff explicitly calls out `StatusPill` as the canonical way to render fixed states rather than colouring text by hand; carry that discipline into Flutter for both apps.
 - Guide-app-specific: signature capture and typed-confirm widgets must work fully offline (sembast-backed, per TDR-16) — the Parchment re-skin does not change this; it's a token/visual change only, layered on the same underlying offline widget behaviour. Note `SignatureField`'s tap-to-attest fidelity (not true signature capture) is itself an open question per the handoff's own §Fidelity — flag to Roma/sponsor if higher-fidelity capture is later required.

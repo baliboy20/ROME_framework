@@ -1,0 +1,69 @@
+ID: CR-011
+title: Deliverability webhook — rebuild on Resend with signature verification
+status: DRAFT — logged 2026-07-28, deferred by sponsor ("not today")
+raised_by: Roma, from FINDING-008 remaining item 1
+requirement: REQ-NOTIF02
+surface: worker — src/routes/notifications.ts
+
+change_type:
+  declared: CT-1
+  rationale: >
+    REQ-NOTIF02 is provider-agnostic — it says "the delivery provider reports an
+    outcome", naming no vendor. So moving the ingestion path from Postmark to
+    Resend does NOT change the requirement; it restores a requirement that is
+    currently not being served. That is a defect fix, not a requirement change.
+    Flagged for the router: if the reviewer judges that changing the vendor
+    integration surface is itself a contract change, this becomes CT-3. Roma's
+    reading is CT-1 and the classification should be confirmed, not assumed.
+  blast_radius:
+    verified: false
+    touches:
+      - SOURCE/worker/src/routes/notifications.ts (POST /webhooks/postmark)
+      - SOURCE/worker/test/notifications.test.ts (7 references)
+      - ARTIFACTS/_design/api-contracts.md (webhook contract)
+
+problem:
+  - The route is UNAUTHENTICATED. It validates payload shape with Zod and claims
+    a D1 idempotency key, but verifies no signature — anyone can inject
+    delivery, bounce and complaint events and corrupt deliverability state.
+  - It is ALSO dead. CHG-008/DR-18 moved outbound transport to Resend, so
+    Postmark no longer calls this endpoint. REQ-NOTIF02 is therefore
+    **currently unserved** — bounces and complaints are not being ingested at
+    all. This is the more consequential half and was not obvious until the route
+    was traced.
+  - So the two failure modes point in opposite directions: deleting the route
+    drops a delivered requirement; leaving it keeps an open injection point on a
+    feature that does not work.
+
+why_not_just_delete:
+  It looked deletable when first raised in FINDING-008. It is not — it carries
+  REQ-NOTIF02 and has 7 test references. Deletion without replacement would
+  silently retire a requirement.
+
+proposed:
+  - Add `POST /webhooks/resend` with signature verification (Resend signs with
+    a webhook secret; verify before any parsing or state change).
+  - Map Resend's event names to the existing deliverability-state transitions,
+    reusing the current D1 idempotency claim, which is sound and stays.
+  - Remove the Postmark route once the replacement is verified, and migrate its
+    7 tests rather than dropping them.
+  - Add `RESEND_WEBHOOK_SECRET` via `wrangler secret put` (never wrangler.toml).
+
+open_questions:
+  - id: OQ-1
+    question: >
+      Has the Resend webhook ever been configured at the provider end? If not,
+      this is not merely a code change — someone must register the endpoint and
+      generate the signing secret before deliverability data flows at all.
+    blocking: true
+  - id: OQ-2
+    question: >
+      How long has REQ-NOTIF02 been unserved, and does any deliverability data
+      shown in the admin console (A4) predate the transport switch? If the
+      console displays stale bounce state as current, that is a separate
+      reporting defect worth raising on its own.
+
+notes:
+  - Interim exposure while deferred: the open endpoint can still be posted to by
+    anyone. Impact is limited to corrupting deliverability state (no PII read,
+    no money path), which is why deferring is defensible — but it is not zero.

@@ -1,0 +1,194 @@
+{
+ "qualityVerdict": "SUFFICIENT",
+ "intent": "extension",
+ "forceIntake": true,
+ "sponsorCheckpoint": true,
+ "inputs": [
+  {
+   "form": "spec",
+   "location": "ARTIFACTS/_config/decisions.tdr.yaml",
+   "reliability": "Reliable",
+   "note": "17 TDRs recovered verbatim from commit 7deff716 (FINDING-009). Sponsor-confirmed 2026-07-28 as the project's constituted technical decisions."
+  },
+  {
+   "form": "requirements",
+   "location": "ARTIFACTS/changes/FR-001-admin-console-on-mac-PROPOSAL.md",
+   "reliability": "Reliable",
+   "note": "Feature request: six workstreams, six sponsor decisions recorded, blast radius traced."
+  }
+ ],
+ "tdrs": [
+  {
+   "id": "TDR-01",
+   "status": "APPROVED",
+   "scope": "stack",
+   "binds": [
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "decision": "Cloudflare-native: Workers (Hono) for APIs, Pages for frontends, D1 (UK) for data, KV for sessions/tokens, R2 for objects, Cron Triggers for scheduled jobs."
+  },
+  {
+   "id": "TDR-02",
+   "status": "APPROVED",
+   "scope": "stack",
+   "binds": [
+    "P3",
+    "P4"
+   ],
+   "decision": "Do NOT use Durable Objects, Cloudflare Queues, AI Gateway, Vectorize, Workers AI, or Cloudflare Access."
+  },
+  {
+   "id": "TDR-03",
+   "status": "APPROVED",
+   "scope": "data",
+   "binds": [
+    "P3",
+    "P4",
+    "P5"
+   ],
+   "decision": "Persistence is Cloudflare D1 (UK); all access goes through the core-data-access layer plus a run-once, in-order migration runner."
+  },
+  {
+   "id": "TDR-04",
+   "status": "APPROVED",
+   "scope": "data",
+   "binds": [
+    "P5"
+   ],
+   "decision": "Money is stored as integer pence; timestamps are ISO-8601 UTC."
+  },
+  {
+   "id": "TDR-05",
+   "status": "APPROVED",
+   "scope": "pattern",
+   "binds": [
+    "P5"
+   ],
+   "decision": "Idempotency (webhooks, cron sends, checkout-session creation) uses a D1 store keyed by the provider event/idempotency key (INSERT OR IGNORE) \u2014 not KV, not a queue."
+  },
+  {
+   "id": "TDR-06",
+   "status": "APPROVED",
+   "scope": "vendor",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "decision": "Payments use Stripe Embedded Checkout (ui_mode:'embedded'); fulfilment driven strictly by the checkout.session.completed webhook, never the return page; cumulative refunds read from charge.amount_refunded."
+  },
+  {
+   "id": "TDR-07",
+   "status": "APPROVED",
+   "scope": "pattern",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "decision": "Auth is JWT (Web Crypto HS256, 1h) plus KV sessions for Customer (signed link) and Owner; Guides authenticate by X-Device-ID validated per guide. No Cloudflare Access."
+  },
+  {
+   "id": "TDR-08",
+   "status": "APPROVED",
+   "scope": "pattern",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "decision": "Departure capacity is enforced by an atomic D1 transactional decrement of held/confirmed counts \u2014 NOT Durable Objects, NOT held_until+sweep."
+  },
+  {
+   "id": "TDR-09",
+   "status": "APPROVED",
+   "scope": "vendor",
+   "binds": [
+    "P4",
+    "P5"
+   ],
+   "decision": "Outbound transactional email is Postmark for v1."
+  },
+  {
+   "id": "TDR-10",
+   "status": "PROPOSED",
+   "scope": "vendor",
+   "binds": [
+    "P4"
+   ],
+   "decision": "SMS/WhatsApp delivery: direct Twilio vs Knock-orchestrated Twilio \u2014 undecided (D-NOTIF-1). Interim: direct Twilio, no orchestration lock-in."
+  },
+  {
+   "id": "TDR-11",
+   "status": "APPROVED",
+   "scope": "deployment",
+   "binds": [
+    "P4"
+   ],
+   "decision": "Deploy to Cloudflare Pages (customer/admin/editor) + Workers (API) on friendsonbikes.uk; prod D1+KV namespaces exist; staging namespaces to be created; secrets set via Wrangler."
+  },
+  {
+   "id": "TDR-12",
+   "status": "SUPERSEDED",
+   "scope": "dev-env",
+   "binds": [
+    "P4",
+    "P5"
+   ],
+   "supersededBy": "DEV-4",
+   "decision": "Canonical source repo is admin-rome (carries CI); rome-dev is spurious/superseded (DR-1). Local dev runs Wrangler against a local D1 \u2014 no in-memory substitute."
+  },
+  {
+   "id": "TDR-13",
+   "status": "SUPERSEDED",
+   "scope": "stack",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "supersededBy": "DEV-3",
+   "decision": "webapp-customer is vanilla static HTML/CSS/JS + Flutter Web island widgets, per-locale static dirs (en/fr/es); webapp-admin/webapp-editor are full Flutter Web SPAs; mobile-guide is Flutter iOS-native (primary) plus Flutter Web PWA (fallback)."
+  },
+  {
+   "id": "TDR-14",
+   "status": "APPROVED",
+   "scope": "pattern",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "decision": "Static publish is manual-only (operator-triggered rebuild of the customer site); no automated on-content-change trigger."
+  },
+  {
+   "id": "TDR-15",
+   "status": "SUPERSEDED",
+   "scope": "dependency",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "supersededBy": "DEV-1",
+   "decision": "Design system = forest-palette CSS tokens + Syne (display) / DM Sans (body), self-hosted variable woff2; every customer surface renders from it; a Flutter component library is to-build."
+  },
+  {
+   "id": "TDR-16",
+   "status": "SUPERSEDED",
+   "scope": "dependency",
+   "binds": [
+    "P3",
+    "P5"
+   ],
+   "supersededBy": "DEV-2",
+   "decision": "The guide app (mobile-guide/GMT) stack is flutter_map + CyclOSM tiles + FMTC offline caching + sembast persistence + flutter_bloc + go_router + GetIt; offline-critical once a tour starts."
+  },
+  {
+   "id": "TDR-17",
+   "status": "APPROVED",
+   "scope": "vendor",
+   "binds": [
+    "P4",
+    "P5"
+   ],
+   "decision": "Advisory APIs: Met Office DataHub (forecast, free tier, via a Worker proxy so the JWT never ships to the browser) and TfL Unified API (use the street field \u2014 road is often null); both read-only, informational at v1."
+  }
+ ]
+}
