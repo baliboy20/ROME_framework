@@ -1,4 +1,0 @@
-STRIPE_SECRET_KEY=sk_test_replace_me
-STRIPE_WEBHOOK_SECRET=whsec_replace_me
-RESEND_API_KEY=re_replace_me
-ADMIN_API_KEY=replace_with_a_random_string

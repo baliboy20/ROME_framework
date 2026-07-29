@@ -1,5 +1,0 @@
-/* FOB webfonts — self-hosted (was Google CDN; embedded locally for CSP-safe rendering).
-   Playfair Display: serif, weights 500/600/700 + italic — titles & money only.
-   Plus Jakarta Sans: sans, weights 400–800 — everything functional.
-   Monospace uses the system ui-monospace stack (ids, codes, micro-labels). */
-@import "../fonts/fonts.css";

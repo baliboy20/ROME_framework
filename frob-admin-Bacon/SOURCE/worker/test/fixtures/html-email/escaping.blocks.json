@@ -1,6 +1,0 @@
-[
-  { "type": "header", "tagline": "<script>alert('x')</script> & \"quotes\"" },
-  { "type": "text", "text": "Fish & chips <b>not bold</b> — merge {{ name }} survives." },
-  { "type": "button", "label": "Click <here> & go", "href": "https://example.com/?a=1&b=\"2\"" },
-  { "type": "footer", "text": "O'Brien & Sons <legal>" }
-]

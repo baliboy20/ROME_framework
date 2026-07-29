@@ -1,24 +1,4 @@
-/ROME/life-cycle/P01-ingest/.idea/.gitignore
-/ROME/life-cycle/P02-analysis/.idea/.gitignore
-/ROME_architect/complete-robot-updates.sh
-/ROME/life-cycle/P01-ingest/.idea/copilot.data.migration.agent.xml
-/ROME/life-cycle/P02-analysis/.idea/copilot.data.migration.agent.xml
-/ROME/life-cycle/P01-ingest/.idea/copilot.data.migration.edit.xml
-/ROME/life-cycle/P02-analysis/.idea/copilot.data.migration.edit.xml
-/ROME/life-cycle/P01-ingest/.idea/caches/deviceStreaming.xml
-/ROME/life-cycle/P02-analysis/.idea/caches/deviceStreaming.xml
-/ROME/life-cycle/P01-ingest/.idea/misc.xml
-/ROME/life-cycle/P02-analysis/.idea/misc.xml
-/ROME/life-cycle/P01-ingest/.idea/modules.xml
-/ROME/life-cycle/P01-ingest/.idea/P01-ingest.iml
-/ROME/life-cycle/P02-analysis/.idea/P02-analysis.iml
-/ROME/life-cycle/P01-ingest/.idea/vcs.xml
-/ROME/life-cycle/P02-analysis/.idea/vcs.xml
-
-# macOS system files
-.DS_Store
-**/.DS_Store
-
-# Node dependencies (installed locally, not committed)
-node_modules/
-**/node_modules/
+# Projects are independent repos — never commit a project into the framework repo.
+# (scaffolded project folders and their symlinks)
+frob-admin-Bacon
+frob-admin-Bacon/
