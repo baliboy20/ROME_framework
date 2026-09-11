@@ -42,18 +42,36 @@ canonicalId = component:logicalName   (e.g. "mobile:OrganisationService")
 
 ## 3. Edge schema (the unit recorded)
 
-Sub-agents return edges in `traceabilityEdges[]`; `processReturn` upserts them into `state.traceability.edges`:
+Two kinds of edge live in `state.traceability.edges`, distinguished by `source` (PROP-058 / AX-42):
+
+- **Scanned** (`source: "scan"`) — every `implements`, `enforces` and `validates` edge. Written only by `guard-cli scan`, which reads the requirement ids out of comments in the source tree (`orchestrator/scan.js`) and replaces the previous scan wholesale. Producers never declare these; a return that does is rejected.
+- **Declared** — `documents` edges only. Sub-agents return them in `traceabilityEdges[]`; `processReturn` upserts them. A declared edge may not cite an artifact of the same return (no self-citation).
+
+A scanned edge:
+
+```json
+{
+  "req": "REQ-012",
+  "artifactId": "mobile:features/org/services/org_service.dart",
+  "satisfiesHow": "implements",
+  "location": "features/org/services/org_service.dart:42",
+  "phase": "P5", "role": "scanner", "agent": "scan",
+  "increment": 3,
+  "source": "scan",
+  "stale": false
+}
+```
+
+A declared (design) edge:
 
 ```json
 {
   "req": "REQ-012",
   "reqField": "Invariants[0]",
-  "artifactId": "mobile:OrganisationService",
-  "satisfiesHow": "enforces",
-  "location": "features/org/services/org_service.dart:42",
-  "phase": "P5",
-  "role": "reena",
-  "agent": "reena-1",
+  "artifactId": "design:api-design",
+  "satisfiesHow": "documents",
+  "location": "ARTIFACTS/_design/api-design.md#create-organisation",
+  "phase": "P3", "role": "pma", "agent": "pma-1",
   "reqVersion": "1.0",
   "stale": false
 }
@@ -64,8 +82,9 @@ Sub-agents return edges in `traceabilityEdges[]`; `processReturn` upserts them i
 | `req` | Yes | REQ-### this edge satisfies |
 | `reqField` | No | Which AORDL field (e.g. `Invariants[0]`, `Postconditions[1]`) |
 | `artifactId` | Yes | Canonical id (`component:logicalName`) |
-| `satisfiesHow` | Yes | `implements` \| `enforces` \| `validates` \| `documents` |
-| `location` | No | `path:line` (code) or `doc.md#section` (design) — consumed by PROP-041 matrix |
+| `satisfiesHow` | Yes | `implements` \| `enforces` \| `validates` (scanned only) \| `documents` (declared only) |
+| `source` | Auto | `scan` on scanned edges; absent on declared |
+| `location` | Scanned: always; declared: Yes | `path:line` (code/test, from the annotation line) or `doc.md#section` (design) |
 | `phase` / `role` / `agent` | Auto | Provenance — set by `processReturn` from the return envelope |
 | `reqVersion` | No | Requirement version at assertion time; enables staleness detection |
 | `stale` | Auto | `true` when the upstream requirement has been amended since assertion |
@@ -105,14 +124,14 @@ Rebuilt by `rebuildIndexes()` after every edge write. Used by `impact.js:compute
 
 ---
 
-## 6. Link-level matrix (PROP-041)
+## 6. Link-level matrix (PROP-041, restored by PROP-058)
 
-`buildMatrix(state, requirements)` projects located edges into per-requirement buckets:
+`buildMatrix(state, requirements)` projects edges into per-requirement buckets and **returns** the result. Nothing stores it. (The field `state.traceability.matrix` that earlier revisions of this section described was never written by any version of the framework; `state.js#load` removes it and audits `MATRIX_FIELD_DROPPED`.)
 
 ```json
 {
   "REQ-012": {
-    "design": ["api-design.md#create-organisation"],
+    "design": ["ARTIFACTS/_design/api-design.md#create-organisation"],
     "code":   ["features/org/services/org_service.dart:42"],
     "tests":  ["features/org/tests/org_service_test.dart:30"],
     "status": "linked"
@@ -120,17 +139,31 @@ Rebuilt by `rebuildIndexes()` after every edge write. Used by `impact.js:compute
 }
 ```
 
-- `design` — edges with `satisfiesHow: documents` and `location` set (section anchor, P3)
-- `code` — edges with `satisfiesHow: implements | enforces` and `location` set (line-level, P5)
-- `tests` — edges with `satisfiesHow: validates` and `location` set (line-level, P5)
+- `design` — declared `documents` edges with a location
+- `code` — **scanned** `implements` / `enforces` edges
+- `tests` — **scanned** `validates` edges
+
+Declared code/test edges are not evidence and are ignored.
 
 **Status:** `linked` (code + tests present) | `partial` (one missing) | `unlinked` (neither)
 
-`checkMatrix(state, requirements, { phase })`:
-- **P3 / P3.5: WARN-only** — always `pass: true`. Warns (in `warnings[]`) only on requirements with **no design-stage link** (empty `design` bucket). A requirement that already has a `documents` anchor is considered covered for design purposes even before its code and tests exist, so it is *not* warned — design-stage links are legitimately ahead of implementation.
-- **P5: STRICT** — `pass: false` if any req is `partial` or `unlinked`; `failures[]` lists them. (A design-only requirement is `partial` here and correctly fails — code and tests are now expected.)
+`checkMatrix(state, requirements?, { phase })` — `requirements` is an override for reports and tests; the gate path reads the increment scope (§9):
+- **P3 / P3.5: WARN-only** — always `pass: true`; warns on requirements with no design link.
+- **P5: STRICT** — `pass: false` if any in-scope requirement is `partial` or `unlinked`, **or** if any requirement recorded `linked` at the previous sealed increment is no longer `linked` (regression, whatever this increment's scope).
+- **No scope recorded → INCONCLUSIVE** (`pass: false`, `state: 'INCONCLUSIVE'`).
 
-Query via CLI: `guard-cli.cjs trace <state.json> --req REQ-012`
+**Annotation (the producer's duty).** A source or test file satisfies a requirement when a comment in it contains the requirement id, matching `id_pattern` in `lib/registry/validate-aordl.yaml`. Any comment form counts; abbreviated runs (`REQ-FLEET09/10/11`) expand. Ids in string literals or code do not count. A file under the project's test paths (`state.traceability.testPaths`, default `test/`, `tests/`, `__tests__/`, `*_test.*`, `*.test.*`, `*.spec.*`) yields `validates`; any other file yields `implements`. Component comes from `state.traceability.componentRoots` (`{ component: pathPrefix }`), null when unmapped.
+
+Commands:
+
+```
+guard-cli.cjs scope  <state.json> --ts <iso> (--from-corpus | --req REQ-A,REQ-B)   # set increment scope
+guard-cli.cjs scan   <state.json> --ts <iso> [--req REQ-012] [--json]              # derive + persist code/test links
+guard-cli.cjs verify <state.json> --ts <iso> --phase P5                            # compute + record traceability/matrix/testAdequacy
+guard-cli.cjs trace  <state.json> --req REQ-012                                    # computed view, sources labelled
+```
+
+`scan` also reports **unattributed** files (source with no requirement id — WARN at v3.5.0, FAIL from the next MINOR) and **unknown ids** (annotations naming no requirement file — FAIL at P5).
 
 ---
 
@@ -175,6 +208,8 @@ GATE-P2 requires `sponsorOq` to pass before advance.
 | GATE-P4 | `secrets`, `traceability` |
 | GATE-P5 | `executability`, `testAdequacy`, `secrets`, `contracts`, `traceability`, `matrix` (strict) |
 
+**Scope and recording (PROP-058).** `traceability`, `matrix` and `testAdequacy` run over `active(state).scope.requirements`, set by `guard-cli scope` (or automatically at intake from the corpus, and at change-begin from the change's traced requirements). They are computed and recorded by `guard-cli verify`; `guard-cli check`/`advance` recomputes them and refuses a record that disagrees (AX-40). `testAdequacy` reads `state.traceability.testCoverage`, the union of every increment's `testManifest`, so a mature requirement's earlier tests count. Each returns a third state, `INCONCLUSIVE`, when scope is unset or empty or nothing was assessed; the guard treats it as not passing.
+
 ---
 
 ## 10. Backward compatibility
@@ -188,5 +223,6 @@ GATE-P2 requires `sponsorOq` to pass before advance.
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — chain, delta schema, coverage; documents PROP-034 Track A behaviour. |
+| 3.0 | 2026-09-11 | PROP-058: code/test edges are scanned from source comments (`source: scan`), never declared; `documents` edges may not self-cite; matrix computed only (`state.traceability.matrix` dropped on load — it never had a writer); scope from increment record; `INCONCLUSIVE` state; regression rule at P5; `testCoverage` union; `scope`/`scan`/`verify` commands. |
 | 2.0 | 2026-06-19 | PROP-042: bipartite edge store, artifact identity (component:logicalName), typed edges, three-level coverage (linked/implemented/verified), staleness via `stale` flag, byReq/byArtifact indexes. PROP-041: link-level matrix (buildMatrix/checkMatrix), sponsor-OQ gating (checkSponsorOq, state.oq), `trace` CLI command. Backward compat with delta format retained. |
 | 2.1 | 2026-06-20 | Wired change-handling enforcement: `applyChange` (CR entry — stales changed-requirement edges + computes impact, AC5), `resolveDeferral` (sponsor answer → stale affectedReqs for scoped re-gen, B4/A5), and deferral-authorization enforcement in `checkSponsorOq` (`sponsorAuthorized` required; unauthorized deferral blocks the gate, B3). Corrected gate table (P4 has no matrix check; added P3.5). |

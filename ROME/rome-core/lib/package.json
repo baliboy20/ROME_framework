@@ -1,12 +1,16 @@
 {
   "name": "rome-core-lib",
   "version": "1.0.0",
-  "description": "ROME core deterministic libraries — AORDL parser/validator, artifact annotation",
+  "description": "ROME core deterministic libraries \u2014 AORDL parser/validator, artifact annotation",
   "private": true,
   "scripts": {
-    "test": "node tests/run-tests.cjs && node aordl-parser/validate-aordl.test.cjs"
+    "test": "node tests/run-tests.cjs && node aordl-parser/validate-aordl.test.cjs",
+    "validate-aordl": "node aordl-parser/validate-aordl.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
+  },
+  "bin": {
+    "validate-aordl": "aordl-parser/validate-aordl.js"
   }
 }

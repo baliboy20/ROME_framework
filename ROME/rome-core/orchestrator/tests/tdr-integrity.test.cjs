@@ -6,6 +6,7 @@
  * assumed a register that reflects reality.
  * Pure, headless. Run: node tests/tdr-integrity.test.cjs
  */
+const { routeFromICR } = require('../routing');
 const { createState, active, finalizeIntake, load, save } = require('../state');
 const { recordTdrDeviation, resolveTdrDeviation } = require('../guard');
 const { checkTdrConformance } = require('../verification');
@@ -115,6 +116,43 @@ console.log('TDR register integrity (PROP-056):');
   // AX-29/AX-30 reinforcement: whole-TDR approved deviation exempts conformance
   const r = checkTdrConformance(s, 'P3', ['TDR-02']);
   ok('AX-29: whole-TDR sponsor-approved deviation exempts the TDR from citation', r.pass === true);
+}
+
+
+// ── AX-36: routing must preserve "no opinion" end-to-end (CHG-118, adopted from frob-admin-Bacon) ──
+const ICR64 = Object.freeze({ intent: 'feature', qualityVerdict: 'SUFFICIENT', inputs: [{ form: 'note', location: 'brief.md', reliability: 'Reliable' }] });
+{
+  const routed = routeFromICR({ ...ICR64 });
+  ok('CHG-118: an ICR with no tdrs key routes with no tdrs key', !('tdrs' in routed));
+}
+{
+  const s = populated();
+  const routed = routeFromICR({ ...ICR64 });
+  let err = null;
+  try { finalizeIntake(s, routed, TS); } catch (e) { err = e; }
+  ok('CHG-118: intake carrying no TDRs against a populated register is accepted', err === null && s.tdrs.length === 2);
+  const fin = s.audit.filter(a => a.event === 'INTAKE_FINALIZED').pop();
+  ok('CHG-118: the accepted intake audits the register it left alone', !!fin && fin.tdrs === 2);
+}
+{
+  const s = populated();
+  const routed = routeFromICR({ ...ICR64, tdrs: [] });
+  ok('CHG-118: an ICR that explicitly asserts tdrs:[] is still refused',
+    Array.isArray(routed.tdrs) && threw(/clearTdrs|drop/i, () => finalizeIntake(s, routed, TS)) && s.tdrs.length === 2);
+}
+{
+  // CHG-119: infra constraints are never replaced silently.
+  const s = populated(); s.infraConstraints = { hosting: 'cloudflare' };
+  ok('CHG-119: an ICR with no infraConstraints key leaves the record unchanged',
+    (() => { finalizeIntake(s, routeFromICR({ ...ICR64 }), TS); return s.infraConstraints && s.infraConstraints.hosting === 'cloudflare'; })());
+  const s2 = populated(); s2.infraConstraints = { hosting: 'cloudflare' };
+  ok('CHG-119: a different value without replaceInfraConstraints is refused',
+    threw(/replaceInfraConstraints/, () => finalizeIntake(s2, routeFromICR({ ...ICR64, infraConstraints: null }), TS)) && s2.infraConstraints.hosting === 'cloudflare');
+  const s3 = populated(); s3.infraConstraints = { hosting: 'cloudflare' };
+  finalizeIntake(s3, routeFromICR({ ...ICR64, infraConstraints: { hosting: 'fly' }, replaceInfraConstraints: true }), TS);
+  ok('CHG-119: deliberate replacement is accepted and audited', s3.infraConstraints.hosting === 'fly' && s3.audit.some(a => a.event === 'INFRA_CONSTRAINTS_REPLACED'));
+  const s4 = populated(); s4.infraConstraints = { hosting: 'cloudflare' };
+  ok('CHG-120: clearTdrs on the ICR reaches the guard', (() => { finalizeIntake(s4, routeFromICR({ ...ICR64, tdrs: [], clearTdrs: true }), TS); return s4.tdrs.length === 0 && s4.audit.some(a => a.event === 'TDR_REGISTER_REDUCED'); })());
 }
 
 console.log(`\n${passed} passed, ${failed} failed`);

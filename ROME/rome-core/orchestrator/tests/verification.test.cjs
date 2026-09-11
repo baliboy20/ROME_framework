@@ -1,7 +1,7 @@
 /** Verification module regression (PROP-035 §3.5 hardening + PROP-042 edge path + PROP-041 matrix/sponsorOq). Run: node tests/verification.test.cjs */
 const { createState, active } = require('../state');
 const { recordDispatch, processReturn } = require('../subagent');
-const { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkDesignAssets } = require('../verification');
+const { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkDesignAssets, applyScan } = require('../verification');
 
 const TS = '2026-06-19T00:00:00Z';
 let passed = 0, failed = 0;
@@ -13,6 +13,7 @@ function withDeltas(deltas) {
   return s;
 }
 
+function scan(s, edges) { applyScan(s, { edges: edges.map(e => ({ artifactPath: e.artifactId, component: null, ...e })), files: 0, unattributed: [], unknownIds: [] }, TS); return s; }
 function withEdges(edges) {
   const s = createState({ project: 'v', frameworkVersion: 't', timestamp: TS });
   recordDispatch(s, { agent: 'a', role: 'x', phase: 'P5', timestamp: TS });
@@ -32,15 +33,16 @@ console.log('verification regression:');
 
 // traceability completeness (ALWAYS-on)
 (() => {
-  const s = withDeltas([{ requirement: 'REQ-001', produces: 'a.md' }]);
-  ok('req with a delta passes (non-test mode)', checkTraceability(s, ['REQ-001']).pass === true);
+  const s = withEdges([{ req: 'REQ-001', artifactId: 'Spec', satisfiesHow: 'documents', location: 'a.md#x' }]);
+  ok('req with a design edge passes (non-test mode)', checkTraceability(s, ['REQ-001']).pass === true);
   ok('missing req fails', checkTraceability(s, ['REQ-001', 'REQ-002']).pass === false);
+  ok('PROP-058: legacy deltas are not evidence', checkTraceability(withDeltas([{ requirement: 'REQ-001', produces: 'a.md' }]), ['REQ-001']).pass === false);
 
-  // P5 requires BOTH code and test per requirement
-  const s2 = withDeltas([
-    { requirement: 'REQ-001', produces: 'user.js' },
-    { requirement: 'REQ-001', produces: 'user.test.js' },
-    { requirement: 'REQ-002', produces: 'order.js' }, // no test
+  // P5 requires BOTH scanned code and scanned test per requirement
+  const s2 = scan(createState({ project: 'v', frameworkVersion: 't', timestamp: TS }), [
+    { req: 'REQ-001', artifactId: 'user.js', satisfiesHow: 'implements', location: 'user.js:1' },
+    { req: 'REQ-001', artifactId: 'user.test.js', satisfiesHow: 'validates', location: 'user.test.js:1' },
+    { req: 'REQ-002', artifactId: 'order.js', satisfiesHow: 'implements', location: 'order.js:1' }, // no test
   ]);
   const r = checkTraceability(s2, ['REQ-001', 'REQ-002'], { requireTest: true });
   ok('REQ with code+test passes; REQ without test fails', r.pass === false &&
@@ -50,30 +52,37 @@ console.log('verification regression:');
 // MVP test adequacy (declared Outcomes + Errors must be tested — no more)
 (() => {
   const aordl = [{ ID: 'REQ-001', Outcomes: ['invoice saved'], Errors: [{ error: 'empty' }, { error: 'inactive' }] }];
-  const good = checkTestAdequacy([{ requirement: 'REQ-001', outcomesTested: true, errorsTested: ['empty', 'inactive'] }], aordl);
-  ok('MVP adequacy passes when outcomes + all errors tested', good.pass === true);
+  const withCov = (cov) => { const s = createState({ project: 'v', frameworkVersion: 't', timestamp: TS }); s.traceability.testCoverage = cov; return s; };
+  const R = { requirements: ['REQ-001'] };
+  const good = checkTestAdequacy(withCov({ 'REQ-001': { outcomesTested: true, errorsTested: ['empty', 'inactive'] } }), aordl, R);
+  ok('MVP adequacy passes when outcomes + all errors tested', good.pass === true && good.state === 'PASS');
 
-  const missErr = checkTestAdequacy([{ requirement: 'REQ-001', outcomesTested: true, errorsTested: ['empty'] }], aordl);
+  const missErr = checkTestAdequacy(withCov({ 'REQ-001': { outcomesTested: true, errorsTested: ['empty'] } }), aordl, R);
   ok('fails when a declared error untested', missErr.pass === false && /error conditions tested/.test(missErr.gaps[0].reason));
 
-  const missOut = checkTestAdequacy([{ requirement: 'REQ-001', outcomesTested: false, errorsTested: ['empty', 'inactive'] }], aordl);
-  ok('fails when happy-path outcome untested', missOut.pass === false);
+  const missOut = checkTestAdequacy(withCov({ 'REQ-001': { outcomesTested: false, errorsTested: ['empty', 'inactive'] } }), aordl, R);
+  ok('fails when happy-path outcome untested', missOut.pass === false && missOut.state === 'FAIL');
 
-  const noTests = checkTestAdequacy([], aordl);
-  ok('fails when a requirement has no tests reported', noTests.pass === false);
+  const noTests = checkTestAdequacy(withCov({}), aordl, R);
+  ok('PROP-058: no coverage at all is INCONCLUSIVE, not PASS and not a plain FAIL', noTests.pass === false && noTests.state === 'INCONCLUSIVE');
+
+  const noScope = checkTestAdequacy(withCov({ 'REQ-001': { outcomesTested: true, errorsTested: ['empty', 'inactive'] } }), aordl);
+  ok('PROP-058: no recorded scope is INCONCLUSIVE even with full coverage', noScope.pass === false && noScope.state === 'INCONCLUSIVE');
+  const emptyScope = checkTestAdequacy(withCov({ 'REQ-001': { outcomesTested: true, errorsTested: ['empty', 'inactive'] } }), aordl, { requirements: [] });
+  ok('PROP-058: empty scope is INCONCLUSIVE (the increment-59 fault)', emptyScope.pass === false && emptyScope.state === 'INCONCLUSIVE');
 
   // MVP: a requirement with no declared errors needs only its outcome — not gold-plating
-  const minimal = checkTestAdequacy([{ requirement: 'REQ-009', outcomesTested: true, errorsTested: [] }],
-    [{ ID: 'REQ-009', Outcomes: ['done'], Errors: [] }]);
+  const minimal = checkTestAdequacy(withCov({ 'REQ-009': { outcomesTested: true, errorsTested: [] } }),
+    [{ ID: 'REQ-009', Outcomes: ['done'], Errors: [] }], { requirements: ['REQ-009'] });
   ok('MVP: no declared errors → only outcome required', minimal.pass === true);
 })();
 
 // PROP-042: edge-based checkTraceability
 (() => {
-  const s = withEdges([
-    { req: 'REQ-001', artifactId: 'Svc', satisfiesHow: 'implements' },
-    { req: 'REQ-001', artifactId: 'SvcTest', satisfiesHow: 'validates' },
-    { req: 'REQ-002', artifactId: 'Svc', satisfiesHow: 'implements' },
+  const s = scan(createState({ project: 'v', frameworkVersion: 't', timestamp: TS }), [
+    { req: 'REQ-001', artifactId: 'Svc', satisfiesHow: 'implements', location: 'svc.dart:1' },
+    { req: 'REQ-001', artifactId: 'SvcTest', satisfiesHow: 'validates', location: 'svc_test.dart:1' },
+    { req: 'REQ-002', artifactId: 'Svc', satisfiesHow: 'implements', location: 'svc.dart:9' },
     // REQ-002 has no validates edge
   ]);
   ok('edge path: req with any edge passes (non-test mode)', checkTraceability(s, ['REQ-001']).pass === true);
@@ -92,13 +101,15 @@ console.log('verification regression:');
 (() => {
   const s = withEdges([
     { req: 'REQ-001', artifactId: 'ApiSpec', satisfiesHow: 'documents',  location: 'api-design.md#create-org' },
+  ]);
+  scan(s, [
     { req: 'REQ-001', artifactId: 'OrgSvc',  satisfiesHow: 'implements', location: 'org_service.dart:42' },
     { req: 'REQ-001', artifactId: 'OrgTest', satisfiesHow: 'validates',  location: 'org_service_test.dart:30' },
     { req: 'REQ-002', artifactId: 'OrgSvc',  satisfiesHow: 'implements', location: 'org_service.dart:88' },
     // REQ-002 has no test location → partial
-    { req: 'REQ-003', artifactId: 'Foo',     satisfiesHow: 'implements' },
-    // REQ-003 edge has no location field → unlinked in matrix
   ]);
+  // REQ-003: a DECLARED code edge is not evidence (PROP-058) → unlinked in matrix
+  s.traceability.edges.push({ req: 'REQ-003', artifactId: 'Foo', satisfiesHow: 'implements', location: 'foo.dart:1', phase: 'P5', stale: false });
   const reqs = ['REQ-001', 'REQ-002', 'REQ-003'];
   const matrix = buildMatrix(s, reqs);
 
@@ -107,7 +118,7 @@ console.log('verification regression:');
   ok('matrix: REQ-001 has code entry', matrix['REQ-001'].code.includes('org_service.dart:42'));
   ok('matrix: REQ-001 has test entry', matrix['REQ-001'].tests.includes('org_service_test.dart:30'));
   ok('matrix: REQ-002 status = partial (code but no test)', matrix['REQ-002'].status === 'partial');
-  ok('matrix: REQ-003 status = unlinked (no location on edge)', matrix['REQ-003'].status === 'unlinked');
+  ok('matrix: REQ-003 status = unlinked (declared code edge is not evidence)', matrix['REQ-003'].status === 'unlinked');
 
   // P3: warn-only — always passes; warns only on reqs lacking a design link
   const p3 = checkMatrix(s, reqs, { phase: 'P3' });
@@ -130,11 +141,12 @@ console.log('verification regression:');
   ok('checkMatrix P5: REQ-001 not in failures', !p5.failures.includes('REQ-001'));
 
   // fully linked set passes P5
-  const s2 = withEdges([
+  const s2 = scan(createState({ project: 'v', frameworkVersion: 't', timestamp: TS }), [
     { req: 'REQ-001', artifactId: 'S', satisfiesHow: 'implements', location: 'svc.dart:1' },
     { req: 'REQ-001', artifactId: 'T', satisfiesHow: 'validates',  location: 'svc_test.dart:1' },
   ]);
   ok('checkMatrix P5: fully linked set passes', checkMatrix(s2, ['REQ-001'], { phase: 'P5' }).pass === true);
+  ok('PROP-058: checkMatrix without scope is INCONCLUSIVE', checkMatrix(s2, undefined, { phase: 'P5' }).state === 'INCONCLUSIVE');
 })();
 
 // PROP-041: checkSponsorOq + openQuestions in processReturn
@@ -212,8 +224,10 @@ console.log('verification regression:');
 // D17 — checkTraceability and buildMatrix agree that `enforces` counts as code.
 (() => {
   const s = createState({ project: 'd17', frameworkVersion: 't', timestamp: TS });
-  s.traceability.edges.push({ req: 'REQ-106', artifactId: 'api:guard', satisfiesHow: 'enforces', location: 'require-owner.ts:3', phase: 'P5', stale: false });
-  s.traceability.edges.push({ req: 'REQ-106', artifactId: 'api:guard.test', satisfiesHow: 'validates', location: 'x.test.ts:1', phase: 'P5', stale: false });
+  scan(s, [
+    { req: 'REQ-106', artifactId: 'api:guard', satisfiesHow: 'enforces', location: 'require-owner.ts:3' },
+    { req: 'REQ-106', artifactId: 'api:guard.test', satisfiesHow: 'validates', location: 'x.test.ts:1' },
+  ]);
   const trace = checkTraceability(s, ['REQ-106'], { requireTest: true });
   ok('D17: enforces-only req passes checkTraceability requireTest', trace.pass === true);
   const matrix = buildMatrix(s, ['REQ-106']);
@@ -231,8 +245,9 @@ console.log('verification regression:');
     testManifest: [{ req: 'REQ-1', outcomesTested: true, errorsTested: ['E1'] }],
   }, TS);
   ok('D7: testManifest merged into state', active(s).testManifest.length === 1 && active(s).testManifest[0].req === 'REQ-1');
-  const ta = checkTestAdequacy(active(s).testManifest, [{ ID: 'REQ-1', Outcomes: ['o'], Errors: [{ error: 'E1' }] }]);
-  ok('D7: checkTestAdequacy reads merged manifest (no false "no tests")', ta.pass === true);
+  ok('PROP-058: manifest merged into project-level testCoverage', s.traceability.testCoverage['REQ-1'] && s.traceability.testCoverage['REQ-1'].errorsTested.includes('E1'));
+  const ta = checkTestAdequacy(s, [{ ID: 'REQ-1', Outcomes: ['o'], Errors: [{ error: 'E1' }] }], { requirements: ['REQ-1'] });
+  ok('D7: checkTestAdequacy reads accumulated coverage (no false "no tests")', ta.pass === true);
 })();
 
 // AX-26 — design assets required at P3 for ui-app projects (D5 fix).

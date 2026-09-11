@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.8 |
-| **Date** | 2026-07-16T00:00:00Z |
+| **Version** | 1.9 |
+| **Date** | 2026-09-11T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
 | **Author** | Archie |
@@ -141,6 +141,9 @@ contiguous with its siblings.)
 | AX-37 | A deviation strips a TDR's authority only within its declared scope: scoped sponsor approval records a carve-out and the TDR remains APPROVED and binding for every other scope; only an unscoped (whole-TDR) approval supersedes it. A fully superseded TDR refuses further deviations; an already-carved scope refuses re-deviation. | ENFORCED (`guard.js#recordTdrDeviation`/`#resolveTdrDeviation` scope handling; `verification.js#checkTdrConformance` counts only unscoped approvals as exemption; PROP-056) |
 | AX-38 | Business flow is authored and sponsor-confirmed, never inferred into bindingness: GATE-P1 requires every FLOW validator-clean and SPONSOR_CONFIRMED (with recorded Confirmation), or a recorded sponsor flows-omission. Generated skeletons are drafts until confirmed; absence of journeys is a decision, never a default. | ENFORCED (`verification.js#checkFlowValidation` as required `flowValidation` fact via `guard.js#canAdvance`; `state.js#recordFlowsOmission` refuses non-sponsor omission; PROP-057) |
 | AX-39 | No unrouted failure: every error declared by a requirement referenced in a flow has an explicit onward route (step or terminal). UNROUTED survives only in DRAFT; a confirmed flow carrying one fails validation, and a route for an error the requirement no longer declares fails as stale. | ENFORCED (`flow-lib.cjs#validateFlow` V4a/V4b; PROP-057) |
+| AX-40 | Nothing derived is stored without a recomputation that can contradict it. `byReq`/`byArtifact` are recomputed from edges, `testCoverage` from the union of increment manifests, and every requirement-scoped fact from a fresh check before `guard-cli check`/`advance` trusts the record. A stored value that disagrees with its recomputation is refused, whatever it says. The stored `traceability.matrix` that no version ever wrote is dropped on load. | ENFORCED (`axioms.js#checkDerivedValues`; `guard-cli.cjs#driftedFacts` on check/advance; `state.js#load` drop; PROP-058) |
+| AX-41 | A mechanical fact declared in `lifecycle.js#requires` has a checker function, or its absence is a failing test — never a silent gap satisfied by assertion. Known without a checker at v3.5.0: `aordl`, `secrets`, `integration`, `contracts`, `executability`; each is its own proposal. | CHECKED (`tests/axioms.test.cjs` AX-41 enumerates `requires` against `verification.js`; PROP-058 §2.7) |
+| AX-42 | Code and test traceability is READ FROM SOURCE, never declared: a file satisfies a requirement when a comment in it carries the requirement id, and `guard-cli scan` derives the links. A producer return that declares an `implements`/`enforces`/`validates` edge is rejected. Design links stay declared but may not cite their own document. Requirement scope for every scoped fact comes from the increment record, never from the caller; an unset or empty scope is INCONCLUSIVE, which the guard treats as not passing. | ENFORCED (`scan.js`; `subagent.js#validateReturn`; `verification.js#scopeOf`; `state.js#setScope`; PROP-058) |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
 
@@ -187,6 +190,7 @@ contiguous with its siblings.)
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.9 | 2026-09-11T00:00:00Z | PROP-058 implemented (v3.5.0): AX-40 (derived values recomputed, stored matrix dropped), AX-41 (every required fact has a checker or a failing test), AX-42 (code/test traceability scanned from source; scope from state; INCONCLUSIVE third state). |
 | 1.8 | 2026-07-29T00:00:00Z | PROP-057 implemented (v3.4.0). Added ENT-21 Flow, REL-25/26, AX-38 flows sponsor-confirmed or omission recorded (ENFORCED via `checkFlowValidation` gate fact + `recordFlowsOmission`), AX-39 no unrouted failure (ENFORCED via `validateFlow` V4a/V4b). Tagged violation tests in `flows.test.cjs`. |
 | 1.7 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1). Added AX-36 TDR register integrity — no silent shrink, empty-after-populated fails conformance, monotonic DEV ids (ENFORCED) and AX-37 scope-bounded deviation authority — carve-outs, whole-TDR supersession only when unscoped (ENFORCED). Tagged violation tests in `tdr-integrity.test.cjs`. Field defect source: frob-admin-Bacon (ROME-DEFECT-001). |
 | 1.6 | 2026-07-27T00:00:00Z | PROP-054/055 implemented (v3.3.0). Added AX-31..35: AX-31 trace-verified change classification (ENFORCED via `routeChange`/`classifyChange`/`beginChange` refusals), AX-32 no untraced delivery — every change path ends at a guard-evidenced gate (ENFORCED via change-scoped increments), AX-33 sponsor register + one-voice questions (ASSERTED; Seez inheritance fidelity-checked), AX-34 declared conventionLevel + compatibility read mode (ENFORCED), AX-35 no unreachable version — per-boundary migration steps, ladder refuses holes (ENFORCED). Tagged violation tests in `changes-upgrade.test.cjs`. |

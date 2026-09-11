@@ -160,6 +160,20 @@ state.conventionLevel = to;
 state.audit.push({ event: 'CONVENTION_UPGRADED', from, to, boundaries: ladder.length, gaps: gaps.length, timestamp: ts });
 save(statePath, state, ts);
 
+
+/** PROP-058 §2.8: a vendored copy declares its dependency in rome-core/lib/package.json
+ *  but the copy filter drops node_modules, so install there or the AORDL validator
+ *  and flow tools cannot load js-yaml. Failure is reported, never hidden. */
+function installVendoredDeps(dest) {
+  const lib = path.join(dest, 'rome-core', 'lib');
+  if (!fs.existsSync(path.join(lib, 'package.json'))) return;
+  try {
+    require('child_process').execFileSync('npm', ['install', '--omit=dev', '--no-audit', '--no-fund', '--loglevel=error'], { cwd: lib, stdio: 'inherit' });
+  } catch (e) {
+    console.error(`WARNING: npm install failed in ${lib} — run it by hand or the AORDL validator will not load (${e.message})`);
+  }
+}
+
 // 5. engine swap LAST (vendored projects only)
 const romeDir = path.join(projectDir, '.rome');
 if (fs.existsSync(romeDir)) {
@@ -170,6 +184,7 @@ if (fs.existsSync(romeDir)) {
     recursive: true,
     filter: (src) => !/(\/|^)(node_modules|\.git)(\/|$)/.test(src.slice(FRAMEWORK_ROOT.length)),
   });
+  installVendoredDeps(romeDir);
   console.log(`Engine swapped: old → .rome-prev/${from}/, new v${to} vendored into .rome/`);
 } else {
   console.log('Project is not vendored — no engine swap.');

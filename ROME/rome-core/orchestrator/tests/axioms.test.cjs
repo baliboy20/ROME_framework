@@ -148,4 +148,24 @@ console.log('axiom regression:');
 
 console.log(`\nResults: ${passed} passed, ${failed} failed`);
 if (failed > 0) { console.log('AXIOM TESTS FAILED'); process.exit(1); }
+
+// ── AX-41 (PROP-058 §2.7): every required mechanical fact key has a checker ──
+// This test names the keys KNOWN to lack one, so it fails when a checker is
+// added (update the list) and when a new key is added without one.
+{
+  const { PHASES } = require('../lifecycle');
+  const V = require('../verification');
+  const CHECKER = {
+    traceability: V.checkTraceability, matrix: V.checkMatrix, testAdequacy: V.checkTestAdequacy,
+    sponsorOq: V.checkSponsorOq, stageConsistency: V.checkStageConsistency, designAssets: V.checkDesignAssets,
+    sponsorArch: V.checkSponsorAib, sponsorInfra: V.checkSponsorAib, tdrConformance: V.checkTdrConformance,
+    flowValidation: V.checkFlowValidation,
+  };
+  const keys = [...new Set(PHASES.flatMap(p => p.requires || []))].sort();
+  const missing = keys.filter(k => typeof CHECKER[k] !== 'function').sort();
+  const KNOWN_MISSING = ['aordl', 'contracts', 'executability', 'integration', 'secrets'];
+  ok(`AX-41: required fact keys without a checker are exactly the known five (${missing.join(', ') || 'none'})`, JSON.stringify(missing) === JSON.stringify(KNOWN_MISSING));
+  ok('AX-40: checkDerivedValues is part of checkAll', require('../axioms').checkAll(require('../state').createState({ project: 'x', timestamp: '2026-01-01T00:00:00Z' })).results.some(r => r.axiom === 'AX-40' && r.pass));
+}
+
 console.log('All axiom tests passed!');

@@ -109,6 +109,20 @@ function validateReturn(ret) {
     if (!['implements', 'enforces', 'validates', 'documents'].includes(e.satisfiesHow)) {
       errs.push(`edge satisfiesHow "${e.satisfiesHow}" must be implements|enforces|validates|documents`); break;
     }
+    // PROP-058 §2.1: code and test links are SCANNED from source comments, never
+    // declared. Two sources for one fact is the defect being removed.
+    if (e.satisfiesHow !== 'documents') {
+      errs.push(`edge ${e.req}→${e.artifactId} (${e.satisfiesHow}): code/test links are not declared — write the requirement id in a comment in the file and run guard-cli scan (PROP-058)`); break;
+    }
+    // PROP-058 §2.6: a design link must reach a different artifact than the one
+    // that declares it. Self-citation is not coverage.
+    if (e.location) {
+      const locPath = String(e.location).split('#')[0].split(':')[0];
+      const own = (ret.artifacts || []).map(a => (typeof a === 'string' ? a : a && a.path)).filter(Boolean);
+      if (own.some(p => p === locPath || p.endsWith('/' + locPath) || locPath.endsWith('/' + p))) {
+        errs.push(`edge ${e.req}→${e.artifactId} cites ${locPath}, an artifact of this same return — a design link may not cite its own document (PROP-058 §2.6)`); break;
+      }
+    }
   }
   if (ret.status === RETURN_STATUS.BLOCKED && !(Array.isArray(ret.blockers) && ret.blockers.length)) {
     errs.push('BLOCKED return must include blockers[]');
@@ -255,11 +269,19 @@ function processReturn(state, ret, timestamp) {
   // Upsert by `req` (canonical, matching edges); latest assertion wins.
   if (Array.isArray(ret.testManifest) && ret.testManifest.length) {
     inc.testManifest = inc.testManifest || [];
+    state.traceability.testCoverage = state.traceability.testCoverage || {};
     for (const m of ret.testManifest) {
       const req = m.req || m.requirement;
       const entry = { req, outcomesTested: !!m.outcomesTested, errorsTested: m.errorsTested || [] };
       const existing = inc.testManifest.find(x => x.req === req);
       if (existing) Object.assign(existing, entry); else inc.testManifest.push(entry);
+      // PROP-058 §2.5: project-level coverage is the UNION across increments, so
+      // a later increment claiming a mature requirement inherits earlier tests.
+      const cov = state.traceability.testCoverage[req] || { outcomesTested: false, errorsTested: [] };
+      cov.outcomesTested = cov.outcomesTested || entry.outcomesTested;
+      cov.errorsTested = [...new Set([...cov.errorsTested, ...entry.errorsTested])];
+      cov.lastIncrement = inc.id;
+      state.traceability.testCoverage[req] = cov;
     }
   }
 
@@ -345,5 +367,5 @@ function coverage(state) {
 module.exports = {
   RETURN_STATUS, DEFAULT_ROLES_DIR,
   loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
-  canonicalId, rebuildIndexes,
+  canonicalId, rebuildIndexes, upsertArtifact, upsertEdge,
 };

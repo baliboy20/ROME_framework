@@ -105,13 +105,26 @@ function routeFromICR(icr = {}) {
 
   // PROP-052: TDRs extracted by Surveyor (canonical decisions.tdr.yaml) pass
   // through to project state; PROP-051: infra constraints likewise.
-  const tdrs = icr.tdrs || [];
-  const approvedTdrs = tdrs.filter(t => t.status === 'APPROVED').length;
-  if (tdrs.length) notes.push(`${tdrs.length} TDR(s) routed (${approvedTdrs} APPROVED — bind P3/P4/P5 per their binds field)`);
+  // PROP-058 §2.8 (CHG-118/119): a key the record did not carry is not put on
+  // the result. Omitted and [] must stay distinguishable downstream (AX-36).
+  const tdrs = Array.isArray(icr.tdrs) ? icr.tdrs : null;
+  if (tdrs) {
+    const approvedTdrs = tdrs.filter(t => t.status === 'APPROVED').length;
+    if (tdrs.length) notes.push(`${tdrs.length} TDR(s) routed (${approvedTdrs} APPROVED — bind P3/P4/P5 per their binds field)`);
+    else notes.push('intake asserts an empty TDR register');
+  } else {
+    notes.push('intake carries no TDRs — existing register left unchanged');
+  }
   const sponsorCheckpointOmitted = icr.sponsorCheckpoint === false;
   if (sponsorCheckpointOmitted) notes.push('sponsor P3/P4 checkpoint omitted (sponsor-authorized)');
 
-  return { routing: resolveRouting(phases), reverseFirst, notes, tdrs, infraConstraints: icr.infraConstraints || null, sponsorCheckpointOmitted };
+  return {
+    routing: resolveRouting(phases), reverseFirst, notes, sponsorCheckpointOmitted,
+    ...(tdrs ? { tdrs } : {}),
+    ...(icr.clearTdrs === true ? { clearTdrs: true } : {}),
+    ...(icr.infraConstraints !== undefined ? { infraConstraints: icr.infraConstraints } : {}),
+    ...(icr.replaceInfraConstraints === true ? { replaceInfraConstraints: true } : {}),
+  };
 }
 
 

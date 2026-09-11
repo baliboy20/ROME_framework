@@ -1,6 +1,7 @@
 /** Impact analysis (040 E) + expert-pack selection (040 F). Run: node tests/impact-experts.test.cjs */
 const { computeImpact, downstreamClosure, markStale, applyChange, resolveDeferral } = require('../impact');
 const { selectPacks, enforcedRules, loadPacks } = require('../experts');
+const { applyScan } = require('../verification');
 const { createState, active } = require('../state');
 const { recordDispatch, processReturn } = require('../subagent');
 
@@ -56,12 +57,13 @@ const deltas = [{ requirement: 'REQ-001', component: 'billing' }, { requirement:
   processReturn(s, {
     agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE',
     summary: 's', artifacts: [],
-    traceabilityEdges: [
-      { req: 'REQ-001', artifactId: 'backend:OrgSvc', satisfiesHow: 'implements' },
-      { req: 'REQ-001', artifactId: 'backend:OrgTest', satisfiesHow: 'validates' },
-      { req: 'REQ-002', artifactId: 'backend:OrgSvc', satisfiesHow: 'implements' },
-    ],
+    traceabilityEdges: [],
   }, TS);
+  applyScan(s, { files: 0, unattributed: [], unknownIds: [], edges: [
+    { req: 'REQ-001', artifactId: 'backend:OrgSvc', component: 'backend', satisfiesHow: 'implements', location: 'svc.ts:1' },
+    { req: 'REQ-001', artifactId: 'backend:OrgTest', component: 'backend', satisfiesHow: 'validates', location: 'svc.test.ts:1' },
+    { req: 'REQ-002', artifactId: 'backend:OrgSvc', component: 'backend', satisfiesHow: 'implements', location: 'svc.ts:9' },
+  ] }, TS);
 
   ok('markStale: edges not stale before call', s.traceability.edges.every(e => !e.stale));
 
@@ -88,12 +90,13 @@ const deltas = [{ requirement: 'REQ-001', component: 'billing' }, { requirement:
   recordDispatch(s, { agent: 'reena-1', role: 'reena', phase: 'P5', timestamp: TS });
   processReturn(s, {
     agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [],
-    traceabilityEdges: [
-      { req: 'REQ-001', artifactId: 'OrgSvc', component: 'backend', satisfiesHow: 'implements', location: 'svc.dart:1' },
-      { req: 'REQ-001', artifactId: 'OrgTest', component: 'backend', satisfiesHow: 'validates', location: 'svc_test.dart:1' },
-      { req: 'REQ-002', artifactId: 'Other', component: 'mobile', satisfiesHow: 'implements', location: 'o.dart:1' },
-    ],
+    traceabilityEdges: [],
   }, TS);
+  applyScan(s, { files: 0, unattributed: [], unknownIds: [], edges: [
+    { req: 'REQ-001', artifactId: 'backend:OrgSvc', component: 'backend', satisfiesHow: 'implements', location: 'svc.dart:1' },
+    { req: 'REQ-001', artifactId: 'backend:OrgTest', component: 'backend', satisfiesHow: 'validates', location: 'svc_test.dart:1' },
+    { req: 'REQ-002', artifactId: 'mobile:Other', component: 'mobile', satisfiesHow: 'implements', location: 'o.dart:1' },
+  ] }, TS);
 
   const r = applyChange(s, { requirements: ['REQ-001'] });
   ok('applyChange: returns staled reqs', eq(r.staled, ['REQ-001']));
@@ -113,8 +116,9 @@ const deltas = [{ requirement: 'REQ-001', component: 'billing' }, { requirement:
   recordDispatch(s, { agent: 'reena-1', role: 'reena', phase: 'P5', timestamp: TS });
   processReturn(s, {
     agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [],
-    traceabilityEdges: [{ req: 'REQ-005', artifactId: 'FleetSvc', component: 'backend', satisfiesHow: 'implements', location: 'f.dart:1' }],
+    traceabilityEdges: [],
   }, TS);
+  applyScan(s, { files: 0, unattributed: [], unknownIds: [], edges: [{ req: 'REQ-005', artifactId: 'backend:FleetSvc', component: 'backend', satisfiesHow: 'implements', location: 'f.dart:1' }] }, TS);
   active(s).oq.deferrals.push({ oqId: 'OQ-003', provisional: true, sponsorAuthorized: true, affectedReqs: ['REQ-005'] });
 
   const r = resolveDeferral(s, 'OQ-003');

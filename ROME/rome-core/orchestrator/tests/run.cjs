@@ -2,7 +2,10 @@
 /** Run all orchestrator-core tests. Exit non-zero on any failure. */
 const { execFileSync } = require('child_process');
 const path = require('path');
-const tests = ['guard.test.cjs', 'subagent.test.cjs', 'topology.test.cjs', 'executability.test.cjs', 'contracts.test.cjs', 'routing-budget.test.cjs', 'integration.test.cjs', 'visualize.test.cjs', 'driver.test.cjs', 'verification.test.cjs', 'impact-experts.test.cjs', 'security.test.cjs', 'sponsor-tdr.test.cjs', 'changes-upgrade.test.cjs', 'tdr-integrity.test.cjs', 'flows.test.cjs'];
+// PROP-058 §2.8: every suite in this directory runs. The former hand-kept list
+// silently omitted axioms, increments and intake.
+const fs = require('fs');
+const tests = fs.readdirSync(__dirname).filter(f => f.endsWith('.test.cjs')).sort();
 let failed = false;
 for (const t of tests) {
   try { execFileSync('node', [path.join(__dirname, t)], { stdio: 'inherit' }); }

@@ -47,6 +47,7 @@ function newIncrement({ id, intent = 'greenfield', stage = null, routing, timest
     testManifest: [],   // [{ req, outcomesTested, errorsTested:[id] }] — D7
     verification: {},   // phase → { key: { pass, detail, timestamp } } — guard preconditions
     aib: {},            // PROP-051: phase → { revision, omitted?, sponsorAuthorized?, response? } — sponsor briefs (AX-27)
+    scope: { requirements: null, source: null }, // PROP-058 §2.4: in-scope requirement ids; null = not set (checks are INCONCLUSIVE)
   };
 }
 
@@ -74,7 +75,7 @@ function createState({ project, frameworkVersion = 'unknown', frameworkCommit = 
       edges: [],     // { req, ..., increment, stale } — tagged with the producing increment
       byReq: {},     // derived — rebuilt on every edge write, never written directly
       byArtifact: {},
-      matrix: {},
+      testCoverage: {}, // PROP-058 §2.5: project-level { REQ: { outcomesTested, errorsTested:[] } }, union across increments
     },
     stagePlan: null,    // PROP-049: { stages:[{id, inputs, provides, presumes, dependsOn}], decisions:[] }
     stubs: [],          // PROP-049 stub ledger: { id, subsystem, contract?, stubbedIn, implementBy, sponsorDecision, status, timestamp }
@@ -213,7 +214,27 @@ function beginChange(state, changeId, { routing, timestamp }) {
   state.increments.push(inc);
   state.activeIncrement = inc.id;
   entry.status = 'IN_PROGRESS';
+  // PROP-058 §2.4: a change-scoped run's scope is the change's traced requirements.
+  const reqs = (entry.blastRadius && entry.blastRadius.requirements) || entry.requirements;
+  if (Array.isArray(reqs)) inc.scope = { requirements: [...new Set(reqs)].sort(), source: 'change', timestamp };
   state.audit.push({ event: 'CHANGE_BEGUN', change: changeId, ct: entry.ct, increment: inc.id, routing: inc.routing, timestamp });
+  state.updatedAt = timestamp;
+  return state;
+}
+
+/**
+ * Set the active increment's in-scope requirement ids (PROP-058 §2.4). Every
+ * requirement-scoped mechanical fact reads this; none takes scope from its
+ * caller. `source` names where the list came from: 'corpus' | 'change' | 'stage' | 'sponsor'.
+ */
+function setScope(state, requirements, source, timestamp) {
+  if (!timestamp) throw new Error('setScope: timestamp required');
+  if (!Array.isArray(requirements)) throw new Error('setScope: requirements must be an array of ids');
+  const inc = active(state);
+  if (inc.sealed) throw new Error(`Increment ${inc.id} is sealed — scope is immutable (ROME-AX-19)`);
+  const ids = [...new Set(requirements)].sort();
+  inc.scope = { requirements: ids, source: source || 'unspecified', timestamp };
+  state.audit.push({ event: 'SCOPE_SET', increment: inc.id, count: ids.length, source: inc.scope.source, timestamp });
   state.updatedAt = timestamp;
   return state;
 }
@@ -255,13 +276,27 @@ function finalizeIntake(state, routed, timestamp) {
     state.tdrs = routed.tdrs;
   }
   if ((state.tdrs || []).length) state.tdrsEverPopulated = true;
-  if (routed.infraConstraints !== undefined) state.infraConstraints = routed.infraConstraints;
+  // PROP-058 §2.8 (CHG-119): recorded infra constraints are never replaced
+  // silently. Key absent → unchanged; a different value is refused unless
+  // replaceInfraConstraints:true, and an accepted replacement audits the old value.
+  if (routed.infraConstraints !== undefined) {
+    const before = state.infraConstraints;
+    const changed = JSON.stringify(before) !== JSON.stringify(routed.infraConstraints);
+    if (changed && before !== null && before !== undefined && routed.replaceInfraConstraints !== true) {
+      throw new Error('finalizeIntake: intake would replace the recorded infra constraints. An intake that carries none must omit the key; pass replaceInfraConstraints:true to replace them deliberately (PROP-058 / CHG-119).');
+    }
+    if (changed && before !== null && before !== undefined) {
+      state.audit.push({ event: 'INFRA_CONSTRAINTS_REPLACED', before, after: routed.infraConstraints, timestamp });
+    }
+    state.infraConstraints = routed.infraConstraints;
+  }
   if (routed.sponsorCheckpointOmitted) {
     // Sponsor-authorized omission (AX-27): record it so checkSponsorAib passes.
     inc.aib = inc.aib || {};
     for (const phase of ['P3', 'P4']) inc.aib[phase] = { omitted: true, sponsorAuthorized: true };
   }
-  state.audit.push({ event: 'INTAKE_FINALIZED', increment: inc.id, routing, tdrs: (routed.tdrs || []).length, timestamp });
+  // CHG-118: audit the register as it stands, not what the intake carried (an intake that carried none was writing 0 beside a register of 20).
+  state.audit.push({ event: 'INTAKE_FINALIZED', increment: inc.id, routing, tdrs: (state.tdrs || []).length, timestamp });
   state.updatedAt = timestamp;
   return state;
 }
@@ -360,7 +395,7 @@ function migrateV1(v1) {
     aib: {},
   };
   // edges from a v1 state all belong to increment 0
-  const traceability = v1.traceability || { deltas: [], artifacts: {}, edges: [], byReq: {}, byArtifact: {}, matrix: {} };
+  const traceability = v1.traceability || { deltas: [], artifacts: {}, edges: [], byReq: {}, byArtifact: {}, testCoverage: {} };
   for (const e of traceability.edges || []) { if (e.increment === undefined) e.increment = 0; }
   return {
     schemaVersion: SCHEMA_VERSION,
@@ -399,6 +434,29 @@ function load(file) {
   if (state.upgrade === undefined) state.upgrade = null;
   if (!Array.isArray(state.changeQueue)) state.changeQueue = [];
   for (const c of state.changeQueue) { if (c.priority === undefined) c.priority = 'NORMAL'; }
+  // PROP-058 (MIG-3.4.0→3.5.0): the stored matrix never had a writer in any
+  // version; drop it on load and say so. Derived values are recomputed, never stored.
+  if (state.traceability && state.traceability.matrix !== undefined) {
+    const rows = Object.keys(state.traceability.matrix || {}).length;
+    delete state.traceability.matrix;
+    state.audit.push({ event: 'MATRIX_FIELD_DROPPED', rows, timestamp: state.updatedAt || null, note: 'PROP-058: stored matrix had no writer; trace/checks compute from edges' });
+  }
+  if (state.traceability && !state.traceability.testCoverage) state.traceability.testCoverage = {};
+  // PROP-058 §2.5 backfill: coverage is the union of every increment's manifest.
+  // Without this an existing project starts INCONCLUSIVE on every requirement.
+  if (state.traceability && Object.keys(state.traceability.testCoverage).length === 0) {
+    for (const inc of state.increments || []) {
+      for (const m of inc.testManifest || []) {
+        const req = m.req || m.requirement; if (!req) continue;
+        const cov = state.traceability.testCoverage[req] || { outcomesTested: false, errorsTested: [] };
+        cov.outcomesTested = cov.outcomesTested || !!m.outcomesTested;
+        cov.errorsTested = [...new Set([...cov.errorsTested, ...(m.errorsTested || [])])];
+        cov.lastIncrement = inc.id;
+        state.traceability.testCoverage[req] = cov;
+      }
+    }
+  }
+  for (const inc of state.increments || []) { if (!inc.scope) inc.scope = { requirements: null, source: null }; }
   // PROP-056 additive fields (AX-36): derive from history so legacy states
   // never re-mint DEV ids or mistake an emptied register for a virgin one.
   if (state.tdrsEverPopulated === undefined) {
@@ -421,4 +479,4 @@ function save(file, state, timestamp) {
   return file;
 }
 
-module.exports = { SCHEMA_VERSION, CHANGE_STATUS, CHANGE_PRIORITY, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, recordFlowsOmission, queueChange, classifyChange, confirmChange, prioritizeChange, reopenChange, beginChange, migrateV1, load, save };
+module.exports = { SCHEMA_VERSION, CHANGE_STATUS, CHANGE_PRIORITY, createState, newIncrement, active, sealActive, beginIncrement, finalizeIntake, recordAib, recordAibResponse, recordFlowsOmission, queueChange, classifyChange, confirmChange, prioritizeChange, reopenChange, beginChange, setScope, migrateV1, load, save };

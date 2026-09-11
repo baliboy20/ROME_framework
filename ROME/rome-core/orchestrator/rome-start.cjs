@@ -44,7 +44,21 @@ function vendorFramework(projectDir) {
     recursive: true,
     filter: (src) => !/(\/|^)(node_modules|\.git)(\/|$)/.test(src.slice(FRAMEWORK_ROOT.length)),
   });
+  installVendoredDeps(dest);
   return dest;
+}
+
+/** PROP-058 §2.8: a vendored copy declares its dependency in rome-core/lib/package.json
+ *  but the copy filter drops node_modules, so install there or the AORDL validator
+ *  and flow tools cannot load js-yaml. Failure is reported, never hidden. */
+function installVendoredDeps(dest) {
+  const lib = path.join(dest, 'rome-core', 'lib');
+  if (!fs.existsSync(path.join(lib, 'package.json'))) return;
+  try {
+    require('child_process').execFileSync('npm', ['install', '--omit=dev', '--no-audit', '--no-fund', '--loglevel=error'], { cwd: lib, stdio: 'inherit' });
+  } catch (e) {
+    console.error(`WARNING: npm install failed in ${lib} — run it by hand or the AORDL validator will not load (${e.message})`);
+  }
 }
 
 const projectDir = process.argv[2];

@@ -2,8 +2,8 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.17 |
-| **Date** | 2026-07-17T00:00:00Z |
+| **Document UID** | ROME-GOV-002 || **Version** | 4.24 |
+| **Date** | 2026-09-10T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -214,6 +214,11 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-DEFECT-001 | Field Defect Report — TDR Register Integrity (frob-admin-Bacon) | `/ROME_framework_maintenance/defect-reports/ROME-DEFECT-001-tdr-register-integrity.md` | Closed (superseded by ROME-PROP-056) |
 | ROME-PROP-057 | Formal Workflows (FLOW artifacts above AORDL) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-057-formal-workflows.md` | Implemented (v3.4.0) |
 | ROME-STD-FLOW | Flow Standard (formal workflow artifacts) | `/ROME/rome-core/docs/standards/flow-standard.md` | Active |
+| ROME-DISC-001 | Discussion — OWL Ontological Definitions for ROME | published artifact (claude.ai/code/artifact/62d7cc6e-1e99-4137-85e8-48fe9ccfded5) | Discussion |
+| ROME-DISC-002 | Discussion — Rule Bloat Review | `/ROME_framework_maintenance/discussions/ROME-DISC-002-rule-bloat-review.md` | Discussion |
+| ROME-DISC-003 | Discussion — Expedited Changes (sponsor-directed edits, post-approval) | `/ROME_framework_maintenance/discussions/ROME-DISC-003-expedited-changes.md` | Discussion |
+| ROME-PROP-058 | Derived Traceability (scanned matrix, scope from state, stored matrix removed; consolidates DISC-007 and CHG-118/119/120/123) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-058-derived-traceability.md` | Implemented (v3.5.0) |
+| ROME-REVIEW-PROP-058 | Proof run of derived traceability on frob-admin-Bacon (PROP-058 AC11) | `/ROME_framework_maintenance/reviews/ROME-REVIEW-PROP-058-proof-frob-admin.md` | Complete |
 
 ### Implementation Plans
 
@@ -315,6 +320,10 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.24 | 2026-09-11T00:00:00Z | PROP-058 implemented (v3.5.0 "Aurelius" — MINOR) and moved to implemented-proposals/. Registered ROME-REVIEW-PROP-058. Companions: ontology v1.9 (AX-40..42), lexicon v1.7, ROME-STD-TRACE 3.0, ROME-STD-GATE (PROP-058 notes), ROME-STD-AORDL 1.1, MIG-3.4.0→3.5.0. |
+| 4.23 | 2026-09-10T00:00:00Z | Registered ROME-PROP-058 (derived traceability — restores PROP-041 §A2 as designed; stored matrix had no writer since v2.3.0). Header version corrected from stale 4.17 to match the log. |
+| 4.22 | 2026-07-30T00:00:00Z | Registered ROME-DISC-003 (expedited changes — capture-first sponsor-directed edits with deferred gates; stub-precedent seal-block). |
+| 4.21 | 2026-07-30T00:00:00Z | Added DISC type (discussion/review documents — decide nothing, precede proposals). Registered ROME-DISC-001 (OWL, published artifact) and ROME-DISC-002 (rule-bloat review, discussions/). |
 | 4.20 | 2026-07-29T00:00:00Z | PROP-057 implemented (v3.4.0 "Hadrian" — MINOR) and moved to implemented-proposals/. Registered ROME-STD-FLOW (Active). Companions: ontology v1.8 (ENT-21, REL-25/26, AX-38/39), lexicon v1.8, MIG-3.3.1→3.4.0. |
 | 4.19 | 2026-07-29T00:00:00Z | Registered ROME-PROP-057 (Formal Workflows — FLOW artifacts above AORDL; statechart-disciplined, journey-presented; AX-38/39 reserved). Draft. |
 | 4.18 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1 — PATCH) and registered; ROME-DEFECT-001 (field defect report, frob-admin-Bacon) archived to defect-reports/ and registered Closed. Backfilled missing v3.3.0 registrations: PROP-053 (Draft), PROP-054/055 (Implemented v3.3.0). Companions: ontology v1.7 (AX-36/37), lexicon v1.7 (Carve-Out), MIG-3.3.0→3.3.1. |

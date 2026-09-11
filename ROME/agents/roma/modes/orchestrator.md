@@ -68,7 +68,16 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
       - P5 only: component-graph → topoBatches → one sub-agent per node, batch by batch.
    c. VERIFY — run the phase's mechanical checks and recordVerification(...) for each
       key in PHASE.requires (the guard demands these BEFORE the gate; the
-      authoritative per-phase list is lifecycle.js PHASES[].requires):
+      authoritative per-phase list is lifecycle.js PHASES[].requires).
+      PROP-058: the requirement-scoped facts are NOT recorded from library calls.
+      Run, in this order, and let the CLI record them:
+        guard-cli scope  <state> --ts <iso> --from-corpus      (once per increment; change runs get scope at --begin)
+        guard-cli scan   <state> --ts <iso>                     (P5, after every producer batch: derives code/test links from source comments)
+        guard-cli verify <state> --ts <iso> --phase <P>        (records traceability / matrix / testAdequacy; INCONCLUSIVE = not passing)
+      Producers must write the requirement id in a comment in every source and test
+      file they touch; a return that declares implements/enforces/validates edges is
+      rejected. Design (`documents`) edges are still returned, and may not cite the
+      producer's own artifact.
         P1:   validate-aordl STRICT → 'aordl'; checkTraceability → 'traceability'
         P2:   checkTraceability → 'traceability'; checkSponsorOq → 'sponsorOq';
               checkStageConsistency → 'stageConsistency'
@@ -80,8 +89,8 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
               checkSponsorAib(P4) → 'sponsorInfra'; checkTdrConformance(P4) → 'tdrConformance'
         P5:   verifyComponent/selfHeal → 'executability'; runIntegration → 'integration';
               gateContracts → 'contracts'; gateSecurity(source) → 'secrets';
-              checkTestAdequacy → 'testAdequacy'; checkTraceability(requireTest) → 'traceability';
-              checkMatrix(P5 STRICT) → 'matrix'; checkTdrConformance(P5) → 'tdrConformance'
+              guard-cli scan + verify → 'testAdequacy', 'traceability', 'matrix';
+              checkTdrConformance(P5) → 'tdrConformance'
       Also at P5: checkEnvDivergence(configManifest, runtime) — a failing result
       is filed as a blocker (ROME-AX-28), not a required fact.
    c2. SPONSOR CHECKPOINT (P3 and P4 — PROP-051 / ROME-AX-27). Before 'sponsorArch'

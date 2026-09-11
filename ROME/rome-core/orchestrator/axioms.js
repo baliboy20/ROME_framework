@@ -124,19 +124,51 @@ function checkNoSilentRecovery(state) {
 }
 
 /** Run all CHECKED axioms. Returns { pass, results: [...] }. */
-const CHECKS = [
+const CHECKS = [checkDerivedValues, 
   checkOneRolePerInstance,
   checkSeparationOfDuties,
   checkOrchestratorSpawns,
   checkP5NoNewRequirements,
   checkNoSilentRecovery,
 ];
+/**
+ * AX-40 (PROP-058 §2.7): every stored derived value must agree with its
+ * recomputation. byReq/byArtifact are recomputed from edges; testCoverage from
+ * the union of increment manifests. A stored table nothing writes would have
+ * failed this on the day it was created.
+ */
+function checkDerivedValues(state) {
+  const t = state.traceability || {};
+  const problems = [];
+  const byReq = {}, byArtifact = {};
+  for (const e of t.edges || []) {
+    (byReq[e.req] = byReq[e.req] || []); if (!byReq[e.req].includes(e.artifactId)) byReq[e.req].push(e.artifactId);
+    (byArtifact[e.artifactId] = byArtifact[e.artifactId] || []); if (!byArtifact[e.artifactId].includes(e.req)) byArtifact[e.artifactId].push(e.req);
+  }
+  const same = (a, b) => JSON.stringify(Object.fromEntries(Object.entries(a || {}).map(([k, v]) => [k, [...v].sort()]).sort())) === JSON.stringify(Object.fromEntries(Object.entries(b || {}).map(([k, v]) => [k, [...v].sort()]).sort()));
+  if (!same(byReq, t.byReq)) problems.push('byReq disagrees with edges');
+  if (!same(byArtifact, t.byArtifact)) problems.push('byArtifact disagrees with edges');
+  const cov = {};
+  for (const inc of state.increments || []) for (const m of inc.testManifest || []) {
+    const req = m.req || m.requirement; if (!req) continue;
+    const c = cov[req] || { outcomesTested: false, errorsTested: [] };
+    c.outcomesTested = c.outcomesTested || !!m.outcomesTested; c.errorsTested = [...new Set([...c.errorsTested, ...(m.errorsTested || [])])]; cov[req] = c;
+  }
+  for (const [req, c] of Object.entries(cov)) {
+    const st = (t.testCoverage || {})[req];
+    if (!st || !!st.outcomesTested !== c.outcomesTested || [...(st.errorsTested || [])].sort().join() !== [...c.errorsTested].sort().join()) problems.push(`testCoverage[${req}] disagrees with increment manifests`);
+  }
+  if (t.matrix !== undefined) problems.push('a stored traceability.matrix exists — nothing writes it (PROP-058 P1)');
+  return { axiom: 'AX-40', pass: problems.length === 0, detail: problems.length ? problems.join('; ') : 'all stored derived values agree with recomputation' };
+}
+
 function checkAll(state) {
   const results = CHECKS.map(fn => fn(state));
   return { pass: results.every(r => r.pass), results };
 }
 
 module.exports = {
+  checkDerivedValues,
   checkOneRolePerInstance,
   checkSeparationOfDuties,
   checkOrchestratorSpawns,

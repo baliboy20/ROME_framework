@@ -126,6 +126,11 @@ this document and should be treated as historical until the Stage 7 rename pass.
 
 ---
 
+
+## Annotation duty (PROP-058 / AX-42)
+
+Every producer that writes or edits a source or test file writes the requirement id(s) it satisfies in a comment in that file, in any comment form (`// REQ-BO06`, `/// CHG-044 (REQ-CNA03)`, `# REQ-NOTIF11`). The framework derives code/test traceability by scanning for these; a return that declares `implements`, `enforces` or `validates` edges is rejected. `documents` edges are still returned for design artifacts and may not cite the producer's own artifact.
+
 ## Revision History
 
 | Version | Date | Summary |
