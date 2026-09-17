@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.9 |
-| **Date** | 2026-09-11T00:00:00Z |
+| **Version** | 1.10 |
+| **Date** | 2026-09-17T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
 | **Author** | Archie |
@@ -142,7 +142,7 @@ contiguous with its siblings.)
 | AX-38 | Business flow is authored and sponsor-confirmed, never inferred into bindingness: GATE-P1 requires every FLOW validator-clean and SPONSOR_CONFIRMED (with recorded Confirmation), or a recorded sponsor flows-omission. Generated skeletons are drafts until confirmed; absence of journeys is a decision, never a default. | ENFORCED (`verification.js#checkFlowValidation` as required `flowValidation` fact via `guard.js#canAdvance`; `state.js#recordFlowsOmission` refuses non-sponsor omission; PROP-057) |
 | AX-39 | No unrouted failure: every error declared by a requirement referenced in a flow has an explicit onward route (step or terminal). UNROUTED survives only in DRAFT; a confirmed flow carrying one fails validation, and a route for an error the requirement no longer declares fails as stale. | ENFORCED (`flow-lib.cjs#validateFlow` V4a/V4b; PROP-057) |
 | AX-40 | Nothing derived is stored without a recomputation that can contradict it. `byReq`/`byArtifact` are recomputed from edges, `testCoverage` from the union of increment manifests, and every requirement-scoped fact from a fresh check before `guard-cli check`/`advance` trusts the record. A stored value that disagrees with its recomputation is refused, whatever it says. The stored `traceability.matrix` that no version ever wrote is dropped on load. | ENFORCED (`axioms.js#checkDerivedValues`; `guard-cli.cjs#driftedFacts` on check/advance; `state.js#load` drop; PROP-058) |
-| AX-41 | A mechanical fact declared in `lifecycle.js#requires` has a checker function, or its absence is a failing test — never a silent gap satisfied by assertion. Known without a checker at v3.5.0: `aordl`, `secrets`, `integration`, `contracts`, `executability`; each is its own proposal. | CHECKED (`tests/axioms.test.cjs` AX-41 enumerates `requires` against `verification.js`; PROP-058 §2.7) |
+| AX-41 | A mechanical fact declared in `lifecycle.js` `PHASES[].requires` has a checker function, or its absence is a failing test — never a silent gap satisfied by assertion. Known without a checker at v3.5.0: `aordl`, `secrets`, `integration`, `contracts`, `executability`; each is its own proposal. | CHECKED (`tests/axioms.test.cjs` AX-41 enumerates `lifecycle.js` `PHASES[].requires` against `verification.js`; PROP-058 §2.7) |
 | AX-42 | Code and test traceability is READ FROM SOURCE, never declared: a file satisfies a requirement when a comment in it carries the requirement id, and `guard-cli scan` derives the links. A producer return that declares an `implements`/`enforces`/`validates` edge is rejected. Design links stay declared but may not cite their own document. Requirement scope for every scoped fact comes from the increment record, never from the caller; an unset or empty scope is INCONCLUSIVE, which the guard treats as not passing. | ENFORCED (`scan.js`; `subagent.js#validateReturn`; `verification.js#scopeOf`; `state.js#setScope`; PROP-058) |
 
 > **AX-06 — skipping vs reordering.** These are not the same invariant and the framework treats them differently. `resolveRouting` rejects any routing whose phases are out of canonical relative order, but accepts any *subset*: a routing that omits an optional phase is valid, by design (intent routing, PROP-036). "Phases cannot be skipped" is therefore **false** as a framework guarantee and must not be stated as one. What holds is: order is fixed, membership is chosen once at routing time, and thereafter no phase in the routing may be jumped.
@@ -152,7 +152,7 @@ contiguous with its siblings.)
 | Phase | Required mechanical facts |
 |-------|---------------------------|
 | P0 / P0.5 | — |
-| P1 | `aordl`, `traceability` |
+| P1 | `aordl`, `traceability`, `flowValidation` |
 | P2 | `traceability`, `sponsorOq`, `stageConsistency` |
 | P3 | `traceability`, `matrix`, `designAssets`, `sponsorArch`, `tdrConformance` |
 | P3.5 | `traceability`, `matrix` |
@@ -190,11 +190,12 @@ contiguous with its siblings.)
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.10 | 2026-09-17T00:00:00Z | Correction: AX-41 cited the `requires` field of lifecycle.js in module#function form, as if it were a function (fidelity check 6 failed); reworded to the field `PHASES[].requires`. AX-08 table P1 row += `flowValidation` (present in `lifecycle.js` since PROP-057; table was stale). Duplicate revision number 1.6 (2026-07-17) renumbered 1.5.1. |
 | 1.9 | 2026-09-11T00:00:00Z | PROP-058 implemented (v3.5.0): AX-40 (derived values recomputed, stored matrix dropped), AX-41 (every required fact has a checker or a failing test), AX-42 (code/test traceability scanned from source; scope from state; INCONCLUSIVE third state). |
 | 1.8 | 2026-07-29T00:00:00Z | PROP-057 implemented (v3.4.0). Added ENT-21 Flow, REL-25/26, AX-38 flows sponsor-confirmed or omission recorded (ENFORCED via `checkFlowValidation` gate fact + `recordFlowsOmission`), AX-39 no unrouted failure (ENFORCED via `validateFlow` V4a/V4b). Tagged violation tests in `flows.test.cjs`. |
 | 1.7 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1). Added AX-36 TDR register integrity — no silent shrink, empty-after-populated fails conformance, monotonic DEV ids (ENFORCED) and AX-37 scope-bounded deviation authority — carve-outs, whole-TDR supersession only when unscoped (ENFORCED). Tagged violation tests in `tdr-integrity.test.cjs`. Field defect source: frob-admin-Bacon (ROME-DEFECT-001). |
 | 1.6 | 2026-07-27T00:00:00Z | PROP-054/055 implemented (v3.3.0). Added AX-31..35: AX-31 trace-verified change classification (ENFORCED via `routeChange`/`classifyChange`/`beginChange` refusals), AX-32 no untraced delivery — every change path ends at a guard-evidenced gate (ENFORCED via change-scoped increments), AX-33 sponsor register + one-voice questions (ASSERTED; Seez inheritance fidelity-checked), AX-34 declared conventionLevel + compatibility read mode (ENFORCED), AX-35 no unreachable version — per-boundary migration steps, ladder refuses holes (ENFORCED). Tagged violation tests in `changes-upgrade.test.cjs`. |
-| 1.6 | 2026-07-17T00:00:00Z | v3.2.1 consistency pass (post-implementation review): AX-08 table P2 row corrected (+`stageConsistency` — was self-contradicting AX-22; lifecycle.js was always right). |
+| 1.5.1 | 2026-07-17T00:00:00Z | *(Renumbered from a duplicate 1.6 in v1.10.)* v3.2.1 consistency pass (post-implementation review): AX-08 table P2 row corrected (+`stageConsistency` — was self-contradicting AX-22; lifecycle.js was always right). |
 | 1.5 | 2026-07-17T00:00:00Z | PROP-051/052 implemented (v3.2.0). Added ENT-20 (TDR), REL-22..24, and AX-27..30: AX-27 sponsor P3/P4 checkpoint (ENFORCED via `sponsorArch`/`sponsorInfra` facts + routing omission guard), AX-28 declared dev/prod divergence (CHECKED, required `devRuntimeDiffers` manifest field), AX-29 TDR conformance (ENFORCED via `tdrConformance` fact at P3/P4/P5), AX-30 carrier reliability + sponsor-only deviation (ENFORCED). AX-25 remains reserved by PROP-050 (Draft) — numbering deliberately skips it. AX-08 fact table updated. Tagged violation tests in `sponsor-tdr.test.cjs`; check 6b extended. |
 | 1.4 | 2026-07-17T00:00:00Z | v3.1.0 (D5 fix): AX-26 — design assets required at P3 for ui-app projects (ENFORCED, tagged test). AX-25 remains reserved by PROP-050 (Draft). AX-08 fact table updated (P3 += designAssets). |
 | 1.3 | 2026-07-17T00:00:00Z | PROP-048/049 implemented (v3.0.0). Added ENT-15..19 (Increment, Project, Stage, Core Subsystem, Stub), REL-14..21, and AX-19..24: AX-19 append-only preservation, AX-20 union coverage (CHECKED), AX-21 no terminal project, AX-22 stage dependency-consistency, AX-23 no dangling presumption, AX-24 no silent stubs. All ENFORCED axioms carry tagged violation tests (increments.test.cjs); check 6b extended. |

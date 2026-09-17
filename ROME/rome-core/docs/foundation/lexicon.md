@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.8 |
-| **Date** | 2026-07-16T00:00:00Z |
+| **Version** | 1.10 |
+| **Date** | 2026-09-17T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
 | **Companion** | ROME-ONT-001 (Ontology — structure and axioms) |
@@ -251,9 +251,10 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.10 | 2026-09-17T00:00:00Z | Correction: header version/date brought in line with the revision log; PROP-058 row renumbered 1.7 → 1.9. |
 | 1.8 | 2026-07-29T00:00:00Z | PROP-057 companion additions: Flow, Error Routing, Flow Index (cross-linked to ENT-21, AX-38/39, ROME-STD-FLOW). |
 | 1.7 | 2026-07-28T00:00:00Z | PROP-056 companion additions (revision row backfilled — changes shipped v3.3.1): Carve-Out added; Deviation Request updated (scope-bounded authority, monotonic ids); Change Queue updated (priority, stash — PROP-054 v1.4). |
-| 1.7 | 2026-09-11T00:00:00Z | PROP-058 companion additions: Scanned Edge, Declared Edge, Annotation, Increment Scope, INCONCLUSIVE (cross-linked to ROME-ONT-001 AX-40..42). |
+| 1.9 | 2026-09-11T00:00:00Z | *(Recorded as a duplicate 1.7; renumbered in v1.10.)* PROP-058 companion additions: Scanned Edge, Declared Edge, Annotation, Increment Scope, INCONCLUSIVE (cross-linked to ROME-ONT-001 AX-40..42). |
 | 1.6 | 2026-07-27T00:00:00Z | PROP-054/055 companion additions: Change Type (CT-1..5, with the intent-vs-CT boundary resolving the refinement/extension overlap), Change Queue, Change-Scoped Run, Blast Radius, Convention Level, Migration Step, Migration Log (cross-linked to AX-31..35). |
 | 1.5 | 2026-07-17T00:00:00Z | v3.2.1 consistency pass: duplicate "Technical Specification" resolved (P4 artifact renamed **Technical Specs Artifact**, cross-referenced to the spec-input term); Constraint ↔ Infra Constraint distinct-from note. |
 | 1.4 | 2026-07-17T00:00:00Z | PROP-051/052 companion additions: AIB, Sponsor Checkpoint Response (CONFIRM/REDIRECT/DELEGATE), Technical Specification (spec input), TDR, Deviation Request, Carrier Reliability, Infra Constraint (cross-linked to ENT-20 and AX-27..30). |

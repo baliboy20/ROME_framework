@@ -2,8 +2,9 @@
 
 | Field | Value |
 |-------|-------|
-| **Document UID** | ROME-GOV-002 || **Version** | 4.24 |
-| **Date** | 2026-09-10T00:00:00Z |
+| **Document UID** | ROME-GOV-002 |
+| **Version** | 4.25 |
+| **Date** | 2026-09-17T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -94,7 +95,7 @@ Normative cross-cutting standards extracted per PROP-034 Track A. Enforced mecha
 
 | UID | Document | Location | Status |
 |-----|----------|----------|--------|
-| ROME-GUIDE-001 | Requirements Authoring for AORDL (portable) | `/REQUIREMENTS-AUTHORING-GUIDE.md` | Active |
+| ROME-GUIDE-001 | Requirements Authoring for AORDL (portable) | ~~Deleted~~ — file removed 2026-07-19 (commit fcc53c79); UID not reusable | Withdrawn |
 | ROME-GUIDE-002 | Technical Spec Authoring (portable; TDRs) | `/TECHNICAL-SPEC-AUTHORING-GUIDE.md` | Active |
 
 ### Governance Documents
@@ -320,6 +321,7 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.25 | 2026-09-17T00:00:00Z | ROME-GUIDE-001 marked Withdrawn (file deleted 2026-07-19, commit fcc53c79; registry still listed it Active). Backticks removed from the path in the v4.15 row so fidelity check 1 does not read it as a live entry. Header table row break repaired. Companions recorded: ontology v1.10, lexicon v1.10 (corrections). |
 | 4.24 | 2026-09-11T00:00:00Z | PROP-058 implemented (v3.5.0 "Aurelius" — MINOR) and moved to implemented-proposals/. Registered ROME-REVIEW-PROP-058. Companions: ontology v1.9 (AX-40..42), lexicon v1.7, ROME-STD-TRACE 3.0, ROME-STD-GATE (PROP-058 notes), ROME-STD-AORDL 1.1, MIG-3.4.0→3.5.0. |
 | 4.23 | 2026-09-10T00:00:00Z | Registered ROME-PROP-058 (derived traceability — restores PROP-041 §A2 as designed; stored matrix had no writer since v2.3.0). Header version corrected from stale 4.17 to match the log. |
 | 4.22 | 2026-07-30T00:00:00Z | Registered ROME-DISC-003 (expedited changes — capture-first sponsor-directed edits with deferred gates; stub-precedent seal-block). |
@@ -329,7 +331,7 @@ This registry MUST be updated when:
 | 4.18 | 2026-07-28T00:00:00Z | PROP-056 implemented (v3.3.1 — PATCH) and registered; ROME-DEFECT-001 (field defect report, frob-admin-Bacon) archived to defect-reports/ and registered Closed. Backfilled missing v3.3.0 registrations: PROP-053 (Draft), PROP-054/055 (Implemented v3.3.0). Companions: ontology v1.7 (AX-36/37), lexicon v1.7 (Carve-Out), MIG-3.3.0→3.3.1. |
 | 4.17 | 2026-07-17T00:00:00Z | PROP-051 and PROP-052 implemented (v3.2.0 — MINOR); moved to implemented-proposals/ and registered. Registered ROME-STD-TECHSPEC; ROME-GUIDE-002 promoted Draft → Active. Companion updates: ontology v1.5 (ENT-20, REL-22..24, AX-27..30), lexicon v1.4, GOV-006 v3.0 (per-row enforcement citations), gate-decision-standard v1.4. |
 | 4.16 | 2026-07-17T00:00:00Z | Registered ROME-GUIDE-002 (Technical Spec Authoring — portable TDR guide, Draft; companion to ROME-PROP-052, activates with ROME-STD-TECHSPEC). |
-| 4.15 | 2026-07-17T00:00:00Z | ROME-GUIDE-001 relocated to repo root (`/REQUIREMENTS-AUTHORING-GUIDE.md`) — sponsor-facing external document, sits beside GETTING-STARTED.md outside rome-core. |
+| 4.15 | 2026-07-17T00:00:00Z | ROME-GUIDE-001 relocated to repo root (/REQUIREMENTS-AUTHORING-GUIDE.md) — sponsor-facing external document, sits beside GETTING-STARTED.md outside rome-core. |
 | 4.14 | 2026-07-17T00:00:00Z | Added GUIDE type code; registered ROME-GUIDE-001 (Requirements Authoring for AORDL — portable, self-contained; quotes ROME-STD-AORDL rule lists verbatim). PROP-050 remains Draft (parked — sponsor prioritised the portable guide over intake conformance machinery). |
 | 4.13 | 2026-07-17T00:00:00Z | Registered ROME-PROP-050 (Input Format Standard — zoned module docs, canonical domain lexicon, wireframe sidecars, authority-marker consistency AX-25). Draft; STD-INPUT UID reserved for implementation. |
 | 4.12 | 2026-07-17T00:00:00Z | PROP-048 and PROP-049 implemented (v3.0.0 "Antoninus" — MAJOR); moved to implemented-proposals/. Registered ROME-MIG-002 (state v1 → increment model, auto-migrating). Lexicon v1.3 + ontology v1.3 companion changes (ENT-15..19, REL-14..21, AX-19..24). |
