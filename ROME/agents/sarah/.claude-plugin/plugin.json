@@ -45,9 +45,6 @@
       "Seez"
     ]
   },
-  "hooks": {
-    "SessionStart": "hooks/SessionStart.sh"
-  },
   "terminalConfig": {
     "badge": "sarah.png",
     "backgroundColor": "#2b1f3d",

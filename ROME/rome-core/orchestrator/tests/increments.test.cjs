@@ -54,11 +54,11 @@ console.log('increments + staging regression:');
 (() => {
   const s = fresh();
   recordDispatch(s, { agent: 'i1', role: 'charlie', phase: 'P5', timestamp: TS });
-  processReturn(s, { agent: 'i1', role: 'charlie', phase: 'P5', status: 'COMPLETE', summary: 'x', artifacts: [], traceabilityEdges: [{ req: 'REQ-1', artifactId: 'A', satisfiesHow: 'implements' }] }, TS);
+  processReturn(s, { agent: 'i1', role: 'charlie', phase: 'P5', status: 'COMPLETE', summary: 'x', artifacts: [], traceabilityEdges: [{ req: 'REQ-1', artifactId: 'A', satisfiesHow: 'documents', location: 'a.md#1' }] }, TS);
   completeIncrement(s); sealActive(s, TS);
   beginIncrement(s, { intent: 'extension', timestamp: TS });
   recordDispatch(s, { agent: 'i2', role: 'charlie', phase: 'P5', timestamp: TS });
-  processReturn(s, { agent: 'i2', role: 'charlie', phase: 'P5', status: 'COMPLETE', summary: 'x', artifacts: [], traceabilityEdges: [{ req: 'REQ-2', artifactId: 'B', satisfiesHow: 'implements' }] }, TS);
+  processReturn(s, { agent: 'i2', role: 'charlie', phase: 'P5', status: 'COMPLETE', summary: 'x', artifacts: [], traceabilityEdges: [{ req: 'REQ-2', artifactId: 'B', satisfiesHow: 'documents', location: 'b.md#1' }] }, TS);
   ok('AX-20 edges tagged with producing increment', s.traceability.edges.some(e => e.increment === 0) && s.traceability.edges.some(e => e.increment === 1));
   const cov = checkTraceability(s, ['REQ-1', 'REQ-2']);
   ok('AX-20 union coverage spans increments', cov.pass === true);

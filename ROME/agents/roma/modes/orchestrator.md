@@ -5,7 +5,7 @@
 | **Mode UID** | roma:orchestrator |
 | **Phase** | ALL (P0–P5) — Phase-Agnostic |
 | **Plugin** | rome-core |
-| **Version** | 5.0 |
+| **Version** | 5.3 |
 | **Authority** | Drives the lifecycle; the deterministic guard enforces transitions |
 | **Implements** | ROME-PROP-035..040 |
 
@@ -64,11 +64,22 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
    a. budget.policy(state) → if ESCALATE, surface to sponsor; if DEGRADE, reduce parallelism/self-heal
    b. DISPATCH the phase owner role(s):
         spec = loadRoleSpec(role, phase)  (+ experts.selectPacks for P5 generation instances)
-        recordDispatch(state, {...}); <invoke sub-agent>; processReturn(state, <return>)
+        recordDispatch(state, {..., model: spec.model}); <invoke sub-agent with spec.systemPrompt, model: spec.model>; processReturn(state, <return>)
+      - spec.model is the role's tier from model-tiers.json (PROP-059). Override upward
+        to `opus` only for a P5 component that has exhausted one self-heal cycle.
       - P5 only: component-graph → topoBatches → one sub-agent per node, batch by batch.
    c. VERIFY — run the phase's mechanical checks and recordVerification(...) for each
       key in PHASE.requires (the guard demands these BEFORE the gate; the
-      authoritative per-phase list is lifecycle.js PHASES[].requires):
+      authoritative per-phase list is lifecycle.js PHASES[].requires).
+      PROP-058: the requirement-scoped facts are NOT recorded from library calls.
+      Run, in this order, and let the CLI record them:
+        guard-cli scope  <state> --ts <iso> --from-corpus      (once per increment; change runs get scope at --begin)
+        guard-cli scan   <state> --ts <iso>                     (P5, after every producer batch: derives code/test links from source comments)
+        guard-cli verify <state> --ts <iso> --phase <P>        (records traceability / matrix / testAdequacy; INCONCLUSIVE = not passing)
+      Producers must write the requirement id in a comment in every source and test
+      file they touch; a return that declares implements/enforces/validates edges is
+      rejected. Design (`documents`) edges are still returned, and may not cite the
+      producer's own artifact.
         P1:   validate-aordl STRICT → 'aordl'; checkTraceability → 'traceability'
         P2:   checkTraceability → 'traceability'; checkSponsorOq → 'sponsorOq';
               checkStageConsistency → 'stageConsistency'
@@ -80,8 +91,8 @@ The AORDL mechanical gate is `ROME/rome-core/lib/aordl-parser/validate-aordl.js`
               checkSponsorAib(P4) → 'sponsorInfra'; checkTdrConformance(P4) → 'tdrConformance'
         P5:   verifyComponent/selfHeal → 'executability'; runIntegration → 'integration';
               gateContracts → 'contracts'; gateSecurity(source) → 'secrets';
-              checkTestAdequacy → 'testAdequacy'; checkTraceability(requireTest) → 'traceability';
-              checkMatrix(P5 STRICT) → 'matrix'; checkTdrConformance(P5) → 'tdrConformance'
+              guard-cli scan + verify → 'testAdequacy', 'traceability', 'matrix';
+              checkTdrConformance(P5) → 'tdrConformance'
       Also at P5: checkEnvDivergence(configManifest, runtime) — a failing result
       is filed as a blocker (ROME-AX-28), not a required fact.
    c2. SPONSOR CHECKPOINT (P3 and P4 — PROP-051 / ROME-AX-27). Before 'sponsorArch'
@@ -140,6 +151,26 @@ Producer ≠ validator ≠ gate authority. The guard makes self-approval impossi
 | Gate BLOCK | loop back to the producing role with findings |
 
 All retries/escalations/blocks are recorded in `state.json` + audit. No silent recovery.
+
+---
+
+## Delegation, pausing and reporting (PROP-059)
+
+Start a sub-agent only for a role the routing assigns to the current phase, or a
+P5 component node. Do not start agents to explore, to double-check a producer, or
+to verify a gate: Clara and Sarah are the verification, and the guard's mechanical
+checks run in Node. Work you can finish in a few tool calls, do yourself.
+
+In P5, dispatch every node of a batch in one message so they run concurrently, and
+process returns as they arrive rather than waiting for the slowest.
+
+Stop for the sponsor only at a gate that needs their approval, on budget ESCALATE,
+on a blocker the failure policy escalates, or before a destructive action.
+Otherwise continue to the next action from `driver.nextAction(state)`. Do not end
+a turn on a statement of what you will do next.
+
+Before telling the sponsor a phase or gate is done, read it from `state.json` or
+the guard's output. Report failures with the guard's message.
 
 ---
 
@@ -218,4 +249,5 @@ RE-ENTRY, not greenfield. The sponsor wants something changed. Rules:
 | 4.0 | 2026-03-03 | ROME-PROP-030 monolith split. |
 | 5.0 | 2026-06-18 | ROME-PROP-035..040: rewritten as the single-session lifecycle driver over the deterministic substrate (state/guard/subagent/topology/executability/contracts/routing/budget). Drives only; guard enforces. Replaces log-based coordination with call/return + guard. |
 | 5.1 | 2026-07-17 | v3.2.0 consistency pass: VERIFY step (c) rebuilt complete from lifecycle.js (was stale — P2/P3/P3.5 facts and matrix/integration missing); intake finalization via `guard-cli intake` (persists TDRs/infraConstraints — PROP-047/051/052); new step (c2) sponsor AIB checkpoint (issue → deliver → respond → REDIRECT loop, AX-27) and TDR deviation resolution (AX-29/30); AX-28 blocker note. |
+| 5.3 | 2026-09-22 | PROP-059: model tier passed at dispatch (`spec.model`); new section on delegation, pausing and reporting. |
 | 5.2 | 2026-07-27 | PROP-054/055 (v3.3.0): Re-entry mode — live triage via change queue, trace-verified CT classification (AX-31), mechanism routing (change-scoped increments vs rome-increment), blast-radius honesty, compatibility read mode + migration-log duty (AX-34), sponsor register + one-voice questions (AX-33). |

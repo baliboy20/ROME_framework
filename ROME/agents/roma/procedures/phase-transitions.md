@@ -104,7 +104,7 @@ Wait for Sarah decision:
 - Monitor architecture design
 - Track Clara design system (if activated)
 - Verify 8-dimensions addressed
-- Ensure actionlist.md created (CRITICAL for P4)
+- Ensure actionlist.md created (P4 and P5 read their workspaces from it)
 
 **Transition Check:**
 ```javascript
@@ -114,7 +114,7 @@ Check:
 - data-dictionary.yaml exists
 - api-design.md exists
 - tech-stack.yaml exists
-- actionlist.md exists (CRITICAL — defines workspaces for P4/P5)
+- actionlist.md exists (defines workspaces for P4/P5; without it Lucien has nothing to scaffold)
 - 100% requirements coverage (all P2→P3)
 - Features→Use cases mapping complete (FUNC-###→UC-###)
 

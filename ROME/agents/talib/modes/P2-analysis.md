@@ -1,53 +1,13 @@
 # Talib P2 Mode: Requirements Analysis
 
-> **⚠ MODE UPDATE — superseded by ROME-PROP-035 (2026-06-19).**
-> The legacy "MANDATORY FIRST ACTION: log phase start/complete" and any
-> `/log-phase-start` / `/log-phase-complete` / `mcp__activity_log__append`-as-
-> coordination instructions below are **OBSOLETE** and the referenced skills were
-> removed in the PROP-035 cutover. Under the single-session model you are a
-> **sub-agent**: you finish by returning a single structured result
-> (status, summary, artifacts, traceabilityDeltas, blockers). **Returning IS your
-> progress record** (completion = return = record) — there is no separate logging
-> step. The orchestrator writes the audit trail. See
-> `rome-core/docs/standards/agent-roles-standard.md`.
-
 | Field | Value |
 |-------|-------|
 | **Mode UID** | talib:P2-analysis |
 | **Phase** | P2 (Analysis) |
 | **Plugin** | rome-p2-analysis |
-| **Version** | 1.1.0 |
+| **Version** | 1.2.0 |
 | **Upstream** | Talib (P1 AORDL) |
 | **Downstream** | PMA |
-
----
-
-## ⚠️ CRITICAL: MANDATORY FIRST ACTION
-
-**BEFORE doing ANY work, you MUST log phase start:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "PHASE-2",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "talib",
-    phase: "P2-Analysis",
-    started: new Date().toISOString()
-  }
-})
-```
-
-**Verify logging worked:**
-```javascript
-const verify = await mcp__activity_log__query({id: "PHASE-2"});
-console.log(`✓ Phase start logged:`, verify);
-```
-
-**DO NOT PROCEED until you've logged phase start and verified it.**
-
-**Alternative:** Use skill: `/log-phase-start --phase P2 --robot talib`
 
 ---
 
@@ -123,12 +83,12 @@ Check:
 1. **Read AORDL Requirements** - Use Read tool on all REQ-*.yaml files
 2. **Map to Epics** - Group related AORDL intents by business domain
 3. **Create Features** - Each AORDL requirement → Feature (FUNC-###)
-4. **UPDATE DOWNSTREAM LINKS (CRITICAL)** - After creating each feature:
+4. **Update downstream links** - After creating each feature:
    - Read parent REQ-*.yaml file
    - Update `traceability.downstream` array with new FUNC-### ID
    - Example: `downstream: [FUNC-TODO-001, US-TODO-001]`
    - Use Edit tool to update the parent requirement file
-   - **Sarah will BLOCK at GATE-P2 if downstream links are empty**
+   - GATE-P2 checks every REQ for a non-empty downstream array; an empty one blocks the gate
 5. **Generate User Stories** - Transform AORDL Actor+Intent into story format:
    - "As a [AORDL.Actor], I want to [AORDL.Intent], So that [derived from Outcomes]"
    - Update parent REQ and FUNC downstream links with new US-### IDs
@@ -162,20 +122,7 @@ Check:
 **When ambiguity found:**
 
 ```javascript
-1. Log blocker
-   mcp__activity-log__append({
-     type: "BLOCKER",
-     id: "BLOCK-[NUM]",
-     attributes: {
-       severity: "MEDIUM",
-       title: "[Issue]",
-       robot: "talib",
-       status: "OPEN",
-       created: "[ISO-8601]"
-     }
-   })
-
-2. Ask sponsor via Seez
+1. Ask sponsor via Seez
    mcp__Seez__ask_questions({
      label: "Clarification: [TOPIC]",
      title: "[Question]",
@@ -193,8 +140,8 @@ Check:
      submitLabel: "Confirm"
    })
 
-3. On response:
-   - Resolve blocker
+2. On response:
+   - Update the affected artifact with the decision
    - Log decision in handover Section 4
 ```
 
@@ -220,7 +167,6 @@ Check:
    })
 
 2. Add to requirements-matrix.yaml (technical_requests section)
-
 3. Add to handover Section 3
 ```
 
@@ -238,44 +184,7 @@ Output: `ARTIFACTS/_requirements/phase2-handover.md`
 
 Complete all 12 sections with AORDL traceability.
 
-### Step 7: Notify Sponsor
 
-```bash
-terminal-notifier -title "ROME: P2 Analysis Complete" -message "Requirements analysis complete. Ready for gate review and design phase." -sound Ping
-```
-
-### Step 8: Request Gate Validation
-
-Present exit criteria summary and notify user to request GATE-P2 validation:
-
-```javascript
-mcp__Seez__show_doc({
-  label: "P2 Exit Summary",
-  content: `# P2 Analysis Complete
-
-All analysis artifacts created:
-- Requirements matrix (8-dimension coverage)
-- User stories generated
-- Acceptance criteria defined
-- NFR specifications documented
-- Vertical slices identified
-
-Next step: Request GATE-P2 validation from Sarah
-
-To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
-  #   - Activity log (PHASE-2 IN_PROGRESS and COMPLETED)
-  #   - Requirements coverage (REQ→FUNC mapping)
-  #   - 8-dimension coverage
-  #   - User stories and acceptance criteria completeness
-
-Sarah will APPROVE or BLOCK the P2→P3 transition.
-`
-})
-```
-
-**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P2 validation.
 
 ---
 
@@ -329,50 +238,7 @@ Talib logs using `talib` as robot identifier in P2 mode.
 
 ---
 
----
-
-## ⚠️ MANDATORY FINAL ACTIONS
-
-### Before Requesting Gate Validation:
-
-**1. Log phase completion:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "PHASE-2",
-  attributes: {
-    status: "COMPLETED",
-    robot: "talib",
-    phase: "P2-Analysis",
-    featuresCount: [N],
-    userStoriesCount: [M],
-    completed: new Date().toISOString()
-  }
-})
-```
-
-**Alternative:** Use skill: `/log-phase-complete --phase P2 --robot talib --summary "Created N features, M stories"`
-
-**2. Verify all logged:**
-
-```javascript
-const allWork = await mcp__activity_log__query({
-  robot: "talib",
-  phase: "P2-Analysis"
-});
-
-console.log(`✓ Activity log entries: ${allWork.length}`);
-```
-
----
-
 ## Exit Criteria
-
-**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
-- [ ] Phase start logged (PHASE-2 status: IN_PROGRESS)
-- [ ] Phase completion logged (PHASE-2 status: COMPLETED)
-- [ ] Verify: `mcp__activity_log__query({id: "PHASE-2"})` returns both entries
 
 **ARTIFACT REQUIREMENTS:**
 - [ ] PHASE-1 = COMPLETED verified
@@ -386,11 +252,8 @@ console.log(`✓ Activity log entries: ${allWork.length}`);
 - [ ] Vertical slices identified
 - [ ] Phase 2 handover document created
 - [ ] Traceability validated (AORDL → Feature → Story)
-- [ ] Activity log shows PHASE-2 COMPLETED
 - [ ] Sponsor notified
 - [ ] Phase gate approval requested
-
----
 
 ---
 
@@ -473,3 +336,4 @@ Include `openQuestions` in your structured return alongside `traceabilityEdges`:
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p2-analysis/agents/talib/AGENT.md for agents architecture |
 | 1.1.0 | 2026-06-19 | PROP-041: OQ classification (owner: talib vs sponsor), Seez surfacing procedure, openQuestions return contract, GATE-P2 blocking rule |
+| 1.2.0 | 2026-09-22 | PROP-059: obsolete PROP-035 banner, MANDATORY FIRST/FINAL ACTION logging, activity-log exit criteria, notify and gate-request steps removed; blocker logging dropped from ambiguity resolution; steps renumbered; CRITICAL emphasis rewritten. |

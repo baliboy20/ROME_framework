@@ -108,7 +108,7 @@ entities:
 
 ## Notes
 
-- CRITICAL: Data dictionary is SINGLE SOURCE OF TRUTH
+- The data dictionary is the single source of truth: schema, DTOs and UI forms are generated from it, so a field defined anywhere else will diverge
 - All layers (database, API, UI) derive from data dictionary
 - Integrates with PMA's data dictionary workflow (Step 6)
 - Traces to AORDL Invariants for business rules
@@ -126,3 +126,4 @@ entities:
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0.0 | 2026-01-07 | Skill definition created for rome-p3-design plugin |
+| 1.0.1 | 2026-09-22 | PROP-059: CRITICAL emphasis rewritten with its reason. |

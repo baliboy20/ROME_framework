@@ -62,7 +62,7 @@
       "enabled": true,
       "required": false,
       "description": "Terminal management for server tasks"
-    },
+    }
   },
   "plugins": ["Context7"],
   "exports": {
@@ -77,11 +77,5 @@
     "skills/parse-server-integrations/SKILL.md": "Parse Server integrations skill",
     "skills/parse-server-security/SKILL.md": "Parse Server security skill",
     "skills/parse-server-deployment/SKILL.md": "Parse Server deployment skill"
-  },
-  "hooks": {
-    "SessionStart": {
-      "enabled": true,
-      "script": "hooks/SessionStart.sh"
-    }
   }
 }

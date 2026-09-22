@@ -86,11 +86,19 @@ Implemented Proposals:
 When a proposal moves from Draft to Implemented status, move it from proposals/ to implemented-proposals/.
 Do not create proposals in ROME_architect/proposals - they belong in ../ROME_framework_maintenance/proposals.
 
-## v2.0 Sub-Agent Context (ROME-STD-AGENT-ROLES)
+## Scope: Maintainer Only
 
-As of v2.0 (PROP-035), Archie operates as a sub-agent role spawned by the orchestrator (Roma), not as an independently-bootable session. Key invariants:
+Archie maintains the framework. Archie is not a runtime Role, has no entry in `../ROME/agents/`, and is never spawned by the orchestrator (Roma). Archie takes no part in any project lifecycle.
 
-- Canonical role definitions live in `../ROME/agents/`. This directory is the human-facing entry point for direct framework work with Archie outside Roma's lifecycle.
-- Archie returns structured output conforming to the return contract in `../ROME/rome-core/orchestrator/subagent.js`.
-- Standards live in `../ROME/rome-core/docs/standards/` — consult `agent-roles-standard.md` for the full role/instance/gate model.
-- The consolidated MCP set for the orchestrator session is: `activity-log-file` (audit), `Seez` (sponsor), `Mermaid` (visualization). No per-robot MCP setup.
+- Archie works in a session opened directly by the framework owner, from this directory.
+- Runtime Roles (Roma, Surveyor, Talib, PMA, and others) are defined in `../ROME/agents/`. Archie edits those definitions but does not fill any of them.
+- Standards live in `../ROME/rome-core/docs/standards/`. `agent-roles-standard.md` defines the runtime Role/Instance/gate model that Archie maintains.
+- Foundation documents: `../ROME/rome-core/docs/foundation/lexicon.md` (term definitions) and `ontology.md` (entities, relations, axioms).
+
+---
+
+## Revision History
+
+| Rev | Date (ISO 8601) | Summary |
+|-----|------------------|---------|
+| v2.1 | 2026-09-17T00:00:00Z | Replaced "v2.0 Sub-Agent Context" with "Scope: Maintainer Only": Archie is the framework maintainer, not a runtime Role spawned by Roma. Revision history added (previously absent). |

@@ -2,6 +2,122 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-09-22] - v3.5.1 — current-model alignment (PROP-059)
+
+PATCH. Adjusts the agent layer to the Claude 5 generation (Opus 5, Fable 5 /
+5.1) per Anthropic's published prompting guidance. Convention change: NO
+(no state schema or artifact format change; MIG-3.5.0→3.5.1 has no transforms
+and no gaps).
+
+### Why
+The recommended-model table named superseded versions and nothing in the code
+read it. Five producer mode files still carried pre-PROP-035 "log phase
+start/complete" and robot-to-robot hand-off steps under a banner declaring
+them obsolete; current models follow instructions closely enough that a file
+saying both "do X first" and "X is obsolete" is a real risk. Role prompts used
+CRITICAL/MANDATORY as emphasis, which current models over-apply. No rule told
+a sub-agent to finish its dispatch rather than end on a question, or told Roma
+when it may start agents or stop for the sponsor.
+
+### Added
+- **`orchestrator/model-tiers.json`**: model tier per role, by Claude Code
+  alias. `loadRoleSpec` returns `model`; Roma passes it at dispatch;
+  `recordDispatch` stores it.
+- **`orchestrator/prompts/operating-rules.md`**: shared block appended to
+  every sub-agent prompt between the active mode and the return contract.
+- **Roma §"Delegation, pausing and reporting"** in `orchestrator.md`.
+- **Fidelity check 8** (quick and full): 8a no pre-cutover logging phrases
+  under `agents/`; 8b standard §3 names tiers by alias only; 8c every role
+  resolves to a tier and every tier key is a role.
+- Lexicon 1.11: Model Tier, Operating Rules. Ontology 1.11: REL-27.
+
+### Changed
+- `agent-roles-standard.md` 1.3: "Model tier" column by alias; §5 and the
+  intro no longer claim role content is unchanged.
+- Talib P1/P2, Ashok/Reena/Charlie P5: obsolete banner, MANDATORY FIRST/FINAL
+  ACTION sections, activity-log exit criteria, feature start/complete logging,
+  terminal-notifier and robot-to-robot "notify" steps removed; steps
+  renumbered. Implementation-proposal approval now returns BLOCKED for Roma to
+  ask the sponsor (AX-33) instead of pausing inside the dispatch.
+- Sarah QA-validator: "Activity Log Validation" at each gate replaced by a
+  dispatch-record check against `state.json` (sponsor decision §5.3);
+  blockers reported via the structured return.
+- Emphasis rewrite: CRITICAL/MANDATORY used as stress replaced with the plain
+  instruction and its consequence (Talib, Sarah, Lucien, PMA skill, Roma
+  procedures, P5 modes). Severity enum values unchanged.
+
+### Not done (follow-ups, out of PROP-059 scope)
+- Talib P1/P2 still call `mcp__Seez__ask_questions` directly for ambiguity
+  resolution; ROME-STD-AGENT-ROLES §2.1 routes questions through Roma.
+- Bootstrap, Clara, PMA, Lucien and Roma procedures still show
+  `mcp__activity-log__append` (hyphen form) as a coordination call; the
+  lexicon's "Logging Trigger" entry still defines mandatory producer logging.
+- Whether P5 producers should still write `TRACEABILITY.md` now that the
+  matrix is scanned from source (PROP-058).
+- AC8 proof run on `testapps/pinnote` not yet executed (needs a Roma session).
+
+## [2026-09-11] - v3.5.0 "Aurelius" — derived traceability (PROP-058)
+
+Codename **Aurelius**. Restores PROP-041 §A2 as designed: the code and test
+half of traceability is read from the source tree, not declared by producers.
+Convention change: YES (scope per increment, scanned edges, stored matrix
+removed; migration step MIG-3.4.0→3.5.0 with four gaps, nothing retro-gated).
+
+### Why
+On a live project the stored traceability table answered the sponsor with a
+fleet route for a booking-view requirement. Investigation found no version of
+the framework had ever written that table; every requirement-scoped fact took
+its scope from whoever recorded it; `checkTestAdequacy` passed on an empty
+list; and the AORDL validator had no entry point, so the `aordl` fact had been
+satisfied by assertion since v2.3.0. Five faults, one shape: stated intent and
+actual behaviour disagreeing with nothing to notice.
+
+### Added
+- **Scanner** (`orchestrator/scan.js`, `guard-cli scan`): walks `SOURCE/`,
+  finds requirement ids in comments (language-aware; string literals and
+  code never count), yields `path:line` edges tagged `source: scan`, plus
+  unattributed files and unknown ids. Persisted wholesale, never merged.
+- **Increment scope** (`state.js#setScope`, `guard-cli scope`): the in-scope
+  requirement list lives on the increment; set at intake from the corpus,
+  at change-begin from the change's traced requirements, or by the sponsor.
+- **`guard-cli verify`**: the only writer of `traceability`, `matrix`,
+  `testAdequacy`. **`guard-cli check`/`advance`** recompute them and refuse a
+  record that disagrees (AX-40).
+- **INCONCLUSIVE**: third state for scoped checks when scope is unset/empty
+  or nothing was assessed. The guard treats it as not passing.
+- **Accumulated test coverage** (`traceability.testCoverage`): union across
+  increments, so claiming a mature requirement no longer demands re-reporting
+  tests other increments ran.
+- **P5 regression rule**: a requirement linked at the previous sealed
+  increment must still be linked, whatever the current scope.
+- **AX-40, AX-41, AX-42** (ontology 1.9). `tests/axioms.test.cjs` names the
+  five required facts that still lack a checker.
+- **AORDL validator CLI** (from the frob-admin clone): runnable at last;
+  `id_pattern` in the rules manifest admits subject-prefixed ids
+  (`REQ-NOTIF11`); `aordl-standard.md` 1.1.
+- **`guard-cli intake --clear-tdrs / --replace-infra`**: the escapes the
+  AX-36 message promised now exist (CHG-120).
+
+### Changed
+- `buildMatrix` computes only; `guard-cli trace` computes and labels sources.
+  `state.traceability.matrix` is deleted on load (`MATRIX_FIELD_DROPPED`).
+- `validateReturn` rejects declared `implements`/`enforces`/`validates`
+  edges and `documents` edges that cite the producer's own artifact.
+- `routeFromICR` puts `tdrs`/`infraConstraints` on its result only when the
+  record carried them (CHG-118, adopted from the clone with its tests;
+  CHG-119: recorded infra constraints are never replaced silently).
+- `INTAKE_FINALIZED` audits the register as it stands, not what the intake
+  carried.
+- `tests/run.cjs` runs every suite in its directory (three had been omitted:
+  axioms, increments, intake).
+- `rome-start`/`rome-upgrade` run `npm install` in the vendored `lib/`;
+  `lib/node_modules` is no longer tracked in git.
+
+### Known
+- `impact-experts.test.cjs`: one pre-existing failure ("parse pack selected
+  for parse-server service"), unrelated, carried.
+- CHG-121 (conditional gate verdict) is deferred to its own proposal.
+
 ## [2026-07-29] - v3.4.0 "Hadrian" — formal workflows (PROP-057)
 
 Codename **Hadrian**. Closes the workflow gap: AORDL captures atomic actions

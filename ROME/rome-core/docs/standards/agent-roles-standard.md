@@ -11,8 +11,9 @@
 
 Single source of truth for the agent layer under the single-session model. It
 **reframes how existing `agents/` are used** — their content (`ROBOT.md`,
-`modes/`, `skills/`) is unchanged; this standard governs interpretation, so the
-per-robot docs do not each need rewriting.
+`modes/`, `skills/`) is interpreted through this standard. PROP-059 (2026-09-22)
+removed the pre-cutover logging and hand-off instructions that had remained in
+the role docs under a superseded banner.
 
 ---
 
@@ -57,17 +58,17 @@ checked by fidelity 7a.
 
 ## 3. Role catalog & ownership (responsibility matrix)
 
-| Role | Kind | Phase(s) | Capability (PROP-038) | Recommended model |
+| Role | Kind | Phase(s) | Capability (PROP-038) | Model tier |
 |------|------|----------|------------------------|-------------------|
-| Roma | orchestrator | ALL | drives lifecycle (does not produce/approve) | **Opus 4.8 (1M ctx)** |
-| Bootstrap | producer | P0 | scaffold | Haiku 4.5 |
-| Surveyor | producer | P0.5 | input characterization / as-is derivation (PROP-036) | Haiku 4.5 / Sonnet 4.6 |
-| Talib | producer | P1, P2 | requirements, analysis | Sonnet 4.6 |
-| PMA | producer | P3 | design, contracts | **Opus 4.8** |
-| Clara | validator | P3 | design-domain validation (advises; no gate authority) | Sonnet 4.6 |
-| Lucien | producer | P4 | config, secrets-as-config | Sonnet 4.6 |
-| Ashok / Reena / Charlie | producer (capability instances) | P5 | `generate-schema` / `generate-service` / `generate-ui` (+ shared-lib, integration) | Sonnet 4.6 (Opus for gnarly components) |
-| Sarah | gate authority | all gates | issues APPROVE/BLOCK; the only role the guard accepts a verdict from | **Opus 4.8** |
+| Roma | orchestrator | ALL | drives lifecycle (does not produce/approve) | `opus` (session model) |
+| Bootstrap | producer | P0 | scaffold | `haiku` |
+| Surveyor | producer | P0.5 | input characterization / as-is derivation (PROP-036) | `sonnet` |
+| Talib | producer | P1, P2 | requirements, analysis | `sonnet` |
+| PMA | producer | P3 | design, contracts | `opus` |
+| Clara | validator | P3 | design-domain validation (advises; no gate authority) | `sonnet` |
+| Lucien | producer | P4 | config, secrets-as-config | `sonnet` |
+| Ashok / Reena / Charlie | producer (capability instances) | P5 | `generate-schema` / `generate-service` / `generate-ui` (+ shared-lib, integration) | `sonnet` (`opus` for a component Roma marks difficult) |
+| Sarah | gate authority | all gates | issues APPROVE/BLOCK; the only role the guard accepts a verdict from | `opus` |
 
 **Separation of duties (EP-5):** producer ≠ validator ≠ gate authority. The guard
 makes self-approval structurally impossible.
@@ -91,8 +92,14 @@ producers on Sonnet safe — the system verifies their work rather than trusting
 - These are **starting defaults, not measured tunings**: downshift any role that
   proves reliable, upshift any that produces weak output. Override per project /
   per sub-agent (the Agent tool / subagent definitions support a per-agent model).
-- Always use the latest model in each tier (currently Opus 4.8 / Sonnet 4.6 /
-  Haiku 4.5); update this table as the lineup advances.
+- Tiers are Claude Code model aliases (`opus`, `sonnet`, `haiku`); the standard
+  names no model version. The machine source is
+  `rome-core/orchestrator/model-tiers.json`, read by `loadRoleSpec` and passed by
+  Roma at dispatch; this table mirrors it (fidelity 8b/8c). `fable` may replace
+  `opus` by sponsor decision (PROP-059 §5.1: declined for v3.5.1 because its
+  safety classifiers can refuse benign security work in P4/P5 and at gates).
+- Effort is not settable per sub-agent through the Agent tool. Run the Roma
+  session at `high`; revisit if per-agent effort becomes available.
 
 ## 3b. Skills vs Expert packs (no duplication)
 
@@ -119,12 +126,20 @@ progress record; there is no separate logging step and no silent-finish path.
 
 ## 5. Migration note for existing robot docs
 
-`agents/roma/` has been rewritten to v5.0 (orchestrator). The other role
-docs remain content-valid and are interpreted through this standard; any
-remaining "session"/"switch"/"log-coordination" wording in them is superseded by
-this document and should be treated as historical until the Stage 7 rename pass.
+`agents/roma/` was rewritten to v5.0 (orchestrator) under PROP-035. The
+producer mode docs kept their pre-cutover "log phase start/complete" and
+robot-to-robot hand-off steps under a superseded banner until PROP-059 removed
+them (2026-09-22). Every sub-agent prompt now ends with the shared operating
+rules (`rome-core/orchestrator/prompts/operating-rules.md`, appended by
+`loadRoleSpec`) and the return contract. A role doc that still tells a producer
+to log coordination events or to notify another role is a defect.
 
 ---
+
+
+## Annotation duty (PROP-058 / AX-42)
+
+Every producer that writes or edits a source or test file writes the requirement id(s) it satisfies in a comment in that file, in any comment form (`// REQ-BO06`, `/// CHG-044 (REQ-CNA03)`, `# REQ-NOTIF11`). The framework derives code/test traceability by scanning for these; a return that declares `implements`, `enforces` or `validates` edges is rejected. `documents` edges are still returned for design artifacts and may not cite the producer's own artifact.
 
 ## Revision History
 
@@ -132,4 +147,5 @@ this document and should be treated as historical until the Stage 7 rename pass.
 |---------|------|---------|
 | 1.0 | 2026-06-18 | Initial standard — reframes agents as sub-agent roles/capabilities under the single-session model; role catalog + responsibility matrix + return contract; retires the session/switch notion without rewriting each ROBOT.md. |
 | 1.1 | 2026-06-19 | Added recommended-model column + model-selection principle (Opus on Roma/Sarah/PMA; Sonnet producers; Haiku intake/scaffold). |
+| 1.3 | 2026-09-22 | PROP-059: model column by tier alias (`model-tiers.json`, passed at dispatch); shared operating rules appended to every sub-agent prompt; §5 rewritten (pre-cutover logging removed from role docs); intro no longer claims role content unchanged. |
 | 1.2 | 2026-07-27 | PROP-054 Part C: consolidated MCP set inherited by every sub-agent (fidelity 7a); §2.1 sponsor communication — plain-English register (ROME-AX-33) + hybrid channel split (display direct via Seez, questions one-voice through Roma). |

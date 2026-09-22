@@ -5,7 +5,7 @@
 | **Mode UID** | sarah:QA-validator |
 | **Phase** | Quality Gates (All phase transitions) |
 | **Plugin** | rome-qa |
-| **Version** | 1.0.0 |
+| **Version** | 1.2.0 |
 | **Authority** | APPROVE or BLOCK phase transitions |
 
 ---
@@ -74,11 +74,11 @@ Execute quality gate audits at phase transitions. Phase transitions are BLOCKED 
 **During Quality Gates:**
 1. GATE-P1 → `/validate-aordl-structure --requirements ARTIFACTS/_requirements/`
 2. GATE-P2 → `/validate-requirements-coverage --matrix requirements-matrix.yaml`
-   - **CRITICAL:** Manually verify downstream links populated in REQ-*.yaml files
+   - Also read the REQ-*.yaml files and confirm downstream links are populated; the skill counts, it does not read
 3. GATE-P3 → `/validate-data-dictionary --dictionary data-dictionary.yaml`
 4. GATE-P4 → `/validate-workspace-structure --manifest scaffolding-manifest.md`
 5. GATE-P5 → `/validate-test-coverage --source SOURCE/`
-   - **CRITICAL:** Manually verify TRACEABILITY.md files exist for all features
+   - Also confirm a TRACEABILITY.md exists for every feature; the skill measures test coverage, not traceability
 6. Traceability → `/verify-traceability --from AORDL --to Code` (when implemented)
 
 ---
@@ -139,12 +139,9 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Activity Log Validation (MANDATORY)
-   - Verify: mcp__activity_log__query({id: "PHASE-1"}) returns entries
-   - PHASE-1 has status: IN_PROGRESS (start logged)
-   - PHASE-1 has status: COMPLETED (completion logged)
-   - Robot: talib
-   - BLOCK if missing or incomplete
+1. Dispatch record
+   - In state.json, the active increment's dispatch[] holds an entry for phase P1 with status COMPLETE (the orchestrator writes it when the producer returns)
+   - BLOCK if absent: the producer did not run or did not return
 
 2. Structure Compliance
    - All REQ-*.yaml files have 13 fields
@@ -190,21 +187,18 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Activity Log Validation (MANDATORY)
-   - Verify: mcp__activity_log__query({id: "PHASE-2"}) returns entries
-   - PHASE-2 has status: IN_PROGRESS (start logged)
-   - PHASE-2 has status: COMPLETED (completion logged)
-   - Robot: talib
-   - BLOCK if missing or incomplete
+1. Dispatch record
+   - In state.json, the active increment's dispatch[] holds an entry for phase P2 with status COMPLETE (the orchestrator writes it when the producer returns)
+   - BLOCK if absent: the producer did not run or did not return
 
 2. Requirements Coverage + Downstream Traceability
    - All AORDL requirements mapped to features (REQ-###→FUNC-###)
    - No orphan requirements
-   - **CRITICAL:** All P1 requirements have populated downstream links
+   - All P1 requirements have populated downstream links
    - Check: grep "downstream: \[\]" ARTIFACTS/_requirements/aordl/*.yaml
    - BLOCK if any REQ-### has empty downstream array
    - All created features/stories must be listed in parent requirement's downstream
-   - **Content sampling (MANDATORY — not count-only):**
+   - **Content sampling (a count alone passes mechanical linking):**
      - Select at least 3 REQ-### entries at random
      - Read each REQ-### YAML and its corresponding FUNC-### entry
      - Verify the downstream link is semantically correct (FUNC title matches REQ intent)
@@ -249,12 +243,9 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Activity Log Validation (MANDATORY)
-   - Verify: mcp__activity_log__query({id: "PHASE-3"}) returns entries
-   - PHASE-3 has status: IN_PROGRESS (start logged)
-   - PHASE-3 has status: COMPLETED (completion logged)
-   - Robot: PMA (clara, roma, or assigned design robot)
-   - BLOCK if missing or incomplete
+1. Dispatch record
+   - In state.json, the active increment's dispatch[] holds an entry for phase P3 with status COMPLETE (the orchestrator writes it when the producer returns)
+   - BLOCK if absent: the producer did not run or did not return
 
 2. Requirements Coverage (100%)
    - All P2 requirements addressed in P3 design
@@ -312,12 +303,9 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Activity Log Validation (MANDATORY)
-   - Verify: mcp__activity_log__query({id: "PHASE-4"}) returns entries
-   - PHASE-4 has status: IN_PROGRESS (start logged)
-   - PHASE-4 has status: COMPLETED (completion logged)
-   - Robot: lucien
-   - BLOCK if missing or incomplete
+1. Dispatch record
+   - In state.json, the active increment's dispatch[] holds an entry for phase P4 with status COMPLETE (the orchestrator writes it when the producer returns)
+   - BLOCK if absent: the producer did not run or did not return
 
 2. Workspace Structure
    - All workspaces from actionlist.md scaffolded
@@ -365,17 +353,10 @@ Sarah must know these critical file paths for gate validation:
 
 **Validation Checks:**
 ```
-1. Activity Log Validation (MANDATORY)
-   - Implementation Proposal approval:
-     - Verify IMPL-PROP-ASHOK logged APPROVED — BLOCK if missing
-     - Verify IMPL-PROP-REENA logged APPROVED — BLOCK if missing
-     - Verify IMPL-PROP-CHARLIE logged APPROVED — BLOCK if missing
-     - Query: mcp__activity_log_file__query({id: "IMPL-PROP-ASHOK"})
-   - FOR EACH capability in tech-stack.yaml:
-     - Verify P5-[ROBOT] activity log entries exist for assigned capability
-     - Verify capability status: COMPLETED
-   - All declared capabilities must have COMPLETED status
-   - BLOCK if any capability incomplete
+1. Dispatch records
+   - Implementation Proposal approval: state.json audit holds the sponsor's APPROVED decision for each P5 role's proposal (recorded by Roma when it re-dispatched the role) — BLOCK if missing
+   - FOR EACH capability in tech-stack.yaml: the active increment's dispatch[] holds a COMPLETE entry for the role that owns it
+   - BLOCK if any capability has no completed dispatch
 
 2. Implementation Completeness
    - All workspaces implemented
@@ -386,7 +367,7 @@ Sarah must know these critical file paths for gate validation:
    - All integration tests passing
    - Test coverage adequate
 
-4. Traceability (CRITICAL)
+4. Traceability (blocks the gate on failure)
    - AORDL→FUNC→UC→Code chain intact
    - **All TRACEABILITY.md files present**
    - Check: find SOURCE/ -name "TRACEABILITY.md"
@@ -465,27 +446,21 @@ Your independence is worth nothing if your inputs are curated. Rules:
 
 ## Blocker Management
 
-Sarah creates blockers when gate validation fails:
+Sarah reports blockers in the `blockers` array of her structured return; Roma records them in state.json and applies the failure policy. Each entry:
 
 ```javascript
-mcp__activity-log__append({
-  type: "BLOCKER",
+{
   id: "BLOCK-[NUM]",
-  attributes: {
-    severity: "CRITICAL|HIGH|MEDIUM",
-    title: "[Specific issue title]",
-    description: "Requirement: [REQ-ID]. Issue: [specific problem]. Required action: [what must be done].",
-    robot: "sarah",
-    assignedTo: "[responsible robot]",
-    phase: "[current phase]",
-    status: "OPEN",
-    created: "[ISO-8601]"
-  }
-})
+  severity: "CRITICAL|HIGH|MEDIUM",
+  title: "[Specific issue title]",
+  description: "Requirement: [REQ-ID]. Issue: [specific problem]. Required action: [what must be done].",
+  assignedTo: "[responsible role]",
+  phase: "[current phase]"
+}
 ```
 
 **Severity Guidelines:**
-- **CRITICAL:** Blocks phase transition, must be fixed
+- **CRITICAL:** blocks phase transition; must be fixed
 - **HIGH:** Significant issue, should be fixed before proceeding
 - **MEDIUM:** Important issue, can be tracked but doesn't block
 
@@ -561,7 +536,7 @@ Sarah logs using `sarah` as robot identifier.
 ## Exit Criteria
 
 Before issuing APPROVAL decision:
-- [ ] **Activity log validation PASS (MANDATORY)**
+- [ ] Dispatch record check PASS
 - [ ] All validation checks PASS
 - [ ] No CRITICAL blockers
 - [ ] Handover document complete
@@ -585,3 +560,4 @@ Before issuing BLOCK decision:
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-qa/agents/sarah/AGENT.md for agents architecture |
 | 1.1.0 | 2026-07-27 | Core Principle hardened: evidence-from-disk rule — never approve from a summary; read state/artifacts/code directly; verdicts must cite what was read; change-scoped runs verify the fix against the recorded observation. (Answers the "should Sarah run in her own session" question: independence via unmediated evidence access, not session topology.) |
+| 1.2.0 | 2026-09-22 | PROP-059 (sponsor decision §5.3): Activity Log Validation at each gate replaced by a state.json dispatch-record check; blockers reported via the structured return; CRITICAL/MANDATORY emphasis rewritten. |

@@ -5,7 +5,7 @@
 | **Mode UID** | lucien:P4-config |
 | **Phase** | P4 (Config) |
 | **Plugin** | rome-p4-config |
-| **Version** | 1.0.0 |
+| **Version** | 1.0.1 |
 | **Upstream** | PMA (P3 Design) |
 | **Downstream** | Ashok/Reena/Charlie (P5 Generation) |
 
@@ -199,7 +199,7 @@ mcp__activity-log__append({
 
 **NOTE:** This step applies only when a database capability is declared in tech-stack.yaml. Scaffold one workspace per declared capability.
 
-**CRITICAL:** Lucien scaffolds the data workspace structure. Ashok (P5) creates the actual database schema, migrations, models, and seed data.
+Boundary: Lucien scaffolds the data workspace structure. Ashok (P5) creates the actual database schema, migrations, models, and seed data.
 
 #### Step 6.1: Create Data Workspace Structure
 
@@ -459,3 +459,4 @@ Before marking P4 complete:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p4-config/agents/lucien/AGENT.md for agents architecture |
+| 1.0.1 | 2026-09-22 | PROP-059: CRITICAL emphasis rewritten as a plain boundary statement. |

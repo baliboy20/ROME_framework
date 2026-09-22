@@ -2,9 +2,9 @@
 
 **Document UID:** ROME-PRIN-001  
 
-**Version:** 1.1
+**Version:** 1.2
 
-**Date:** 2026-02-27T00:00:00Z
+**Date:** 2026-09-17T00:00:00Z
 
 **Status:** Draft
 
@@ -15,7 +15,7 @@
 --------------------
 
 ## Purpose
-Defines the modus operandi of ROME for all robots operating within the framework. Particularly critical for the Framework Analyst & Architect, who ensures framework consistency and relevance as it evolves.
+Defines the modus operandi of ROME for all Roles and Instances operating within the framework. Particularly critical for the Framework Analyst & Architect, who ensures framework consistency and relevance as it evolves.
 
 Detailed policy for these principles throughout the application development lifecycle is documented in `core-principles-policy.md` (ROME-IMPL-001).
 
@@ -44,7 +44,7 @@ Tracks the progress of work across the ROME lifecycle during application develop
 - Monitor progress of tasks through phases
 - Ensure completion of assigned work
 - Verify compliance to specifications
-- Enable coordination across robots
+- Enable coordination across Instances
 - Support recovery from interruptions
 
 **2b. Framework Traceability (Structural)**
@@ -69,22 +69,28 @@ Maintains integrity and consistency through inter-document references within the
 - Validation mechanisms specific to each phase output type
 
 ### 4. Phase Decomposition
-**Definition:** Requirements-to-code transformation occurs through discrete, sequential phases.
+**Definition:** Requirements-to-code transformation occurs through discrete phases in a fixed order. The phase catalog is defined in ROME-LEX-001 (Phases); `lifecycle.js` (`PHASES`) is authoritative.
 
 **Phases:**
-- **Phase 1 (AORDL)**: Capture and validation of structured requirements in Actor-Oriented Requirements Definition Language (AORDL) format
-- **Phase 2 (Analysis)**: Functional decomposition, entity extraction, and user story generation from AORDL requirements
-- **Phase 3 (Design)**: Converting requirements into architectural schemas and logic flows
-- **Phase 4 (Config)**: Defining technical constraints, environment variables, scaffolding instructions
-- **Phase 5 (Generation)**: Mechanical production of executable code from Phase 4 outputs
+- **P0 (Bootup)**: Framework initialization and project setup. Ungated.
+- **P0.5 (Intake)**: Input characterization and routing. Optional.
+- **P1 (AORDL)**: Capture and validation of structured requirements in Actor-Oriented Requirements Definition Language (AORDL) format
+- **P2 (Analysis)**: Functional decomposition, entity extraction, and user story generation from AORDL requirements
+- **P3 (Design)**: Converting requirements into architectural schemas and logic flows
+- **P3.5 (Prototype)**: Visual prototyping and sponsor visual approval. Optional.
+- **P4 (Config)**: Defining technical constraints, environment variables, scaffolding instructions
+- **P5 (Generation)**: Mechanical production of executable code from P4 outputs
+
+**Order rule:** Routing selects which phases a project runs, once, at intake. Optional phases may be omitted; no phase may be reordered, and no routed phase may be jumped (ROME-AX-06).
 
 ### 5. Central Orchestration
-**Definition:** A designated orchestrator maintains process integrity and coordination across agents.
+**Definition:** One Orchestrator maintains process integrity and coordination across all Instances.
 
 **Implementation:**
-- Single orchestrating agent (Robot) manages phase transitions
-- Ensures adherence to process flow
-- Monitors quality gate compliance
+- The Orchestrator (Roma) is a distinguished Role. It spawns every Instance and drives phase transitions.
+- It does not produce artifacts and does not approve gates.
+- Phase transitions are decided by the deterministic guard (`guard.js`), not by the Orchestrator's judgement (ROME-STD-GATE).
+- Project state is held in `state.json`, independent of any Instance's lifespan.
 
 ### 6. Single Source of Truth
 **Definition:** Critical shared resources maintain singular, authoritative versions.
@@ -97,23 +103,22 @@ Maintains integrity and consistency through inter-document references within the
 - All agents reference canonical versions
 - Updates propagate from single source
 
-### 7. Robot Architecture
-**Definition:** Robots are autonomous Claude Code sessions executing specific tasks within defined operational boundaries.
+### 7. Role Architecture
+**Definition:** Work is done by Instances, each spawned by the Orchestrator from a Role. A Role is a capability definition; an Instance is one sub-agent filling one Role for its lifetime (ROME-STD-AGENT-ROLES).
 
 **Characteristics:**
-- Autonomous Claude Code instances
-- Task-assigned from central task lists
-- Carefully defined role specifications
-- Centrally coordinated operations
-- Trainable via expert input and external knowledge sources
-- Constrained by extensive rule sets defining operational scope within assigned phase(s)
+- Roles are producers, validators, gate authority, or the Orchestrator.
+- Instances run inside the Orchestrator's session with isolated context and scoped tools. They are not separate sessions.
+- Many Instances may fill the same Role at once.
+- Domain knowledge is injected from Expert packs, not duplicated as skills.
+- Each Role's scope is limited to its assigned phase(s).
 
 **Implementation:**
-- Each robot receives explicit role definition document
-- Task assignment through central orchestration
-- Rule sets and constraints limit operational field to specific phase(s)
-- Training materials and expert guidance incorporated into role definitions
-- Coordination ensures non-conflicting concurrent operations
+- Each Role is defined in `ROME/agents/<role>/` (`ROBOT.md`, `modes/`, `skills/`).
+- Only the Orchestrator spawns Instances; Instances do not spawn peers (ROME-AX-14).
+- Producer, validator, and gate authority are separate Roles (ROME-AX-13).
+- An Instance finishes by returning a validated structured result; this return is its progress record.
+- Framework maintenance (Archie) is not a Role and is never spawned.
 
 ### 8. Terminological Integrity
 **Definition:** Framework terminology must be distinct, non-overlapping, and explicitly defined to prevent ambiguity.
@@ -158,14 +163,14 @@ Maintains integrity and consistency through inter-document references within the
 **Definition:** Framework must maintain operational integrity and support recovery under failure conditions.
 
 **Failure Scenarios:**
-- Robot crashes or disconnections during task execution
+- Instance crashes or disconnections during task execution
 - Missing or corrupted framework documents
 - Broken document references or invalid UIDs
 - Incomplete phase outputs due to interrupted processes
-- Inconsistent state across distributed robot operations
+- Inconsistent state across concurrent Instances
 
 **Resilience Requirements:**
-- Tasks must be resumable after robot failure
+- Tasks must be resumable after Instance failure
 - Document corruption must be detectable and recoverable
 - Missing dependencies must be identifiable before task initiation
 - State must be reconstructible from artifact trail
@@ -176,7 +181,7 @@ Maintains integrity and consistency through inter-document references within the
 - Mandatory revision logs support rollback to known-good states
 - Document validation checks detect corruption/incompleteness before use
 - Dependency declarations in documents enable pre-flight checks
-- Central orchestrator maintains authoritative task state independent of robot lifespan
+- Central orchestrator maintains authoritative task state independent of Instance lifespan
 - Framework documents stored in version control for recovery
 - Critical artifacts include checksums or validation metadata
 
@@ -203,7 +208,7 @@ Maintains integrity and consistency through inter-document references within the
 **Implementation:**
 - Roma (Orchestrator) serves as primary sponsor communication channel
 - Escalation protocols define when to engage sponsor vs. resolve internally
-- Decision authority boundaries specify robot autonomy limits
+- Decision authority boundaries specify Role autonomy limits
 - Communication logged in activity system for traceability
 - **Reference:** ROME-GOV-006 (Sponsor Interaction)
 
@@ -250,3 +255,12 @@ Is the ROME cycle (P0–P5) still active?
 - CR-### workflow: Change Request Protocol, ROME-GOV-003
 - New Cycle: version control maintains relationship between cycles; traceability links refinements to source decisions
 
+---
+
+## Revision History
+
+| Version | Date (ISO 8601) | Summary |
+|---------|-----------------|---------|
+| 1.0 | — | Initial issue. (Reconstructed entry.) |
+| 1.1 | 2026-02-27T00:00:00Z | Reconstructed entry; change content not recorded. |
+| 1.2 | 2026-09-17T00:00:00Z | Category 4 modification, sponsor-approved. Principle 4: phase list aligned to ROME-LEX-001 (adds P0, P0.5, P3.5; order rule per AX-06). Principle 5: Orchestrator restated as a Role that spawns Instances; guard decides transitions. Principle 7: "Robot Architecture" (autonomous sessions) replaced by "Role Architecture" (Role + Instance per ROME-STD-AGENT-ROLES). Remaining "robot" wording in Principles 2, 10, 11 and Purpose replaced with Role/Instance. Revision history added. |

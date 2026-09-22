@@ -32,6 +32,7 @@ const TECHNICAL_KEYWORDS = manifest.anti_patterns.technical_keywords;
 const GENERIC_ACTORS = manifest.anti_patterns.generic_actors;
 const AMBIGUOUS_VERBS = manifest.anti_patterns.ambiguous_verbs;
 const APPROVED_VERBS = manifest.approved_verbs;
+const ID_PATTERN = new RegExp(manifest.id_pattern);
 
 // Whitelisted business-appropriate terms that contain technical keywords
 const BUSINESS_WHITELISTED_TERMS = [
@@ -133,15 +134,15 @@ class ValidateAORDL {
   }
 
   /**
-   * Validate ID format (REQ-###)
+   * Validate ID format. Pattern comes from the manifest (never hardcode rule
+   * values here — aordl-standard.md §6). Accepts REQ-001 and REQ-NOTIF11 alike.
    */
   static validateID(requirement, violations) {
     if (requirement.ID) {
-      const idPattern = /^REQ-\d{3}$/;
-      if (!idPattern.test(requirement.ID)) {
+      if (!ID_PATTERN.test(requirement.ID)) {
         violations.push({
           field: 'ID',
-          violation: `ID must match format REQ-### (e.g., REQ-001). Got: ${requirement.ID}`,
+          violation: `ID must be REQ- plus an optional subject prefix and a number (e.g. REQ-001 or REQ-NOTIF11). Got: ${requirement.ID}`,
           severity: 'ERROR',
           rule: 'ID_FORMAT'
         });
@@ -447,3 +448,101 @@ class ValidateAORDL {
 }
 
 module.exports = ValidateAORDL;
+
+// ---------------------------------------------------------------------------
+// CLI. Added 2026-09-08 (CHG-067, increment 56). The AORDL gate at P1 is
+// declared mechanical, but this file shipped as a library with no way to run
+// it, so the gate was never actually enforceable. Usage:
+//
+//   node validate-aordl.js <file-or-directory> [...] [--mode STRICT|GUIDED|PERMISSIVE] [--json]
+//
+// Exit code 0 when every file passes, 1 when any fails, 2 on a usage or read
+// error — so a caller can record the fact without parsing prose.
+// ---------------------------------------------------------------------------
+if (require.main === module) {
+  (async () => {
+    const argv = process.argv.slice(2);
+    const asJson = argv.includes('--json');
+    const modeIdx = argv.indexOf('--mode');
+    const mode = modeIdx !== -1 ? argv[modeIdx + 1] : 'STRICT';
+    const targets = argv.filter((a, i) =>
+      !a.startsWith('--') && !(modeIdx !== -1 && i === modeIdx + 1));
+
+    if (targets.length === 0) {
+      console.error('usage: validate-aordl.js <file-or-directory> [...] [--mode STRICT|GUIDED|PERMISSIVE] [--json]');
+      process.exit(2);
+    }
+    if (!['STRICT', 'GUIDED', 'PERMISSIVE'].includes(mode)) {
+      console.error(`unknown mode "${mode}" — expected STRICT, GUIDED or PERMISSIVE`);
+      process.exit(2);
+    }
+
+    // Expand directories to the REQ-*.yaml files directly inside them.
+    const files = [];
+    for (const t of targets) {
+      let st;
+      try { st = fs.statSync(t); }
+      catch { console.error(`cannot read ${t}`); process.exit(2); }
+      if (st.isDirectory()) {
+        files.push(...fs.readdirSync(t)
+          .filter(f => /^REQ-.*\.ya?ml$/.test(f))
+          .sort()
+          .map(f => path.join(t, f)));
+      } else {
+        files.push(t);
+      }
+    }
+    if (files.length === 0) {
+      console.error('no REQ-*.yaml files found in the given paths');
+      process.exit(2);
+    }
+
+    // A file that cannot be read or parsed is a FAIL for that file, never a
+    // crash of the run — one malformed requirement must not hide the state of
+    // the other ninety-seven.
+    const reports = [];
+    for (const f of files) {
+      try {
+        reports.push(await ValidateAORDL.execute({ requirement_file: f, mode }, 'cli'));
+      } catch (err) {
+        reports.push({
+          requirement_id: path.basename(f, path.extname(f)),
+          requirement_file: f,
+          mode,
+          status: 'FAIL',
+          violations: [{
+            field: 'FILE',
+            violation: `File could not be read or parsed: ${err.message}`,
+            severity: 'ERROR',
+            rule: 'UNPARSEABLE'
+          }],
+          warnings: [],
+          execution_id: 'cli',
+          timestamp: new Date().toISOString()
+        });
+      }
+    }
+    const failed = reports.filter(r => r.status !== 'PASS');
+
+    if (asJson) {
+      console.log(JSON.stringify({
+        mode,
+        total: reports.length,
+        passed: reports.length - failed.length,
+        failed: failed.length,
+        reports
+      }, null, 2));
+    } else {
+      for (const r of reports) {
+        const v = (r.violations || []).length;
+        const w = (r.warnings || []).length;
+        if (r.status === 'PASS' && w === 0) continue;  // quiet on clean
+        console.log(`${r.status.padEnd(4)}  ${r.requirement_id}  violations=${v} warnings=${w}`);
+        for (const x of r.violations || []) console.log(`   VIOLATION ${x.rule} [${x.field}] ${x.violation}`);
+        for (const x of r.warnings || []) console.log(`   WARNING   ${x.rule} [${x.field}] ${x.warning || x.violation}`);
+      }
+      console.log(`\n${mode}: ${reports.length - failed.length}/${reports.length} passed, ${failed.length} failed`);
+    }
+    process.exit(failed.length === 0 ? 0 : 1);
+  })();
+}

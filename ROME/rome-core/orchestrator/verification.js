@@ -5,126 +5,135 @@
  * gated advance — closing the hole where an LLM gate role could APPROVE without
  * the checks having run. The guard reads state.verification[phase][key].pass.
  *
- * Two checks are computed here from state (not trusted from an agent):
- *  - traceability: ALWAYS enforced (iterative-dev safety). Every in-scope
- *    requirement maps requirement→artifact; at P5 also requirement→code AND →test.
- *  - testAdequacy: MVP rule — each requirement's declared Outcomes + Errors are
- *    tested (reported per-requirement by the producer, verified against AORDL).
+ * PROP-058 (derived traceability):
+ *  - The code/test half of every traceability fact comes from SCANNED edges
+ *    (source:'scan', written by applyScan from orchestrator/scan.js), never
+ *    from producer declarations. Design links stay declared (`documents`).
+ *  - Requirement scope comes from active(state).scope.requirements, set by the
+ *    guard at intake or change-begin. A check with no scope is INCONCLUSIVE,
+ *    which the guard treats as not passing. No check takes scope from its caller.
+ *  - Nothing derived is stored: buildMatrix returns, it does not write.
  * Others (executability/secrets/contracts/aordl) are recorded from their modules.
- * Pure, no deps.
+ * Pure with respect to the filesystem: the scan result is passed in.
  */
 
 const { CODE_SATISFIES } = require('./lifecycle');
 const { active } = require('./state');
 
 /** Record a mechanical fact for a phase. Mutates + returns state. */
-function recordVerification(state, phase, key, pass, detail, timestamp) {
+function recordVerification(state, phase, key, pass, detail, timestamp, data) {
   if (!timestamp) throw new Error('recordVerification: timestamp required');
   const inc = active(state);
   inc.verification[phase] = inc.verification[phase] || {};
-  inc.verification[phase][key] = { pass: !!pass, detail: detail || null, timestamp };
+  inc.verification[phase][key] = { pass: !!pass, detail: detail || null, timestamp, ...(data !== undefined ? { data } : {}) };
   state.audit.push({ event: 'VERIFY', phase, key, pass: !!pass, timestamp });
   return state;
 }
 
 /**
- * Traceability completeness for a set of in-scope requirements.
- * @param requirements [REQ-###] expected for the project (in scope)
- * @param opts { requireTest:boolean } — P5 also requires implements + validates edges
- *
- * PROP-042: uses edge store when populated (satisfiesHow: implements / validates).
- * Falls back to legacy delta heuristics when no edges exist.
- *
- * Returns { pass, missing:[{requirement, missing:['code'|'test'|'any']}] }
+ * Resolve the requirement scope a check runs over (PROP-058 §2.4).
+ * Explicit `requirements` (tests, reports) win; otherwise the active increment's
+ * recorded scope; otherwise null → the caller returns INCONCLUSIVE.
  */
-function checkTraceability(state, requirements = [], { requireTest = false } = {}) {
-  const edges = state.traceability.edges || [];
+function scopeOf(state, requirements) {
+  if (Array.isArray(requirements)) return { requirements, source: 'argument' };
+  const sc = active(state).scope;
+  if (sc && Array.isArray(sc.requirements)) return { requirements: sc.requirements, source: sc.source };
+  return null;
+}
+const INCONCLUSIVE = (what) => ({ pass: false, state: 'INCONCLUSIVE', detail: `${what}: no requirement scope recorded for this increment (guard-cli scope) — an absent assessment is not a clean one (PROP-058)` });
+
+/** Edges that count as evidence: unstale, and for code/test only scanned ones. */
+function evidenceEdges(state) {
+  return (state.traceability.edges || []).filter(e => !e.stale);
+}
+function isCodeEvidence(e) { return e.source === 'scan' && CODE_SATISFIES.includes(e.satisfiesHow); }
+function isTestEvidence(e) { return e.source === 'scan' && e.satisfiesHow === 'validates'; }
+
+/**
+ * Traceability completeness for the in-scope requirements.
+ * @param requirements [REQ] optional override (tests/reports); default = increment scope
+ * @param opts { requireTest:boolean } — P5 also requires scanned code AND test edges
+ * Returns { pass, state:'PASS'|'FAIL'|'INCONCLUSIVE', missing:[{requirement, missing:['code'|'test'|'any']}], scope }
+ */
+function checkTraceability(state, requirements, { requireTest = false } = {}) {
+  const sc = scopeOf(state, requirements);
+  if (!sc) return { ...INCONCLUSIVE('traceability'), missing: [] };
+  const edges = evidenceEdges(state);
   const missing = [];
-
-  if (edges.length > 0) {
-    // PROP-042 path: use typed edges
-    for (const req of requirements) {
-      const active = edges.filter(e => e.req === req && !e.stale);
-      if (!active.length) { missing.push({ requirement: req, missing: ['any'] }); continue; }
-      if (requireTest) {
-        const hasImpl = active.some(e => CODE_SATISFIES.includes(e.satisfiesHow));
-        const hasTest = active.some(e => e.satisfiesHow === 'validates');
-        const gap = [];
-        if (!hasImpl) gap.push('code');
-        if (!hasTest) gap.push('test');
-        if (gap.length) missing.push({ requirement: req, missing: gap });
-      }
-    }
-  } else {
-    // Legacy path: heuristic file-extension / name matching on deltas
-    const deltas = state.traceability.deltas || [];
-    for (const req of requirements) {
-      const ds = deltas.filter(d => d.requirement === req);
-      if (ds.length === 0) { missing.push({ requirement: req, missing: ['any'] }); continue; }
-      if (requireTest) {
-        const hasCode = ds.some(d => /\.(js|ts|tsx|dart|py|go|rb|java|cs)$/.test(d.produces) || d.kind === 'code' || /code/i.test(d.produces));
-        const hasTest = ds.some(d => /test|spec/i.test(d.produces));
-        const gap = [];
-        if (!hasCode) gap.push('code');
-        if (!hasTest) gap.push('test');
-        if (gap.length) missing.push({ requirement: req, missing: gap });
-      }
+  for (const req of sc.requirements) {
+    const mine = edges.filter(e => e.req === req);
+    if (!mine.length) { missing.push({ requirement: req, missing: ['any'] }); continue; }
+    if (requireTest) {
+      const gap = [];
+      if (!mine.some(isCodeEvidence)) gap.push('code');
+      if (!mine.some(isTestEvidence)) gap.push('test');
+      if (gap.length) missing.push({ requirement: req, missing: gap });
     }
   }
-
-  return { pass: missing.length === 0, missing };
+  const pass = missing.length === 0;
+  return { pass, state: pass ? 'PASS' : 'FAIL', missing, scope: sc.source,
+    detail: pass ? `${sc.requirements.length} in-scope requirement(s) traced (scope: ${sc.source})` : `${missing.length} of ${sc.requirements.length} in-scope requirement(s) untraced: ${missing.map(m => `${m.requirement}[${m.missing.join('+')}]`).join(', ')}` };
 }
 
 /**
- * MVP test adequacy. The producer reports, per requirement, which declared
- * Outcomes/Errors it tested; this verifies that against the AORDL declaration.
- * @param testManifest [{ req, outcomesTested:bool, errorsTested:[id] }]
- *   Canonical key is `req` (matches traceabilityEdges); `requirement` accepted as
- *   a legacy alias (fob-admin defect D7 — the two used to disagree, so every entry
- *   keyed `undefined` and all requirements falsely reported "no tests").
- * @param aordl        [{ ID, Outcomes:[], Errors:[{error,...}] }]
- * Returns { pass, gaps:[{requirement, reason}] }
+ * Test adequacy (PROP-058 §2.5). Each in-scope requirement's declared Outcomes
+ * and Errors must be covered by tests reported in ANY increment: coverage is the
+ * project-level union in state.traceability.testCoverage, merged by processReturn.
+ * An increment claiming a mature requirement inherits what earlier increments
+ * established and reports only what it adds.
+ *
+ * Three states. INCONCLUSIVE when the scope is empty or unset, or when no
+ * in-scope requirement has any coverage record: an absent assessment is not a
+ * clean one, and the guard treats it as not passing.
+ *
+ * @param aordl [{ ID, Outcomes:[], Errors:[{error,...}] }] — the requirement definitions
+ * Returns { pass, state, gaps:[{requirement, reason}] }
  */
-function checkTestAdequacy(testManifest = [], aordl = []) {
-  const byId = Object.fromEntries(aordl.map(r => [r.ID || r.id, r]));
-  const manifestById = Object.fromEntries(testManifest.map(m => [m.req || m.requirement, m]));
+function checkTestAdequacy(state, aordl = [], { requirements } = {}) {
+  const sc = scopeOf(state, requirements);
+  if (!sc || !sc.requirements.length) return { ...INCONCLUSIVE('testAdequacy'), gaps: [] };
+  const byId = Object.fromEntries((aordl || []).map(r => [r.ID || r.id, r]));
+  const coverage = (state.traceability && state.traceability.testCoverage) || {};
   const gaps = [];
-  for (const req of Object.keys(byId)) {
-    const m = manifestById[req];
-    if (!m) { gaps.push({ requirement: req, reason: 'no tests reported' }); continue; }
-    if ((byId[req].Outcomes || []).length && !m.outcomesTested) {
-      gaps.push({ requirement: req, reason: 'happy-path outcome(s) not tested' });
-    }
-    const declaredErrors = (byId[req].Errors || []).length;
-    const testedErrors = (m.errorsTested || []).length;
-    if (declaredErrors > 0 && testedErrors < declaredErrors) {
-      gaps.push({ requirement: req, reason: `${testedErrors}/${declaredErrors} declared error conditions tested` });
-    }
+  let anyCovered = false;
+  for (const req of sc.requirements) {
+    const def = byId[req];
+    if (!def) { gaps.push({ requirement: req, reason: 'no AORDL definition supplied for in-scope requirement' }); continue; }
+    const c = coverage[req];
+    if (!c) { gaps.push({ requirement: req, reason: 'no tests reported' }); continue; }
+    anyCovered = true;
+    if ((def.Outcomes || []).length && !c.outcomesTested) gaps.push({ requirement: req, reason: 'happy-path outcome(s) not tested' });
+    const declared = (def.Errors || []).length;
+    const tested = (c.errorsTested || []).length;
+    if (declared > 0 && tested < declared) gaps.push({ requirement: req, reason: `${tested}/${declared} declared error conditions tested` });
   }
-  return { pass: gaps.length === 0, gaps };
+  if (!anyCovered) return { pass: false, state: 'INCONCLUSIVE', gaps, detail: `testAdequacy: none of the ${sc.requirements.length} in-scope requirement(s) has any coverage record — nothing was assessed (PROP-058)` };
+  const pass = gaps.length === 0;
+  return { pass, state: pass ? 'PASS' : 'FAIL', gaps, detail: pass ? `all ${sc.requirements.length} in-scope requirement(s) adequately tested (accumulated coverage)` : `${gaps.length} gap(s): ${gaps.map(g => `${g.requirement} — ${g.reason}`).join('; ')}` };
 }
 
 /**
- * Build the link-level traceability matrix from the edge store (PROP-041 A2).
- * Projects edges with a `location` field into per-requirement buckets:
- *   design  — satisfiesHow: 'documents'  (section anchor, P3-stage evidence)
- *   code    — satisfiesHow: 'implements' | 'enforces'  (line-level, P5)
- *   tests   — satisfiesHow: 'validates'  (line-level, P5)
+ * Build the link-level traceability matrix (PROP-041 A2 as restored by PROP-058).
+ *   design — declared `documents` edges with a location (section anchor, P3)
+ *   code   — SCANNED implements/enforces edges (path:line, from source comments)
+ *   tests  — SCANNED validates edges
+ * Declared code/test edges are not evidence and are ignored here.
  *
  * Returns { REQ-ID: { design:[loc], code:[loc], tests:[loc], status } }
  * where status = 'linked' | 'partial' | 'unlinked'.
  *
- * Does not mutate state. The orchestrator stores the result in
- * state.traceability.matrix and calls recordVerification with checkMatrix result.
+ * Returns only. Nothing stores this: the field state.traceability.matrix that
+ * an earlier comment here promised was never written by any version (PROP-058 P1).
  */
 function buildMatrix(state, requirements = []) {
-  const edges = state.traceability.edges || [];
+  const edges = evidenceEdges(state).filter(e => e.location);
   const matrix = {};
   for (const req of requirements) {
-    const active = edges.filter(e => e.req === req && !e.stale && e.location);
-    const design = active.filter(e => e.satisfiesHow === 'documents').map(e => e.location);
-    const code   = active.filter(e => CODE_SATISFIES.includes(e.satisfiesHow)).map(e => e.location);
-    const tests  = active.filter(e => e.satisfiesHow === 'validates').map(e => e.location);
+    const mine = edges.filter(e => e.req === req);
+    const design = mine.filter(e => e.satisfiesHow === 'documents').map(e => e.location);
+    const code   = mine.filter(isCodeEvidence).map(e => e.location);
+    const tests  = mine.filter(isTestEvidence).map(e => e.location);
     const hasCode = code.length > 0;
     const hasTest = tests.length > 0;
     const status = (hasCode && hasTest) ? 'linked' : (hasCode || hasTest || design.length > 0) ? 'partial' : 'unlinked';
@@ -145,7 +154,10 @@ function buildMatrix(state, requirements = []) {
  *
  * Returns { pass, warnings:[REQ-ID], failures:[REQ-ID], detail }
  */
-function checkMatrix(state, requirements = [], { phase = 'P5' } = {}) {
+function checkMatrix(state, requirements, { phase = 'P5' } = {}) {
+  const sc = scopeOf(state, requirements);
+  if (!sc) return { ...INCONCLUSIVE('matrix'), warnings: [], failures: [], linked: [] };
+  requirements = sc.requirements;
   const matrix = buildMatrix(state, requirements);
 
   if (phase === 'P3' || phase === 'P3.5') {
@@ -165,13 +177,30 @@ function checkMatrix(state, requirements = [], { phase = 'P5' } = {}) {
   const unlinked = requirements.filter(r => matrix[r] && matrix[r].status === 'unlinked');
   const partial  = requirements.filter(r => matrix[r] && matrix[r].status === 'partial');
   const failures = [...unlinked, ...partial];
+  const linked = requirements.filter(r => matrix[r] && matrix[r].status === 'linked');
+  // PROP-058 §2.4 regression (sponsor decision 3): a requirement linked at the
+  // previous sealed increment must still be linked now, whatever this
+  // increment's scope. Previous statuses come from that increment's recorded
+  // matrix fact (data.linked), not from a stored table.
+  const regressed = [];
+  const prev = [...(state.increments || [])].reverse().find(i => i.sealed && i.verification && i.verification.P5 && i.verification.P5.matrix && i.verification.P5.matrix.data);
+  if (prev) {
+    const wasLinked = prev.verification.P5.matrix.data.linked || [];
+    const now = buildMatrix(state, wasLinked);
+    for (const r of wasLinked) if (!now[r] || now[r].status !== 'linked') regressed.push(r);
+  }
+  const pass = failures.length === 0 && regressed.length === 0;
   return {
-    pass: failures.length === 0,
+    pass,
+    state: pass ? 'PASS' : 'FAIL',
     warnings: [],
     failures,
-    detail: failures.length
-      ? `${failures.length} req(s) missing code or test location links: ${failures.join(', ')}`
-      : 'all reqs linked to code and tests',
+    regressed,
+    linked,
+    detail: [
+      failures.length ? `${failures.length} req(s) missing code or test location links: ${failures.join(', ')}` : `all ${requirements.length} in-scope req(s) linked to code and tests`,
+      regressed.length ? `${regressed.length} previously linked req(s) regressed since increment ${prev.id}: ${regressed.join(', ')}` : '',
+    ].filter(Boolean).join('; '),
   };
 }
 
@@ -223,8 +252,9 @@ function checkSponsorOq(state) {
  * @param requirements [{ id, stage, dependsOn:[reqId] }] — stage per requirement
  * Returns { pass, violations:[{requirement, dependsOn, reqStage, depStage}], detail }
  */
-function checkStageConsistency(state, requirements = []) {
+function checkStageConsistency(state, requirements) {
   if (!state.stagePlan) return { pass: true, violations: [], detail: 'unstaged project — trivially consistent' };
+  if (!Array.isArray(requirements)) return { ...INCONCLUSIVE('stageConsistency'), violations: [] };
   const stageOf = Object.fromEntries(requirements.map(r => [r.id, r.stage]));
   const violations = [];
   for (const r of requirements) {
@@ -423,4 +453,32 @@ function checkFlowValidation(state, { flowsDir, reqDir } = {}) {
     : { pass: true, detail: `${flows.length} flow(s) validator-clean and sponsor-confirmed (AX-38/39)` };
 }
 
-module.exports = { recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets, checkSponsorAib, checkEnvDivergence, checkTdrConformance, checkFlowValidation };
+/**
+ * Write a scan result into the edge store (PROP-058 §2.2/§3). Scanned edges
+ * carry source:'scan' and are REPLACED wholesale on every scan, never merged:
+ * the source tree is the truth and the store is its projection. Declared
+ * (design) edges are untouched. Rebuilds byReq/byArtifact.
+ */
+function applyScan(state, scan, timestamp) {
+  if (!timestamp) throw new Error('applyScan: timestamp required');
+  const { rebuildIndexes, upsertArtifact } = require('./subagent');
+  const t = state.traceability;
+  const inc = active(state);
+  t.edges = (t.edges || []).filter(e => e.source !== 'scan');
+  for (const e of scan.edges || []) {
+    const existing = t.artifacts[e.artifactId];
+    upsertArtifact(t, e.artifactId, {
+      logicalName: (existing && existing.logicalName) || e.artifactPath || e.artifactId,
+      kind: (existing && existing.kind && existing.kind !== 'unknown') ? existing.kind : (e.satisfiesHow === 'validates' ? 'test' : 'code'),
+      path: e.artifactPath || (existing && existing.path) || null,
+      component: e.component || (existing && existing.component) || null,
+    });
+    t.edges.push({ req: e.req, artifactId: e.artifactId, satisfiesHow: e.satisfiesHow, location: e.location, phase: 'P5', role: 'scanner', agent: 'scan', increment: inc.id, stale: false, source: 'scan' });
+  }
+  rebuildIndexes(t);
+  state.audit.push({ event: 'TRACEABILITY_SCANNED', increment: inc.id, files: scan.files, edges: (scan.edges || []).length, unattributed: (scan.unattributed || []).length, unknownIds: (scan.unknownIds || []).length, timestamp });
+  state.updatedAt = timestamp;
+  return state;
+}
+
+module.exports = { applyScan, scopeOf, recordVerification, checkTraceability, checkTestAdequacy, buildMatrix, checkMatrix, checkSponsorOq, checkStageConsistency, checkStubs, checkDesignAssets, checkSponsorAib, checkEnvDivergence, checkTdrConformance, checkFlowValidation };

@@ -3,6 +3,7 @@
  * Loads a REAL role (pma) from agents and exercises return processing.
  * Run: node tests/subagent.test.cjs
  */
+const { applyScan } = require('../verification');
 const { createState, active } = require('../state');
 const {
   RETURN_STATUS, loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
@@ -23,6 +24,20 @@ console.log('subagent regression:');
   ok('pma system prompt includes return contract', /Return Contract/.test(spec.systemPrompt));
   ok('pma resolved a P3 mode file', /P3/i.test(spec.modeFile || ''));
   ok('pma exposes its skills', spec.skills.includes('design-data-dictionary'));
+  // PROP-059: operating rules appended once, between active mode and return contract
+  const rulesAt = spec.systemPrompt.indexOf('# Operating Rules');
+  ok('operating rules present exactly once', rulesAt > 0 && spec.systemPrompt.indexOf('# Operating Rules', rulesAt + 1) === -1);
+  ok('operating rules follow active mode and precede return contract',
+    spec.systemPrompt.indexOf('# Active Mode') < rulesAt && rulesAt < spec.systemPrompt.lastIndexOf('# Return Contract'));
+  ok('operating rules carry the finish-the-task rule', /Finish the whole task/.test(spec.systemPrompt));
+})();
+
+// 1b. PROP-059: model tier resolved from model-tiers.json
+(() => {
+  ok('sarah resolves to opus', loadRoleSpec('sarah', 'QA').model === 'opus');
+  ok('bootstrap resolves to haiku', loadRoleSpec('bootstrap', 'P0').model === 'haiku');
+  ok('talib resolves to sonnet', loadRoleSpec('talib', 'P1').model === 'sonnet');
+  ok('unlisted role gets the default tier', require('../subagent').modelTier('no-such-role') === 'sonnet');
 })();
 
 // 2. Unknown role throws
@@ -38,7 +53,23 @@ console.log('subagent regression:');
   ok('valid edge return passes', validateReturn({
     agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE',
     summary: 'generated service', artifacts: [],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'OrgService', satisfiesHow: 'documents', location: 'api.md#org' }],
+  }).length === 0);
+  ok('PROP-058: declared code edge rejected (links are scanned, not declared)', validateReturn({
+    agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [],
     traceabilityEdges: [{ req: 'REQ-001', artifactId: 'OrgService', satisfiesHow: 'implements' }],
+  }).some(e => /scan/.test(e)));
+  ok('PROP-058: declared test edge rejected', validateReturn({
+    agent: 'reena-1', role: 'reena', phase: 'P5', status: 'COMPLETE', summary: 's', artifacts: [],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'T', satisfiesHow: 'validates' }],
+  }).some(e => /scan/.test(e)));
+  ok('PROP-058 §2.6: design edge citing its own artifact rejected', validateReturn({
+    agent: 'pma-1', role: 'pma', phase: 'P3', status: 'COMPLETE', summary: 's', artifacts: [{ path: 'ARTIFACTS/_design/delta.md' }],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'delta', satisfiesHow: 'documents', location: 'ARTIFACTS/_design/delta.md#s1' }],
+  }).some(e => /its own document/.test(e)));
+  ok('PROP-058 §2.6: design edge citing another artifact accepted', validateReturn({
+    agent: 'pma-1', role: 'pma', phase: 'P3', status: 'COMPLETE', summary: 's', artifacts: [{ path: 'ARTIFACTS/_design/delta.md' }],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'api', satisfiesHow: 'documents', location: 'ARTIFACTS/_design/api-design.md#s1' }],
   }).length === 0);
   ok('neither deltas nor edges rejected', validateReturn({
     agent: 'x', role: 'pma', phase: 'P3', status: 'COMPLETE', summary: 's', artifacts: [],
@@ -64,7 +95,8 @@ console.log('subagent regression:');
 // 4. Dispatch + processReturn → state records (completion = record)
 (() => {
   const s = createState({ project: 'demo', frameworkVersion: 'test', timestamp: TS });
-  recordDispatch(s, { agent: 'pma-1', role: 'pma', phase: 'P3', timestamp: TS });
+  recordDispatch(s, { agent: 'pma-1', role: 'pma', phase: 'P3', timestamp: TS, model: 'opus' });
+  ok('dispatch records the model tier when passed', active(s).dispatch[0].model === 'opus');
   ok('dispatch recorded RUNNING', active(s).dispatch[0].status === 'RUNNING');
   processReturn(s, {
     agent: 'pma-1', role: 'pma', phase: 'P3', status: RETURN_STATUS.COMPLETE,
@@ -102,15 +134,17 @@ console.log('subagent regression:');
     artifacts: [],
     traceabilityEdges: [
       { req: 'REQ-012', reqField: 'Invariants[0]', artifactId: 'OrgService', artifactKind: 'class',
-        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'enforces' },
-      { req: 'REQ-012', artifactId: 'OrgService', artifactKind: 'class',
-        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'implements' },
+        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'documents', location: 'design.md#org' },
       { req: 'REQ-003', artifactId: 'OrgService', artifactKind: 'class',
-        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'implements' },
-      { req: 'REQ-012', artifactId: 'OrgServiceTest', artifactKind: 'test',
-        artifactPath: 'features/org/tests/org_service_test.dart', component: 'mobile', satisfiesHow: 'validates' },
+        artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'documents', location: 'design.md#org3' },
     ],
   }, TS);
+  // PROP-058: code/test links arrive from the scanner, not the return
+  applyScan(s, { files: 2, unattributed: [], unknownIds: [], edges: [
+    { req: 'REQ-012', artifactId: 'mobile:OrgService', artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'implements', location: 'features/org/services/org_service.dart:1' },
+    { req: 'REQ-012', artifactId: 'mobile:OrgServiceTest', artifactPath: 'features/org/tests/org_service_test.dart', component: 'mobile', satisfiesHow: 'validates', location: 'features/org/tests/org_service_test.dart:1' },
+    { req: 'REQ-003', artifactId: 'mobile:OrgService', artifactPath: 'features/org/services/org_service.dart', component: 'mobile', satisfiesHow: 'implements', location: 'features/org/services/org_service.dart:40' },
+  ] }, TS);
 
   ok('canonical id uses component:name', canonicalId('OrgService', 'mobile') === 'mobile:OrgService');
   ok('artifact node created for OrgService', !!s.traceability.artifacts['mobile:OrgService']);
@@ -119,8 +153,7 @@ console.log('subagent regression:');
   ok('byReq index built for REQ-003', (s.traceability.byReq['REQ-003'] || []).includes('mobile:OrgService'));
   ok('byArtifact index built', (s.traceability.byArtifact['mobile:OrgService'] || []).includes('REQ-012'));
   ok('byArtifact includes REQ-003', (s.traceability.byArtifact['mobile:OrgService'] || []).includes('REQ-003'));
-  ok('3 unique edges stored (enforces+implements+validates for REQ-012; implements for REQ-003)',
-    s.traceability.edges.length === 4);
+  ok('5 unique edges stored (2 declared design + 3 scanned)', s.traceability.edges.length === 5);
 
   const cov = coverage(s);
   ok('linked = 2 (REQ-012 + REQ-003)', cov.linked === 2);
@@ -136,21 +169,22 @@ console.log('subagent regression:');
   processReturn(s, {
     agent: 'reena-1', role: 'reena', phase: 'P5', status: RETURN_STATUS.COMPLETE,
     summary: 'first pass', artifacts: [],
-    traceabilityEdges: [
-      { req: 'REQ-001', artifactId: 'Svc', component: 'mobile', satisfiesHow: 'implements', location: 'svc.dart:10' },
-    ],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'Spec', component: 'mobile', satisfiesHow: 'documents', location: 'd.md#a' }],
   }, TS);
   recordDispatch(s, { agent: 'reena-2', role: 'reena', phase: 'P5', timestamp: TS });
   processReturn(s, {
     agent: 'reena-2', role: 'reena', phase: 'P5', status: RETURN_STATUS.COMPLETE,
     summary: 'self-heal retry', artifacts: [],
-    traceabilityEdges: [
-      { req: 'REQ-001', artifactId: 'Svc', component: 'mobile', satisfiesHow: 'implements', location: 'svc.dart:22' },
-    ],
+    traceabilityEdges: [{ req: 'REQ-001', artifactId: 'Spec', component: 'mobile', satisfiesHow: 'documents', location: 'd.md#b' }],
   }, TS);
   ok('upsert: only 1 edge (not 2) for same natural key', s.traceability.edges.length === 1);
-  ok('upsert: latest location wins', s.traceability.edges[0].location === 'svc.dart:22');
+  ok('upsert: latest location wins', s.traceability.edges[0].location === 'd.md#b');
   ok('upsert: latest agent wins', s.traceability.edges[0].agent === 'reena-2');
+  // PROP-058: scanned edges are replaced wholesale on every scan
+  applyScan(s, { files: 1, unattributed: [], unknownIds: [], edges: [{ req: 'REQ-001', artifactId: 'svc.dart', artifactPath: 'svc.dart', satisfiesHow: 'implements', location: 'svc.dart:10' }] }, TS);
+  applyScan(s, { files: 1, unattributed: [], unknownIds: [], edges: [{ req: 'REQ-001', artifactId: 'svc.dart', artifactPath: 'svc.dart', satisfiesHow: 'implements', location: 'svc.dart:22' }] }, TS);
+  ok('scan: second scan replaces the first (1 scan edge, 1 declared)', s.traceability.edges.filter(e => e.source === 'scan').length === 1 && s.traceability.edges.length === 2);
+  ok('scan: latest scan location wins', s.traceability.edges.find(e => e.source === 'scan').location === 'svc.dart:22');
 })();
 
 // 8. PROP-042: mixed delta + edge return (transition period)

@@ -10,6 +10,11 @@
 # Values sourced from templates/aordl/REQ-TEMPLATE.yaml and the validate-aordl
 # skill definitions.
 
+# Requirement ID format (aordl-standard §2, rev 1.1). An optional upper-case
+# subject prefix precedes the number: REQ-001 and REQ-NOTIF11 are both valid.
+# Read by lib/aordl-parser/validate-aordl.js and orchestrator/scan.js.
+id_pattern: '^REQ-(?:[A-Z][A-Z0-9]*)?\d{2,3}$'
+
 # The 13 required AORDL fields (must all be present). Order matches REQ-TEMPLATE.yaml.
 required_fields:
   - ID

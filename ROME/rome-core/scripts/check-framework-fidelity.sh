@@ -354,6 +354,49 @@ fi
 echo ""
 
 # ─────────────────────────────────────────────────────────
+# Check 8: PROP-059 prompt hygiene. Runs in both quick and full mode.
+# 8a: no role doc reintroduces the pre-cutover logging instructions removed by
+#     PROP-059 (they contradicted the return contract).
+# 8b: the agent-roles standard names model tiers by alias, never by version.
+# 8c: every role directory resolves to a tier in model-tiers.json, and every
+#     key in model-tiers.json is a real role directory.
+# ─────────────────────────────────────────────────────────
+bold "Check 8: Prompt Hygiene & Model Tiers (PROP-059)"
+
+AGENTS_DIR="$ROME_CORE/../agents"
+HYG=$(grep -rlE "MANDATORY FIRST ACTION|/log-phase-|mcp__activity_log__append" "$AGENTS_DIR" --include='*.md' 2>/dev/null || true)
+if [ -z "$HYG" ]; then
+  pass "8a: no role doc carries pre-cutover logging instructions"
+else
+  for H in $HYG; do fail "8a: ${H#$AGENTS_DIR/} carries a pre-cutover logging instruction (PROP-059 §2.4)"; done
+fi
+
+STD="$ROME_CORE/docs/standards/agent-roles-standard.md"
+if awk '/^## 3\. Role catalog/,/^## 3b/' "$STD" | grep -qE "(Opus|Sonnet|Haiku|Fable) [0-9]"; then
+  fail "8b: agent-roles-standard.md §3 names a model version; tiers are aliases (PROP-059 §2.1)"
+else
+  pass "8b: agent-roles-standard.md §3 names tiers by alias only"
+fi
+
+TIERS="$ROME_CORE/orchestrator/model-tiers.json"
+if [ ! -f "$TIERS" ]; then
+  fail "8c: model-tiers.json missing"
+else
+  TIER_FAIL=0
+  for D in "$AGENTS_DIR"/*/; do
+    R=$(basename "$D")
+    if ! node -e "const t=require('$TIERS');process.exit((t.roles['$R']||t.default)?0:1)"; then
+      fail "8c: role $R resolves to no tier"; TIER_FAIL=1
+    fi
+  done
+  for K in $(node -e "console.log(Object.keys(require('$TIERS').roles).join(' '))"); do
+    if [ ! -d "$AGENTS_DIR/$K" ]; then fail "8c: model-tiers.json names role '$K' with no agents/$K/"; TIER_FAIL=1; fi
+  done
+  [ "$TIER_FAIL" -eq 0 ] && pass "8c: every role resolves to a tier; every tier key is a role"
+fi
+echo ""
+
+# ─────────────────────────────────────────────────────────
 # Summary
 # ─────────────────────────────────────────────────────────
 bold "═══════════════════════════════════════════════════════"

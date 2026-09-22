@@ -23,6 +23,10 @@ const { active } = require('./state');
 
 // Repo-relative default location of role definitions.
 const DEFAULT_ROLES_DIR = path.join(__dirname, '..', '..', 'agents');
+// PROP-059: model tier per role (Claude Code alias) and the shared operating rules
+// appended to every sub-agent prompt. One source each; no copy in any ROBOT.md.
+const MODEL_TIERS_FILE = path.join(__dirname, 'model-tiers.json');
+const OPERATING_RULES_FILE = path.join(__dirname, 'prompts', 'operating-rules.md');
 
 const RETURN_STATUS = Object.freeze({ COMPLETE: 'COMPLETE', FAILED: 'FAILED', BLOCKED: 'BLOCKED' });
 
@@ -38,9 +42,15 @@ function findModeFile(modesDir, phaseOrMode) {
   return path.join(modesDir, files[0]);
 }
 
+/** Resolve a role's model tier from model-tiers.json (explicit, else default). */
+function modelTier(role, tiersFile = MODEL_TIERS_FILE) {
+  const tiers = JSON.parse(fs.readFileSync(tiersFile, 'utf8'));
+  return (tiers.roles && tiers.roles[role]) || tiers.default;
+}
+
 /**
  * Load a role's sub-agent spec.
- * @returns { role, systemPrompt, skills:[name], modeFile, sourceDir }
+ * @returns { role, model, systemPrompt, skills:[name], modeFile, sourceDir }
  */
 function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
   const dir = path.join(rolesDir, role);
@@ -56,9 +66,11 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
     ? fs.readdirSync(skillsDir, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name)
     : [];
 
+  const rules = fs.readFileSync(OPERATING_RULES_FILE, 'utf8');
   const systemPrompt = [
     identity,
     mode ? `\n---\n# Active Mode\n\n${mode}` : '',
+    `\n---\n# Operating Rules\n\n${rules}`,
     `\n---\n# Return Contract\n` +
     `You FINISH by returning a single structured result (agent, role, phase, status, ` +
     `summary, artifacts, traceabilityEdges, blockers). \`agent\` MUST be your dispatch ` +
@@ -69,7 +81,7 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
     `to depart from one, file a deviation via the orchestrator instead (never deviate silently).`,
   ].join('');
 
-  return { role, systemPrompt, skills, modeFile: modeFile || null, sourceDir: dir };
+  return { role, model: modelTier(role), systemPrompt, skills, modeFile: modeFile || null, sourceDir: dir };
 }
 
 /**
@@ -109,6 +121,20 @@ function validateReturn(ret) {
     if (!['implements', 'enforces', 'validates', 'documents'].includes(e.satisfiesHow)) {
       errs.push(`edge satisfiesHow "${e.satisfiesHow}" must be implements|enforces|validates|documents`); break;
     }
+    // PROP-058 §2.1: code and test links are SCANNED from source comments, never
+    // declared. Two sources for one fact is the defect being removed.
+    if (e.satisfiesHow !== 'documents') {
+      errs.push(`edge ${e.req}→${e.artifactId} (${e.satisfiesHow}): code/test links are not declared — write the requirement id in a comment in the file and run guard-cli scan (PROP-058)`); break;
+    }
+    // PROP-058 §2.6: a design link must reach a different artifact than the one
+    // that declares it. Self-citation is not coverage.
+    if (e.location) {
+      const locPath = String(e.location).split('#')[0].split(':')[0];
+      const own = (ret.artifacts || []).map(a => (typeof a === 'string' ? a : a && a.path)).filter(Boolean);
+      if (own.some(p => p === locPath || p.endsWith('/' + locPath) || locPath.endsWith('/' + p))) {
+        errs.push(`edge ${e.req}→${e.artifactId} cites ${locPath}, an artifact of this same return — a design link may not cite its own document (PROP-058 §2.6)`); break;
+      }
+    }
   }
   if (ret.status === RETURN_STATUS.BLOCKED && !(Array.isArray(ret.blockers) && ret.blockers.length)) {
     errs.push('BLOCKED return must include blockers[]');
@@ -139,11 +165,14 @@ function validateReturn(ret) {
  * orchestrator's spawn action (ROME-AX-14). Pass it explicitly only to record a
  * non-orchestrator spawner, which the AX-14 check will then flag.
  */
-function recordDispatch(state, { agent, role, phase, timestamp, spawnedBy = 'roma' }) {
+function recordDispatch(state, { agent, role, phase, timestamp, spawnedBy = 'roma', model }) {
   if (!agent || !role || !phase || !timestamp) throw new Error('recordDispatch: agent, role, phase, timestamp required');
   const inc = active(state);
-  inc.dispatch.push({ agent, role, phase, status: 'RUNNING', timestamp, spawnedBy });
-  state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp, spawnedBy });
+  // PROP-059: `model` (tier alias) is recorded when passed so the audit shows which tier ran.
+  const rec = { agent, role, phase, status: 'RUNNING', timestamp, spawnedBy };
+  if (model) rec.model = model;
+  inc.dispatch.push(rec);
+  state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp, spawnedBy, ...(model ? { model } : {}) });
   return state;
 }
 
@@ -255,11 +284,19 @@ function processReturn(state, ret, timestamp) {
   // Upsert by `req` (canonical, matching edges); latest assertion wins.
   if (Array.isArray(ret.testManifest) && ret.testManifest.length) {
     inc.testManifest = inc.testManifest || [];
+    state.traceability.testCoverage = state.traceability.testCoverage || {};
     for (const m of ret.testManifest) {
       const req = m.req || m.requirement;
       const entry = { req, outcomesTested: !!m.outcomesTested, errorsTested: m.errorsTested || [] };
       const existing = inc.testManifest.find(x => x.req === req);
       if (existing) Object.assign(existing, entry); else inc.testManifest.push(entry);
+      // PROP-058 §2.5: project-level coverage is the UNION across increments, so
+      // a later increment claiming a mature requirement inherits earlier tests.
+      const cov = state.traceability.testCoverage[req] || { outcomesTested: false, errorsTested: [] };
+      cov.outcomesTested = cov.outcomesTested || entry.outcomesTested;
+      cov.errorsTested = [...new Set([...cov.errorsTested, ...entry.errorsTested])];
+      cov.lastIncrement = inc.id;
+      state.traceability.testCoverage[req] = cov;
     }
   }
 
@@ -343,7 +380,7 @@ function coverage(state) {
 }
 
 module.exports = {
-  RETURN_STATUS, DEFAULT_ROLES_DIR,
-  loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
-  canonicalId, rebuildIndexes,
+  RETURN_STATUS, DEFAULT_ROLES_DIR, MODEL_TIERS_FILE, OPERATING_RULES_FILE,
+  modelTier, loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
+  canonicalId, rebuildIndexes, upsertArtifact, upsertEdge,
 };

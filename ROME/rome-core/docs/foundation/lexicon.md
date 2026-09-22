@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-LEX-001 |
-| **Version** | 1.8 |
-| **Date** | 2026-07-16T00:00:00Z |
+| **Version** | 1.11 |
+| **Date** | 2026-09-22T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Foundation |
 | **Companion** | ROME-ONT-001 (Ontology — structure and axioms) |
@@ -58,6 +58,8 @@ Centralized definition of all framework-specific terms to ensure terminological 
 | **Error Routing** | A Flow's explicit map from every error declared by its referenced Requirements to an onward route (step or terminal). `UNROUTED` marks a pending sponsor decision — permitted only while DRAFT; a confirmed Flow with an unrouted or stale route fails validation (ROME-AX-39). | `ErrorRouting[]` | Failure-path record (ROME-STD-FLOW; PROP-057) |
 | **Flow Index** | The DERIVED reverse map Requirement → Flows, written by the validator, never hand-authored (it cannot go stale). Requirements referenced by no Flow surface as orphans for sponsor disposition. | `flows/flow-index.json` | Derived cross-reference (PROP-057) |
 | **Carrier Reliability** | The rule that TDR authority never exceeds the reliability of the document carrying it: in a non-Reliable input every APPROVED TDR is downgraded to PROPOSED at extraction (ROME-AX-30). | `intake.js#applyCarrierReliability` | Authority bound (PROP-052 §2.1) |
+| **Model Tier** | The Claude Code model alias (`opus`, `sonnet`, `haiku`, `fable`) assigned to a Role in `rome-core/orchestrator/model-tiers.json`; resolved by `loadRoleSpec` and passed by Roma at dispatch. Names no model version. | `model-tiers.json`, `dispatch[].model` | Model routing that cannot go stale (PROP-059) |
+| **Operating Rules** | The shared prompt block (`rome-core/orchestrator/prompts/operating-rules.md`) that `loadRoleSpec` appends to every sub-agent system prompt between the active mode and the return contract: finish the dispatch, stay in scope, bound document length, ground every claim in the return. | `loadRoleSpec` | One source for sub-agent conduct (PROP-059) |
 | **Infra Constraint** | A sponsor-declared fact about existing infrastructure or vendor commitments (hosting/vendor accounts, operated stacks, vendors to avoid), captured by Surveyor at intake into the ICR. A P3/P4 choice contradicting one must surface in the AIB, never silently. | ICR `infraConstraints` | Intake capture (PROP-051 §2.4) |
 
 ---
@@ -121,6 +123,11 @@ Gate ownership and enforcement: ROME-STD-GATE. Structure and invariants: ROME-ON
 | Term | Definition | Implementation | Scope |
 |------|------------|----------------|-------|
 | **Traceability** | Ability to track transformation steps from source requirements through to generated code | Versioned artifacts, event logging, source references | Process transparency and audit capability |
+| **Scanned Edge** | A code or test traceability link derived by `guard-cli scan` from a requirement id written in a comment in a source file; carries `source: scan` and a `path:line` location. The only admissible evidence that a requirement reaches code or test. | `orchestrator/scan.js`, `verification.js#applyScan` (PROP-058, AX-42) | Traceability |
+| **Declared Edge** | A `documents` traceability link returned by a producer, pointing at a design artifact section. May not cite the producer's own artifact. Declared `implements`/`enforces`/`validates` edges are rejected since v3.5.0. | `subagent.js#validateReturn` | Traceability |
+| **Annotation** | A requirement id, matching `id_pattern`, inside a comment in a source or test file. Any comment form counts; ids in code or string literals do not. The producer's duty; the scanner's input. | ROME-STD-TRACE §6 | Traceability |
+| **Increment Scope** | The list of requirement ids an increment is assessed against, recorded on the increment (`scope.requirements`) at intake, change-begin or by the sponsor. Every requirement-scoped fact reads it; none takes scope from its caller. | `state.js#setScope`, `guard-cli scope` | Verification |
+| **INCONCLUSIVE** | Third state of a requirement-scoped fact: scope unset or empty, or nothing assessed. Recorded as not passing. Distinguishes an absent assessment from a clean one. | `verification.js` (PROP-058 §2.5) | Verification |
 | **Single Source of Truth** | Principle requiring critical shared resources to maintain singular authoritative versions | Data Dictionary, Technical Specifications, Action Lists, Lexicon | Information consistency control |
 | **Atomic Requirement** | Indivisible logical requirement unit produced during Analysis phase; cannot be further decomposed without losing semantic coherence | - | Minimum granularity unit for requirements |
 | **Terminological Integrity** | Property ensuring framework terms are distinct, non-overlapping, and unambiguous | Centralized lexicon and conflict detection | Framework-wide vocabulary management |
@@ -246,8 +253,11 @@ Per ROME-GOV-011 (Git Conventions). All branch names and commit messages in ROME
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
 | 1.0 | — | Initial issue. (Predates revision logging on this document; reconstructed entry.) |
+| 1.11 | 2026-09-22T00:00:00Z | PROP-059 companion additions: Model Tier, Operating Rules (cross-linked to REL-27, ROME-STD-AGENT-ROLES §2/§3). |
+| 1.10 | 2026-09-17T00:00:00Z | Correction: header version/date brought in line with the revision log; PROP-058 row renumbered 1.7 → 1.9. |
 | 1.8 | 2026-07-29T00:00:00Z | PROP-057 companion additions: Flow, Error Routing, Flow Index (cross-linked to ENT-21, AX-38/39, ROME-STD-FLOW). |
 | 1.7 | 2026-07-28T00:00:00Z | PROP-056 companion additions (revision row backfilled — changes shipped v3.3.1): Carve-Out added; Deviation Request updated (scope-bounded authority, monotonic ids); Change Queue updated (priority, stash — PROP-054 v1.4). |
+| 1.9 | 2026-09-11T00:00:00Z | *(Recorded as a duplicate 1.7; renumbered in v1.10.)* PROP-058 companion additions: Scanned Edge, Declared Edge, Annotation, Increment Scope, INCONCLUSIVE (cross-linked to ROME-ONT-001 AX-40..42). |
 | 1.6 | 2026-07-27T00:00:00Z | PROP-054/055 companion additions: Change Type (CT-1..5, with the intent-vs-CT boundary resolving the refinement/extension overlap), Change Queue, Change-Scoped Run, Blast Radius, Convention Level, Migration Step, Migration Log (cross-linked to AX-31..35). |
 | 1.5 | 2026-07-17T00:00:00Z | v3.2.1 consistency pass: duplicate "Technical Specification" resolved (P4 artifact renamed **Technical Specs Artifact**, cross-referenced to the spec-input term); Constraint ↔ Infra Constraint distinct-from note. |
 | 1.4 | 2026-07-17T00:00:00Z | PROP-051/052 companion additions: AIB, Sponsor Checkpoint Response (CONFIRM/REDIRECT/DELEGATE), Technical Specification (spec input), TDR, Deviation Request, Carrier Reliability, Infra Constraint (cross-linked to ENT-20 and AX-27..30). |

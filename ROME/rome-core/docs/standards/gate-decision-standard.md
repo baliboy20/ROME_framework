@@ -70,12 +70,20 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
    `lifecycle.js` (`PHASES[].requires`) is authoritative for this table.
 
    - **traceability** is ALWAYS required (iterative-dev safety): every in-scope
-     requirement maps requirement→artifact; at P5 also requirement→**code** AND →**test**.
-   - **testAdequacy** is the **MVP rule** — each requirement's *declared* Outcomes +
+     requirement maps requirement→artifact; at P5 also requirement→**code** AND →**test**,
+     where code and test links are **scanned from source comments** by `guard-cli scan`,
+     never declared by a producer (PROP-058 / AX-42). "In scope" is the increment's
+     recorded scope (`guard-cli scope`), never a list the recorder chose.
+   - **testAdequacy** is the **MVP rule** — each in-scope requirement's *declared* Outcomes +
      Errors (from AORDL) must be tested; nothing more is demanded (`verification.js#checkTestAdequacy`).
-   - **matrix** is link-level traceability (PROP-041): located edges projected per
-     requirement (`verification.js#checkMatrix`). Section anchors at P3, line-level at
-     P5 — WARN-only at P3, STRICT at P5.
+     Coverage accumulates across increments (`state.traceability.testCoverage`), so a
+     mature requirement's earlier tests count. An empty or unset scope, or no coverage
+     record at all, is **INCONCLUSIVE** — recorded as not passing, never as PASS.
+   - **matrix** is link-level traceability (PROP-041, restored by PROP-058): scanned
+     code/test locations plus declared design anchors, projected per requirement and
+     computed every time (`verification.js#checkMatrix`; nothing is stored). WARN-only
+     at P3, STRICT at P5, where a requirement linked at the previous sealed increment
+     that is no longer linked also fails (regression).
    - **sponsorOq** gates on open questions from P2 (PROP-041 Part B): a deferral is
      valid ONLY with explicit `sponsorAuthorized: true` (`verification.js#checkSponsorOq`).
    - **designAssets** (D5 fix / ROME-AX-26): for a project WITH a ui capability,
@@ -110,7 +118,13 @@ Recorded via `guard.recordGateVerdict` / `guard-cli.cjs verdict`. Appended to
      entry — never a silent skip.
    - Facts are written by their modules (`executability.js`, `security.js`,
      `contracts.js`, `validate-aordl.js`) via `verification.js#recordVerification`,
-     not asserted by the gate role.
+     not asserted by the gate role. The requirement-scoped facts (`traceability`,
+     `matrix`, `testAdequacy`) are written only by `guard-cli verify`; `guard-cli
+     check`/`advance` recomputes them and refuses a record that disagrees (AX-40).
+   - **Known gap (AX-41).** `aordl`, `secrets`, `integration`, `contracts` and
+     `executability` are required facts with no checker function wired to them at
+     v3.5.0; each is satisfied by its module or by assertion until its own proposal
+     lands. `tests/axioms.test.cjs` names them so the gap cannot grow silently.
 
 `guard-cli.cjs` exits non-zero on any blocked transition, so it is wireable as a
 hook over `state.json` mutations. The orchestrator MUST route every transition
