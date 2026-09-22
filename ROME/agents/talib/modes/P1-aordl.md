@@ -5,7 +5,7 @@
 | **Mode UID** | talib:P1-aordl |
 | **Phase** | P1 (AORDL) |
 | **Plugin** | rome-p1-aordl |
-| **Version** | 1.0.0 |
+| **Version** | 1.1.0 |
 | **Upstream** | Bootstrap |
 | **Downstream** | Talib (P2 Analysis) → PMA |
 
@@ -382,3 +382,4 @@ Talib logs using `talib` as robot identifier in P1 mode.
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p1-aordl/agents/talib/AGENT.md for agents architecture |
+| 1.1.0 | 2026-09-22 | PROP-059: obsolete PROP-035 banner, MANDATORY FIRST/FINAL ACTION logging, activity-log exit criteria, notify and gate-request steps removed; blocker logging dropped from ambiguity resolution; steps renumbered; CRITICAL emphasis rewritten. |

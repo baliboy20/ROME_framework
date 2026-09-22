@@ -126,3 +126,4 @@ entities:
 | Version | Date | Summary |
 |---------|------|---------|
 | 1.0.0 | 2026-01-07 | Skill definition created for rome-p3-design plugin |
+| 1.0.1 | 2026-09-22 | PROP-059: CRITICAL emphasis rewritten with its reason. |

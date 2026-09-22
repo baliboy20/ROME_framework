@@ -5,7 +5,7 @@
 | **Mode UID** | sarah:QA-validator |
 | **Phase** | Quality Gates (All phase transitions) |
 | **Plugin** | rome-qa |
-| **Version** | 1.0.0 |
+| **Version** | 1.2.0 |
 | **Authority** | APPROVE or BLOCK phase transitions |
 
 ---
@@ -560,3 +560,4 @@ Before issuing BLOCK decision:
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-qa/agents/sarah/AGENT.md for agents architecture |
 | 1.1.0 | 2026-07-27 | Core Principle hardened: evidence-from-disk rule — never approve from a summary; read state/artifacts/code directly; verdicts must cite what was read; change-scoped runs verify the fix against the recorded observation. (Answers the "should Sarah run in her own session" question: independence via unmediated evidence access, not session topology.) |
+| 1.2.0 | 2026-09-22 | PROP-059 (sponsor decision §5.3): Activity Log Validation at each gate replaced by a state.json dispatch-record check; blockers reported via the structured return; CRITICAL/MANDATORY emphasis rewritten. |

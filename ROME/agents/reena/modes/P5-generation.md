@@ -5,7 +5,7 @@
 | **Mode UID** | reena:P5-generation |
 | **Phase** | P5 (Generation - Backend/API Layer) |
 | **Plugin** | rome-p5-generation |
-| **Version** | 1.0.0 |
+| **Version** | 1.2.0 |
 | **Upstream** | Lucien (P4 Config), Ashok (Data Layer) |
 | **Downstream** | Charlie (Frontend - API consumer) |
 
@@ -530,3 +530,4 @@ Return `traceabilityEdges` (not `traceabilityDeltas`). Each service, route handl
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p5-generation/agents/reena/AGENT.md for agents architecture |
 | 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. implements/enforces for services/middleware, validates for tests. |
+| 1.2.0 | 2026-09-22 | PROP-059: obsolete banner, phase/feature logging, Activity Logging section, notify-Charlie step removed; implementation-proposal approval returns BLOCKED for Roma to ask (AX-33); steps renumbered; CRITICAL emphasis rewritten. |

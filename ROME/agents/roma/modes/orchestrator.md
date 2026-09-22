@@ -5,7 +5,7 @@
 | **Mode UID** | roma:orchestrator |
 | **Phase** | ALL (P0–P5) — Phase-Agnostic |
 | **Plugin** | rome-core |
-| **Version** | 5.0 |
+| **Version** | 5.3 |
 | **Authority** | Drives the lifecycle; the deterministic guard enforces transitions |
 | **Implements** | ROME-PROP-035..040 |
 

@@ -5,7 +5,7 @@
 | **Mode UID** | ashok:P5-generation |
 | **Phase** | P5 (Generation - Data Layer) |
 | **Plugin** | rome-p5-generation |
-| **Version** | 1.0.0 |
+| **Version** | 1.2.0 |
 | **Upstream** | Lucien (P4 Config) |
 | **Downstream** | Reena (Backend API) |
 
@@ -473,3 +473,4 @@ Return `traceabilityEdges` (not `traceabilityDeltas`). Each schema, model, migra
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p5-generation/agents/ashok/AGENT.md for agents architecture |
 | 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. implements/enforces for schemas, validates for tests. |
+| 1.2.0 | 2026-09-22 | PROP-059: obsolete banner, phase/feature logging, Activity Logging section, notify-Reena step removed; implementation-proposal approval returns BLOCKED for Roma to ask (AX-33); steps renumbered; CRITICAL emphasis rewritten. |

@@ -5,7 +5,7 @@
 | **Mode UID** | talib:P2-analysis |
 | **Phase** | P2 (Analysis) |
 | **Plugin** | rome-p2-analysis |
-| **Version** | 1.1.0 |
+| **Version** | 1.2.0 |
 | **Upstream** | Talib (P1 AORDL) |
 | **Downstream** | PMA |
 
@@ -336,3 +336,4 @@ Include `openQuestions` in your structured return alongside `traceabilityEdges`:
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p2-analysis/agents/talib/AGENT.md for agents architecture |
 | 1.1.0 | 2026-06-19 | PROP-041: OQ classification (owner: talib vs sponsor), Seez surfacing procedure, openQuestions return contract, GATE-P2 blocking rule |
+| 1.2.0 | 2026-09-22 | PROP-059: obsolete PROP-035 banner, MANDATORY FIRST/FINAL ACTION logging, activity-log exit criteria, notify and gate-request steps removed; blocker logging dropped from ambiguity resolution; steps renumbered; CRITICAL emphasis rewritten. |

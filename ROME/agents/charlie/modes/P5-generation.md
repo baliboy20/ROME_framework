@@ -5,7 +5,7 @@
 | **Mode UID** | charlie:P5-generation |
 | **Phase** | P5 (Generation - Frontend/Application Layer) |
 | **Plugin** | rome-p5-generation |
-| **Version** | 1.0.0 |
+| **Version** | 1.2.0 |
 | **Upstream** | Lucien (P4 Config), Reena (Backend API) |
 | **Downstream** | End Users |
 
@@ -178,7 +178,7 @@ _Awaiting sponsor approval._`
 
 Then return status BLOCKED with the proposal reference in `blockers`, without writing feature source files in this dispatch. Roma asks the sponsor (ROME-AX-33: questions are asked with one voice) and re-dispatches you with the decision.
 
-**Note:** While awaiting Reena's APIs, Charlie may scaffold the project structure, navigation shell, and design system components — but not implement feature screens.
+**Note:** Roma dispatches Charlie after Reena's node completes (topoBatches). If dispatched earlier for scaffolding, Charlie may scaffold the project structure, navigation shell, and design system components — but not implement feature screens.
 
 **On re-dispatch:**
 
@@ -597,3 +597,4 @@ Return `traceabilityEdges` (not `traceabilityDeltas`). Each widget, screen, bloc
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p5-generation/agents/charlie/AGENT.md for agents architecture |
 | 1.1.0 | 2026-06-19 | PROP-042: traceabilityEdges return contract. implements for screens/widgets, validates for tests. |
+| 1.2.0 | 2026-09-22 | PROP-059: obsolete banner, phase/feature logging, Activity Logging section, completion/gate-request step removed; implementation-proposal approval returns BLOCKED for Roma to ask (AX-33); steps renumbered; CRITICAL emphasis rewritten. |

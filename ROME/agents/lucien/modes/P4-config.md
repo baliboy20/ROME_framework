@@ -5,7 +5,7 @@
 | **Mode UID** | lucien:P4-config |
 | **Phase** | P4 (Config) |
 | **Plugin** | rome-p4-config |
-| **Version** | 1.0.0 |
+| **Version** | 1.0.1 |
 | **Upstream** | PMA (P3 Design) |
 | **Downstream** | Ashok/Reena/Charlie (P5 Generation) |
 
@@ -459,3 +459,4 @@ Before marking P4 complete:
 | Version | Date | Summary of Changes |
 |---------|------|-------------------|
 | 1.0.0 | 2026-01-28 | Extracted from rome-p4-config/agents/lucien/AGENT.md for agents architecture |
+| 1.0.1 | 2026-09-22 | PROP-059: CRITICAL emphasis rewritten as a plain boundary statement. |
