@@ -61,11 +61,5 @@
     "modes/P5-generation.md": "P5 frontend/application implementation mode",
     "skills/generate-ui-screens/SKILL.md": "Generate UI screens skill",
     "skills/generate-ui-components/SKILL.md": "Generate UI components skill"
-  },
-  "hooks": {
-    "SessionStart": {
-      "enabled": true,
-      "script": "hooks/SessionStart.sh"
-    }
   }
 }
