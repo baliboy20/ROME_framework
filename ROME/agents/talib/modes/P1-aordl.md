@@ -1,16 +1,5 @@
 # Talib P1 Mode: AORDL Requirements Capture
 
-> **⚠ MODE UPDATE — superseded by ROME-PROP-035 (2026-06-19).**
-> The legacy "MANDATORY FIRST ACTION: log phase start/complete" and any
-> `/log-phase-start` / `/log-phase-complete` / `mcp__activity_log__append`-as-
-> coordination instructions below are **OBSOLETE** and the referenced skills were
-> removed in the PROP-035 cutover. Under the single-session model you are a
-> **sub-agent**: you finish by returning a single structured result
-> (status, summary, artifacts, traceabilityDeltas, blockers). **Returning IS your
-> progress record** (completion = return = record) — there is no separate logging
-> step. The orchestrator writes the audit trail. See
-> `rome-core/docs/standards/agent-roles-standard.md`.
-
 | Field | Value |
 |-------|-------|
 | **Mode UID** | talib:P1-aordl |
@@ -19,35 +8,6 @@
 | **Version** | 1.0.0 |
 | **Upstream** | Bootstrap |
 | **Downstream** | Talib (P2 Analysis) → PMA |
-
----
-
-## ⚠️ CRITICAL: MANDATORY FIRST ACTION
-
-**BEFORE doing ANY work, you MUST log phase start:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "PHASE-1",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "talib",
-    phase: "P1-AORDL",
-    started: new Date().toISOString()
-  }
-})
-```
-
-**Verify logging worked:**
-```javascript
-const verify = await mcp__activity_log__query({id: "PHASE-1"});
-console.log(`✓ Phase start logged:`, verify);
-```
-
-**DO NOT PROCEED until you've logged phase start and verified it.**
-
-**Alternative:** Use skill: `/log-phase-start --phase P1 --robot talib`
 
 ---
 
@@ -254,7 +214,7 @@ OpenQuestions:
 CopilotMode: STRICT|GUIDED|PERMISSIVE
 ```
 
-**CRITICAL Anti-Patterns to Avoid:**
+**Anti-patterns the STRICT validator rejects:**
 - ❌ UI Language: "click button", "dropdown menu", "modal dialog"
 - ❌ Technical Jargon: "POST /api/users", "Redux action", "database join"
 - ❌ Generic Actors: "User", "System" (use specific roles)
@@ -286,21 +246,7 @@ Generates BDD scenarios to verify completeness.
 **For each OpenQuestion with status=OPEN:**
 
 ```javascript
-1. Log blocker
-   mcp__activity-log__append({
-     type: "BLOCKER",
-     id: "BLOCK-[NUM]",
-     attributes: {
-       severity: "HIGH",
-       title: "AORDL OpenQuestion: [Question]",
-       requirementId: "REQ-###",
-       robot: "talib",
-       status: "OPEN",
-       created: "[ISO-8601]"
-     }
-   })
-
-2. Ask sponsor via Seez
+1. Ask sponsor via Seez
    mcp__Seez__ask_questions({
      label: "AORDL Clarification: REQ-###",
      title: "[Question]",
@@ -317,7 +263,7 @@ Generates BDD scenarios to verify completeness.
      }]
    })
 
-3. Update requirement with decision
+2. Update requirement with decision
    - status: RESOLVED
    - decision: "[Answer]"
    - decisionDate: "[ISO-8601]"
@@ -364,7 +310,7 @@ Output: `ARTIFACTS/_requirements/requirements-catalog.md`
 /generate-aordl-report --output ARTIFACTS/_requirements/aordl-validation-report.md
 ```
 
-**CRITICAL:** GATE-P1 must show 100% pass rate. No exceptions.
+GATE-P1 passes only at 100%. The guard rejects a partial pass, so fix each failure rather than reporting it as accepted.
 
 ### Step 8: Create Phase 1 Handover
 
@@ -378,45 +324,7 @@ Output: `ARTIFACTS/_requirements/phase1-handover.md`
 - Technical requests for PMA
 - Notes for P2 analysis (suggested decomposition)
 
-### Step 9: Notify Sponsor
 
-```bash
-terminal-notifier -title "ROME: P1 AORDL Complete" -message "All requirements captured in AORDL format. GATE-P1 approved. Ready for analysis." -sound Ping
-```
-
-### Step 10: Request Gate Validation
-
-Present exit criteria summary and notify user to request GATE-P1 validation:
-
-```javascript
-mcp__Seez__show_doc({
-  label: "P1 Exit: GATE-P1 Results",
-  content: `# GATE-P1 Validation Results
-
-**Total Requirements:** [N]
-**Validation Pass Rate:** 100%
-**Anti-Pattern Violations:** 0
-**Open Questions:** 0
-**Status:** Self-validated - Ready for Sarah Review
-
-All P1 exit criteria met. Ready for GATE-P1 validation.
-
-Next step: Request GATE-P1 validation from Sarah
-
-To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
-  #   - Activity log (PHASE-1 IN_PROGRESS and COMPLETED)
-  #   - AORDL structure (13 fields, no anti-patterns)
-  #   - All OpenQuestions resolved
-  #   - 100% STRICT mode validation pass
-
-Sarah will APPROVE or BLOCK the P1→P2 transition.
-`
-})
-```
-
-**Alternative (if Roma orchestrator is in use):** Notify Roma to coordinate GATE-P1 validation.
 
 ---
 
@@ -452,50 +360,7 @@ Talib logs using `talib` as robot identifier in P1 mode.
 
 ---
 
----
-
-## ⚠️ MANDATORY FINAL ACTIONS
-
-### Before Requesting Gate Validation:
-
-**1. Log phase completion:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "PHASE-1",
-  attributes: {
-    status: "COMPLETED",
-    robot: "talib",
-    phase: "P1-AORDL",
-    requirementsCount: [N],
-    completed: new Date().toISOString()
-  }
-})
-```
-
-**Alternative:** Use skill: `/log-phase-complete --phase P1 --robot talib --summary "Created N requirements"`
-
-**2. Verify all logged:**
-
-```javascript
-const allWork = await mcp__activity_log__query({
-  robot: "talib",
-  phase: "P1-AORDL"
-});
-
-console.log(`✓ Activity log entries: ${allWork.length}`);
-// Should have: phase start + work items + phase complete
-```
-
----
-
 ## Exit Criteria
-
-**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
-- [ ] Phase start logged (PHASE-1 status: IN_PROGRESS)
-- [ ] Phase completion logged (PHASE-1 status: COMPLETED)
-- [ ] Verify: `mcp__activity_log__query({id: "PHASE-1"})` returns both entries
 
 **ARTIFACT REQUIREMENTS:**
 - [ ] All raw materials read and analyzed
@@ -509,8 +374,6 @@ console.log(`✓ Activity log entries: ${allWork.length}`);
 - [ ] Requirements catalog created
 - [ ] Phase 1 handover document created
 - [ ] GATE-P1 validation passed
-- [ ] Activity log shows PHASE-1 COMPLETED
-- [ ] Roma notified of completion
 
 ---
 

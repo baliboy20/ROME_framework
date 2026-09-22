@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-GOV-002 |
-| **Version** | 4.25 |
-| **Date** | 2026-09-17T00:00:00Z |
+| **Version** | 4.28 |
+| **Date** | 2026-09-21T00:00:00Z |
 | **Status** | Draft |
 | **Document Type** | Governance |
 | **Author** | Framework Analyst & Architect |
@@ -213,13 +213,16 @@ Relocated in v2.0 (PROP-035): `robot-templates/<robot>/CLAUDE.md` → `agents/<a
 | ROME-PROP-055 | Project Version Migration | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-055-project-version-migration.md` | Implemented (v3.3.0) |
 | ROME-PROP-056 | TDR Register Integrity | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-056-tdr-register-integrity.md` | Implemented (v3.3.1) |
 | ROME-DEFECT-001 | Field Defect Report — TDR Register Integrity (frob-admin-Bacon) | `/ROME_framework_maintenance/defect-reports/ROME-DEFECT-001-tdr-register-integrity.md` | Closed (superseded by ROME-PROP-056) |
+| ROME-DEFECT-002 | Defect Report — Framework Document Consistency (seven open defects, D1–D7) | `/ROME_framework_maintenance/defect-reports/ROME-DEFECT-002-framework-document-consistency.md` | Draft (open) |
 | ROME-PROP-057 | Formal Workflows (FLOW artifacts above AORDL) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-057-formal-workflows.md` | Implemented (v3.4.0) |
+| ROME-MIG-3.5.0-3.5.1 | Migration step 3.5.0→3.5.1 (PROP-059; no transforms, no gaps) | `/ROME/rome-core/migrations/3.5.0-3.5.1/step.md` | Active |
 | ROME-STD-FLOW | Flow Standard (formal workflow artifacts) | `/ROME/rome-core/docs/standards/flow-standard.md` | Active |
 | ROME-DISC-001 | Discussion — OWL Ontological Definitions for ROME | published artifact (claude.ai/code/artifact/62d7cc6e-1e99-4137-85e8-48fe9ccfded5) | Discussion |
 | ROME-DISC-002 | Discussion — Rule Bloat Review | `/ROME_framework_maintenance/discussions/ROME-DISC-002-rule-bloat-review.md` | Discussion |
 | ROME-DISC-003 | Discussion — Expedited Changes (sponsor-directed edits, post-approval) | `/ROME_framework_maintenance/discussions/ROME-DISC-003-expedited-changes.md` | Discussion |
 | ROME-PROP-058 | Derived Traceability (scanned matrix, scope from state, stored matrix removed; consolidates DISC-007 and CHG-118/119/120/123) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-058-derived-traceability.md` | Implemented (v3.5.0) |
 | ROME-REVIEW-PROP-058 | Proof run of derived traceability on frob-admin-Bacon (PROP-058 AC11) | `/ROME_framework_maintenance/reviews/ROME-REVIEW-PROP-058-proof-frob-admin.md` | Complete |
+| ROME-PROP-059 | Current-Model Alignment (model tiers by alias passed at dispatch, shared sub-agent operating rules, Roma delegation/pause rules, obsolete and over-emphasised prompt text removed) | `/ROME_framework_maintenance/implemented-proposals/ROME-PROP-059-current-model-alignment.md` | Implemented (v3.5.1; AC8 proof run pending) |
 
 ### Implementation Plans
 
@@ -321,6 +324,9 @@ This registry MUST be updated when:
 | 3.8 | 2026-03-03T20:00:00Z | Registered ROME-PROP-030 (Roma Robot Documentation Restructure — monolith split, proposal ref removal, capability-based rollback). |
 | 3.9 | 2026-03-04T00:00:00Z | Framework v1.2.1: PROP-030 implemented (Roma doc restructure), proposal reference removal sweep across 20+ operational docs. PATCH bump — no breaking changes. |
 | 4.0 | 2026-03-05T00:00:00Z | Registered ROME-PROP-034 (Phase Plugin Consolidation — retire phase plugins, elevate content to robot plugins and framework standards). Registered ROME-REV-005 (AORDL Ingest Pipeline Gap Review). |
+| 4.28 | 2026-09-22T00:00:00Z | PROP-059 implemented (v3.5.1 — PATCH) and moved to implemented-proposals/. Registered ROME-MIG-3.5.0-3.5.1. Companions: ontology 1.11 (REL-27), lexicon 1.11, ROME-STD-AGENT-ROLES 1.3, orchestrator.md 5.3, fidelity check 8. |
+| 4.27 | 2026-09-21T00:00:00Z | Registered ROME-PROP-059 (current-model alignment — draft for sponsor decision; appraisal against the Claude Opus 5 / Fable 5 / Fable 5.1 prompting guides). |
+| 4.26 | 2026-09-17T00:00:00Z | Registered ROME-DEFECT-002 (framework document consistency — seven open defects from the 2026-09-17 read-through; six same-session fixes recorded). |
 | 4.25 | 2026-09-17T00:00:00Z | ROME-GUIDE-001 marked Withdrawn (file deleted 2026-07-19, commit fcc53c79; registry still listed it Active). Backticks removed from the path in the v4.15 row so fidelity check 1 does not read it as a live entry. Header table row break repaired. Companions recorded: ontology v1.10, lexicon v1.10 (corrections). |
 | 4.24 | 2026-09-11T00:00:00Z | PROP-058 implemented (v3.5.0 "Aurelius" — MINOR) and moved to implemented-proposals/. Registered ROME-REVIEW-PROP-058. Companions: ontology v1.9 (AX-40..42), lexicon v1.7, ROME-STD-TRACE 3.0, ROME-STD-GATE (PROP-058 notes), ROME-STD-AORDL 1.1, MIG-3.4.0→3.5.0. |
 | 4.23 | 2026-09-10T00:00:00Z | Registered ROME-PROP-058 (derived traceability — restores PROP-041 §A2 as designed; stored matrix had no writer since v2.3.0). Header version corrected from stale 4.17 to match the log. |

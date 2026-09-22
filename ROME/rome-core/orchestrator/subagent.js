@@ -23,6 +23,10 @@ const { active } = require('./state');
 
 // Repo-relative default location of role definitions.
 const DEFAULT_ROLES_DIR = path.join(__dirname, '..', '..', 'agents');
+// PROP-059: model tier per role (Claude Code alias) and the shared operating rules
+// appended to every sub-agent prompt. One source each; no copy in any ROBOT.md.
+const MODEL_TIERS_FILE = path.join(__dirname, 'model-tiers.json');
+const OPERATING_RULES_FILE = path.join(__dirname, 'prompts', 'operating-rules.md');
 
 const RETURN_STATUS = Object.freeze({ COMPLETE: 'COMPLETE', FAILED: 'FAILED', BLOCKED: 'BLOCKED' });
 
@@ -38,9 +42,15 @@ function findModeFile(modesDir, phaseOrMode) {
   return path.join(modesDir, files[0]);
 }
 
+/** Resolve a role's model tier from model-tiers.json (explicit, else default). */
+function modelTier(role, tiersFile = MODEL_TIERS_FILE) {
+  const tiers = JSON.parse(fs.readFileSync(tiersFile, 'utf8'));
+  return (tiers.roles && tiers.roles[role]) || tiers.default;
+}
+
 /**
  * Load a role's sub-agent spec.
- * @returns { role, systemPrompt, skills:[name], modeFile, sourceDir }
+ * @returns { role, model, systemPrompt, skills:[name], modeFile, sourceDir }
  */
 function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
   const dir = path.join(rolesDir, role);
@@ -56,9 +66,11 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
     ? fs.readdirSync(skillsDir, { withFileTypes: true }).filter(d => d.isDirectory()).map(d => d.name)
     : [];
 
+  const rules = fs.readFileSync(OPERATING_RULES_FILE, 'utf8');
   const systemPrompt = [
     identity,
     mode ? `\n---\n# Active Mode\n\n${mode}` : '',
+    `\n---\n# Operating Rules\n\n${rules}`,
     `\n---\n# Return Contract\n` +
     `You FINISH by returning a single structured result (agent, role, phase, status, ` +
     `summary, artifacts, traceabilityEdges, blockers). \`agent\` MUST be your dispatch ` +
@@ -69,7 +81,7 @@ function loadRoleSpec(role, phaseOrMode, rolesDir = DEFAULT_ROLES_DIR) {
     `to depart from one, file a deviation via the orchestrator instead (never deviate silently).`,
   ].join('');
 
-  return { role, systemPrompt, skills, modeFile: modeFile || null, sourceDir: dir };
+  return { role, model: modelTier(role), systemPrompt, skills, modeFile: modeFile || null, sourceDir: dir };
 }
 
 /**
@@ -153,11 +165,14 @@ function validateReturn(ret) {
  * orchestrator's spawn action (ROME-AX-14). Pass it explicitly only to record a
  * non-orchestrator spawner, which the AX-14 check will then flag.
  */
-function recordDispatch(state, { agent, role, phase, timestamp, spawnedBy = 'roma' }) {
+function recordDispatch(state, { agent, role, phase, timestamp, spawnedBy = 'roma', model }) {
   if (!agent || !role || !phase || !timestamp) throw new Error('recordDispatch: agent, role, phase, timestamp required');
   const inc = active(state);
-  inc.dispatch.push({ agent, role, phase, status: 'RUNNING', timestamp, spawnedBy });
-  state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp, spawnedBy });
+  // PROP-059: `model` (tier alias) is recorded when passed so the audit shows which tier ran.
+  const rec = { agent, role, phase, status: 'RUNNING', timestamp, spawnedBy };
+  if (model) rec.model = model;
+  inc.dispatch.push(rec);
+  state.audit.push({ event: 'DISPATCH', agent, role, phase, timestamp, spawnedBy, ...(model ? { model } : {}) });
   return state;
 }
 
@@ -365,7 +380,7 @@ function coverage(state) {
 }
 
 module.exports = {
-  RETURN_STATUS, DEFAULT_ROLES_DIR,
-  loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
+  RETURN_STATUS, DEFAULT_ROLES_DIR, MODEL_TIERS_FILE, OPERATING_RULES_FILE,
+  modelTier, loadRoleSpec, validateReturn, recordDispatch, processReturn, coverage,
   canonicalId, rebuildIndexes, upsertArtifact, upsertEdge,
 };

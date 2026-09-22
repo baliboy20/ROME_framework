@@ -24,6 +24,20 @@ console.log('subagent regression:');
   ok('pma system prompt includes return contract', /Return Contract/.test(spec.systemPrompt));
   ok('pma resolved a P3 mode file', /P3/i.test(spec.modeFile || ''));
   ok('pma exposes its skills', spec.skills.includes('design-data-dictionary'));
+  // PROP-059: operating rules appended once, between active mode and return contract
+  const rulesAt = spec.systemPrompt.indexOf('# Operating Rules');
+  ok('operating rules present exactly once', rulesAt > 0 && spec.systemPrompt.indexOf('# Operating Rules', rulesAt + 1) === -1);
+  ok('operating rules follow active mode and precede return contract',
+    spec.systemPrompt.indexOf('# Active Mode') < rulesAt && rulesAt < spec.systemPrompt.lastIndexOf('# Return Contract'));
+  ok('operating rules carry the finish-the-task rule', /Finish the whole task/.test(spec.systemPrompt));
+})();
+
+// 1b. PROP-059: model tier resolved from model-tiers.json
+(() => {
+  ok('sarah resolves to opus', loadRoleSpec('sarah', 'QA').model === 'opus');
+  ok('bootstrap resolves to haiku', loadRoleSpec('bootstrap', 'P0').model === 'haiku');
+  ok('talib resolves to sonnet', loadRoleSpec('talib', 'P1').model === 'sonnet');
+  ok('unlisted role gets the default tier', require('../subagent').modelTier('no-such-role') === 'sonnet');
 })();
 
 // 2. Unknown role throws
@@ -81,7 +95,8 @@ console.log('subagent regression:');
 // 4. Dispatch + processReturn → state records (completion = record)
 (() => {
   const s = createState({ project: 'demo', frameworkVersion: 'test', timestamp: TS });
-  recordDispatch(s, { agent: 'pma-1', role: 'pma', phase: 'P3', timestamp: TS });
+  recordDispatch(s, { agent: 'pma-1', role: 'pma', phase: 'P3', timestamp: TS, model: 'opus' });
+  ok('dispatch records the model tier when passed', active(s).dispatch[0].model === 'opus');
   ok('dispatch recorded RUNNING', active(s).dispatch[0].status === 'RUNNING');
   processReturn(s, {
     agent: 'pma-1', role: 'pma', phase: 'P3', status: RETURN_STATUS.COMPLETE,

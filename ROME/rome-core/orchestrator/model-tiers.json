@@ -1,0 +1,17 @@
+{
+  "_comment": "ROME-PROP-059. Model tier per role, by Claude Code alias (opus|sonnet|haiku|fable). Read by subagent.js#loadRoleSpec; mirrored in ROME-STD-AGENT-ROLES §3. Roles absent from `roles` get `default`.",
+  "default": "sonnet",
+  "roles": {
+    "roma": "opus",
+    "sarah": "opus",
+    "pma": "opus",
+    "talib": "sonnet",
+    "clara": "sonnet",
+    "lucien": "sonnet",
+    "surveyor": "sonnet",
+    "ashok": "sonnet",
+    "reena": "sonnet",
+    "charlie": "sonnet",
+    "bootstrap": "haiku"
+  }
+}

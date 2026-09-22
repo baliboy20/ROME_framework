@@ -1,16 +1,5 @@
 # Reena P5 Mode: Backend API Implementation
 
-> **⚠ MODE UPDATE — superseded by ROME-PROP-035 (2026-06-19).**
-> The legacy "MANDATORY FIRST ACTION: log phase start/complete" and any
-> `/log-phase-start` / `/log-phase-complete` / `mcp__activity_log__append`-as-
-> coordination instructions below are **OBSOLETE** and the referenced skills were
-> removed in the PROP-035 cutover. Under the single-session model you are a
-> **sub-agent**: you finish by returning a single structured result
-> (status, summary, artifacts, traceabilityDeltas, blockers). **Returning IS your
-> progress record** (completion = return = record) — there is no separate logging
-> step. The orchestrator writes the audit trail. See
-> `rome-core/docs/standards/agent-roles-standard.md`.
-
 | Field | Value |
 |-------|-------|
 | **Mode UID** | reena:P5-generation |
@@ -19,36 +8,6 @@
 | **Version** | 1.0.0 |
 | **Upstream** | Lucien (P4 Config), Ashok (Data Layer) |
 | **Downstream** | Charlie (Frontend - API consumer) |
-
----
-
-## ⚠️ CRITICAL: MANDATORY FIRST ACTION
-
-**BEFORE doing ANY work, you MUST log phase start:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "P5-REENA",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "reena",
-    phase: "P5-generation",
-    capability: "api",
-    started: new Date().toISOString()
-  }
-})
-```
-
-**Verify logging worked:**
-```javascript
-const verify = await mcp__activity_log__query({robot: "reena", phase: "P5-generation"});
-console.log(`✓ Phase start logged:`, verify);
-```
-
-**DO NOT PROCEED until you've logged phase start and verified it.**
-
-**Alternative:** Use skill: `/log-phase-start --phase P5 --robot reena`
 
 ---
 
@@ -131,19 +90,7 @@ Check:
 
 ### Step 2: Query Assigned Features
 
-Query activity log for backend layer feature assignments:
-
-```javascript
-mcp__activity-log__query({
-  robot: "reena",
-  status: "PENDING"
-})
-```
-
-**Alternative:** Read actionlist.md directly:
-```
-ARTIFACTS/_design/design-decisions/actionlist.md
-```
+Read the feature assignments from `ARTIFACTS/_design/design-decisions/actionlist.md`.
 
 **For each assigned feature (FEAT-###):**
 - Note feature ID, title, priority
@@ -151,9 +98,9 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Verify Ashok's data layer dependencies completed
 - Check dependencies on other features
 
-### Step 2b: Publish Implementation Proposal (MANDATORY)
+### Step 2b: Publish Implementation Proposal
 
-**Before logging any FEATURE IN_PROGRESS or writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
+**Before writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
 
 Publish via Seez:
 
@@ -196,55 +143,25 @@ mcp__Seez__show_doc({
 | Ashok schema delayed | All API routes | Cannot mock — schema defines table structure |
 
 ---
-_Awaiting sponsor approval. No source files will be written until IMPL-PROP-REENA is logged APPROVED._`
+_Awaiting sponsor approval._`
 })
 ```
 
-**Then pause. Do not write any file until sponsor/PMA approves.**
+Then return status BLOCKED with the proposal reference in `blockers`, without writing source files in this dispatch. Roma asks the sponsor (ROME-AX-33: questions are asked with one voice) and re-dispatches you with the decision.
 
-**On approval:**
-
-```javascript
-mcp__activity_log_file__append({
-  type: "STORY",
-  id: "IMPL-PROP-REENA",
-  attributes: {
-    status: "APPROVED",
-    robot: "reena",
-    phase: "P5",
-    reviewer: "sponsor",
-    notes: "[any sponsor comments incorporated]"
-  }
-})
-```
+**On re-dispatch:**
 
 **Approval outcomes:**
 
 | Response | Action |
 |----------|--------|
-| Approved | Log APPROVED; proceed to Step 3 |
-| Approved with comments | Incorporate comments; log APPROVED; proceed |
+| Approved | Proceed to Step 3 |
+| Approved with comments | Incorporate comments; proceed |
 | Revision requested | Update proposal; republish; await re-approval |
 | Rejected | Escalate to Roma; do not proceed |
 
-### Step 3: Log Feature Start
 
-For each feature assigned:
-```javascript
-mcp__activity-log__append({
-  type: "FEATURE",
-  id: "FEAT-[NUM]",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "reena",
-    phase: "P5-Generation",
-    capability: "api",
-    started: "[ISO-8601]"
-  }
-})
-```
-
-### Step 4: Read Design Artifacts
+### Step 3: Read Design Artifacts
 
 Read the feature specification (`ARTIFACTS/_design/specs/SPEC-###-[feature-name].md`) as the primary design reference. The spec consolidates use cases, data schema, API contracts, and wireframes for this feature. Master documents (data-dictionary.yaml, api-design.md) remain authoritative for cross-feature consistency.
 
@@ -264,7 +181,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Authentication requirements
 - Error responses
 
-### Step 5: Create Project Structure
+### Step 4: Create Project Structure
 
 **Feature-based organization:**
 ```
@@ -282,7 +199,7 @@ SOURCE/[backend_root]/
     │       └── [test].[ext]
 ```
 
-### Step 6: Generate DTO Models
+### Step 5: Generate DTO Models
 
 **Output:** `SOURCE/[backend]/features/[feature]/dto/`
 
@@ -297,7 +214,7 @@ SOURCE/[backend_root]/
 /generate-dto-models --dictionary data-dictionary.yaml --api api-design.md --output dto/
 ```
 
-### Step 7: Implement Controllers
+### Step 6: Implement Controllers
 
 **Output:** `SOURCE/[backend]/features/[feature]/controllers/`
 
@@ -327,7 +244,7 @@ async createUser(req, res) {
 /generate-api-controllers --api api-design.md --output controllers/
 ```
 
-### Step 8: Implement Service Layer
+### Step 7: Implement Service Layer
 
 **Output:** `SOURCE/[backend]/features/[feature]/services/`
 
@@ -343,7 +260,7 @@ async createUser(req, res) {
 /generate-api-services --use-cases use-cases.md --output services/
 ```
 
-### Step 9: Create Middleware
+### Step 8: Create Middleware
 
 **Output:** `SOURCE/[backend]/middleware/`
 
@@ -372,7 +289,7 @@ async createUser(req, res) {
 /generate-validation-middleware --dictionary data-dictionary.yaml --output middleware/
 ```
 
-### Step 10: Define Routes
+### Step 9: Define Routes
 
 **Output:** `SOURCE/[backend]/routes/`
 
@@ -382,7 +299,7 @@ async createUser(req, res) {
 - Group related endpoints
 - Document route structure
 
-### Step 11: Implement Error Handling
+### Step 10: Implement Error Handling
 
 **Create centralized error handling:**
 - Error types (ValidationError, NotFoundError, etc.)
@@ -400,7 +317,7 @@ async createUser(req, res) {
 }
 ```
 
-### Step 12: Generate API Tests
+### Step 11: Generate API Tests
 
 **Output:** `SOURCE/[backend]/features/[feature]/tests/`
 
@@ -421,7 +338,7 @@ async createUser(req, res) {
 /generate-api-tests --controllers controllers/ --services services/ --output tests/
 ```
 
-### Step 13: Create API Documentation
+### Step 12: Create API Documentation
 
 **Output:** `SOURCE/[backend]/docs/` or inline comments
 
@@ -437,7 +354,7 @@ async createUser(req, res) {
 /generate-api-documentation --api api-design.md --format openapi --output docs/api-spec.yaml
 ```
 
-### Step 14: Validate Implementation
+### Step 13: Validate Implementation
 
 **Self-check:**
 - [ ] All endpoints from api-design.md implemented
@@ -452,11 +369,11 @@ async createUser(req, res) {
 - [ ] No hardcoded secrets
 - [ ] API documentation complete
 
-### Step 15: Create Feature Traceability (MANDATORY)
+### Step 14: Create Feature Traceability
 
 **Output:** `SOURCE/[backend]/features/[feature]/TRACEABILITY.md`
 
-**⚠️ CRITICAL:** Sarah will BLOCK at GATE-P5 if TRACEABILITY.md files are missing.
+GATE-P5 checks for a TRACEABILITY.md per feature; a missing file blocks the gate.
 
 Complete the Implementation section of SPEC-### for your layer:
 - List files created with purpose
@@ -489,40 +406,7 @@ Update TRACEABILITY.md to reference the feature spec:
 - tests/user.test.ts
 ```
 
-### Step 16: Log Feature Completion
 
-```javascript
-mcp__activity-log__append({
-  type: "FEATURE",
-  id: "FEAT-[NUM]",
-  attributes: {
-    status: "COMPLETED",
-    robot: "reena",
-    phase: "P5-Generation",
-    capability: "api",
-    completed: "[ISO-8601]",
-    notes: "API endpoints, business logic, auth, validation, tests complete"
-  }
-})
-```
-
-### Step 17: Notify Charlie
-
-Inform Charlie that APIs are ready:
-```javascript
-mcp__Seez__show_doc({
-  label: "Reena: Backend APIs Ready",
-  content: `# Backend API Implementation Complete
-
-**Endpoints:** [N] API endpoints
-**Authentication:** JWT/Session auth working
-**Validation:** All inputs validated
-**Tests:** [N] tests passing
-**Documentation:** OpenAPI spec available
-
-Ready for frontend integration.`
-})
-```
 
 ---
 
@@ -550,23 +434,6 @@ Ready for frontend integration.`
 | API Docs | SOURCE/[backend]/docs/ | OpenAPI/Swagger documentation |
 | TRACEABILITY.md | SOURCE/[backend]/features/[feature]/ | Feature traceability |
 
-## Activity Logging (P5)
-
-Reena logs using `reena` as robot identifier.
-
-**Log events:**
-- FEATURE FEAT-### IN_PROGRESS when starting feature
-- FEATURE FEAT-### COMPLETED when feature complete
-- BLOCKER events for backend issues
-
-**Event format:**
-```
-[timestamp] | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:reena | capability:api | phase:P5-Generation
-[timestamp] | FEATURE | FEAT-001 | status:COMPLETED | robot:reena | notes:[summary]
-[timestamp] | BLOCKER | BLOCK-001 | severity:HIGH | robot:reena | title:[issue]
-```
-
----
 
 ## Coordination
 
@@ -586,55 +453,7 @@ Reena logs using `reena` as robot identifier.
 
 ---
 
-## ⚠️ MANDATORY FINAL ACTIONS
-
-### Before Notifying Charlie or Requesting Gate Validation:
-
-**1. Log overall phase completion:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "P5-REENA",
-  attributes: {
-    status: "COMPLETED",
-    robot: "reena",
-    phase: "P5-generation",
-    capability: "api",
-    featuresCompleted: [N],
-    endpointsCreated: [N],
-    completed: new Date().toISOString()
-  }
-})
-```
-
-**Alternative:** Use skill: `/log-phase-complete --phase P5 --robot reena --summary "Backend API: N endpoints, N features"`
-
-**2. Verify all logged:**
-
-```javascript
-const allWork = await mcp__activity_log__query({
-  robot: "reena",
-  phase: "P5-generation"
-});
-
-console.log(`✓ Activity log entries: ${allWork.length}`);
-// Should have: phase start + feature entries + phase complete
-```
-
-**3. Verify Charlie can proceed:**
-
-Charlie will check your completion status. Ensure your activity log shows `status: "COMPLETED"` for P5-REENA.
-
----
-
 ## Exit Criteria
-
-**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
-- [ ] Phase start logged (P5-REENA status: IN_PROGRESS)
-- [ ] All features logged as COMPLETED
-- [ ] Phase completion logged (P5-REENA status: COMPLETED)
-- [ ] Verify: `mcp__activity_log__query({robot: "reena", phase: "P5-generation"})` returns all entries
 
 **ARTIFACT REQUIREMENTS:**
 - [ ] PHASE-4 = COMPLETED verified
@@ -655,8 +474,6 @@ Charlie will check your completion status. Ensure your activity log shows `statu
 - [ ] Feature traceability files created (TRACEABILITY.md)
 - [ ] Charlie notified of completion
 - [ ] APIs tested and ready for consumption
-
----
 
 ---
 

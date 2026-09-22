@@ -2,6 +2,60 @@
 
 All notable changes to the ROME Framework will be documented in this file.
 
+## [2026-09-22] - v3.5.1 — current-model alignment (PROP-059)
+
+PATCH. Adjusts the agent layer to the Claude 5 generation (Opus 5, Fable 5 /
+5.1) per Anthropic's published prompting guidance. Convention change: NO
+(no state schema or artifact format change; MIG-3.5.0→3.5.1 has no transforms
+and no gaps).
+
+### Why
+The recommended-model table named superseded versions and nothing in the code
+read it. Five producer mode files still carried pre-PROP-035 "log phase
+start/complete" and robot-to-robot hand-off steps under a banner declaring
+them obsolete; current models follow instructions closely enough that a file
+saying both "do X first" and "X is obsolete" is a real risk. Role prompts used
+CRITICAL/MANDATORY as emphasis, which current models over-apply. No rule told
+a sub-agent to finish its dispatch rather than end on a question, or told Roma
+when it may start agents or stop for the sponsor.
+
+### Added
+- **`orchestrator/model-tiers.json`**: model tier per role, by Claude Code
+  alias. `loadRoleSpec` returns `model`; Roma passes it at dispatch;
+  `recordDispatch` stores it.
+- **`orchestrator/prompts/operating-rules.md`**: shared block appended to
+  every sub-agent prompt between the active mode and the return contract.
+- **Roma §"Delegation, pausing and reporting"** in `orchestrator.md`.
+- **Fidelity check 8** (quick and full): 8a no pre-cutover logging phrases
+  under `agents/`; 8b standard §3 names tiers by alias only; 8c every role
+  resolves to a tier and every tier key is a role.
+- Lexicon 1.11: Model Tier, Operating Rules. Ontology 1.11: REL-27.
+
+### Changed
+- `agent-roles-standard.md` 1.3: "Model tier" column by alias; §5 and the
+  intro no longer claim role content is unchanged.
+- Talib P1/P2, Ashok/Reena/Charlie P5: obsolete banner, MANDATORY FIRST/FINAL
+  ACTION sections, activity-log exit criteria, feature start/complete logging,
+  terminal-notifier and robot-to-robot "notify" steps removed; steps
+  renumbered. Implementation-proposal approval now returns BLOCKED for Roma to
+  ask the sponsor (AX-33) instead of pausing inside the dispatch.
+- Sarah QA-validator: "Activity Log Validation" at each gate replaced by a
+  dispatch-record check against `state.json` (sponsor decision §5.3);
+  blockers reported via the structured return.
+- Emphasis rewrite: CRITICAL/MANDATORY used as stress replaced with the plain
+  instruction and its consequence (Talib, Sarah, Lucien, PMA skill, Roma
+  procedures, P5 modes). Severity enum values unchanged.
+
+### Not done (follow-ups, out of PROP-059 scope)
+- Talib P1/P2 still call `mcp__Seez__ask_questions` directly for ambiguity
+  resolution; ROME-STD-AGENT-ROLES §2.1 routes questions through Roma.
+- Bootstrap, Clara, PMA, Lucien and Roma procedures still show
+  `mcp__activity-log__append` (hyphen form) as a coordination call; the
+  lexicon's "Logging Trigger" entry still defines mandatory producer logging.
+- Whether P5 producers should still write `TRACEABILITY.md` now that the
+  matrix is scanned from source (PROP-058).
+- AC8 proof run on `testapps/pinnote` not yet executed (needs a Roma session).
+
 ## [2026-09-11] - v3.5.0 "Aurelius" — derived traceability (PROP-058)
 
 Codename **Aurelius**. Restores PROP-041 §A2 as designed: the code and test

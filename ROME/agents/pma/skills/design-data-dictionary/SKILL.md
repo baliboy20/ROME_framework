@@ -108,7 +108,7 @@ entities:
 
 ## Notes
 
-- CRITICAL: Data dictionary is SINGLE SOURCE OF TRUTH
+- The data dictionary is the single source of truth: schema, DTOs and UI forms are generated from it, so a field defined anywhere else will diverge
 - All layers (database, API, UI) derive from data dictionary
 - Integrates with PMA's data dictionary workflow (Step 6)
 - Traces to AORDL Invariants for business rules

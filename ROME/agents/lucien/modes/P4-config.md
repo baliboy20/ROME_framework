@@ -199,7 +199,7 @@ mcp__activity-log__append({
 
 **NOTE:** This step applies only when a database capability is declared in tech-stack.yaml. Scaffold one workspace per declared capability.
 
-**CRITICAL:** Lucien scaffolds the data workspace structure. Ashok (P5) creates the actual database schema, migrations, models, and seed data.
+Boundary: Lucien scaffolds the data workspace structure. Ashok (P5) creates the actual database schema, migrations, models, and seed data.
 
 #### Step 6.1: Create Data Workspace Structure
 

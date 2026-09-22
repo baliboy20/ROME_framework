@@ -3,8 +3,8 @@
 | Field | Value |
 |-------|-------|
 | **Document UID** | ROME-ONT-001 |
-| **Version** | 1.10 |
-| **Date** | 2026-09-17T00:00:00Z |
+| **Version** | 1.11 |
+| **Date** | 2026-09-22T00:00:00Z |
 | **Status** | Active |
 | **Document Type** | Foundation |
 | **Author** | Archie |
@@ -84,6 +84,7 @@ Three sections: the **entity set** (what exists), the **relation set** (how enti
 | REL-24 | Sponsor `confirms/redirects/delegates` AIB | Sponsor(1) → AIB(1 per P3/P4), bound to AIB revision (PROP-051) |
 | REL-25 | Flow `references` Requirement | Flow(N) → Requirement(M) — by id only, never restated; reverse index derived (PROP-057) |
 | REL-26 | Sponsor `confirms/omits` Flows | Sponsor(1) → Flow(N) confirmation, or one recorded omission per Increment (PROP-057; AX-38) |
+| REL-27 | Role `has-model-tier` Model Tier | Role(1) → Tier(1) (`model-tiers.json`; explicit or default; PROP-059). No axiom: a wrong tier degrades quality but breaks no guard-enforced guarantee |
 
 ---
 
@@ -190,6 +191,7 @@ contiguous with its siblings.)
 
 | Version | Date/Time (ISO 8601) | Summary |
 |---------|----------------------|---------|
+| 1.11 | 2026-09-22T00:00:00Z | PROP-059 implemented (v3.5.1). Added REL-27 Role has-model-tier Model Tier. No axiom change. |
 | 1.10 | 2026-09-17T00:00:00Z | Correction: AX-41 cited the `requires` field of lifecycle.js in module#function form, as if it were a function (fidelity check 6 failed); reworded to the field `PHASES[].requires`. AX-08 table P1 row += `flowValidation` (present in `lifecycle.js` since PROP-057; table was stale). Duplicate revision number 1.6 (2026-07-17) renumbered 1.5.1. |
 | 1.9 | 2026-09-11T00:00:00Z | PROP-058 implemented (v3.5.0): AX-40 (derived values recomputed, stored matrix dropped), AX-41 (every required fact has a checker or a failing test), AX-42 (code/test traceability scanned from source; scope from state; INCONCLUSIVE third state). |
 | 1.8 | 2026-07-29T00:00:00Z | PROP-057 implemented (v3.4.0). Added ENT-21 Flow, REL-25/26, AX-38 flows sponsor-confirmed or omission recorded (ENFORCED via `checkFlowValidation` gate fact + `recordFlowsOmission`), AX-39 no unrouted failure (ENFORCED via `validateFlow` V4a/V4b). Tagged violation tests in `flows.test.cjs`. |

@@ -1,16 +1,5 @@
 # Charlie P5 Mode: Frontend/Application Implementation
 
-> **⚠ MODE UPDATE — superseded by ROME-PROP-035 (2026-06-19).**
-> The legacy "MANDATORY FIRST ACTION: log phase start/complete" and any
-> `/log-phase-start` / `/log-phase-complete` / `mcp__activity_log__append`-as-
-> coordination instructions below are **OBSOLETE** and the referenced skills were
-> removed in the PROP-035 cutover. Under the single-session model you are a
-> **sub-agent**: you finish by returning a single structured result
-> (status, summary, artifacts, traceabilityDeltas, blockers). **Returning IS your
-> progress record** (completion = return = record) — there is no separate logging
-> step. The orchestrator writes the audit trail. See
-> `rome-core/docs/standards/agent-roles-standard.md`.
-
 | Field | Value |
 |-------|-------|
 | **Mode UID** | charlie:P5-generation |
@@ -19,36 +8,6 @@
 | **Version** | 1.0.0 |
 | **Upstream** | Lucien (P4 Config), Reena (Backend API) |
 | **Downstream** | End Users |
-
----
-
-## ⚠️ CRITICAL: MANDATORY FIRST ACTION
-
-**BEFORE doing ANY work, you MUST log phase start:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "P5-CHARLIE",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "charlie",
-    phase: "P5-generation",
-    capability: "ui-app",
-    started: new Date().toISOString()
-  }
-})
-```
-
-**Verify logging worked:**
-```javascript
-const verify = await mcp__activity_log__query({robot: "charlie", phase: "P5-generation"});
-console.log(`✓ Phase start logged:`, verify);
-```
-
-**DO NOT PROCEED until you've logged phase start and verified it.**
-
-**Alternative:** Use skill: `/log-phase-start --phase P5 --robot charlie`
 
 ---
 
@@ -141,19 +100,7 @@ Check:
 
 ### Step 2: Query Assigned Features
 
-Query activity log for frontend layer feature assignments:
-
-```javascript
-mcp__activity-log__query({
-  robot: "charlie",
-  status: "PENDING"
-})
-```
-
-**Alternative:** Read actionlist.md directly:
-```
-ARTIFACTS/_design/design-decisions/actionlist.md
-```
+Read the feature assignments from `ARTIFACTS/_design/design-decisions/actionlist.md`.
 
 **For each assigned feature (FEAT-###):**
 - Note feature ID, title, priority
@@ -161,9 +108,9 @@ ARTIFACTS/_design/design-decisions/actionlist.md
 - Verify Reena's backend API dependencies completed
 - Check dependencies on other features
 
-### Step 2b: Publish Implementation Proposal (MANDATORY)
+### Step 2b: Publish Implementation Proposal
 
-**Before logging any FEATURE IN_PROGRESS or writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
+**Before writing any source file**, produce and publish an Implementation Proposal. All P5 robots publish proposals simultaneously; sponsor reviews the combined set before coding begins.
 
 Publish via Seez:
 
@@ -225,57 +172,27 @@ For each screen in the assigned features, document the widget structure and stat
 - [e.g. "BottomSheet not AlertDialog for delete confirmation — less disruptive"]
 
 ---
-_Awaiting sponsor approval. No source files will be written until IMPL-PROP-CHARLIE is logged APPROVED._`
+_Awaiting sponsor approval._`
 })
 ```
 
-**Then pause. Do not write any file until sponsor/PMA approves.**
+Then return status BLOCKED with the proposal reference in `blockers`, without writing feature source files in this dispatch. Roma asks the sponsor (ROME-AX-33: questions are asked with one voice) and re-dispatches you with the decision.
 
 **Note:** While awaiting Reena's APIs, Charlie may scaffold the project structure, navigation shell, and design system components — but not implement feature screens.
 
-**On approval:**
-
-```javascript
-mcp__activity_log_file__append({
-  type: "STORY",
-  id: "IMPL-PROP-CHARLIE",
-  attributes: {
-    status: "APPROVED",
-    robot: "charlie",
-    phase: "P5",
-    reviewer: "sponsor",
-    notes: "[any sponsor comments incorporated]"
-  }
-})
-```
+**On re-dispatch:**
 
 **Approval outcomes:**
 
 | Response | Action |
 |----------|--------|
-| Approved | Log APPROVED; proceed to Step 3 |
-| Approved with comments | Incorporate comments; log APPROVED; proceed |
+| Approved | Proceed to Step 3 |
+| Approved with comments | Incorporate comments; proceed |
 | Revision requested | Update proposal; republish; await re-approval |
 | Rejected | Escalate to Roma; do not proceed |
 
-### Step 3: Log Feature Start
 
-For each feature assigned:
-```javascript
-mcp__activity-log__append({
-  type: "FEATURE",
-  id: "FEAT-[NUM]",
-  attributes: {
-    status: "IN_PROGRESS",
-    robot: "charlie",
-    phase: "P5-Generation",
-    capability: "ui-app",
-    started: "[ISO-8601]"
-  }
-})
-```
-
-### Step 4: Read Design Artifacts
+### Step 3: Read Design Artifacts
 
 Read the feature specification (`ARTIFACTS/_design/specs/SPEC-###-[feature-name].md`) as the primary design reference. The spec consolidates use cases, data schema, API contracts, and wireframes for this feature. Master documents (data-dictionary.yaml, api-design.md) remain authoritative for cross-feature consistency.
 
@@ -298,7 +215,7 @@ ARTIFACTS/_design/design-decisions/tech-stack.yaml
 - Design tokens (from the required design system)
 - API endpoints to integrate
 
-### Step 5: Create Project Structure
+### Step 4: Create Project Structure
 
 **Feature-based organization:**
 ```
@@ -318,7 +235,7 @@ SOURCE/lib/
     │       └── [test].dart
 ```
 
-### Step 6: Generate Data Models
+### Step 5: Generate Data Models
 
 **Output:** `SOURCE/lib/features/[feature]/models/`
 
@@ -334,7 +251,7 @@ SOURCE/lib/
 /generate-api-models --dictionary data-dictionary.yaml --output models/
 ```
 
-### Step 7: Create API Service Layer
+### Step 6: Create API Service Layer
 
 **Output:** `SOURCE/lib/features/[feature]/services/`
 
@@ -362,7 +279,7 @@ class UserService {
 /generate-api-integration --api api-design.md --output services/
 ```
 
-### Step 8: Implement State Management
+### Step 7: Implement State Management
 
 **Output:** `SOURCE/lib/features/[feature]/state/` or `SOURCE/lib/state/`
 
@@ -378,7 +295,7 @@ class UserService {
 /generate-state-management --pattern [redux|provider|bloc] --output state/
 ```
 
-### Step 9: Create Reusable Components
+### Step 8: Create Reusable Components
 
 **Output:** `SOURCE/lib/features/[feature]/widgets/` or `SOURCE/lib/widgets/`
 
@@ -395,7 +312,7 @@ class UserService {
 /generate-ui-components --design-system design-system.md --output widgets/
 ```
 
-### Step 10: Implement Screens
+### Step 9: Implement Screens
 
 **Output:** `SOURCE/lib/features/[feature]/screens/`
 
@@ -412,7 +329,7 @@ class UserService {
 /generate-ui-screens --use-cases use-cases.md --wireframes wireframes/ --output screens/
 ```
 
-### Step 11: Implement Forms
+### Step 10: Implement Forms
 
 **Output:** Forms within screens
 
@@ -435,7 +352,7 @@ class UserService {
 /generate-form-validation --dictionary data-dictionary.yaml
 ```
 
-### Step 12: Implement Navigation
+### Step 11: Implement Navigation
 
 **Output:** `SOURCE/lib/navigation/` or routing configuration
 
@@ -452,7 +369,7 @@ class UserService {
 /generate-route-guards --auth-requirements tech-stack.yaml
 ```
 
-### Step 13: Implement Accessibility
+### Step 12: Implement Accessibility
 
 **Output:** Accessibility enhancements across screens
 
@@ -470,7 +387,7 @@ class UserService {
 /validate-accessibility --wcag-level AA
 ```
 
-### Step 14: Generate UI Tests
+### Step 13: Generate UI Tests
 
 **Output:** `SOURCE/test/features/[feature]/` or `SOURCE/tests/`
 
@@ -492,7 +409,7 @@ class UserService {
 /generate-integration-tests --user-flows user-flows.md --output tests/integration/
 ```
 
-### Step 15: Create Application Documentation
+### Step 14: Create Application Documentation
 
 **Output:** `SOURCE/README.md` or `SOURCE/docs/`
 
@@ -505,7 +422,7 @@ class UserService {
 - Common tasks (add new screen, component, etc.)
 - Troubleshooting
 
-### Step 16: Validate Implementation
+### Step 15: Validate Implementation
 
 **Self-check:**
 - [ ] All screens from use-cases.md implemented
@@ -521,11 +438,11 @@ class UserService {
 - [ ] No hardcoded API URLs (use environment config)
 - [ ] Application builds without errors
 
-### Step 17: Create Feature Traceability (MANDATORY)
+### Step 16: Create Feature Traceability
 
 **Output:** `SOURCE/lib/features/[feature]/TRACEABILITY.md`
 
-**⚠️ CRITICAL:** Sarah will BLOCK at GATE-P5 if TRACEABILITY.md files are missing.
+GATE-P5 checks for a TRACEABILITY.md per feature; a missing file blocks the gate.
 
 Complete the Implementation section of SPEC-### for your layer:
 - List files created with purpose
@@ -558,59 +475,7 @@ Update TRACEABILITY.md to reference the feature spec:
 - tests/user_list_test.dart
 ```
 
-### Step 18: Log Feature Completion
 
-```javascript
-mcp__activity-log__append({
-  type: "FEATURE",
-  id: "FEAT-[NUM]",
-  attributes: {
-    status: "COMPLETED",
-    robot: "charlie",
-    phase: "P5-Generation",
-    capability: "ui-app",
-    completed: "[ISO-8601]",
-    notes: "Screens, components, API integration, state management, tests complete"
-  }
-})
-```
-
-### Step 19: Notify Completion and Request Gate Validation
-
-```javascript
-mcp__Seez__show_doc({
-  label: "Charlie: Frontend Complete",
-  content: `# Frontend Application Complete
-
-**Screens:** [N] screens implemented
-**Components:** [N] reusable components
-**API Integration:** All endpoints integrated
-**State Management:** Working
-**Tests:** [N] tests passing
-**Accessibility:** WCAG AA compliant
-
-✓ P5-CHARLIE Complete
-
-All three P5 robots have completed:
-- ✓ Ashok: Database layer
-- ✓ Reena: Backend API
-- ✓ Charlie: Frontend UI
-
-Next step: Request GATE-P5 validation from Sarah
-
-To proceed:
-  cd ROME/rome-qa
-  # Sarah will validate:
-  #   - Activity log (P5-ASHOK, P5-REENA, P5-CHARLIE all COMPLETED)
-  #   - All features implemented
-  #   - All tests passing
-  #   - Traceability (AORDL→Code chain intact)
-  #   - Documentation complete
-
-Sarah will APPROVE or BLOCK project delivery.
-`
-})
-```
 
 ---
 
@@ -642,23 +507,6 @@ Sarah will APPROVE or BLOCK project delivery.
 | README.md | SOURCE/ | Application documentation |
 | TRACEABILITY.md | SOURCE/lib/features/[feature]/ | Feature traceability |
 
-## Activity Logging (P5)
-
-Charlie logs using `charlie` as robot identifier.
-
-**Log events:**
-- FEATURE FEAT-### IN_PROGRESS when starting feature
-- FEATURE FEAT-### COMPLETED when feature complete
-- BLOCKER events for frontend issues
-
-**Event format:**
-```
-[timestamp] | FEATURE | FEAT-001 | status:IN_PROGRESS | robot:charlie | capability:ui-app | phase:P5-Generation
-[timestamp] | FEATURE | FEAT-001 | status:COMPLETED | robot:charlie | notes:[summary]
-[timestamp] | BLOCKER | BLOCK-001 | severity:HIGH | robot:charlie | title:[issue]
-```
-
----
 
 ## Coordination
 
@@ -678,55 +526,7 @@ Charlie logs using `charlie` as robot identifier.
 
 ---
 
-## ⚠️ MANDATORY FINAL ACTIONS
-
-### Before Completing P5 or Requesting Gate Validation:
-
-**1. Log overall phase completion:**
-
-```javascript
-mcp__activity_log__append({
-  type: "PHASE",
-  id: "P5-CHARLIE",
-  attributes: {
-    status: "COMPLETED",
-    robot: "charlie",
-    phase: "P5-generation",
-    capability: "ui-app",
-    featuresCompleted: [N],
-    screensCreated: [N],
-    completed: new Date().toISOString()
-  }
-})
-```
-
-**Alternative:** Use skill: `/log-phase-complete --phase P5 --robot charlie --summary "Frontend: N screens, N features"`
-
-**2. Verify all logged:**
-
-```javascript
-const allWork = await mcp__activity_log__query({
-  robot: "charlie",
-  phase: "P5-generation"
-});
-
-console.log(`✓ Activity log entries: ${allWork.length}`);
-// Should have: phase start + feature entries + phase complete
-```
-
-**3. Verify P5 complete:**
-
-All three robots (Ashok, Reena, Charlie) must have logged completion for P5 phase to be complete.
-
----
-
 ## Exit Criteria
-
-**ACTIVITY LOG REQUIREMENTS (MANDATORY):**
-- [ ] Phase start logged (P5-CHARLIE status: IN_PROGRESS)
-- [ ] All features logged as COMPLETED
-- [ ] Phase completion logged (P5-CHARLIE status: COMPLETED)
-- [ ] Verify: `mcp__activity_log__query({robot: "charlie", phase: "P5-generation"})` returns all entries
 
 **ARTIFACT REQUIREMENTS:**
 - [ ] PHASE-4 = COMPLETED verified
@@ -751,8 +551,6 @@ All three robots (Ashok, Reena, Charlie) must have logged completion for P5 phas
 - [ ] Application documentation complete
 - [ ] Feature traceability files created (TRACEABILITY.md)
 - [ ] Application ready for end users
-
----
 
 ---
 
